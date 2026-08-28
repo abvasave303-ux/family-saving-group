@@ -191,6 +191,8 @@ def export_data(kind):
     else:return jsonify(error="unknown export"),400
     return jsonify([dict(x) for x in c.execute(q).fetchall()])
 
+# Initialize database when the app starts
+init_db()
+
 if __name__=="__main__":
-    init_db()
     app.run(host="0.0.0.0",port=int(os.environ.get("PORT",8000)),debug=False)
