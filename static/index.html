@@ -650,20 +650,29 @@ $("progtext").textContent=
 
 $("ft").innerHTML=
 fam.map((f,i)=>`
-
+$("ft").innerHTML=
+fam.map((f,i)=>`
 <tr>
 <td>${i+1}</td>
 <td>${f.name}</td>
 <td>${f.mobile||"—"}</td>
 <td>${money(f.savings)}</td>
+
 <td>${money(f.loan)}</td>
 <td>
 <button class="btn secondary small" onclick="editFamily(${f.id})">✏️ Edit</button>
+<button class="btn danger small" onclick="deleteFamily(${f.id})">🗑️ Delete</button>
 </td>
 </tr>
-
+<button class="btn secondary small" onclick="editFamily(${f.id})">
+✏️ Edit
+</button>
+<button class="btn danger small" onclick="deleteFamily(${f.id})">
+🗑️ Delete
+</button>
+</td>
+</tr>
 `).join("");
-
 
 /* SAVING LEDGER WITH EDIT DELETE */
 
@@ -1227,6 +1236,67 @@ async function deleteFamily(id){
 
     alert(e.message);
 
+  }
+}
+  async function editFamily(id){
+
+  const family = fam.find(f => f.id === id);
+
+  if(!family){
+    alert("परिवार नहीं मिला");
+    return;
+  }
+
+  const name = prompt("परिवार का नाम बदलें", family.name);
+  if(name === null) return;
+
+  const mobile = prompt("मोबाइल नंबर बदलें", family.mobile || "");
+  if(mobile === null) return;
+
+  try{
+    await api("/api/families/"+id,{
+      method:"PUT",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        name:name.trim(),
+        mobile:mobile.trim()
+      })
+    });
+
+    alert("परिवार की जानकारी अपडेट हो गई");
+    await refresh();
+
+  }catch(e){
+    alert(e.message);
+  }
+}
+
+
+async function deleteFamily(id){
+
+  const family = fam.find(f => f.id === id);
+
+  if(!family){
+    alert("परिवार नहीं मिला");
+    return;
+  }
+
+  if(!confirm("क्या आप '"+family.name+"' को Delete करना चाहते हैं?")){
+    return;
+  }
+
+  try{
+    await api("/api/families/"+id,{
+      method:"DELETE"
+    });
+
+    alert("परिवार Delete हो गया");
+    await refresh();
+
+  }catch(e){
+    alert(e.message);
   }
 }
 /* ADD FAMILY */
