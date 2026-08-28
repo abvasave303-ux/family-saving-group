@@ -659,6 +659,7 @@ fam.map((f,i)=>`
 <td>${money(f.loan)}</td>
 <td>
 <button class="btn secondary small" onclick="editFamily(${f.id})">✏️ Edit</button>
+<button class="btn danger small" onclick="deleteFamily(${f.id})">🗑️ Delete</button>
 </td>
 </tr>
 
@@ -1159,6 +1160,50 @@ alert(e.message);
 }
 
 async function editFamily(id){
+
+  const family = fam.find(f => f.id === id);
+
+  if(!family){
+    alert("परिवार नहीं मिला");
+    return;
+  }
+
+  const name = prompt("परिवार का नाम बदलें", family.name);
+
+  if(name === null) return;
+
+  const mobile = prompt(
+    "मोबाइल नंबर बदलें",
+    family.mobile || ""
+  );
+
+  if(mobile === null) return;
+
+  try{
+
+    await api("/api/families/"+id,{
+      method:"PUT",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        name:name.trim(),
+        mobile:mobile.trim()
+      })
+    });
+
+    alert("परिवार की जानकारी अपडेट हो गई");
+
+    await refresh();
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+}
+
+
 async function deleteFamily(id){
 
   const family = fam.find(f => f.id === id);
@@ -1181,45 +1226,6 @@ async function deleteFamily(id){
     });
 
     alert("परिवार Delete हो गया");
-
-    await refresh();
-
-  }catch(e){
-
-    alert(e.message);
-
-  }
-}
-
-  const family = fam.find(f => f.id === id);
-
-  if(!family){
-    alert("परिवार नहीं मिला");
-    return;
-  }
-
-  const name = prompt("परिवार का नाम बदलें", family.name);
-
-  if(name === null) return;
-
-  const mobile = prompt("मोबाइल नंबर बदलें", family.mobile || "");
-
-  if(mobile === null) return;
-
-  try{
-
-    await api("/api/families/"+id,{
-      method:"PUT",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({
-        name:name.trim(),
-        mobile:mobile.trim()
-      })
-    });
-
-    alert("परिवार की जानकारी अपडेट हो गई");
 
     await refresh();
 
