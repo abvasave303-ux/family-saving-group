@@ -102,6 +102,45 @@ def get_families():
 
 @app.post("/api/families")
 def add_family():
+    @app.delete("/api/families/<int:fid>")
+def delete_family(fid):
+    c = conn()
+
+    family = c.execute(
+        "SELECT * FROM families WHERE id=?",
+        (fid,)
+    ).fetchone()
+
+    if not family:
+        return jsonify(error="परिवार नहीं मिला"), 404
+
+    # परिवार की बचत/लोन/भुगतान मौजूद हो तो delete रोकें
+    savings = c.execute(
+        "SELECT COUNT(*) n FROM savings WHERE family_id=?",
+        (fid,)
+    ).fetchone()["n"]
+
+    loans = c.execute(
+        "SELECT COUNT(*) n FROM loans WHERE family_id=?",
+        (fid,)
+    ).fetchone()["n"]
+
+    payments = c.execute(
+        "SELECT COUNT(*) n FROM payments WHERE family_id=?",
+        (fid,)
+    ).fetchone()["n"]
+
+    if savings or loans or payments:
+        c.close()
+        return jsonify(
+            error="इस परिवार का वित्तीय रिकॉर्ड मौजूद है। पहले रिकॉर्ड हटाना होगा।"
+        ), 400
+
+    c.execute("DELETE FROM families WHERE id=?", (fid,))
+    c.commit()
+    c.close()
+
+    return jsonify(ok=True)
     d=request.json or {}; name=(d.get("name") or "").strip()
     if not name: return jsonify(error="नाम जरूरी है"),400
     c=conn(); cur=c.execute("INSERT INTO families(name,mobile,created_at) VALUES(?,?,?)",
