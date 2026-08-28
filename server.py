@@ -183,7 +183,91 @@ def add_loan():
       VALUES(?,?,?,?,?,?)""",(int(d["family_id"]),amount,amount,2,int(d.get("months",12)),
       d.get("date",datetime.date.today().isoformat())))
     c.commit(); return jsonify(ok=True)
+@app.put("/api/loans/<int:lid>")
+def update_loan(lid):
+    d = request.json or {}
+    amount = float(d.get("amount", 0))
 
+    if amount <= 0:
+        return jsonify(error="लोन राशि सही दें"), 400
+
+    c = conn()
+
+    loan = c.execute(
+        "SELECT * FROM loans WHERE id=?",
+        (lid,)
+    ).fetchone()
+
+    if not loan:
+        c.close()
+        return jsonify(error="लोन नहीं मिला"), 404
+
+    # Payment हो चुके loan को edit नहीं करेंगे
+    paid = c.execute(
+        "SELECT COUNT(*) n FROM payments WHERE loan_id=?",
+        (lid,)
+    ).fetchone()["n"]
+
+    if paid > 0:
+        c.close()
+        return jsonify(
+            error="इस लोन पर payment हो चुकी है, इसलिए इसे edit नहीं किया जा सकता"
+        ), 400
+
+    c.execute("""
+        UPDATE loans
+        SET family_id=?, original=?, principal=?, rate=?, months=?, date=?
+        WHERE id=?
+    """, (
+        int(d["family_id"]),
+        amount,
+        amount,
+        float(d.get("rate", 2)),
+        int(d.get("months", 12)),
+        d.get("date", datetime.date.today().isoformat()),
+        lid
+    ))
+
+    c.commit()
+    c.close()
+
+    return jsonify(ok=True)
+
+
+@app.delete("/api/loans/<int:lid>")
+def delete_loan(lid):
+    c = conn()
+
+    loan = c.execute(
+        "SELECT * FROM loans WHERE id=?",
+        (lid,)
+    ).fetchone()
+
+    if not loan:
+        c.close()
+        return jsonify(error="लोन नहीं मिला"), 404
+
+    # जिस loan पर payment हो चुकी है उसे delete नहीं करेंगे
+    paid = c.execute(
+        "SELECT COUNT(*) n FROM payments WHERE loan_id=?",
+        (lid,)
+    ).fetchone()["n"]
+
+    if paid > 0:
+        c.close()
+        return jsonify(
+            error="इस लोन पर payment हो चुकी है, इसलिए इसे delete नहीं किया जा सकता"
+        ), 400
+
+    c.execute(
+        "DELETE FROM loans WHERE id=?",
+        (lid,)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(ok=True)
 @app.get("/api/loans")
 def loans():
     c=conn(); rows=c.execute("""SELECT l.*,f.name family FROM loans l
