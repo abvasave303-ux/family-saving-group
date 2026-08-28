@@ -115,7 +115,60 @@ def add_saving():
     c=conn(); c.execute("INSERT INTO savings(family_id,month,amount,date) VALUES(?,?,?,?)",
       (int(d["family_id"]),d["month"],amount,d.get("date",datetime.date.today().isoformat())))
     c.commit(); return jsonify(ok=True)
+@app.put("/api/savings/<int:sid>")
+def update_saving(sid):
+    d = request.json or {}
+    amount = float(d.get("amount", 0))
 
+    if amount <= 0:
+        return jsonify(error="बचत राशि सही दें"), 400
+
+    c = conn()
+    row = c.execute(
+        "SELECT id FROM savings WHERE id=?",
+        (sid,)
+    ).fetchone()
+
+    if not row:
+        c.close()
+        return jsonify(error="बचत एंट्री नहीं मिली"), 404
+
+    c.execute("""
+        UPDATE savings
+        SET family_id=?, month=?, amount=?, date=?
+        WHERE id=?
+    """, (
+        int(d["family_id"]),
+        d["month"],
+        amount,
+        d["date"],
+        sid
+    ))
+
+    c.commit()
+    c.close()
+    return jsonify(ok=True)
+
+
+@app.delete("/api/savings/<int:sid>")
+def delete_saving(sid):
+    c = conn()
+
+    row = c.execute(
+        "SELECT id FROM savings WHERE id=?",
+        (sid,)
+    ).fetchone()
+
+    if not row:
+        c.close()
+        return jsonify(error="बचत एंट्री नहीं मिली"), 404
+
+    c.execute("DELETE FROM savings WHERE id=?", (sid,))
+    c.commit()
+    c.close()
+
+    return jsonify(ok=True)
+    
 @app.get("/api/savings")
 def savings():
     c=conn(); rows=c.execute("""SELECT s.*,f.name family FROM savings s
