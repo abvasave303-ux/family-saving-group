@@ -1162,6 +1162,52 @@ alert(e.message);
 
 
 /* ADD FAMILY */
+async function editLoan(id){
+  const loan = await api("/api/loans").then(rows => rows.find(x => x.id === id));
+  if(!loan) return alert("लोन नहीं मिला");
+
+  const amount = prompt("लोन राशि", loan.original);
+  if(amount === null) return;
+
+  const months = prompt("अवधि माह", loan.months);
+  if(months === null) return;
+
+  try{
+    await api("/api/loans/"+id,{
+      method:"PUT",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        family_id: loan.family_id,
+        amount: Number(amount),
+        rate: loan.rate || 2,
+        months: Number(months),
+        date: loan.date
+      })
+    });
+
+    alert("लोन अपडेट हो गया");
+    await refresh();
+
+  }catch(e){
+    alert(e.message);
+  }
+}
+
+async function deleteLoan(id){
+  if(!confirm("क्या आप यह लोन delete करना चाहते हैं?")) return;
+
+  try{
+    await api("/api/loans/"+id,{
+      method:"DELETE"
+    });
+
+    alert("लोन delete हो गया");
+    await refresh();
+
+  }catch(e){
+    alert(e.message);
+  }
+}
 
 async function addFamily(){
 
