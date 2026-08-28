@@ -530,21 +530,19 @@ return j;
 
 
 function login(){
-
-api("/api/login",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-pin:$("pin").value
-})
-})
-.then(()=>{
-$("login").classList.add("hidden");
-$("app").classList.remove("hidden");
-init();
-})
-.catch(e=>alert(e.message));
-
+  api("/api/login",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({pin:$("pin").value})
+  })
+  .then(function(){
+    $("login").classList.add("hidden");
+    $("app").classList.remove("hidden");
+    init();
+  })
+  .catch(function(e){
+    alert(e.message);
+  });
 }
 
 
