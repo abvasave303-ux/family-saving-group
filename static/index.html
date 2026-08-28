@@ -1047,115 +1047,295 @@ alert(e.message);
 
 async function passbook(){
 
-try{
+  try{
 
-let x=await api(
-"/api/family/"+$("pf").value+"/passbook"
-);
+    let x = await api(
+      "/api/family/" + $("pf").value + "/passbook"
+    );
 
-let s=x.savings.reduce(
-(a,r)=>a+r.amount,0
-);
+    let family = fam.find(
+      f => String(f.id) === String($("pf").value)
+    );
 
-let l=x.loans.reduce(
-(a,r)=>a+r.principal,0
-);
+    let s = x.savings.reduce(
+      (a,r) => a + Number(r.amount || 0), 0
+    );
 
+    let l = x.loans.reduce(
+      (a,r) => a + Number(r.principal || 0), 0
+    );
 
-$("pr").innerHTML=`
+    $("pr").innerHTML = `
 
-<div class="cards" style="grid-template-columns:repeat(2,1fr)">
+      <div id="printPassbook">
 
-<div class="card">
+        <div style="
+          text-align:center;
+          padding:15px;
+          border-bottom:2px solid #1976d2;
+        ">
+          <h2 style="margin:0;color:#083b78;">
+            🏦 Family Saving Group
+          </h2>
 
-<div class="label">
-कुल बचत
-</div>
+          <div style="margin-top:5px;">
+            एक परिवार • एक बचत • उज्ज्वल भविष्य
+          </div>
 
-<div class="value green">
-${money(s)}
-</div>
+          <h3 style="margin:10px 0 0;">
+            DIGITAL PASSBOOK
+          </h3>
 
-</div>
-
-<div class="card">
-
-<div class="label">
-लोन बाकी
-</div>
-
-<div class="value red">
-${money(l)}
-</div>
-
-</div>
-
-</div>
-
-
-<div class="panel" style="margin-top:12px">
-
-<h3>बचत / भुगतान</h3>
-
-<div class="table">
-
-<table>
-
-<tr>
-<th>तारीख</th>
-<th>विवरण</th>
-<th>राशि</th>
-</tr>
-
-${x.savings.map(r=>`
-
-<tr>
-
-<td>${r.date}</td>
-
-<td>
-मासिक बचत (${r.month})
-</td>
-
-<td>
-${money(r.amount)}
-</td>
-
-</tr>
-
-`).join("")}
+          <div>
+            वित्तीय वर्ष: <b>2026–27</b>
+          </div>
+        </div>
 
 
-${x.payments.map(r=>`
+        <div style="
+          display:grid;
+          grid-template-columns:1fr 1fr;
+          gap:10px;
+          margin-top:15px;
+        ">
 
-<tr>
+          <div class="card">
+            <div class="label">परिवार</div>
+            <div class="value">
+              ${family ? family.name : "—"}
+            </div>
+          </div>
 
-<td>${r.date}</td>
+          <div class="card">
+            <div class="label">मोबाइल</div>
+            <div class="value">
+              ${family ? (family.mobile || "—") : "—"}
+            </div>
+          </div>
 
-<td>
-Loan Payment
-</td>
+          <div class="card">
+            <div class="label">कुल बचत</div>
+            <div class="value green">
+              ${money(s)}
+            </div>
+          </div>
 
-<td>
-${money(r.amount)}
-</td>
+          <div class="card">
+            <div class="label">लोन बाकी</div>
+            <div class="value red">
+              ${money(l)}
+            </div>
+          </div>
 
-</tr>
+        </div>
 
-`).join("")}
 
-</table>
+        <div class="panel" style="margin-top:15px">
 
-</div>
-</div>
+          <h3>
+            बचत / भुगतान विवरण
+          </h3>
 
-`;
+          <div class="table">
 
-}catch(e){
+            <table>
 
-alert(e.message);
+              <tr>
+                <th>तारीख</th>
+                <th>विवरण</th>
+                <th>राशि</th>
+              </tr>
+
+              ${x.savings.map(r => `
+
+                <tr>
+                  <td>${r.date}</td>
+
+                  <td>
+                    मासिक बचत (${r.month})
+                  </td>
+
+                  <td class="green">
+                    ${money(r.amount)}
+                  </td>
+                </tr>
+
+              `).join("")}
+
+
+              ${x.payments.map(r => `
+
+                <tr>
+                  <td>${r.date}</td>
+
+                  <td>
+                    Loan Payment
+                  </td>
+
+                  <td>
+                    ${money(r.amount)}
+                  </td>
+                </tr>
+
+              `).join("")}
+
+            </table>
+
+          </div>
+        </div>
+
+
+        <div style="
+          margin-top:25px;
+          display:flex;
+          justify-content:space-between;
+          font-size:12px;
+        ">
+
+          <div>
+            सदस्य हस्ताक्षर
+          </div>
+
+          <div>
+            Admin हस्ताक्षर
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div style="margin-top:15px;text-align:right;">
+
+        <button
+          class="btn"
+          onclick="printPassbook()">
+          🖨️ Print Passbook
+        </button>
+
+      </div>
+
+    `;
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
 
 }
+
+
+function printPassbook(){
+
+  let content = $("printPassbook").innerHTML;
+
+  let w = window.open("", "_blank");
+
+  if(!w){
+    alert("Print window नहीं खुली। Browser में popup allow करें।");
+    return;
+  }
+
+  w.document.write(`
+
+    <!doctype html>
+
+    <html lang="hi">
+
+    <head>
+
+      <meta charset="utf-8">
+
+      <title>Family Saving Group - Passbook</title>
+
+      <style>
+
+        *{
+          box-sizing:border-box;
+        }
+
+        body{
+          font-family:Arial,"Noto Sans Devanagari",sans-serif;
+          color:#16233b;
+          margin:25px;
+        }
+
+        h2,h3{
+          margin-top:0;
+        }
+
+        table{
+          width:100%;
+          border-collapse:collapse;
+          margin-top:10px;
+        }
+
+        th,td{
+          border:1px solid #ccc;
+          padding:9px;
+          text-align:left;
+        }
+
+        th{
+          background:#f2f5f9;
+        }
+
+        .card{
+          border:1px solid #ddd;
+          padding:12px;
+          margin:5px;
+          display:inline-block;
+          width:45%;
+          vertical-align:top;
+        }
+
+        .label{
+          font-size:12px;
+          color:#666;
+        }
+
+        .value{
+          font-size:18px;
+          font-weight:bold;
+          margin-top:5px;
+        }
+
+        .green{
+          color:#20864b;
+        }
+
+        .red{
+          color:#c73535;
+        }
+
+        @media print{
+          body{
+            margin:12mm;
+          }
+        }
+
+      </style>
+
+    </head>
+
+    <body>
+
+      ${content}
+
+      <script>
+        window.onload=function(){
+          window.print();
+        };
+      <\/script>
+
+    </body>
+
+    </html>
+
+  `);
+
+  w.document.close();
 
 }
 
