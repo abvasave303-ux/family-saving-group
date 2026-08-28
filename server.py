@@ -124,7 +124,51 @@ def add_family():
 
     return jsonify(id=cur.lastrowid)
 
+@app.delete("/api/families/<int:fid>")
+def delete_family(fid):
+    c = conn()
 
+    family = c.execute(
+        "SELECT * FROM families WHERE id=?",
+        (fid,)
+    ).fetchone()
+
+    if not family:
+        c.close()
+        return jsonify(error="परिवार नहीं मिला"), 404
+
+    # जिस परिवार की बचत/लोन/भुगतान है,
+    # उसे delete नहीं करने देंगे
+    savings = c.execute(
+        "SELECT COUNT(*) FROM savings WHERE family_id=?",
+        (fid,)
+    ).fetchone()[0]
+
+    loans = c.execute(
+        "SELECT COUNT(*) FROM loans WHERE family_id=?",
+        (fid,)
+    ).fetchone()[0]
+
+    payments = c.execute(
+        "SELECT COUNT(*) FROM payments WHERE family_id=?",
+        (fid,)
+    ).fetchone()[0]
+
+    if savings > 0 or loans > 0 or payments > 0:
+        c.close()
+        return jsonify(
+            error="इस परिवार की बचत, लोन या भुगतान की एंट्री मौजूद है। पहले संबंधित रिकॉर्ड हटाएँ।"
+        ), 400
+
+    c.execute(
+        "DELETE FROM families WHERE id=?",
+        (fid,)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(ok=True)
 @app.delete("/api/families/<int:fid>")
 def delete_family(fid):
     c = conn()
