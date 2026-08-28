@@ -330,11 +330,7 @@ header{padding:0 12px}
 
 <thead>
 <tr>
-<th>परिवार</th>
-<th>मूल लोन</th>
-<th>2%</th>
-<th>बाकी</th>
-<th>स्थिति</th>
+<th>परिवार</th><th>मूल लोन</th><th>2%</th><th>बाकी</th><th>स्थिति</th><th>Action</th>
 </tr>
 </thead>
 
@@ -716,16 +712,22 @@ let l=await api("/api/loans");
 
 $("lt").innerHTML=
 l.map(x=>`
-
 <tr>
 <td>${x.family}</td>
 <td>${money(x.original)}</td>
 <td>2%</td>
 <td>${money(x.principal)}</td>
 <td>${x.principal>0?"Active":"Closed"}</td>
+<td>
+<button class="btn secondary small" onclick="editLoan(${x.id})">✏️ Edit</button>
+<button class="btn danger small" onclick="deleteLoan(${x.id})">🗑️ Delete</button>
+</td>
 </tr>
-
 `).join("")
+||
+`<tr>
+<td colspan="6" class="empty">कोई लोन नहीं</td>
+</tr>`;
 ||
 `<tr>
 <td colspan="5" class="empty">
