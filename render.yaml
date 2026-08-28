@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: family-saving-group
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn server:app
+    envVars:
+      - key: ADMIN_PIN
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: COOKIE_SECURE
+        value: "1"
+    disk:
+      name: family-saving-data
+      mountPath: /opt/render/project/src
+      sizeGB: 1

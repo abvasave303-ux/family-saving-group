@@ -1,0 +1,9 @@
+[ ] GitHub repository
+[ ] Render Web Service
+[ ] ADMIN_PIN set
+[ ] SECRET_KEY generated
+[ ] HTTPS test
+[ ] 23 family records verify
+[ ] Database backup policy
+[ ] Loan/interest rule confirmation
+[ ] Member login + permissions before public use
