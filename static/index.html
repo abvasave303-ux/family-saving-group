@@ -198,6 +198,7 @@ header{padding:0 12px}
 <th>मोबाइल</th>
 <th>कुल बचत</th>
 <th>लोन बाकी</th>
+<th>Action</th>
 </tr>
 </thead>
 
@@ -656,6 +657,9 @@ fam.map((f,i)=>`
 <td>${f.mobile||"—"}</td>
 <td>${money(f.savings)}</td>
 <td>${money(f.loan)}</td>
+<td>
+<button class="btn secondary small" onclick="editFamily(${f.id})">✏️ Edit</button>
+</td>
 </tr>
 
 `).join("");
@@ -1154,7 +1158,46 @@ alert(e.message);
 
 }
 
+async function editFamily(id){
 
+  const family = fam.find(f => f.id === id);
+
+  if(!family){
+    alert("परिवार नहीं मिला");
+    return;
+  }
+
+  const name = prompt("परिवार का नाम बदलें", family.name);
+
+  if(name === null) return;
+
+  const mobile = prompt("मोबाइल नंबर बदलें", family.mobile || "");
+
+  if(mobile === null) return;
+
+  try{
+
+    await api("/api/families/"+id,{
+      method:"PUT",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        name:name.trim(),
+        mobile:mobile.trim()
+      })
+    });
+
+    alert("परिवार की जानकारी अपडेट हो गई");
+
+    await refresh();
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+}
 /* ADD FAMILY */
 async function editLoan(id){
   const loan = await api("/api/loans").then(rows => rows.find(x => x.id === id));
