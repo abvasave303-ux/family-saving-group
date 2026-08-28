@@ -1159,6 +1159,37 @@ alert(e.message);
 }
 
 async function editFamily(id){
+async function deleteFamily(id){
+
+  const family = fam.find(f => f.id === id);
+
+  if(!family){
+    alert("परिवार नहीं मिला");
+    return;
+  }
+
+  if(!confirm(
+    "क्या आप '"+family.name+"' को Delete करना चाहते हैं?"
+  )){
+    return;
+  }
+
+  try{
+
+    await api("/api/families/"+id,{
+      method:"DELETE"
+    });
+
+    alert("परिवार Delete हो गया");
+
+    await refresh();
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+}
 
   const family = fam.find(f => f.id === id);
 
