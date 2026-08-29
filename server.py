@@ -582,7 +582,86 @@ def add_saving():
     c.close()
 
     return jsonify(ok=True)
+@app.put("/api/savings/<int:sid>")
+def update_saving(sid):
 
+    error = admin_required()
+    if error:
+        return error
+
+    d = request.json or {}
+
+    try:
+        family_id = int(d.get("family_id"))
+        amount = float(d.get("amount", 0))
+    except:
+        return jsonify(error="बचत जानकारी सही दें"), 400
+
+    month = (d.get("month") or "").strip()
+    date = (d.get("date") or "").strip()
+
+    if amount <= 0:
+        return jsonify(error="बचत राशि सही दें"), 400
+
+    if not month or not date:
+        return jsonify(error="महीना और तारीख जरूरी है"), 400
+
+    c = conn()
+
+    row = c.execute(
+        "SELECT id FROM savings WHERE id=?",
+        (sid,)
+    ).fetchone()
+
+    if not row:
+        c.close()
+        return jsonify(error="बचत एंट्री नहीं मिली"), 404
+
+    c.execute("""
+        UPDATE savings
+        SET family_id=?, month=?, amount=?, date=?
+        WHERE id=?
+    """, (
+        family_id,
+        month,
+        amount,
+        date,
+        sid
+    ))
+
+    c.commit()
+    c.close()
+
+    return jsonify(ok=True)
+
+
+@app.delete("/api/savings/<int:sid>")
+def delete_saving(sid):
+
+    error = admin_required()
+    if error:
+        return error
+
+    c = conn()
+
+    row = c.execute(
+        "SELECT id FROM savings WHERE id=?",
+        (sid,)
+    ).fetchone()
+
+    if not row:
+        c.close()
+        return jsonify(error="बचत एंट्री नहीं मिली"), 404
+
+    c.execute(
+        "DELETE FROM savings WHERE id=?",
+        (sid,)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(ok=True)
 
 # --------------------------------------------------
 # LOANS
