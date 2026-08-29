@@ -690,7 +690,50 @@ return j;
 
 }
 
+function loginType(type){
 
+    if(type === "member"){
+
+        $("memberLoginBox").classList.remove("hidden");
+
+        loadMembers();
+
+        $("adminTab").classList.add("secondary");
+        $("memberTab").classList.remove("secondary");
+
+    }else{
+
+        $("memberLoginBox").classList.add("hidden");
+
+        $("memberTab").classList.add("secondary");
+        $("adminTab").classList.remove("secondary");
+
+    }
+
+}
+
+
+async function loadMembers(){
+
+    try{
+
+        let members = await api("/api/families");
+
+        $("memberFamily").innerHTML =
+            members.map(f =>
+                `<option value="${f.id}">${f.name}</option>`
+            ).join("");
+
+    }catch(e){
+
+        alert("Member list load नहीं हो सकी");
+    }
+
+}
+
+
+function login(){
+  api("/api/login",{
 function login(){
   api("/api/login",{
     method:"POST",
