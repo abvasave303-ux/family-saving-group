@@ -734,7 +734,108 @@ def add_loan():
 
     return jsonify(ok=True)
 
+@app.put("/api/loans/<int:lid>")
+def update_loan(lid):
 
+    error = admin_required()
+    if error:
+        return error
+
+    d = request.json or {}
+
+    try:
+        family_id = int(d.get("family_id"))
+        amount = float(d.get("amount", 0))
+        rate = float(d.get("rate", 2))
+        months = int(d.get("months", 12))
+    except:
+        return jsonify(error="लोन जानकारी सही दें"), 400
+
+    if amount <= 0:
+        return jsonify(error="लोन राशि सही दें"), 400
+
+    if months <= 0:
+        return jsonify(error="अवधि सही दें"), 400
+
+    c = conn()
+
+    loan = c.execute(
+        "SELECT * FROM loans WHERE id=?",
+        (lid,)
+    ).fetchone()
+
+    if not loan:
+        c.close()
+        return jsonify(error="लोन नहीं मिला"), 404
+
+    # भुगतान हो चुका हो तो original amount को सीधे बदलने से
+    # हिसाब बिगड़ सकता है, इसलिए नया principal amount के अनुसार रखा जाएगा।
+    paid_principal = loan["original"] - loan["principal"]
+
+    if amount < paid_principal:
+        c.close()
+        return jsonify(
+            error="नई लोन राशि अब तक चुकाए गए मूलधन से कम नहीं हो सकती"
+        ), 400
+
+    new_principal = amount - paid_principal
+
+    c.execute("""
+        UPDATE loans
+        SET family_id=?,
+            original=?,
+            principal=?,
+            rate=?,
+            months=?
+        WHERE id=?
+    """, (
+        family_id,
+        amount,
+        new_principal,
+        rate,
+        months,
+        lid
+    ))
+
+    c.commit()
+    c.close()
+
+    return jsonify(ok=True)
+
+
+@app.delete("/api/loans/<int:lid>")
+def delete_loan(lid):
+
+    error = admin_required()
+    if error:
+        return error
+
+    c = conn()
+
+    loan = c.execute(
+        "SELECT id FROM loans WHERE id=?",
+        (lid,)
+    ).fetchone()
+
+    if not loan:
+        c.close()
+        return jsonify(error="लोन नहीं मिला"), 404
+
+    # संबंधित payment history भी हटाएँ
+    c.execute(
+        "DELETE FROM payments WHERE loan_id=?",
+        (lid,)
+    )
+
+    c.execute(
+        "DELETE FROM loans WHERE id=?",
+        (lid,)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(ok=True)
 # --------------------------------------------------
 # PAYMENTS
 # --------------------------------------------------
