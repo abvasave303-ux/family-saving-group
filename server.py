@@ -258,7 +258,59 @@ def dashboard():
 # --------------------------------------------------
 # FAMILIES
 # --------------------------------------------------
+# --------------------------------------------------
+# MEMBER MANAGEMENT
+# --------------------------------------------------
 
+@app.put("/api/families/<int:fid>")
+def update_family(fid):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    d = request.json or {}
+
+    name = (d.get("name") or "").strip()
+    mobile = (d.get("mobile") or "").strip()
+    pin = str(d.get("pin") or "").strip()
+
+    if not name:
+        return jsonify(error="नाम जरूरी है"), 400
+
+    if not pin:
+        return jsonify(error="PIN जरूरी है"), 400
+
+    if len(pin) < 4:
+        return jsonify(error="PIN कम से कम 4 अंक का होना चाहिए"), 400
+
+    c = conn()
+
+    family = c.execute(
+        "SELECT id FROM families WHERE id=?",
+        (fid,)
+    ).fetchone()
+
+    if not family:
+        c.close()
+        return jsonify(error="परिवार नहीं मिला"), 404
+
+    c.execute("""
+        UPDATE families
+        SET name=?, mobile=?, pin=?
+        WHERE id=?
+    """, (
+        name,
+        mobile,
+        pin,
+        fid
+    ))
+
+    c.commit()
+    c.close()
+
+    return jsonify(ok=True)
 @app.get("/api/families")
 def get_families():
 
