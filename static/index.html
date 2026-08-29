@@ -76,12 +76,98 @@ header{padding:0 12px}
 <body>
 
 <div id="login" class="login">
-<div class="loginbox">
-<h2>🏦 Family Saving Group</h2>
-<p>Admin Login</p>
-<input id="pin" type="password" placeholder="Demo PIN: 1234">
-<button class="btn" onclick="login()">Login करें</button>
-</div>
+
+  <div class="loginbox">
+
+    <h2>🏦 Family Saving Group</h2>
+
+    <p style="color:#68768b;">
+      सुरक्षित सदस्य लॉगिन
+    </p>
+
+    <div style="display:flex;gap:8px;margin:15px 0;">
+
+      <button
+        id="adminTab"
+        class="btn"
+        style="flex:1"
+        onclick="loginType('admin')">
+        👑 Admin
+      </button>
+
+      <button
+        id="memberTab"
+        class="btn secondary"
+        style="flex:1"
+        onclick="loginType('member')">
+        👤 Member
+      </button>
+
+    </div>
+
+    <div id="adminLogin">
+
+      <label style="font-size:13px;">
+        Admin PIN
+      </label>
+
+      <input
+        id="pin"
+        type="password"
+        placeholder="Admin PIN">
+
+      <button
+        class="btn"
+        onclick="login()">
+        🔐 Admin Login
+      </button>
+
+    </div>
+
+    <div id="memberLogin" class="hidden">
+
+      <label style="font-size:13px;">
+        अपना परिवार चुनें
+      </label>
+
+      <select
+        id="memberFamily"
+        style="
+          width:100%;
+          padding:11px;
+          margin:8px 0;
+          border:1px solid #ccd6e2;
+          border-radius:8px;
+        ">
+      </select>
+
+      <label style="font-size:13px;">
+        Member PIN
+      </label>
+
+      <input
+        id="memberPin"
+        type="password"
+        placeholder="Member PIN">
+
+      <button
+        class="btn"
+        onclick="memberLogin()">
+        👤 Member Login
+      </button>
+
+    </div>
+
+    <div style="
+      margin-top:15px;
+      font-size:11px;
+      color:#7a8798;
+      text-align:center;">
+      Family Saving Group • 2026–27
+    </div>
+
+  </div>
+
 </div>
 
 <div id="app" class="hidden">
@@ -545,7 +631,320 @@ function login(){
     alert(e.message);
   });
 }
+function loginType(type){
 
+  if(type === "admin"){
+
+    $("adminLogin").classList.remove("hidden");
+    $("memberLogin").classList.add("hidden");
+
+    $("adminTab").className = "btn";
+    $("memberTab").className = "btn secondary";
+
+  }else{
+
+    $("adminLogin").classList.add("hidden");
+    $("memberLogin").classList.remove("hidden");
+
+    $("adminTab").className = "btn secondary";
+    $("memberTab").className = "btn";
+
+    loadMemberList();
+  }
+
+}
+
+
+async function loadMemberList(){
+
+  try{
+
+    let list = await api("/api/families");
+
+    $("memberFamily").innerHTML =
+      list.map(f =>
+        `<option value="${f.id}">${f.name}</option>`
+      ).join("");
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+}
+
+
+async function memberLogin(){
+
+  try{
+
+    let family_id = $("memberFamily").value;
+    let pin = $("memberPin").value;
+
+    if(!family_id){
+
+      alert("अपना परिवार चुनें");
+      return;
+
+    }
+
+    if(!pin){
+
+      alert("PIN डालें");
+      return;
+
+    }
+
+    let x = await api("/api/login",{
+
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+
+        type:"member",
+        family_id:+family_id,
+        pin:pin
+
+      })
+
+    });
+
+    $("login").classList.add("hidden");
+    $("app").classList.remove("hidden");
+
+    initMember(x);
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+}
+
+
+async function initMember(user){
+
+  document.querySelector(".side").style.display="none";
+
+  document.querySelector(".main").style.marginLeft="0";
+
+  $("title").textContent =
+    "📒 " + user.name + " - Passbook";
+
+  document.querySelectorAll("main section")
+    .forEach(x=>x.classList.add("hidden"));
+
+  $("passbook").classList.remove("hidden");
+
+  $("pf").value = user.family_id;
+
+  await memberPassbook(user.family_id);
+
+}
+
+
+async function memberPassbook(fid){
+
+  try{
+
+    let x = await api(
+      "/api/family/" + fid + "/passbook"
+    );
+
+    let family = x.family;
+
+    let savings = x.savings.reduce(
+      (a,r)=>a+Number(r.amount||0),0
+    );
+
+    let loan = x.loans.reduce(
+      (a,r)=>a+Number(r.principal||0),0
+    );
+
+    $("pr").innerHTML = `
+
+      <div id="memberPrintPassbook">
+
+        <div style="
+          text-align:center;
+          padding:15px;
+          border-bottom:2px solid #1976d2;
+        ">
+
+          <h2 style="margin:0;color:#083b78;">
+            🏦 Family Saving Group
+          </h2>
+
+          <div>
+            एक परिवार • एक बचत • उज्ज्वल भविष्य
+          </div>
+
+          <h3>DIGITAL PASSBOOK</h3>
+
+          <div>
+            वित्तीय वर्ष: <b>2026–27</b>
+          </div>
+
+        </div>
+
+        <div class="cards" style="margin-top:15px">
+
+          <div class="card">
+            <div class="label">परिवार</div>
+            <div class="value">${family.name}</div>
+          </div>
+
+          <div class="card">
+            <div class="label">मोबाइल</div>
+            <div class="value">${family.mobile || "—"}</div>
+          </div>
+
+          <div class="card">
+            <div class="label">कुल बचत</div>
+            <div class="value green">${money(savings)}</div>
+          </div>
+
+          <div class="card">
+            <div class="label">लोन बाकी</div>
+            <div class="value red">${money(loan)}</div>
+          </div>
+
+        </div>
+
+        <div class="panel" style="margin-top:15px">
+
+          <h3>बचत / भुगतान विवरण</h3>
+
+          <div class="table">
+
+            <table>
+
+              <tr>
+                <th>तारीख</th>
+                <th>विवरण</th>
+                <th>राशि</th>
+              </tr>
+
+              ${x.savings.map(r=>`
+
+                <tr>
+                  <td>${r.date}</td>
+                  <td>मासिक बचत (${r.month})</td>
+                  <td class="green">
+                    ${money(r.amount)}
+                  </td>
+                </tr>
+
+              `).join("")}
+
+              ${x.payments.map(r=>`
+
+                <tr>
+                  <td>${r.date}</td>
+                  <td>Loan Payment</td>
+                  <td>${money(r.amount)}</td>
+                </tr>
+
+              `).join("")}
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="actions" style="margin-top:15px">
+
+        <button
+          class="btn"
+          onclick="printMemberPassbook()">
+          🖨️ Print / PDF
+        </button>
+
+      </div>
+
+    `;
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+}
+
+
+function printMemberPassbook(){
+
+  let content =
+    $("memberPrintPassbook").innerHTML;
+
+  let w = window.open("", "_blank");
+
+  w.document.write(`
+
+    <html>
+
+    <head>
+
+      <title>Family Saving Group Passbook</title>
+
+      <style>
+
+        body{
+          font-family:Arial,
+          "Noto Sans Devanagari",
+          sans-serif;
+          padding:25px;
+          color:#16233b;
+        }
+
+        table{
+          width:100%;
+          border-collapse:collapse;
+        }
+
+        th,td{
+          padding:9px;
+          border-bottom:1px solid #ddd;
+          text-align:left;
+        }
+
+        th{
+          background:#f5f7fb;
+        }
+
+      </style>
+
+    </head>
+
+    <body>
+
+      ${content}
+
+      <script>
+        window.onload=function(){
+          window.print();
+        }
+      <\/script>
+
+    </body>
+
+    </html>
+
+  `);
+
+  w.document.close();
+
+}
 
 async function logout(){
 
