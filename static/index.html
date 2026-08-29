@@ -104,95 +104,60 @@ header{padding:0 12px}
       </button>
 
     </div>
-<div id="memberLoginBox" class="hidden">
 
-  <label style="display:block;margin-top:10px;">
-    👤 अपना Member चुनें
+<div id="adminLogin">
+
+  <label style="font-size:13px;">
+    Admin PIN
+  </label>
+
+  <input
+    id="pin"
+    type="password"
+    placeholder="Admin PIN">
+
+  <button
+    class="btn"
+    onclick="login()">
+    🔐 Admin Login
+  </button>
+
+</div>
+
+
+<div id="memberLogin" class="hidden">
+
+  <label style="font-size:13px;">
+    👤 अपना परिवार चुनें
   </label>
 
   <select
     id="memberFamily"
-    style="width:100%;padding:11px;margin:8px 0;border:1px solid #ccd6e2;border-radius:8px;">
+    style="
+      width:100%;
+      padding:11px;
+      margin:8px 0;
+      border:1px solid #ccd6e2;
+      border-radius:8px;
+    ">
   </select>
 
-  <input
-    id="memberPin"
-    type="password"
-    placeholder="अपना PIN डालें"
-    style="width:100%;padding:11px;margin:8px 0;border:1px solid #ccd6e2;border-radius:8px;">
-
-</div>
-    
-<div id="memberLoginBox" class="hidden">
-
-  <label style="display:block;margin-top:10px;">
-    👤 अपना Member चुनें
+  <label style="font-size:13px;">
+    Member PIN
   </label>
 
-  <select
-    id="memberFamily"
-    style="width:100%;padding:11px;margin:8px 0;border:1px solid #ccd6e2;border-radius:8px;">
-  </select>
-
   <input
     id="memberPin"
     type="password"
-    placeholder="अपना PIN डालें"
-    style="width:100%;padding:11px;margin:8px 0;border:1px solid #ccd6e2;border-radius:8px;">
+    placeholder="Member PIN">
+
+  <button
+    class="btn"
+    onclick="memberLogin()">
+    👤 Member Login
+  </button>
 
 </div>
-    <div id="adminLogin">
-
-      <label style="font-size:13px;">
-        Admin PIN
-      </label>
-
-      <input
-        id="pin"
-        type="password"
-        placeholder="Admin PIN">
-
-      <button
-        class="btn"
-        onclick="login()">
-        🔐 Admin Login
-      </button>
-
-    </div>
-
-    <div id="memberLogin" class="hidden">
-
-      <label style="font-size:13px;">
-        अपना परिवार चुनें
-      </label>
-
-      <select
-        id="memberFamily"
-        style="
-          width:100%;
-          padding:11px;
-          margin:8px 0;
-          border:1px solid #ccd6e2;
-          border-radius:8px;
-        ">
-      </select>
-
-      <label style="font-size:13px;">
-        Member PIN
-      </label>
-
-      <input
-        id="memberPin"
-        type="password"
-        placeholder="Member PIN">
-
-      <button
-        class="btn"
-        onclick="memberLogin()">
-        👤 Member Login
-      </button>
-
-    </div>
 
     <div style="
       margin-top:15px;
@@ -672,7 +637,31 @@ const M=[
 ];
 
 const $=id=>document.getElementById(id);
+let currentLoginType = "admin";
 
+function loginType(type){
+
+    currentLoginType = type;
+
+    if(type === "admin"){
+
+        $("adminTab").classList.remove("secondary");
+        $("memberTab").classList.add("secondary");
+
+        $("adminLoginBox").classList.remove("hidden");
+        $("memberLoginBox").classList.add("hidden");
+
+    }else{
+
+        $("memberTab").classList.remove("secondary");
+        $("adminTab").classList.add("secondary");
+
+        $("adminLoginBox").classList.add("hidden");
+        $("memberLoginBox").classList.remove("hidden");
+
+        loadMembers();
+    }
+}
 const money=n=>"₹"+Number(n||0).toLocaleString("en-IN");
 
 let fam=[];
