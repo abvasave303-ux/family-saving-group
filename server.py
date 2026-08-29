@@ -183,12 +183,12 @@ def me():
 @app.before_request
 def protect_api():
 
-   public = (
-    "/api/login",
-    "/api/me",
-    "/api/member-list"
-)
-"/api/member-list"
+    public = (
+        "/api/login",
+        "/api/me",
+        "/api/member-list"
+    )
+
     if (
         request.path.startswith("/api/")
         and request.path not in public
@@ -198,7 +198,6 @@ def protect_api():
             return jsonify(
                 error="Login required"
             ), 401
-
 
 # --------------------------------------------------
 # ADMIN ONLY
