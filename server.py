@@ -388,7 +388,40 @@ def add_family():
     return jsonify(
         id=cur.lastrowid
     )
+@app.delete("/api/families/<int:fid>")
+def delete_family(fid):
 
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    family = c.execute(
+        "SELECT id FROM families WHERE id=?",
+        (fid,)
+    ).fetchone()
+
+    if not family:
+        c.close()
+        return jsonify(error="परिवार नहीं मिला"), 404
+
+    # पहले संबंधित records हटाएँ
+    c.execute("DELETE FROM payments WHERE family_id=?", (fid,))
+    c.execute("DELETE FROM savings WHERE family_id=?", (fid,))
+    c.execute("DELETE FROM loans WHERE family_id=?", (fid,))
+
+    # फिर परिवार हटाएँ
+    c.execute(
+        "DELETE FROM families WHERE id=?",
+        (fid,)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(ok=True)
 # --------------------------------------------------
 # MEMBER LIST FOR LOGIN
 # --------------------------------------------------
