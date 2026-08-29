@@ -183,11 +183,12 @@ def me():
 @app.before_request
 def protect_api():
 
-    public = (
-        "/api/login",
-        "/api/me"
-    )
-
+   public = (
+    "/api/login",
+    "/api/me",
+    "/api/member-list"
+)
+"/api/member-list"
     if (
         request.path.startswith("/api/")
         and request.path not in public
