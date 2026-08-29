@@ -389,7 +389,30 @@ def add_family():
         id=cur.lastrowid
     )
 
+# --------------------------------------------------
+# MEMBER LIST FOR LOGIN
+# --------------------------------------------------
 
+@app.get("/api/member-list")
+def member_list():
+
+    c = conn()
+
+    rows = c.execute("""
+        SELECT id, name
+        FROM families
+        ORDER BY id
+    """).fetchall()
+
+    c.close()
+
+    return jsonify([
+        {
+            "id": r["id"],
+            "name": r["name"]
+        }
+        for r in rows
+    ])
 # --------------------------------------------------
 # MEMBER PASSBOOK
 # --------------------------------------------------
