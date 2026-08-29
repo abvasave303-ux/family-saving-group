@@ -1103,6 +1103,40 @@ fam.map((f,i)=>`
 
 `).join("");
 
+$("mt").innerHTML =
+fam.map((f,i)=>`
+
+<tr>
+
+<td>${i+1}</td>
+
+<td><b>${f.name}</b></td>
+
+<td>${f.mobile || "—"}</td>
+
+<td>••••</td>
+
+<td class="green">
+${money(f.savings)}
+</td>
+
+<td class="red">
+${money(f.loan)}
+</td>
+
+<td>
+
+<button
+class="btn secondary small"
+onclick="editMember(${f.id})">
+✏️ Edit
+</button>
+
+</td>
+
+</tr>
+
+`).join("");
 
 /* SAVING LEDGER WITH EDIT DELETE */
 
@@ -1979,7 +2013,94 @@ init();
 })
 .catch(()=>{});
 
-</script>
+    // तुम्हारे बाकी सारे JavaScript functions
+    // login()
+    // logout()
+    // refresh()
+    // saveSaving()
+    // editSaving()
+    // giveLoan()
+    // repay()
+    // dist()
+    // passbook()
+    // आदि...
 
+
+    async function editMember(id){
+
+        let member = fam.find(
+            f => Number(f.id) === Number(id)
+        );
+
+        if(!member){
+            alert("Member नहीं मिला");
+            return;
+        }
+
+        let name = prompt(
+            "Member का नाम:",
+            member.name
+        );
+
+        if(name === null) return;
+
+        name = name.trim();
+
+        if(!name){
+            alert("नाम जरूरी है");
+            return;
+        }
+
+        let mobile = prompt(
+            "Mobile Number:",
+            member.mobile || ""
+        );
+
+        if(mobile === null) return;
+
+        let pin = prompt(
+            "Member Login PIN:",
+            member.pin || "1234"
+        );
+
+        if(pin === null) return;
+
+        pin = pin.trim();
+
+        if(pin.length < 4){
+            alert("PIN कम से कम 4 अंक का होना चाहिए");
+            return;
+        }
+
+        try{
+
+            await api("/api/families/" + id, {
+
+                method:"PUT",
+
+                headers:{
+                    "Content-Type":"application/json"
+                },
+
+                body:JSON.stringify({
+                    name:name,
+                    mobile:mobile,
+                    pin:pin
+                })
+
+            });
+
+            alert("Member details सफलतापूर्वक अपडेट हो गईं।");
+
+            await refresh();
+
+        }catch(e){
+
+            alert(e.message);
+
+        }
+    }
+
+</script>
 </body>
 </html>
