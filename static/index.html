@@ -7,90 +7,436 @@
 
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,"Noto Sans Devanagari",sans-serif;background:#f5f7fb;color:#16233b}
-.side{position:fixed;left:0;top:0;bottom:0;width:230px;background:#083b78;color:#fff;padding:18px 12px}
-.brand{text-align:center;font-size:20px;font-weight:800;padding:10px}
-.brand small{display:block;font-size:11px;font-weight:400;margin-top:5px}
-.nav button{width:100%;padding:11px;margin:3px 0;border:0;border-radius:8px;background:transparent;color:#fff;text-align:left;font-size:14px;cursor:pointer}
-.nav button:hover,.nav button.active{background:#1976d2}
-.main{margin-left:230px}
-header{height:65px;background:#fff;border-bottom:1px solid #e5e9f2;display:flex;justify-content:space-between;align-items:center;padding:0 24px;position:sticky;top:0;z-index:2}
-.title{font-size:21px;font-weight:800}
-.content{padding:20px}
-.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-.card,.panel{background:#fff;border:1px solid #e6eaf1;border-radius:12px;box-shadow:0 3px 15px #17365d0b}
-.card{padding:16px}
-.label{font-size:12px;color:#68768b}
-.value{font-size:23px;font-weight:800;margin-top:6px}
+
+body{
+  margin:0;
+  font-family:Arial,"Noto Sans Devanagari",sans-serif;
+  background:#f5f7fb;
+  color:#16233b;
+}
+
+.side{
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+  width:230px;
+  background:#083b78;
+  color:#fff;
+  padding:18px 12px;
+  overflow-y:auto;
+}
+
+.brand{
+  text-align:center;
+  font-size:20px;
+  font-weight:800;
+  padding:10px;
+}
+
+.brand img{
+  width:90px;
+  height:90px;
+  object-fit:contain;
+  display:block;
+  margin:0 auto 8px;
+  background:#fff;
+  border-radius:50%;
+  padding:5px;
+}
+
+.brand small{
+  display:block;
+  font-size:11px;
+  font-weight:400;
+  margin-top:5px;
+}
+
+.nav button{
+  width:100%;
+  padding:11px;
+  margin:3px 0;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  color:#fff;
+  text-align:left;
+  font-size:14px;
+  cursor:pointer;
+}
+
+.nav button:hover,
+.nav button.active{
+  background:#1976d2;
+}
+
+.main{
+  margin-left:230px;
+}
+
+header{
+  height:65px;
+  background:#fff;
+  border-bottom:1px solid #e5e9f2;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0 24px;
+  position:sticky;
+  top:0;
+  z-index:2;
+}
+
+.title{
+  font-size:21px;
+  font-weight:800;
+}
+
+.content{
+  padding:20px;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:12px;
+}
+
+.card,
+.panel{
+  background:#fff;
+  border:1px solid #e6eaf1;
+  border-radius:12px;
+  box-shadow:0 3px 15px #17365d0b;
+}
+
+.card{
+  padding:16px;
+}
+
+.label{
+  font-size:12px;
+  color:#68768b;
+}
+
+.value{
+  font-size:23px;
+  font-weight:800;
+  margin-top:6px;
+}
+
 .green{color:#20864b}
 .blue{color:#1769c2}
 .orange{color:#c66d14}
 .red{color:#c73535}
-.grid{display:grid;grid-template-columns:1fr 1.5fr 1fr;gap:14px;margin-top:14px}
-.panel{overflow:hidden}
-.panel h3{font-size:15px;padding:14px 16px;margin:0;border-bottom:1px solid #edf0f4}
-.body{padding:15px}
-.line{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #edf0f4}
-.table{overflow:auto}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{padding:10px;border-bottom:1px solid #edf0f4;text-align:left;white-space:nowrap}
-th{background:#fafbfe}
-.btn{background:#1976d2;color:white;border:0;padding:9px 13px;border-radius:7px;font-weight:700;cursor:pointer}
-.btn.secondary{background:#eef4ff;color:#135ba5}
-.btn.danger{background:#c73535;color:#fff}
-.btn.small{padding:6px 9px;font-size:12px}
-.form{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.field label{display:block;font-size:12px;margin-bottom:4px;color:#5f6d80}
-.field input,.field select{width:100%;padding:10px;border:1px solid #cdd6e2;border-radius:7px}
-.full{grid-column:1/-1}
-.actions{display:flex;gap:7px;justify-content:flex-end;margin-bottom:12px}
-.hidden{display:none}
-.notice{padding:11px;background:#eef7ff;color:#145b9e;border-radius:8px;margin-bottom:12px}
-.bar{height:9px;background:#e9eef5;border-radius:8px}
-.bar i{display:block;height:100%;background:#1976d2;border-radius:8px}
-.footer{text-align:center;color:#778397;font-size:11px;padding:20px}
-.login{min-height:100vh;display:grid;place-items:center;background:#eef6ff}
-.loginbox{width:min(400px,92vw);background:#fff;padding:28px;border-radius:15px;box-shadow:0 10px 35px #17365d18}
-.loginbox input{width:100%;padding:11px;margin:8px 0;border:1px solid #ccd6e2;border-radius:8px}
-.loginbox .btn{width:100%;margin-top:7px}
-.empty{text-align:center;color:#748196;padding:25px}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1.5fr 1fr;
+  gap:14px;
+  margin-top:14px;
+}
+
+.panel{
+  overflow:hidden;
+}
+
+.panel h3{
+  font-size:15px;
+  padding:14px 16px;
+  margin:0;
+  border-bottom:1px solid #edf0f4;
+}
+
+.body{
+  padding:15px;
+}
+
+.line{
+  display:flex;
+  justify-content:space-between;
+  padding:9px 0;
+  border-bottom:1px solid #edf0f4;
+}
+
+.table{
+  overflow:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+
+th,
+td{
+  padding:10px;
+  border-bottom:1px solid #edf0f4;
+  text-align:left;
+  white-space:nowrap;
+}
+
+th{
+  background:#fafbfe;
+}
+
+.btn{
+  background:#1976d2;
+  color:white;
+  border:0;
+  padding:9px 13px;
+  border-radius:7px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.btn:hover{
+  opacity:.9;
+}
+
+.btn.secondary{
+  background:#eef4ff;
+  color:#135ba5;
+}
+
+.btn.danger{
+  background:#c73535;
+  color:#fff;
+}
+
+.btn.small{
+  padding:6px 9px;
+  font-size:12px;
+}
+
+.form{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+
+.field label{
+  display:block;
+  font-size:12px;
+  margin-bottom:4px;
+  color:#5f6d80;
+}
+
+.field input,
+.field select{
+  width:100%;
+  padding:10px;
+  border:1px solid #cdd6e2;
+  border-radius:7px;
+}
+
+.full{
+  grid-column:1/-1;
+}
+
+.actions{
+  display:flex;
+  gap:7px;
+  justify-content:flex-end;
+  margin-bottom:12px;
+}
+
+.hidden{
+  display:none !important;
+}
+
+.notice{
+  padding:11px;
+  background:#eef7ff;
+  color:#145b9e;
+  border-radius:8px;
+  margin-bottom:12px;
+}
+
+.bar{
+  height:9px;
+  background:#e9eef5;
+  border-radius:8px;
+}
+
+.bar i{
+  display:block;
+  height:100%;
+  background:#1976d2;
+  border-radius:8px;
+}
+
+.footer{
+  text-align:center;
+  color:#778397;
+  font-size:11px;
+  padding:20px;
+}
+
+.login{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:20px;
+  background:
+    radial-gradient(circle at top left,#dceeff 0,#eef6ff 35%,#f7fbff 100%);
+}
+
+.loginbox{
+  width:min(420px,94vw);
+  background:rgba(255,255,255,.96);
+  padding:30px;
+  border-radius:18px;
+  box-shadow:0 15px 45px rgba(23,54,93,.16);
+  border:1px solid #e1eaf5;
+}
+
+.login-logo{
+  width:105px;
+  height:105px;
+  object-fit:contain;
+  display:block;
+  margin:0 auto 10px;
+}
+
+.loginbox h2{
+  text-align:center;
+  color:#083b78;
+  margin:8px 0;
+}
+
+.login-subtitle{
+  text-align:center;
+  color:#68768b;
+  font-size:13px;
+  margin-bottom:18px;
+}
+
+.loginbox input,
+.loginbox select{
+  width:100%;
+  padding:12px;
+  margin:8px 0;
+  border:1px solid #ccd6e2;
+  border-radius:8px;
+  outline:none;
+}
+
+.loginbox input:focus,
+.loginbox select:focus{
+  border-color:#1976d2;
+  box-shadow:0 0 0 3px #1976d21a;
+}
+
+.loginbox .btn{
+  width:100%;
+  margin-top:8px;
+}
+
+.login-tabs{
+  display:flex;
+  gap:8px;
+  margin:18px 0;
+}
+
+.login-tabs .btn{
+  margin:0;
+}
+
+.login-footer{
+  margin-top:18px;
+  font-size:11px;
+  color:#7a8798;
+  text-align:center;
+}
 
 @media(max-width:1000px){
-.cards{grid-template-columns:repeat(2,1fr)}
-.grid{grid-template-columns:1fr}
-.side{width:200px}
-.main{margin-left:200px}
+
+  .cards{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .side{
+    width:200px;
+  }
+
+  .main{
+    margin-left:200px;
+  }
 }
+
 @media(max-width:650px){
-.side{display:none}
-.main{margin-left:0}
-.content{padding:10px}
-.cards{grid-template-columns:1fr 1fr}
-.form{grid-template-columns:1fr}
-.full{grid-column:auto}
-header{padding:0 12px}
+
+  .side{
+    display:none;
+  }
+
+  .main{
+    margin-left:0;
+  }
+
+  .content{
+    padding:10px;
+  }
+
+  .cards{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .form{
+    grid-template-columns:1fr;
+  }
+
+  .full{
+    grid-column:auto;
+  }
+
+  header{
+    padding:0 12px;
+  }
+
+  header>div:last-child{
+    font-size:11px;
+  }
+
+  .loginbox{
+    padding:22px;
+  }
 }
 </style>
 </head>
 
 <body>
 
+<!-- ================= LOGIN ================= -->
+
 <div id="login" class="login">
 
   <div class="loginbox">
 
-    <h2>🏦 Family Saving Group</h2>
+    <img
+      src="/static/logo.png"
+      class="login-logo"
+      alt="Family Saving Group Logo"
+      onerror="this.style.display='none'"
+    >
 
-    <p style="color:#68768b;">
+    <h2>Family Saving Group</h2>
+
+    <div class="login-subtitle">
       सुरक्षित सदस्य लॉगिन
-    </p>
+    </div>
 
-    <div style="display:flex;gap:8px;margin:15px 0;">
+    <div class="login-tabs">
 
       <button
         id="adminTab"
         class="btn"
-        style="flex:1"
         onclick="loginType('admin')">
         👑 Admin
       </button>
@@ -98,72 +444,68 @@ header{padding:0 12px}
       <button
         id="memberTab"
         class="btn secondary"
-        style="flex:1"
         onclick="loginType('member')">
         👤 Member
       </button>
 
     </div>
 
-<div id="adminLogin">
+    <!-- ADMIN LOGIN -->
 
-  <label style="font-size:13px;">
-    Admin PIN
-  </label>
+    <div id="adminLogin">
 
-  <input
-    id="pin"
-    type="password"
-    placeholder="Admin PIN">
+      <label style="font-size:13px;">
+        Admin PIN
+      </label>
 
-  <button
-    class="btn"
-    onclick="login()">
-    🔐 Admin Login
-  </button>
+      <input
+        id="pin"
+        type="password"
+        placeholder="Admin PIN"
+        autocomplete="current-password"
+      >
 
-</div>
+      <button
+        class="btn"
+        onclick="login()">
+        🔐 Admin Login
+      </button>
+
+    </div>
 
 
-<div id="memberLogin" class="hidden">
+    <!-- MEMBER LOGIN -->
 
-  <label style="font-size:13px;">
-    👤 अपना परिवार चुनें
-  </label>
+    <div id="memberLogin" class="hidden">
 
-  <select
-    id="memberFamily"
-    style="
-      width:100%;
-      padding:11px;
-      margin:8px 0;
-      border:1px solid #ccd6e2;
-      border-radius:8px;
-    ">
-  </select>
+      <label style="font-size:13px;">
+        👤 अपना परिवार चुनें
+      </label>
 
-  <label style="font-size:13px;">
-    Member PIN
-  </label>
+      <select id="memberFamily">
+        <option value="">परिवार चुनें...</option>
+      </select>
 
-  <input
-    id="memberPin"
-    type="password"
-    placeholder="Member PIN">
+      <label style="font-size:13px;">
+        Member PIN
+      </label>
 
-  <button
-    class="btn"
-    onclick="memberLogin()">
-    👤 Member Login
-  </button>
+      <input
+        id="memberPin"
+        type="password"
+        placeholder="Member PIN"
+        autocomplete="current-password"
+      >
 
-</div>
+      <button
+        class="btn"
+        onclick="memberLogin()">
+        👤 Member Login
+      </button>
 
-    <div style="
-      margin-top:15px;
-      font-size:11px;
-      color:#7a8798;
-      text-align:center;">
+    </div>
+
+    <div class="login-footer">
       Family Saving Group • 2026–27
     </div>
 
@@ -171,638 +513,805 @@ header{padding:0 12px}
 
 </div>
 
+
+<!-- ================= APP ================= -->
+
 <div id="app" class="hidden">
 
 <aside class="side">
-<div class="brand">
-👨‍👩‍👧‍👦 Family Saving Group
-<small>एक परिवार • एक बचत • उज्ज्वल भविष्य</small>
-</div>
 
-<div class="nav">
-<button onclick="show('dashboard',this)" class="active">🏠 Dashboard</button>
-<button onclick="show('families',this)">👥 परिवार</button>
-<button onclick="show('members',this)">👤 Member Management</button>
-<button onclick="show('saving',this)">💰 मासिक बचत</button>
-<button onclick="show('loans',this)">💳 लोन</button>
-<button onclick="show('repay',this)">💵 किस्त / भुगतान</button>
-<button onclick="show('interest',this)">📈 ब्याज वितरण</button>
-<button onclick="show('passbook',this)">📒 पासबुक</button>
-<button onclick="show('reports',this)">📄 रिपोर्ट्स</button>
-<button onclick="logout()">🚪 Logout</button>
-</div>
+  <div class="brand">
+
+    <img
+      src="/static/logo.png"
+      alt="Logo"
+      onerror="this.style.display='none'"
+    >
+
+    👨‍👩‍👧‍👦 Family Saving Group
+
+    <small>
+      एक परिवार • एक बचत • उज्ज्वल भविष्य
+    </small>
+
+  </div>
+
+  <div class="nav">
+
+    <button onclick="show('dashboard',this)" class="active">
+      🏠 Dashboard
+    </button>
+
+    <button onclick="show('families',this)">
+      👥 परिवार
+    </button>
+
+    <button onclick="show('members',this)">
+      👤 Member Management
+    </button>
+
+    <button onclick="show('saving',this)">
+      💰 मासिक बचत
+    </button>
+
+    <button onclick="show('loans',this)">
+      💳 लोन
+    </button>
+
+    <button onclick="show('repay',this)">
+      💵 किस्त / भुगतान
+    </button>
+
+    <button onclick="show('interest',this)">
+      📈 ब्याज वितरण
+    </button>
+
+    <button onclick="show('passbook',this)">
+      📒 पासबुक
+    </button>
+
+    <button onclick="show('reports',this)">
+      📄 रिपोर्ट्स
+    </button>
+
+    <button onclick="logout()">
+      🚪 Logout
+    </button>
+
+  </div>
+
 </aside>
+
 
 <main class="main">
 
 <header>
-<div class="title" id="title">Dashboard</div>
-<div>👤 Admin &nbsp; | &nbsp; 2026-27</div>
+
+  <div class="title" id="title">
+    Dashboard
+  </div>
+
+  <div>
+    👤 Admin &nbsp; | &nbsp; 2026-27
+  </div>
+
 </header>
+
 
 <div class="content">
 
-<!-- DASHBOARD -->
+
+<!-- ================= DASHBOARD ================= -->
+
 <section id="dashboard">
 
-<div class="cards">
+  <div class="cards">
 
-<div class="card">
-<div class="label">कुल परिवार</div>
-<div class="value blue" id="cf">23</div>
-</div>
+    <div class="card">
+      <div class="label">कुल परिवार</div>
+      <div class="value blue" id="cf">23</div>
+    </div>
 
-<div class="card">
-<div class="label">कुल बचत</div>
-<div class="value green" id="cs">₹0</div>
-</div>
+    <div class="card">
+      <div class="label">कुल बचत</div>
+      <div class="value green" id="cs">₹0</div>
+    </div>
 
-<div class="card">
-<div class="label">कुल लोन बाकी</div>
-<div class="value red" id="cl">₹0</div>
-</div>
+    <div class="card">
+      <div class="label">कुल लोन बाकी</div>
+      <div class="value red" id="cl">₹0</div>
+    </div>
 
-<div class="card">
-<div class="label">प्राप्त ब्याज</div>
-<div class="value orange" id="ci">₹0</div>
-</div>
+    <div class="card">
+      <div class="label">प्राप्त ब्याज</div>
+      <div class="value orange" id="ci">₹0</div>
+    </div>
 
-<div class="card">
-<div class="label">उपलब्ध राशि</div>
-<div class="value" id="ca">₹0</div>
-</div>
+    <div class="card">
+      <div class="label">उपलब्ध राशि</div>
+      <div class="value" id="ca">₹0</div>
+    </div>
 
-</div>
+  </div>
 
-<div class="grid">
 
-<div class="panel">
-<h3>समूह की स्थिति</h3>
-<div class="body" id="sum"></div>
-</div>
+  <div class="grid">
 
-<div class="panel">
-<h3>मासिक बचत लक्ष्य</h3>
-<div class="body">
-<div class="notice">
-23 परिवार × ₹2,000 = <b>₹46,000</b> सामान्य मासिक लक्ष्य।
-</div>
-<div class="bar">
-<i style="width:0%" id="prog"></i>
-</div>
-<p id="progtext"></p>
-</div>
-</div>
+    <div class="panel">
 
-<div class="panel">
-<h3>नियम</h3>
-<div class="body">
-<div class="line"><span>मासिक लक्ष्य</span><b>₹2,000</b></div>
-<div class="line"><span>Loan Interest</span><b>2% / माह</b></div>
-<div class="line"><span>ब्याज वितरण</span><b>बचत अनुपात</b></div>
-</div>
-</div>
+      <h3>समूह की स्थिति</h3>
 
-</div>
+      <div class="body" id="sum"></div>
+
+    </div>
+
+
+    <div class="panel">
+
+      <h3>मासिक बचत लक्ष्य</h3>
+
+      <div class="body">
+
+        <div class="notice">
+          23 परिवार × ₹2,000 =
+          <b>₹46,000</b>
+          सामान्य मासिक लक्ष्य।
+        </div>
+
+        <div class="bar">
+          <i style="width:0%" id="prog"></i>
+        </div>
+
+        <p id="progtext"></p>
+
+      </div>
+
+    </div>
+
+
+    <div class="panel">
+
+      <h3>नियम</h3>
+
+      <div class="body">
+
+        <div class="line">
+          <span>मासिक लक्ष्य</span>
+          <b>₹2,000</b>
+        </div>
+
+        <div class="line">
+          <span>Loan Interest</span>
+          <b>2% / माह</b>
+        </div>
+
+        <div class="line">
+          <span>ब्याज वितरण</span>
+          <b>बचत अनुपात</b>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
 </section>
 
 
-<!-- FAMILIES -->
+<!-- ================= FAMILIES ================= -->
+
 <section id="families" class="hidden">
 
-<div class="actions">
-<button class="btn" onclick="addFamily()">+ परिवार जोड़ें</button>
-</div>
+  <div class="actions">
 
-<div class="panel">
-<h3>परिवार सूची</h3>
+    <button class="btn" onclick="addFamily()">
+      + परिवार जोड़ें
+    </button>
 
-<div class="table">
-<table>
-<thead>
-<tr>
-<th>#</th>
-<th>परिवार</th>
-<th>मोबाइल</th>
-<th>कुल बचत</th>
-<th>लोन बाकी</th>
-<th>Action</th>
-</tr>
-</thead>
+  </div>
 
-<tbody id="ft"></tbody>
-</table>
-</div>
-</div>
+  <div class="panel">
+
+    <h3>परिवार सूची</h3>
+
+    <div class="table">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>#</th>
+            <th>परिवार</th>
+            <th>मोबाइल</th>
+            <th>कुल बचत</th>
+            <th>लोन बाकी</th>
+            <th>Action</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="ft"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
 </section>
 
-<!-- MEMBER MANAGEMENT -->
+
+<!-- ================= MEMBER MANAGEMENT ================= -->
+
 <section id="members" class="hidden">
 
-<div class="panel">
+  <div class="panel">
 
-<h3>👤 Member Management</h3>
+    <h3>👤 Member Management</h3>
 
-<div class="body">
+    <div class="body">
 
-<div class="notice">
-यहाँ Admin सभी 23 Members का नाम, Mobile और Login PIN बदल सकता है।
-</div>
+      <div class="notice">
+        यहाँ Admin सभी Members का नाम, Mobile और Login PIN बदल सकता है।
+      </div>
 
-<div class="table">
+      <div class="table">
 
-<table>
+        <table>
 
-<thead>
-<tr>
-<th>#</th>
-<th>Member</th>
-<th>Mobile</th>
-<th>Login PIN</th>
-<th>कुल बचत</th>
-<th>लोन बाकी</th>
-<th>Action</th>
-</tr>
-</thead>
+          <thead>
 
-<tbody id="mt"></tbody>
+            <tr>
+              <th>#</th>
+              <th>Member</th>
+              <th>Mobile</th>
+              <th>Login PIN</th>
+              <th>कुल बचत</th>
+              <th>लोन बाकी</th>
+              <th>Action</th>
+            </tr>
 
-</table>
+          </thead>
 
-</div>
+          <tbody id="mt"></tbody>
 
-</div>
-</div>
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
 
 </section>
-<!-- SAVING -->
+
+
+<!-- ================= SAVING ================= -->
+
 <section id="saving" class="hidden">
 
-<div class="panel">
+  <div class="panel">
 
-<h3>मासिक बचत एंट्री</h3>
+    <h3>मासिक बचत एंट्री</h3>
 
-<div class="body">
+    <div class="body">
 
-<div class="form">
+      <div class="form">
 
-<div class="field">
-<label>परिवार</label>
-<select id="sf"></select>
-</div>
+        <div class="field">
+          <label>परिवार</label>
+          <select id="sf"></select>
+        </div>
 
-<div class="field">
-<label>महीना</label>
-<select id="sm"></select>
-</div>
+        <div class="field">
+          <label>महीना</label>
+          <select id="sm"></select>
+        </div>
 
-<div class="field">
-<label>बचत राशि ₹</label>
-<input id="sa" type="number" value="2000">
-</div>
+        <div class="field">
+          <label>बचत राशि ₹</label>
+          <input id="sa" type="number" value="2000">
+        </div>
 
-<div class="field">
-<label>तारीख</label>
-<input id="sd" type="date">
-</div>
+        <div class="field">
+          <label>तारीख</label>
+          <input id="sd" type="date">
+        </div>
 
-<div class="full">
-<button class="btn" onclick="saveSaving()">बचत जमा करें</button>
-</div>
+        <div class="full">
 
-</div>
-</div>
-</div>
+          <button class="btn" onclick="saveSaving()">
+            बचत जमा करें
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
 
 
-<div class="panel" style="margin-top:14px">
+  <div class="panel" style="margin-top:14px">
 
-<h3>बचत लेजर</h3>
+    <h3>बचत लेजर</h3>
 
-<div class="table">
+    <div class="table">
 
-<table>
+      <table>
 
-<thead>
-<tr>
-<th>तारीख</th>
-<th>महीना</th>
-<th>परिवार</th>
-<th>राशि</th>
-<th>Action</th>
-</tr>
-</thead>
+        <thead>
 
-<tbody id="st"></tbody>
+          <tr>
+            <th>तारीख</th>
+            <th>महीना</th>
+            <th>परिवार</th>
+            <th>राशि</th>
+            <th>Action</th>
+          </tr>
 
-</table>
+        </thead>
 
-</div>
-</div>
+        <tbody id="st"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
 
 </section>
 
 
-<!-- LOANS -->
+<!-- ================= LOANS ================= -->
+
 <section id="loans" class="hidden">
 
-<div class="panel">
+  <div class="panel">
 
-<h3>नया लोन</h3>
+    <h3>नया लोन</h3>
 
-<div class="body">
+    <div class="body">
 
-<div class="notice">
-लोन ब्याज दर <b>2% प्रति माह</b> है।
-</div>
+      <div class="notice">
+        लोन ब्याज दर <b>2% प्रति माह</b> है।
+      </div>
 
-<div class="form">
+      <div class="form">
 
-<div class="field">
-<label>परिवार</label>
-<select id="lf"></select>
-</div>
+        <div class="field">
+          <label>परिवार</label>
+          <select id="lf"></select>
+        </div>
 
-<div class="field">
-<label>लोन राशि ₹</label>
-<input id="la" type="number">
-</div>
+        <div class="field">
+          <label>लोन राशि ₹</label>
+          <input id="la" type="number">
+        </div>
 
-<div class="field">
-<label>अवधि माह</label>
-<input id="lm" type="number" value="12">
-</div>
+        <div class="field">
+          <label>अवधि माह</label>
+          <input id="lm" type="number" value="12">
+        </div>
 
-<div class="field">
-<label>तारीख</label>
-<input id="ld" type="date">
-</div>
+        <div class="field">
+          <label>तारीख</label>
+          <input id="ld" type="date">
+        </div>
 
-<div class="full">
-<button class="btn" onclick="giveLoan()">लोन दर्ज करें</button>
-</div>
+        <div class="full">
 
-</div>
-</div>
-</div>
+          <button class="btn" onclick="giveLoan()">
+            लोन दर्ज करें
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
 
 
-<div class="panel" style="margin-top:14px">
+  <div class="panel" style="margin-top:14px">
 
-<h3>लोन खाते</h3>
+    <h3>लोन खाते</h3>
 
-<div class="table">
+    <div class="table">
 
-<table>
+      <table>
 
-<thead>
-<tr>
-<th>परिवार</th><th>मूल लोन</th><th>2%</th><th>बाकी</th><th>स्थिति</th><th>Action</th>
-</tr>
-</thead>
+        <thead>
 
-<tbody id="lt"></tbody>
+          <tr>
+            <th>परिवार</th>
+            <th>मूल लोन</th>
+            <th>2%</th>
+            <th>बाकी</th>
+            <th>स्थिति</th>
+            <th>Action</th>
+          </tr>
 
-</table>
+        </thead>
 
-</div>
-</div>
+        <tbody id="lt"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
 
 </section>
 
 
-<!-- REPAY -->
+<!-- ================= REPAY ================= -->
+
 <section id="repay" class="hidden">
 
-<div class="panel">
+  <div class="panel">
 
-<h3>किस्त / भुगतान</h3>
+    <h3>किस्त / भुगतान</h3>
 
-<div class="body">
+    <div class="body">
 
-<div class="form">
+      <div class="form">
 
-<div class="field">
-<label>Active Loan</label>
-<select id="rl"></select>
-</div>
+        <div class="field">
+          <label>Active Loan</label>
+          <select id="rl"></select>
+        </div>
 
-<div class="field">
-<label>भुगतान ₹</label>
-<input id="ra" type="number">
-</div>
+        <div class="field">
+          <label>भुगतान ₹</label>
+          <input id="ra" type="number">
+        </div>
 
-<div class="field">
-<label>तारीख</label>
-<input id="rd" type="date">
-</div>
+        <div class="field">
+          <label>तारीख</label>
+          <input id="rd" type="date">
+        </div>
 
-<div class="full">
-<button class="btn" onclick="repay()">भुगतान दर्ज करें</button>
-</div>
+        <div class="full">
 
-</div>
-</div>
-</div>
+          <button class="btn" onclick="repay()">
+            भुगतान दर्ज करें
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
 
 
-<div class="panel" style="margin-top:14px">
+  <div class="panel" style="margin-top:14px">
 
-<h3>भुगतान इतिहास</h3>
+    <h3>भुगतान इतिहास</h3>
 
-<div class="table">
+    <div class="table">
 
-<table>
+      <table>
 
-<thead>
-<tr>
-<th>तारीख</th>
-<th>परिवार</th>
-<th>भुगतान</th>
-<th>ब्याज</th>
-<th>मूलधन</th>
-</tr>
-</thead>
+        <thead>
 
-<tbody id="pt"></tbody>
+          <tr>
+            <th>तारीख</th>
+            <th>परिवार</th>
+            <th>भुगतान</th>
+            <th>ब्याज</th>
+            <th>मूलधन</th>
+          </tr>
 
-</table>
+        </thead>
 
-</div>
-</div>
+        <tbody id="pt"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
 
 </section>
 
 
-<!-- INTEREST -->
+<!-- ================= INTEREST ================= -->
+
 <section id="interest" class="hidden">
 
-<div class="panel">
+  <div class="panel">
 
-<h3>बचत अनुपात से ब्याज वितरण</h3>
+    <h3>बचत अनुपात से ब्याज वितरण</h3>
 
-<div class="body">
+    <div class="body">
 
-<div class="form">
+      <div class="form">
 
-<div class="field">
-<label>कुल वितरण योग्य ब्याज ₹</label>
-<input id="di" type="number">
-</div>
+        <div class="field">
+          <label>कुल वितरण योग्य ब्याज ₹</label>
+          <input id="di" type="number">
+        </div>
 
-<div class="field">
-<label>तारीख</label>
-<input id="dd" type="date">
-</div>
+        <div class="field">
+          <label>तारीख</label>
+          <input id="dd" type="date">
+        </div>
 
-<div class="full">
-<button class="btn" onclick="dist()">गणना करें</button>
-</div>
+        <div class="full">
 
-</div>
+          <button class="btn" onclick="dist()">
+            गणना करें
+          </button>
 
-<div id="dr" style="margin-top:15px"></div>
+        </div>
 
-</div>
-</div>
+      </div>
+
+      <div id="dr" style="margin-top:15px"></div>
+
+    </div>
+
+  </div>
 
 </section>
 
 
-<!-- PASSBOOK -->
+<!-- ================= PASSBOOK ================= -->
+
 <section id="passbook" class="hidden">
 
-<div class="panel">
+  <div class="panel">
 
-<h3>Digital Passbook</h3>
+    <h3>Digital Passbook</h3>
 
-<div class="body">
+    <div class="body">
 
-<div class="field">
-<label>परिवार</label>
-<select id="pf" onchange="passbook()"></select>
-</div>
+      <div class="field">
 
-<div id="pr" style="margin-top:14px"></div>
+        <label>परिवार</label>
 
-</div>
-</div>
+        <select
+          id="pf"
+          onchange="passbook()">
+        </select>
+
+      </div>
+
+      <div id="pr" style="margin-top:14px"></div>
+
+    </div>
+
+  </div>
 
 </section>
 
 
-<!-- REPORTS -->
+<!-- ================= REPORTS ================= -->
+
 <section id="reports" class="hidden">
 
-<div class="panel">
+  <div class="panel">
 
-<h3>रिपोर्ट्स</h3>
+    <h3>रिपोर्ट्स</h3>
 
-<div class="body">
+    <div class="body">
 
-<p>डेटा JSON format में export किया जा सकता है।</p>
+      <p>
+        डेटा JSON format में export किया जा सकता है।
+      </p>
 
-<button class="btn secondary" onclick="exportData('families')">
-परिवार
-</button>
+      <button
+        class="btn secondary"
+        onclick="exportData('families')">
+        परिवार
+      </button>
 
-<button class="btn secondary" onclick="exportData('savings')">
-बचत
-</button>
+      <button
+        class="btn secondary"
+        onclick="exportData('savings')">
+        बचत
+      </button>
 
-<button class="btn secondary" onclick="exportData('loans')">
-लोन
-</button>
+      <button
+        class="btn secondary"
+        onclick="exportData('loans')">
+        लोन
+      </button>
 
-</div>
-</div>
+    </div>
+
+  </div>
 
 </section>
 
+
 </div>
+
 
 <div class="footer">
-Family Saving Group • Online-ready prototype
+  Family Saving Group • Online-ready
 </div>
 
+
 </main>
+
 </div>
 
 
 <script>
 
-const M=[
-"अप्रैल","मई","जून","जुलाई","अगस्त","सितंबर",
-"अक्टूबर","नवंबर","दिसंबर","जनवरी","फरवरी","मार्च"
+/* ================= BASIC ================= */
+
+const M = [
+  "अप्रैल",
+  "मई",
+  "जून",
+  "जुलाई",
+  "अगस्त",
+  "सितंबर",
+  "अक्टूबर",
+  "नवंबर",
+  "दिसंबर",
+  "जनवरी",
+  "फरवरी",
+  "मार्च"
 ];
 
-const $=id=>document.getElementById(id);
+const $ = id => document.getElementById(id);
+
+const money = n =>
+  "₹" + Number(n || 0).toLocaleString("en-IN");
+
+let fam = [];
+
 let currentLoginType = "admin";
 
-function loginType(type){
 
-    currentLoginType = type;
+/* ================= API ================= */
 
-    if(type === "admin"){
+async function api(url, options = {}){
 
-        $("adminTab").classList.remove("secondary");
-        $("memberTab").classList.add("secondary");
+  const response = await fetch(url, options);
 
-        $("adminLoginBox").classList.remove("hidden");
-        $("memberLoginBox").classList.add("hidden");
+  let data;
 
-    }else{
+  try{
+    data = await response.json();
+  }catch{
+    throw new Error("Server से सही response नहीं मिला");
+  }
 
-        $("memberTab").classList.remove("secondary");
-        $("adminTab").classList.add("secondary");
+  if(!response.ok){
+    throw new Error(data.error || "Server Error");
+  }
 
-        $("adminLoginBox").classList.add("hidden");
-        $("memberLoginBox").classList.remove("hidden");
-
-        loadMembers();
-    }
+  return data;
 }
-const money=n=>"₹"+Number(n||0).toLocaleString("en-IN");
-
-let fam=[];
 
 
-async function api(u,o){
-
-let r=await fetch(u,o);
-
-let j=await r.json();
-
-if(!r.ok)throw Error(j.error||"Error");
-
-return j;
-
-}
+/* ================= LOGIN TYPE ================= */
 
 function loginType(type){
 
-    if(type === "member"){
-
-        $("memberLoginBox").classList.remove("hidden");
-
-        loadMembers();
-
-        $("adminTab").classList.add("secondary");
-        $("memberTab").classList.remove("secondary");
-
-    }else{
-
-        $("memberLoginBox").classList.add("hidden");
-
-        $("memberTab").classList.add("secondary");
-        $("adminTab").classList.remove("secondary");
-
-    }
-
-}
-
-
-async function loadMembers(){
-
-    try{
-
-        let members = await api("/api/member-list");
-        $("memberFamily").innerHTML =
-            members.map(f =>
-                `<option value="${f.id}">${f.name}</option>`
-            ).join("");
-
-    }catch(e){
-
-        alert("Member list load नहीं हो सकी");
-    }
-
-}
-
-
-function login(){
-  api("/api/login",{
-function login(){
-  api("/api/login",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({pin:$("pin").value})
-  })
-  .then(function(){
-    $("login").classList.add("hidden");
-    $("app").classList.remove("hidden");
-    init();
-  })
-  .catch(function(e){
-    alert(e.message);
-  });
-}
-function loginType(type){
+  currentLoginType = type;
 
   if(type === "admin"){
 
     $("adminLogin").classList.remove("hidden");
     $("memberLogin").classList.add("hidden");
 
-    $("adminTab").className = "btn";
-    $("memberTab").className = "btn secondary";
+    $("adminTab").classList.remove("secondary");
+    $("memberTab").classList.add("secondary");
 
   }else{
 
     $("adminLogin").classList.add("hidden");
     $("memberLogin").classList.remove("hidden");
 
-    $("adminTab").className = "btn secondary";
-    $("memberTab").className = "btn";
+    $("adminTab").classList.add("secondary");
+    $("memberTab").classList.remove("secondary");
 
     loadMemberList();
-  }
 
+  }
 }
 
+
+/* ================= MEMBER LIST ================= */
 
 async function loadMemberList(){
 
   try{
 
-    let list = await api("/api/families");
+    const list = await api("/api/families");
 
     $("memberFamily").innerHTML =
+      '<option value="">परिवार चुनें...</option>' +
       list.map(f =>
         `<option value="${f.id}">${f.name}</option>`
       ).join("");
 
   }catch(e){
 
-    alert(e.message);
+    alert("Member list load नहीं हो सकी: " + e.message);
 
   }
-
 }
 
 
-async function memberLogin(){
+/* ================= ADMIN LOGIN ================= */
+
+async function login(){
+
+  const pin = $("pin").value.trim();
+
+  if(!pin){
+
+    alert("Admin PIN डालें");
+    return;
+
+  }
 
   try{
 
-    let family_id = $("memberFamily").value;
-    let pin = $("memberPin").value;
+    await api("/api/login",{
 
-    if(!family_id){
+      method:"POST",
 
-      alert("अपना परिवार चुनें");
-      return;
+      headers:{
+        "Content-Type":"application/json"
+      },
 
-    }
+      body:JSON.stringify({
+        pin:pin
+      })
 
-    if(!pin){
+    });
 
-      alert("PIN डालें");
-      return;
+    $("login").classList.add("hidden");
+    $("app").classList.remove("hidden");
 
-    }
+    await init();
 
-    let x = await api("/api/login",{
+  }catch(e){
+
+    alert(e.message);
+
+  }
+}
+
+
+/* ================= MEMBER LOGIN ================= */
+
+async function memberLogin(){
+
+  const familyId = $("memberFamily").value;
+  const pin = $("memberPin").value.trim();
+
+  if(!familyId){
+
+    alert("अपना परिवार चुनें");
+    return;
+
+  }
+
+  if(!pin){
+
+    alert("PIN डालें");
+    return;
+
+  }
+
+  try{
+
+    const user = await api("/api/login",{
 
       method:"POST",
 
@@ -813,7 +1322,9 @@ async function memberLogin(){
       body:JSON.stringify({
 
         type:"member",
-        family_id:+family_id,
+
+        family_id:Number(familyId),
+
         pin:pin
 
       })
@@ -823,54 +1334,56 @@ async function memberLogin(){
     $("login").classList.add("hidden");
     $("app").classList.remove("hidden");
 
-    initMember(x);
+    await initMember(user);
 
   }catch(e){
 
     alert(e.message);
 
   }
-
 }
 
 
+/* ================= MEMBER INIT ================= */
+
 async function initMember(user){
 
-  document.querySelector(".side").style.display="none";
+  document.querySelector(".side").style.display = "none";
 
-  document.querySelector(".main").style.marginLeft="0";
+  document.querySelector(".main").style.marginLeft = "0";
 
   $("title").textContent =
     "📒 " + user.name + " - Passbook";
 
   document.querySelectorAll("main section")
-    .forEach(x=>x.classList.add("hidden"));
+    .forEach(x => x.classList.add("hidden"));
 
   $("passbook").classList.remove("hidden");
 
-  $("pf").value = user.family_id;
-
-  await memberPassbook(user.family_id);
+  await loadMemberPassbook(user.family_id);
 
 }
 
 
-async function memberPassbook(fid){
+/* ================= MEMBER PASSBOOK ================= */
+
+async function loadMemberPassbook(fid){
 
   try{
 
-    let x = await api(
-      "/api/family/" + fid + "/passbook"
+    const x =
+      await api("/api/family/" + fid + "/passbook");
+
+    const family = x.family;
+
+    const savings = (x.savings || []).reduce(
+      (a,r) => a + Number(r.amount || 0),
+      0
     );
 
-    let family = x.family;
-
-    let savings = x.savings.reduce(
-      (a,r)=>a+Number(r.amount||0),0
-    );
-
-    let loan = x.loans.reduce(
-      (a,r)=>a+Number(r.principal||0),0
+    const loan = (x.loans || []).reduce(
+      (a,r) => a + Number(r.principal || 0),
+      0
     );
 
     $("pr").innerHTML = `
@@ -883,8 +1396,14 @@ async function memberPassbook(fid){
           border-bottom:2px solid #1976d2;
         ">
 
+          <img
+            src="/static/logo.png"
+            style="width:85px;height:85px;object-fit:contain"
+            onerror="this.style.display='none'"
+          >
+
           <h2 style="margin:0;color:#083b78;">
-            🏦 Family Saving Group
+            Family Saving Group
           </h2>
 
           <div>
@@ -894,34 +1413,45 @@ async function memberPassbook(fid){
           <h3>DIGITAL PASSBOOK</h3>
 
           <div>
-            वित्तीय वर्ष: <b>2026–27</b>
+            वित्तीय वर्ष:
+            <b>2026–27</b>
           </div>
 
         </div>
+
 
         <div class="cards" style="margin-top:15px">
 
           <div class="card">
             <div class="label">परिवार</div>
-            <div class="value">${family.name}</div>
+            <div class="value">
+              ${family?.name || "—"}
+            </div>
           </div>
 
           <div class="card">
             <div class="label">मोबाइल</div>
-            <div class="value">${family.mobile || "—"}</div>
+            <div class="value">
+              ${family?.mobile || "—"}
+            </div>
           </div>
 
           <div class="card">
             <div class="label">कुल बचत</div>
-            <div class="value green">${money(savings)}</div>
+            <div class="value green">
+              ${money(savings)}
+            </div>
           </div>
 
           <div class="card">
             <div class="label">लोन बाकी</div>
-            <div class="value red">${money(loan)}</div>
+            <div class="value red">
+              ${money(loan)}
+            </div>
           </div>
 
         </div>
+
 
         <div class="panel" style="margin-top:15px">
 
@@ -937,24 +1467,39 @@ async function memberPassbook(fid){
                 <th>राशि</th>
               </tr>
 
-              ${x.savings.map(r=>`
+              ${(x.savings || []).map(r => `
 
                 <tr>
+
                   <td>${r.date}</td>
-                  <td>मासिक बचत (${r.month})</td>
+
+                  <td>
+                    मासिक बचत (${r.month})
+                  </td>
+
                   <td class="green">
                     ${money(r.amount)}
                   </td>
+
                 </tr>
 
               `).join("")}
 
-              ${x.payments.map(r=>`
+
+              ${(x.payments || []).map(r => `
 
                 <tr>
+
                   <td>${r.date}</td>
-                  <td>Loan Payment</td>
-                  <td>${money(r.amount)}</td>
+
+                  <td>
+                    Loan Payment
+                  </td>
+
+                  <td>
+                    ${money(r.amount)}
+                  </td>
+
                 </tr>
 
               `).join("")}
@@ -966,6 +1511,7 @@ async function memberPassbook(fid){
         </div>
 
       </div>
+
 
       <div class="actions" style="margin-top:15px">
 
@@ -984,24 +1530,49 @@ async function memberPassbook(fid){
     alert(e.message);
 
   }
-
 }
 
 
+/* ================= MEMBER PRINT ================= */
+
 function printMemberPassbook(){
 
-  let content =
-    $("memberPrintPassbook").innerHTML;
+  const box = $("memberPrintPassbook");
 
-  let w = window.open("", "_blank");
+  if(!box){
+
+    alert("Passbook तैयार नहीं है");
+    return;
+
+  }
+
+  const content = box.innerHTML;
+
+  const w = window.open("", "_blank");
+
+  if(!w){
+
+    alert(
+      "Print window नहीं खुली। Browser में popup allow करें।"
+    );
+
+    return;
+
+  }
 
   w.document.write(`
 
-    <html>
+    <!doctype html>
+
+    <html lang="hi">
 
     <head>
 
-      <title>Family Saving Group Passbook</title>
+      <meta charset="utf-8">
+
+      <title>
+        Family Saving Group Passbook
+      </title>
 
       <style>
 
@@ -1020,12 +1591,46 @@ function printMemberPassbook(){
 
         th,td{
           padding:9px;
-          border-bottom:1px solid #ddd;
+          border:1px solid #ddd;
           text-align:left;
         }
 
         th{
           background:#f5f7fb;
+        }
+
+        .card{
+          border:1px solid #ddd;
+          padding:12px;
+          margin:5px;
+          display:inline-block;
+          width:45%;
+          vertical-align:top;
+        }
+
+        .label{
+          font-size:12px;
+          color:#666;
+        }
+
+        .value{
+          font-size:18px;
+          font-weight:bold;
+          margin-top:5px;
+        }
+
+        .green{
+          color:#20864b;
+        }
+
+        .red{
+          color:#c73535;
+        }
+
+        @media print{
+          body{
+            margin:12mm;
+          }
         }
 
       </style>
@@ -1037,9 +1642,9 @@ function printMemberPassbook(){
       ${content}
 
       <script>
-        window.onload=function(){
+        window.onload = function(){
           window.print();
-        }
+        };
       <\/script>
 
     </body>
@@ -1052,557 +1657,851 @@ function printMemberPassbook(){
 
 }
 
+
+/* ================= LOGOUT ================= */
+
 async function logout(){
-
-try{
-await api("/api/logout",{method:"POST"});
-}catch(e){}
-
-location.reload();
-
-}
-
-
-function show(id,b){
-
-document.querySelectorAll("main section")
-.forEach(x=>x.classList.add("hidden"));
-
-$(id).classList.remove("hidden");
-
-document.querySelectorAll(".nav button")
-.forEach(x=>x.classList.remove("active"));
-
-b.classList.add("active");
-
-$("title").textContent=
-id==="dashboard"
-?"Dashboard"
-:document.querySelector("#"+id+" h3").textContent;
-
-}
-
-
-async function init(){
-
-let d=new Date().toISOString().slice(0,10);
-
-["sd","ld","rd","dd"].forEach(x=>$(x).value=d);
-
-$("sm").innerHTML=
-M.map(x=>`<option>${x}</option>`).join("");
-
-await refresh();
-
-}
-
-
-async function refresh(){
-
-fam=await api("/api/families");
-
-["sf","lf","pf"].forEach(id=>{
-
-$(id).innerHTML=
-fam.map(f=>
-`<option value="${f.id}">${f.name}</option>`
-).join("");
-
-});
-
-
-let d=await api("/api/dashboard");
-
-$("cf").textContent=d.families;
-$("cs").textContent=money(d.savings);
-$("cl").textContent=money(d.loans);
-$("ci").textContent=money(d.interest);
-$("ca").textContent=money(d.available);
-
-
-$("sum").innerHTML=`
-
-<div class=line>
-<span>कुल परिवार</span>
-<b>${d.families}</b>
-</div>
-
-<div class=line>
-<span>कुल बचत</span>
-<b>${money(d.savings)}</b>
-</div>
-
-<div class=line>
-<span>Active Loan</span>
-<b>${d.loans>0?"हाँ":"नहीं"}</b>
-</div>
-
-`;
-
-
-let s=await api("/api/savings");
-
-let monthTotal=
-s.filter(x=>x.month==M[new Date().getMonth()-3<0?0:new Date().getMonth()-3])
-.reduce((a,x)=>a+x.amount,0);
-
-$("prog").style.width=
-Math.min(100,monthTotal/46000*100)+"%";
-
-$("progtext").textContent=
-"मासिक प्रगति: "+money(monthTotal);
-
-
-$("ft").innerHTML=
-fam.map((f,i)=>`
-
-<tr>
-<td>${i+1}</td>
-<td>${f.name}</td>
-<td>${f.mobile||"—"}</td>
-<td>${money(f.savings)}</td>
-<td>${money(f.loan)}</td>
-<td>
-<button class="btn secondary small" onclick="editFamily(${f.id})">✏️ Edit</button>
-<button class="btn danger small" onclick="deleteFamily(${f.id})">🗑️ Delete</button>
-</td>
-</tr>
-
-`).join("");
-
-$("mt").innerHTML =
-fam.map((f,i)=>`
-
-<tr>
-
-<td>${i+1}</td>
-
-<td><b>${f.name}</b></td>
-
-<td>${f.mobile || "—"}</td>
-
-<td>••••</td>
-
-<td class="green">
-${money(f.savings)}
-</td>
-
-<td class="red">
-${money(f.loan)}
-</td>
-
-<td>
-
-<button
-class="btn secondary small"
-onclick="editMember(${f.id})">
-✏️ Edit
-</button>
-
-</td>
-
-</tr>
-
-`).join("");
-
-/* SAVING LEDGER WITH EDIT DELETE */
-
-$("st").innerHTML=
-s.map(x=>`
-
-<tr>
-
-<td>${x.date}</td>
-
-<td>${x.month}</td>
-
-<td>${x.family}</td>
-
-<td class="green">
-${money(x.amount)}
-</td>
-
-<td>
-
-<button
-class="btn secondary small"
-onclick="editSaving(${x.id})">
-✏️ Edit
-</button>
-
-<button
-class="btn danger small"
-onclick="deleteSaving(${x.id})">
-🗑️ Delete
-</button>
-
-</td>
-
-</tr>
-
-`).join("")
-||
-`<tr>
-<td colspan="5" class="empty">
-कोई एंट्री नहीं
-</td>
-</tr>`;
-
-
-let l=await api("/api/loans");
-
-
-$("lt").innerHTML=
-l.map(x=>`
-<tr>
-<td>${x.family}</td>
-<td>${money(x.original)}</td>
-<td>2%</td>
-<td>${money(x.principal)}</td>
-<td>${x.principal>0?"Active":"Closed"}</td>
-<td>
-<button class="btn secondary small" onclick="editLoan(${x.id})">✏️ Edit</button>
-<button class="btn danger small" onclick="deleteLoan(${x.id})">🗑️ Delete</button>
-</td>
-</tr>
-`).join("")
-||
-`<tr>
-<td colspan="6" class="empty">
-कोई लोन नहीं
-</td>
-</tr>`;
-
-
-$("rl").innerHTML=
-l.filter(x=>x.principal>0)
-.map(x=>
-`<option value="${x.id}">
-${x.family} — ${money(x.principal)}
-</option>`
-)
-.join("")
-||
-"<option>कोई Active Loan नहीं</option>";
-
-
-let p=await api("/api/payments");
-
-
-$("pt").innerHTML=
-p.map(x=>`
-
-<tr>
-<td>${x.date}</td>
-<td>${x.family}</td>
-<td>${money(x.amount)}</td>
-<td>${money(x.interest)}</td>
-<td>${money(x.principal)}</td>
-</tr>
-
-`).join("")
-||
-`<tr>
-<td colspan="5" class="empty">
-कोई भुगतान नहीं
-</td>
-</tr>`;
-
-}
-
-
-/* SAVE SAVING */
-
-async function saveSaving(){
-
-try{
-
-await api("/api/savings",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-family_id:+$("sf").value,
-month:$("sm").value,
-amount:+$("sa").value,
-date:$("sd").value
-})
-});
-
-alert("बचत दर्ज हो गई");
-
-await refresh();
-
-}catch(e){
-
-alert(e.message);
-
-}
-
-}
-
-
-/* EDIT SAVING */
-
-async function editSaving(id){
-
-try{
-
-let list=await api("/api/savings");
-
-let row=list.find(x=>x.id===id);
-
-if(!row){
-
-alert("बचत एंट्री नहीं मिली");
-
-return;
-
-}
-
-
-let amount=prompt(
-"बचत राशि बदलें",
-row.amount
-);
-
-if(amount===null)return;
-
-amount=Number(amount);
-
-if(!amount || amount<=0){
-
-alert("सही राशि डालें");
-
-return;
-
-}
-
-
-let date=prompt(
-"तारीख बदलें",
-row.date
-);
-
-if(date===null)return;
-
-
-await api("/api/savings/"+id,{
-
-method:"PUT",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-
-family_id:row.family_id,
-
-month:row.month,
-
-amount:amount,
-
-date:date
-
-})
-
-});
-
-
-alert("बचत एंट्री अपडेट हो गई");
-
-await refresh();
-
-
-}catch(e){
-
-alert(e.message);
-
-}
-
-}
-
-
-/* DELETE SAVING */
-
-async function deleteSaving(id){
-
-if(!confirm(
-"क्या आप यह बचत एंट्री delete करना चाहते हैं?"
-))return;
-
-
-try{
-
-await api("/api/savings/"+id,{
-method:"DELETE"
-});
-
-alert("बचत एंट्री delete हो गई");
-
-await refresh();
-
-}catch(e){
-
-alert(e.message);
-
-}
-
-}
-
-
-/* LOAN */
-
-async function giveLoan(){
-
-try{
-
-await api("/api/loans",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-family_id:+$("lf").value,
-amount:+$("la").value,
-months:+$("lm").value,
-date:$("ld").value
-})
-});
-
-alert("लोन दर्ज हो गया");
-
-await refresh();
-
-}catch(e){
-
-alert(e.message);
-
-}
-
-}
-
-
-/* REPAYMENT */
-
-async function repay(){
-
-try{
-
-let x=await api("/api/payments",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-loan_id:+$("rl").value,
-amount:+$("ra").value,
-date:$("rd").value
-})
-});
-
-alert(
-"भुगतान दर्ज। ब्याज "+
-money(x.interest)+
-" | मूलधन "+
-money(x.principal)
-);
-
-await refresh();
-
-}catch(e){
-
-alert(e.message);
-
-}
-
-}
-
-
-/* INTEREST DISTRIBUTION */
-
-async function dist(){
-
-try{
-
-let x=await api("/api/interest-distribution",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-total_interest:+$("di").value,
-date:$("dd").value
-})
-});
-
-
-$("dr").innerHTML=`
-
-<div class=notice>
-कुल बचत ${money(x.total_savings)}
-के आधार पर वितरण
-</div>
-
-<div class=table>
-
-<table>
-
-<tr>
-<th>परिवार</th>
-<th>बचत</th>
-<th>हिस्सा</th>
-<th>ब्याज</th>
-</tr>
-
-${x.result.map(r=>`
-
-<tr>
-
-<td>${r.name}</td>
-
-<td>${money(r.savings)}</td>
-
-<td>${(r.share*100).toFixed(2)}%</td>
-
-<td class=green>
-${money(r.interest)}
-</td>
-
-</tr>
-
-`).join("")}
-
-</table>
-
-</div>
-
-`;
-
-}catch(e){
-
-alert(e.message);
-
-}
-
-}
-
-
-/* PASSBOOK */
-
-async function passbook(){
 
   try{
 
-    let x = await api(
-      "/api/family/" + $("pf").value + "/passbook"
+    await api("/api/logout",{
+      method:"POST"
+    });
+
+  }catch(e){}
+
+  location.reload();
+
+}
+
+
+/* ================= NAVIGATION ================= */
+
+function show(id, button){
+
+  document.querySelectorAll("main section")
+    .forEach(x => x.classList.add("hidden"));
+
+  const section = $(id);
+
+  if(!section) return;
+
+  section.classList.remove("hidden");
+
+  document.querySelectorAll(".nav button")
+    .forEach(x => x.classList.remove("active"));
+
+  if(button){
+    button.classList.add("active");
+  }
+
+  if(id === "dashboard"){
+
+    $("title").textContent = "Dashboard";
+
+  }else{
+
+    const heading = section.querySelector("h3");
+
+    $("title").textContent =
+      heading ? heading.textContent : id;
+
+  }
+
+}
+
+
+/* ================= INIT ================= */
+
+async function init(){
+
+  const today =
+    new Date().toISOString().slice(0,10);
+
+  ["sd","ld","rd","dd"].forEach(id => {
+
+    if($(id)){
+      $(id).value = today;
+    }
+
+  });
+
+  $("sm").innerHTML =
+    M.map(x =>
+      `<option value="${x}">${x}</option>`
+    ).join("");
+
+  await refresh();
+
+}
+
+
+/* ================= REFRESH ================= */
+
+async function refresh(){
+
+  try{
+
+    fam = await api("/api/families");
+
+    ["sf","lf","pf"].forEach(id => {
+
+      if(!$(id)) return;
+
+      $(id).innerHTML =
+        fam.map(f =>
+          `<option value="${f.id}">
+            ${f.name}
+          </option>`
+        ).join("");
+
+    });
+
+
+    const d = await api("/api/dashboard");
+
+    $("cf").textContent = d.families ?? fam.length;
+
+    $("cs").textContent = money(d.savings);
+
+    $("cl").textContent = money(d.loans);
+
+    $("ci").textContent = money(d.interest);
+
+    $("ca").textContent = money(d.available);
+
+
+    $("sum").innerHTML = `
+
+      <div class="line">
+        <span>कुल परिवार</span>
+        <b>${d.families ?? fam.length}</b>
+      </div>
+
+      <div class="line">
+        <span>कुल बचत</span>
+        <b>${money(d.savings)}</b>
+      </div>
+
+      <div class="line">
+        <span>Active Loan</span>
+        <b>${Number(d.loans || 0) > 0 ? "हाँ" : "नहीं"}</b>
+      </div>
+
+    `;
+
+
+    const savings =
+      await api("/api/savings");
+
+
+    const currentMonthIndex =
+      new Date().getMonth() - 3;
+
+    const safeIndex =
+      currentMonthIndex < 0
+      ? 0
+      : currentMonthIndex;
+
+
+    const currentMonth = M[safeIndex];
+
+
+    const monthTotal =
+      savings
+      .filter(x => x.month === currentMonth)
+      .reduce(
+        (a,x) => a + Number(x.amount || 0),
+        0
+      );
+
+
+    $("prog").style.width =
+      Math.min(
+        100,
+        monthTotal / 46000 * 100
+      ) + "%";
+
+
+    $("progtext").textContent =
+      "मासिक प्रगति: " +
+      money(monthTotal);
+
+
+    $("ft").innerHTML =
+      fam.map((f,i) => `
+
+        <tr>
+
+          <td>${i+1}</td>
+
+          <td>${f.name}</td>
+
+          <td>${f.mobile || "—"}</td>
+
+          <td>
+            ${money(f.savings)}
+          </td>
+
+          <td>
+            ${money(f.loan)}
+          </td>
+
+          <td>
+
+            <button
+              class="btn secondary small"
+              onclick="editFamily(${f.id})">
+              ✏️ Edit
+            </button>
+
+            <button
+              class="btn danger small"
+              onclick="deleteFamily(${f.id})">
+              🗑️ Delete
+            </button>
+
+          </td>
+
+        </tr>
+
+      `).join("")
+      ||
+      `<tr>
+        <td colspan="6" class="empty">
+          कोई परिवार नहीं
+        </td>
+      </tr>`;
+
+
+    $("mt").innerHTML =
+      fam.map((f,i) => `
+
+        <tr>
+
+          <td>${i+1}</td>
+
+          <td>
+            <b>${f.name}</b>
+          </td>
+
+          <td>
+            ${f.mobile || "—"}
+          </td>
+
+          <td>
+            ••••
+          </td>
+
+          <td class="green">
+            ${money(f.savings)}
+          </td>
+
+          <td class="red">
+            ${money(f.loan)}
+          </td>
+
+          <td>
+
+            <button
+              class="btn secondary small"
+              onclick="editMember(${f.id})">
+              ✏️ Edit
+            </button>
+
+          </td>
+
+        </tr>
+
+      `).join("")
+      ||
+      `<tr>
+        <td colspan="7" class="empty">
+          कोई Member नहीं
+        </td>
+      </tr>`;
+
+
+    $("st").innerHTML =
+      savings.map(x => `
+
+        <tr>
+
+          <td>${x.date}</td>
+
+          <td>${x.month}</td>
+
+          <td>${x.family}</td>
+
+          <td class="green">
+            ${money(x.amount)}
+          </td>
+
+          <td>
+
+            <button
+              class="btn secondary small"
+              onclick="editSaving(${x.id})">
+              ✏️ Edit
+            </button>
+
+            <button
+              class="btn danger small"
+              onclick="deleteSaving(${x.id})">
+              🗑️ Delete
+            </button>
+
+          </td>
+
+        </tr>
+
+      `).join("")
+      ||
+      `<tr>
+        <td colspan="5" class="empty">
+          कोई एंट्री नहीं
+        </td>
+      </tr>`;
+
+
+    const loans =
+      await api("/api/loans");
+
+
+    $("lt").innerHTML =
+      loans.map(x => `
+
+        <tr>
+
+          <td>${x.family}</td>
+
+          <td>
+            ${money(x.original)}
+          </td>
+
+          <td>2%</td>
+
+          <td>
+            ${money(x.principal)}
+          </td>
+
+          <td>
+            ${Number(x.principal || 0) > 0
+              ? "Active"
+              : "Closed"}
+          </td>
+
+          <td>
+
+            <button
+              class="btn secondary small"
+              onclick="editLoan(${x.id})">
+              ✏️ Edit
+            </button>
+
+            <button
+              class="btn danger small"
+              onclick="deleteLoan(${x.id})">
+              🗑️ Delete
+            </button>
+
+          </td>
+
+        </tr>
+
+      `).join("")
+      ||
+      `<tr>
+        <td colspan="6" class="empty">
+          कोई लोन नहीं
+        </td>
+      </tr>`;
+
+
+    $("rl").innerHTML =
+      loans
+      .filter(x => Number(x.principal || 0) > 0)
+      .map(x =>
+        `<option value="${x.id}">
+          ${x.family} — ${money(x.principal)}
+        </option>`
+      )
+      .join("")
+      ||
+      `<option value="">
+        कोई Active Loan नहीं
+      </option>`;
+
+
+    const payments =
+      await api("/api/payments");
+
+
+    $("pt").innerHTML =
+      payments.map(x => `
+
+        <tr>
+
+          <td>${x.date}</td>
+
+          <td>${x.family}</td>
+
+          <td>
+            ${money(x.amount)}
+          </td>
+
+          <td>
+            ${money(x.interest)}
+          </td>
+
+          <td>
+            ${money(x.principal)}
+          </td>
+
+        </tr>
+
+      `).join("")
+      ||
+      `<tr>
+        <td colspan="5" class="empty">
+          कोई भुगतान नहीं
+        </td>
+      </tr>`;
+
+  }catch(e){
+
+    console.error(e);
+
+    alert("Data load करने में समस्या: " + e.message);
+
+  }
+
+}
+
+
+/* ================= SAVING ================= */
+
+async function saveSaving(){
+
+  try{
+
+    const amount =
+      Number($("sa").value);
+
+    if(!amount || amount <= 0){
+
+      alert("सही बचत राशि डालें");
+      return;
+
+    }
+
+    await api("/api/savings",{
+
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+
+        family_id:Number($("sf").value),
+
+        month:$("sm").value,
+
+        amount:amount,
+
+        date:$("sd").value
+
+      })
+
+    });
+
+    alert("बचत दर्ज हो गई");
+
+    await refresh();
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+}
+
+
+/* ================= EDIT SAVING ================= */
+
+async function editSaving(id){
+
+  try{
+
+    const list =
+      await api("/api/savings");
+
+    const row =
+      list.find(x => Number(x.id) === Number(id));
+
+    if(!row){
+
+      alert("बचत एंट्री नहीं मिली");
+      return;
+
+    }
+
+    let amount =
+      prompt(
+        "बचत राशि बदलें",
+        row.amount
+      );
+
+    if(amount === null) return;
+
+    amount = Number(amount);
+
+    if(!amount || amount <= 0){
+
+      alert("सही राशि डालें");
+      return;
+
+    }
+
+    const date =
+      prompt(
+        "तारीख बदलें",
+        row.date
+      );
+
+    if(date === null) return;
+
+
+    await api("/api/savings/" + id,{
+
+      method:"PUT",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+
+        family_id:row.family_id,
+
+        month:row.month,
+
+        amount:amount,
+
+        date:date
+
+      })
+
+    });
+
+    alert("बचत एंट्री अपडेट हो गई");
+
+    await refresh();
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+}
+
+
+/* ================= DELETE SAVING ================= */
+
+async function deleteSaving(id){
+
+  if(!confirm(
+    "क्या आप यह बचत एंट्री delete करना चाहते हैं?"
+  )){
+    return;
+  }
+
+  try{
+
+    await api("/api/savings/" + id,{
+      method:"DELETE"
+    });
+
+    alert("बचत एंट्री delete हो गई");
+
+    await refresh();
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+}
+
+
+/* ================= LOAN ================= */
+
+async function giveLoan(){
+
+  try{
+
+    const amount =
+      Number($("la").value);
+
+    const months =
+      Number($("lm").value);
+
+    if(!amount || amount <= 0){
+
+      alert("सही लोन राशि डालें");
+      return;
+
+    }
+
+    if(!months || months <= 0){
+
+      alert("सही अवधि डालें");
+      return;
+
+    }
+
+    await api("/api/loans",{
+
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+
+        family_id:Number($("lf").value),
+
+        amount:amount,
+
+        months:months,
+
+        date:$("ld").value
+
+      })
+
+    });
+
+    alert("लोन दर्ज हो गया");
+
+    await refresh();
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+}
+
+
+/* ================= REPAYMENT ================= */
+
+async function repay(){
+
+  try{
+
+    const loanId =
+      Number($("rl").value);
+
+    const amount =
+      Number($("ra").value);
+
+    if(!loanId){
+
+      alert("Active Loan चुनें");
+      return;
+
+    }
+
+    if(!amount || amount <= 0){
+
+      alert("सही भुगतान राशि डालें");
+      return;
+
+    }
+
+    const x =
+      await api("/api/payments",{
+
+        method:"POST",
+
+        headers:{
+          "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+          loan_id:loanId,
+
+          amount:amount,
+
+          date:$("rd").value
+
+        })
+
+      });
+
+
+    alert(
+      "भुगतान दर्ज। ब्याज " +
+      money(x.interest) +
+      " | मूलधन " +
+      money(x.principal)
     );
 
-    let family = fam.find(
-      f => String(f.id) === String($("pf").value)
-    );
+    await refresh();
 
-    let s = x.savings.reduce(
-      (a,r) => a + Number(r.amount || 0), 0
-    );
+  }catch(e){
 
-    let l = x.loans.reduce(
-      (a,r) => a + Number(r.principal || 0), 0
-    );
+    alert(e.message);
+
+  }
+
+}
+
+
+/* ================= INTEREST ================= */
+
+async function dist(){
+
+  try{
+
+    const totalInterest =
+      Number($("di").value);
+
+    if(!totalInterest || totalInterest <= 0){
+
+      alert("सही ब्याज राशि डालें");
+      return;
+
+    }
+
+    const x =
+      await api("/api/interest-distribution",{
+
+        method:"POST",
+
+        headers:{
+          "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+          total_interest:totalInterest,
+
+          date:$("dd").value
+
+        })
+
+      });
+
+
+    $("dr").innerHTML = `
+
+      <div class="notice">
+
+        कुल बचत
+        ${money(x.total_savings)}
+        के आधार पर वितरण
+
+      </div>
+
+      <div class="table">
+
+        <table>
+
+          <tr>
+            <th>परिवार</th>
+            <th>बचत</th>
+            <th>हिस्सा</th>
+            <th>ब्याज</th>
+          </tr>
+
+          ${(x.result || []).map(r => `
+
+            <tr>
+
+              <td>${r.name}</td>
+
+              <td>
+                ${money(r.savings)}
+              </td>
+
+              <td>
+                ${(Number(r.share || 0) * 100).toFixed(2)}%
+              </td>
+
+              <td class="green">
+                ${money(r.interest)}
+              </td>
+
+            </tr>
+
+          `).join("")}
+
+        </table>
+
+      </div>
+
+    `;
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+}
+
+
+/* ================= PASSBOOK ================= */
+
+async function passbook(){
+
+  const familyId =
+    $("pf").value;
+
+  if(!familyId) return;
+
+  try{
+
+    const x =
+      await api(
+        "/api/family/" +
+        familyId +
+        "/passbook"
+      );
+
+
+    const family =
+      fam.find(
+        f =>
+          String(f.id) ===
+          String(familyId)
+      );
+
+
+    const savingsTotal =
+      (x.savings || []).reduce(
+        (a,r) =>
+          a + Number(r.amount || 0),
+        0
+      );
+
+
+    const loanTotal =
+      (x.loans || []).reduce(
+        (a,r) =>
+          a + Number(r.principal || 0),
+        0
+      );
+
 
     $("pr").innerHTML = `
 
@@ -1613,8 +2512,22 @@ async function passbook(){
           padding:15px;
           border-bottom:2px solid #1976d2;
         ">
-          <h2 style="margin:0;color:#083b78;">
-            🏦 Family Saving Group
+
+          <img
+            src="/static/logo.png"
+            style="
+              width:85px;
+              height:85px;
+              object-fit:contain;
+            "
+            onerror="this.style.display='none'"
+          >
+
+          <h2 style="
+            margin:0;
+            color:#083b78;
+          ">
+            Family Saving Group
           </h2>
 
           <div style="margin-top:5px;">
@@ -1626,8 +2539,10 @@ async function passbook(){
           </h3>
 
           <div>
-            वित्तीय वर्ष: <b>2026–27</b>
+            वित्तीय वर्ष:
+            <b>2026–27</b>
           </div>
+
         </div>
 
 
@@ -1639,31 +2554,54 @@ async function passbook(){
         ">
 
           <div class="card">
-            <div class="label">परिवार</div>
-            <div class="value">
-              ${family ? family.name : "—"}
+
+            <div class="label">
+              परिवार
             </div>
+
+            <div class="value">
+              ${family?.name || "—"}
+            </div>
+
           </div>
 
-          <div class="card">
-            <div class="label">मोबाइल</div>
-            <div class="value">
-              ${family ? (family.mobile || "—") : "—"}
-            </div>
-          </div>
 
           <div class="card">
-            <div class="label">कुल बचत</div>
+
+            <div class="label">
+              मोबाइल
+            </div>
+
+            <div class="value">
+              ${family?.mobile || "—"}
+            </div>
+
+          </div>
+
+
+          <div class="card">
+
+            <div class="label">
+              कुल बचत
+            </div>
+
             <div class="value green">
-              ${money(s)}
+              ${money(savingsTotal)}
             </div>
+
           </div>
 
+
           <div class="card">
-            <div class="label">लोन बाकी</div>
-            <div class="value red">
-              ${money(l)}
+
+            <div class="label">
+              लोन बाकी
             </div>
+
+            <div class="value red">
+              ${money(loanTotal)}
+            </div>
+
           </div>
 
         </div>
@@ -1680,14 +2618,20 @@ async function passbook(){
             <table>
 
               <tr>
+
                 <th>तारीख</th>
+
                 <th>विवरण</th>
+
                 <th>राशि</th>
+
               </tr>
 
-              ${x.savings.map(r => `
+
+              ${(x.savings || []).map(r => `
 
                 <tr>
+
                   <td>${r.date}</td>
 
                   <td>
@@ -1697,14 +2641,16 @@ async function passbook(){
                   <td class="green">
                     ${money(r.amount)}
                   </td>
+
                 </tr>
 
               `).join("")}
 
 
-              ${x.payments.map(r => `
+              ${(x.payments || []).map(r => `
 
                 <tr>
+
                   <td>${r.date}</td>
 
                   <td>
@@ -1714,6 +2660,7 @@ async function passbook(){
                   <td>
                     ${money(r.amount)}
                   </td>
+
                 </tr>
 
               `).join("")}
@@ -1721,6 +2668,7 @@ async function passbook(){
             </table>
 
           </div>
+
         </div>
 
 
@@ -1744,7 +2692,10 @@ async function passbook(){
       </div>
 
 
-      <div style="margin-top:15px;text-align:right;">
+      <div style="
+        margin-top:15px;
+        text-align:right;
+      ">
 
         <button
           class="btn"
@@ -1765,16 +2716,36 @@ async function passbook(){
 }
 
 
+/* ================= PRINT PASSBOOK ================= */
+
 function printPassbook(){
 
-  let content = $("printPassbook").innerHTML;
+  const box =
+    $("printPassbook");
 
-  let w = window.open("", "_blank");
+  if(!box){
+
+    alert("Passbook तैयार नहीं है");
+    return;
+
+  }
+
+  const content =
+    box.innerHTML;
+
+  const w =
+    window.open("", "_blank");
 
   if(!w){
-    alert("Print window नहीं खुली। Browser में popup allow करें।");
+
+    alert(
+      "Print window नहीं खुली। Browser में popup allow करें।"
+    );
+
     return;
+
   }
+
 
   w.document.write(`
 
@@ -1786,7 +2757,9 @@ function printPassbook(){
 
       <meta charset="utf-8">
 
-      <title>Family Saving Group - Passbook</title>
+      <title>
+        Family Saving Group - Passbook
+      </title>
 
       <style>
 
@@ -1795,7 +2768,10 @@ function printPassbook(){
         }
 
         body{
-          font-family:Arial,"Noto Sans Devanagari",sans-serif;
+          font-family:
+            Arial,
+            "Noto Sans Devanagari",
+            sans-serif;
           color:#16233b;
           margin:25px;
         }
@@ -1849,9 +2825,11 @@ function printPassbook(){
         }
 
         @media print{
+
           body{
             margin:12mm;
           }
+
         }
 
       </style>
@@ -1863,9 +2841,11 @@ function printPassbook(){
       ${content}
 
       <script>
+
         window.onload=function(){
           window.print();
         };
+
       <\/script>
 
     </body>
@@ -1878,40 +2858,77 @@ function printPassbook(){
 
 }
 
+
+/* ================= EDIT FAMILY ================= */
+
 async function editFamily(id){
 
-  const family = fam.find(f => f.id === id);
+  const family =
+    fam.find(
+      f => Number(f.id) === Number(id)
+    );
 
   if(!family){
+
     alert("परिवार नहीं मिला");
     return;
+
   }
 
-  const name = prompt("परिवार का नाम बदलें", family.name);
+
+  const name =
+    prompt(
+      "परिवार का नाम बदलें",
+      family.name
+    );
 
   if(name === null) return;
 
-  const mobile = prompt(
-    "मोबाइल नंबर बदलें",
-    family.mobile || ""
-  );
+
+  const mobile =
+    prompt(
+      "मोबाइल नंबर बदलें",
+      family.mobile || ""
+    );
 
   if(mobile === null) return;
 
+
+  if(!name.trim()){
+
+    alert("परिवार का नाम जरूरी है");
+    return;
+
+  }
+
+
   try{
 
-    await api("/api/families/"+id,{
-      method:"PUT",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({
-        name:name.trim(),
-        mobile:mobile.trim()
-      })
-    });
+    await api(
+      "/api/families/" + id,
+      {
 
-    alert("परिवार की जानकारी अपडेट हो गई");
+        method:"PUT",
+
+        headers:{
+          "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+          name:name.trim(),
+
+          mobile:mobile.trim()
+
+        })
+
+      }
+    );
+
+
+    alert(
+      "परिवार की जानकारी अपडेट हो गई"
+    );
 
     await refresh();
 
@@ -1920,29 +2937,47 @@ async function editFamily(id){
     alert(e.message);
 
   }
+
 }
 
 
+/* ================= DELETE FAMILY ================= */
+
 async function deleteFamily(id){
 
-  const family = fam.find(f => f.id === id);
+  const family =
+    fam.find(
+      f => Number(f.id) === Number(id)
+    );
 
   if(!family){
+
     alert("परिवार नहीं मिला");
     return;
+
   }
 
+
   if(!confirm(
-    "क्या आप '"+family.name+"' को Delete करना चाहते हैं?"
+    "क्या आप '" +
+    family.name +
+    "' को Delete करना चाहते हैं?"
   )){
+
     return;
+
   }
+
 
   try{
 
-    await api("/api/families/"+id,{
-      method:"DELETE"
-    });
+    await api(
+      "/api/families/" + id,
+      {
+        method:"DELETE"
+      }
+    );
+
 
     alert("परिवार Delete हो गया");
 
@@ -1953,221 +2988,420 @@ async function deleteFamily(id){
     alert(e.message);
 
   }
-}
-/* ADD FAMILY */
-async function editLoan(id){
-  const loan = await api("/api/loans").then(rows => rows.find(x => x.id === id));
-  if(!loan) return alert("लोन नहीं मिला");
 
-  const amount = prompt("लोन राशि", loan.original);
-  if(amount === null) return;
-
-  const months = prompt("अवधि माह", loan.months);
-  if(months === null) return;
-
-  try{
-    await api("/api/loans/"+id,{
-      method:"PUT",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        family_id: loan.family_id,
-        amount: Number(amount),
-        rate: loan.rate || 2,
-        months: Number(months),
-        date: loan.date
-      })
-    });
-
-    alert("लोन अपडेट हो गया");
-    await refresh();
-
-  }catch(e){
-    alert(e.message);
-  }
 }
 
-async function deleteLoan(id){
-  if(!confirm("क्या आप यह लोन delete करना चाहते हैं?")) return;
 
-  try{
-    await api("/api/loans/"+id,{
-      method:"DELETE"
-    });
-
-    alert("लोन delete हो गया");
-    await refresh();
-
-  }catch(e){
-    alert(e.message);
-  }
-}
+/* ================= ADD FAMILY ================= */
 
 async function addFamily(){
 
-let n=prompt("परिवार का नाम");
+  const name =
+    prompt("परिवार का नाम");
 
-if(!n)return;
-
-let m=prompt("मोबाइल (वैकल्पिक)")||"";
-
-try{
-
-await api("/api/families",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-name:n,
-mobile:m
-})
-});
-
-await refresh();
-
-}catch(e){
-
-alert(e.message);
-
-}
-
-}
+  if(!name || !name.trim()) return;
 
 
-/* EXPORT */
+  const mobile =
+    prompt(
+      "मोबाइल (वैकल्पिक)"
+    ) || "";
 
-async function exportData(k){
 
-try{
+  try{
 
-let x=await api("/api/export/"+k);
+    await api(
+      "/api/families",
+      {
 
-let a=document.createElement("a");
+        method:"POST",
 
-a.href=URL.createObjectURL(
-new Blob(
-[JSON.stringify(x,null,2)],
-{type:"application/json"}
-)
-);
+        headers:{
+          "Content-Type":"application/json"
+        },
 
-a.download=k+".json";
+        body:JSON.stringify({
 
-a.click();
+          name:name.trim(),
 
-}catch(e){
+          mobile:mobile.trim()
 
-alert(e.message);
+        })
 
-}
+      }
+    );
+
+
+    alert("परिवार जोड़ दिया गया");
+
+    await refresh();
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
 
 }
 
 
-/* AUTO LOGIN CHECK */
+/* ================= EDIT MEMBER ================= */
 
-api("/api/me")
-.then(x=>{
+async function editMember(id){
 
-if(x.admin){
+  const member =
+    fam.find(
+      f => Number(f.id) === Number(id)
+    );
 
-$("login").classList.add("hidden");
+  if(!member){
 
-$("app").classList.remove("hidden");
+    alert("Member नहीं मिला");
+    return;
 
-init();
+  }
+
+
+  const name =
+    prompt(
+      "Member का नाम:",
+      member.name
+    );
+
+  if(name === null) return;
+
+
+  const cleanName =
+    name.trim();
+
+  if(!cleanName){
+
+    alert("नाम जरूरी है");
+    return;
+
+  }
+
+
+  const mobile =
+    prompt(
+      "Mobile Number:",
+      member.mobile || ""
+    );
+
+  if(mobile === null) return;
+
+
+  const pin =
+    prompt(
+      "Member Login PIN:",
+      member.pin || ""
+    );
+
+  if(pin === null) return;
+
+
+  const cleanPin =
+    pin.trim();
+
+  if(cleanPin.length < 4){
+
+    alert(
+      "PIN कम से कम 4 अंक का होना चाहिए"
+    );
+
+    return;
+
+  }
+
+
+  try{
+
+    await api(
+      "/api/families/" + id,
+      {
+
+        method:"PUT",
+
+        headers:{
+          "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+          name:cleanName,
+
+          mobile:mobile.trim(),
+
+          pin:cleanPin
+
+        })
+
+      }
+    );
+
+
+    alert(
+      "Member details सफलतापूर्वक अपडेट हो गईं।"
+    );
+
+    await refresh();
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
 
 }
 
-})
-.catch(()=>{});
 
-    // तुम्हारे बाकी सारे JavaScript functions
-    // login()
-    // logout()
-    // refresh()
-    // saveSaving()
-    // editSaving()
-    // giveLoan()
-    // repay()
-    // dist()
-    // passbook()
-    // आदि...
+/* ================= EDIT LOAN ================= */
 
+async function editLoan(id){
 
-    async function editMember(id){
+  try{
 
-        let member = fam.find(
-            f => Number(f.id) === Number(id)
-        );
+    const rows =
+      await api("/api/loans");
 
-        if(!member){
-            alert("Member नहीं मिला");
-            return;
-        }
+    const loan =
+      rows.find(
+        x => Number(x.id) === Number(id)
+      );
 
-        let name = prompt(
-            "Member का नाम:",
-            member.name
-        );
+    if(!loan){
 
-        if(name === null) return;
+      alert("लोन नहीं मिला");
+      return;
 
-        name = name.trim();
-
-        if(!name){
-            alert("नाम जरूरी है");
-            return;
-        }
-
-        let mobile = prompt(
-            "Mobile Number:",
-            member.mobile || ""
-        );
-
-        if(mobile === null) return;
-
-        let pin = prompt(
-            "Member Login PIN:",
-            member.pin || "1234"
-        );
-
-        if(pin === null) return;
-
-        pin = pin.trim();
-
-        if(pin.length < 4){
-            alert("PIN कम से कम 4 अंक का होना चाहिए");
-            return;
-        }
-
-        try{
-
-            await api("/api/families/" + id, {
-
-                method:"PUT",
-
-                headers:{
-                    "Content-Type":"application/json"
-                },
-
-                body:JSON.stringify({
-                    name:name,
-                    mobile:mobile,
-                    pin:pin
-                })
-
-            });
-
-            alert("Member details सफलतापूर्वक अपडेट हो गईं।");
-
-            await refresh();
-
-        }catch(e){
-
-            alert(e.message);
-
-        }
     }
 
+
+    const amount =
+      prompt(
+        "लोन राशि",
+        loan.original
+      );
+
+    if(amount === null) return;
+
+
+    const months =
+      prompt(
+        "अवधि माह",
+        loan.months
+      );
+
+    if(months === null) return;
+
+
+    const amountNumber =
+      Number(amount);
+
+    const monthsNumber =
+      Number(months);
+
+
+    if(
+      !amountNumber ||
+      amountNumber <= 0 ||
+      !monthsNumber ||
+      monthsNumber <= 0
+    ){
+
+      alert("सही जानकारी डालें");
+      return;
+
+    }
+
+
+    await api(
+      "/api/loans/" + id,
+      {
+
+        method:"PUT",
+
+        headers:{
+          "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+          family_id:loan.family_id,
+
+          amount:amountNumber,
+
+          rate:loan.rate || 2,
+
+          months:monthsNumber,
+
+          date:loan.date
+
+        })
+
+      }
+    );
+
+
+    alert("लोन अपडेट हो गया");
+
+    await refresh();
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+}
+
+
+/* ================= DELETE LOAN ================= */
+
+async function deleteLoan(id){
+
+  if(!confirm(
+    "क्या आप यह लोन delete करना चाहते हैं?"
+  )){
+
+    return;
+
+  }
+
+
+  try{
+
+    await api(
+      "/api/loans/" + id,
+      {
+        method:"DELETE"
+      }
+    );
+
+
+    alert("लोन delete हो गया");
+
+    await refresh();
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+}
+
+
+/* ================= EXPORT ================= */
+
+async function exportData(key){
+
+  try{
+
+    const data =
+      await api(
+        "/api/export/" + key
+      );
+
+
+    const blob =
+      new Blob(
+        [JSON.stringify(data,null,2)],
+        {
+          type:"application/json"
+        }
+      );
+
+
+    const url =
+      URL.createObjectURL(blob);
+
+
+    const a =
+      document.createElement("a");
+
+    a.href = url;
+
+    a.download =
+      key + ".json";
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    a.remove();
+
+    URL.revokeObjectURL(url);
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+}
+
+
+/* ================= AUTO LOGIN ================= */
+
+async function checkAutoLogin(){
+
+  try{
+
+    const user =
+      await api("/api/me");
+
+
+    if(user && user.admin){
+
+      $("login").classList.add("hidden");
+
+      $("app").classList.remove("hidden");
+
+      await init();
+
+      return;
+
+    }
+
+
+    if(
+      user &&
+      user.type === "member" &&
+      user.family_id
+    ){
+
+      $("login").classList.add("hidden");
+
+      $("app").classList.remove("hidden");
+
+      await initMember(user);
+
+    }
+
+  }catch(e){
+
+    /* Login नहीं है — login screen दिखेगी */
+
+  }
+
+}
+
+
+/* ================= START ================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function(){
+
+    loginType("admin");
+
+    checkAutoLogin();
+
+  }
+);
+
 </script>
+
 </body>
 </html>
