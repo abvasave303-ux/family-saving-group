@@ -591,12 +591,23 @@ th{
     Dashboard
   </div>
 
-  <div>
-    👤 Admin &nbsp; | &nbsp; 2026-27
+  <div style="display:flex;align-items:center;gap:12px;">
+
+    <span id="userInfo">
+      👤 Admin &nbsp; | &nbsp; 2026-27
+    </span>
+
+    <button
+      id="memberLogoutBtn"
+      class="btn secondary"
+      style="display:none;"
+      onclick="logout()">
+      🚪 Logout
+    </button>
+
   </div>
 
 </header>
-
 
 <div class="content">
 
@@ -1353,6 +1364,12 @@ async function initMember(user){
 
   $("title").textContent =
     "📒 " + user.name + " - Passbook";
+
+  $("userInfo").textContent =
+    "👤 " + user.name;
+
+  $("memberLogoutBtn").style.display =
+    "inline-block";
 
   document.querySelectorAll("main section")
     .forEach(x => x.classList.add("hidden"));
