@@ -1512,15 +1512,22 @@ async function loadMemberPassbook(fid){
       </div>
 
 
-      <div class="actions" style="margin-top:15px">
+    <div class="actions" style="margin-top:15px; display:flex; gap:10px; justify-content:flex-end;">
 
-        <button
-          class="btn"
-          onclick="printMemberPassbook()">
-          🖨️ Print / PDF
-        </button>
+  <button
+    class="btn"
+    onclick="printMemberPassbook()">
+    🖨️ Print / PDF
+  </button>
 
-      </div>
+  <button
+    class="btn"
+    onclick="logout()"
+    style="background:#d32f2f;">
+    🚪 Logout
+  </button>
+
+</div>
 
     `;
 
