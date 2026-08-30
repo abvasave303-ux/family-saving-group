@@ -624,44 +624,43 @@ def member_list():
 # ==================================================
 # MEMBER PASSBOOK
 # ==================================================
-
 @app.get("/api/family/<int:fid>/passbook")
 def passbook(fid):
 
     # ADMIN can see anyone
-
     if session.get("admin"):
-
         allowed = True
 
     # MEMBER can ONLY see own data
-
     elif session.get("family_id") == fid:
-
         allowed = True
 
     else:
-
         return jsonify(
             error="आपको इस परिवार का data देखने की अनुमति नहीं है"
         ), 403
 
     c = conn()
-    
-group_savings = c.execute(
-    "SELECT COALESCE(SUM(amount),0) x FROM savings"
-).fetchone()["x"]
 
-group_loan = c.execute(
-    "SELECT COALESCE(SUM(principal),0) x FROM loans"
-).fetchone()["x"]
+    group_savings = c.execute(
+        "SELECT COALESCE(SUM(amount),0) x FROM savings"
+    ).fetchone()["x"]
 
-group_interest = c.execute(
-    "SELECT COALESCE(SUM(interest),0) x FROM payments"
-).fetchone()["x"]
+    group_loan = c.execute(
+        "SELECT COALESCE(SUM(principal),0) x FROM loans"
+    ).fetchone()["x"]
 
-group_available = group_savings + group_interest - group_loan
-f = c.execute(
+    group_interest = c.execute(
+        "SELECT COALESCE(SUM(interest),0) x FROM payments"
+    ).fetchone()["x"]
+
+    group_available = (
+        group_savings
+        + group_interest
+        - group_loan
+    )
+
+    f = c.execute(
         """
         SELECT *
         FROM families
@@ -671,7 +670,6 @@ f = c.execute(
     ).fetchone()
 
     if not f:
-
         c.close()
 
         return jsonify(
@@ -710,19 +708,18 @@ f = c.execute(
 
     c.close()
 
-  return jsonify({
-    "family": dict(f),
+    return jsonify({
+        "family": dict(f),
 
-    "group_savings": group_savings,
-    "group_loan": group_loan,
-    "group_interest": group_interest,
-    "group_available": group_available,
+        "group_savings": group_savings,
+        "group_loan": group_loan,
+        "group_interest": group_interest,
+        "group_available": group_available,
 
-    "savings": [dict(x) for x in s],
-    "payments": [dict(x) for x in p],
-    "loans": [dict(x) for x in l]
-}) 
-
+        "savings": [dict(x) for x in s],
+        "payments": [dict(x) for x in p],
+        "loans": [dict(x) for x in l]
+    })
 
 # ==================================================
 # SAVINGS - GET
