@@ -3304,32 +3304,36 @@ async function exportData(key){
 
   try{
 
-    const data =
-      await api(
-        "/api/export/" + key
-      );
+    let endpoint = "";
 
+    if(key === "families"){
+      endpoint = "/api/families";
+    }
+    else if(key === "savings"){
+      endpoint = "/api/savings";
+    }
+    else if(key === "loans"){
+      endpoint = "/api/loans";
+    }
+    else{
+      throw new Error("गलत रिपोर्ट");
+    }
 
-    const blob =
-      new Blob(
-        [JSON.stringify(data,null,2)],
-        {
-          type:"application/json"
-        }
-      );
+    const data = await api(endpoint);
 
+    const blob = new Blob(
+      [JSON.stringify(data, null, 2)],
+      {
+        type: "application/json"
+      }
+    );
 
-    const url =
-      URL.createObjectURL(blob);
+    const url = URL.createObjectURL(blob);
 
-
-    const a =
-      document.createElement("a");
+    const a = document.createElement("a");
 
     a.href = url;
-
-    a.download =
-      key + ".json";
+    a.download = key + ".json";
 
     document.body.appendChild(a);
 
@@ -3339,7 +3343,8 @@ async function exportData(key){
 
     URL.revokeObjectURL(url);
 
-  }catch(e){
+  }
+  catch(e){
 
     alert(e.message);
 
