@@ -1,12 +1,17 @@
 from flask import Flask, request, jsonify, send_from_directory, session
-import sqlite3
 import os
 import datetime
+import psycopg2
+from psycopg2.extras import RealDictCursor
+
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-DB = os.path.join(BASE, "family_saving.db")
+
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
 
 app = Flask(__name__, static_folder="static")
+
 app.secret_key = os.environ.get(
     "SECRET_KEY",
     "change-this-secret-in-production"
@@ -17,10 +22,42 @@ app.secret_key = os.environ.get(
 # DATABASE CONNECTION
 # ==================================================
 
+class DBConnection:
+
+    def __init__(self):
+        self.connection = psycopg2.connect(
+            DATABASE_URL,
+            cursor_factory=RealDictCursor
+        )
+
+    def execute(self, sql, params=None):
+        # पुराने SQLite ? placeholders को PostgreSQL %s में बदलें
+        sql = sql.replace("?", "%s")
+
+        cursor = self.connection.cursor()
+        cursor.execute(sql, params or ())
+        return cursor
+
+    def executescript(self, sql):
+        # PostgreSQL में एक-एक statement चलाएँ
+        statements = [
+            x.strip()
+            for x in sql.split(";")
+            if x.strip()
+        ]
+
+        for statement in statements:
+            self.connection.cursor().execute(statement)
+
+    def commit(self):
+        self.connection.commit()
+
+    def close(self):
+        self.connection.close()
+
+
 def conn():
-    c = sqlite3.connect(DB)
-    c.row_factory = sqlite3.Row
-    return c
+    return DBConnection()
 
 
 # ==================================================
@@ -28,11 +65,12 @@ def conn():
 # ==================================================
 
 def init_db():
+
     c = conn()
 
     c.executescript("""
     CREATE TABLE IF NOT EXISTS families(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         name TEXT NOT NULL,
         mobile TEXT DEFAULT '',
         pin TEXT DEFAULT '1234',
@@ -40,7 +78,7 @@ def init_db():
     );
 
     CREATE TABLE IF NOT EXISTS savings(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         family_id INTEGER NOT NULL,
         month TEXT NOT NULL,
         amount REAL NOT NULL,
@@ -49,7 +87,7 @@ def init_db():
     );
 
     CREATE TABLE IF NOT EXISTS loans(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         family_id INTEGER NOT NULL,
         original REAL NOT NULL,
         principal REAL NOT NULL,
@@ -60,7 +98,7 @@ def init_db():
     );
 
     CREATE TABLE IF NOT EXISTS payments(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         loan_id INTEGER NOT NULL,
         family_id INTEGER NOT NULL,
         amount REAL NOT NULL,
@@ -72,34 +110,38 @@ def init_db():
     );
 
     CREATE TABLE IF NOT EXISTS interest_distributions(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         total_interest REAL NOT NULL,
         date TEXT NOT NULL
     );
     """)
 
     n = c.execute(
-        "SELECT COUNT(*) n FROM families"
+        "SELECT COUNT(*) AS n FROM families"
     ).fetchone()["n"]
 
     if n == 0:
+
         today = datetime.date.today().isoformat()
 
         for i in range(1, 24):
-            c.execute("""
+
+            c.execute(
+                """
                 INSERT INTO families
                 (name, mobile, pin, created_at)
                 VALUES (?, ?, ?, ?)
-            """, (
-                f"परिवार {i}",
-                "",
-                "1234",
-                today
-            ))
+                """,
+                (
+                    f"परिवार {i}",
+                    "",
+                    "1234",
+                    today
+                )
+            )
 
     c.commit()
     c.close()
-
 
 # ==================================================
 # HOME PAGE
