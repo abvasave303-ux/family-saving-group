@@ -1135,7 +1135,12 @@ th{
         onclick="exportData('loans')">
         लोन
       </button>
-
+<button
+  class="btn secondary"
+  onclick="exportData('payments')">
+  भुगतान
+</button>
+      
     </div>
 
   </div>
@@ -3469,11 +3474,14 @@ async function exportData(key){
       endpoint = "/api/savings";
     }
     else if(key === "loans"){
-      endpoint = "/api/loans";
-    }
-    else{
-      throw new Error("गलत रिपोर्ट");
-    }
+  endpoint = "/api/loans";
+}
+else if(key === "payments"){
+  endpoint = "/api/payments";
+}
+else{
+  throw new Error("गलत रिपोर्ट");
+}
 
     const data = await api(endpoint);
 
