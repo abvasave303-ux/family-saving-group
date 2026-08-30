@@ -239,27 +239,26 @@ def me():
 @app.before_request
 def protect_api():
 
-    path = request.path.rstrip("/")
-
-    public = (
+    # ये API बिना login के भी चलेंगी
+    public = {
         "/api/login",
         "/api/me",
         "/api/member-list"
-    )
+    }
 
-    if (
-        path.startswith("/api/")
-        and path not in public
-    ):
+    # Public API को security check से बाहर रखें
+    if request.path in public:
+        return None
 
-        if (
-            not session.get("admin")
-            and not session.get("family_id")
-        ):
+    # बाकी सभी API के लिए login जरूरी है
+    if request.path.startswith("/api/"):
 
+        if not session.get("admin") and not session.get("family_id"):
             return jsonify(
                 error="Login required"
             ), 401
+
+    return None
 
 # ==================================================
 # ADMIN REQUIRED
