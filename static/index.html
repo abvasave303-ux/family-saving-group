@@ -1402,6 +1402,18 @@ async function loadMemberPassbook(fid){
       0
     );
 
+    const groupSavings =
+      Number(x.group_savings || 0);
+
+    const groupLoan =
+      Number(x.group_loan || 0);
+
+    const groupInterest =
+      Number(x.group_interest || 0);
+
+    const groupAvailable =
+      Number(x.group_available || 0);
+
     $("pr").innerHTML = `
 
       <div id="memberPrintPassbook">
@@ -1436,58 +1448,173 @@ async function loadMemberPassbook(fid){
         </div>
 
 
+        <!-- MEMBER INFORMATION -->
+
         <div class="cards" style="margin-top:15px">
 
           <div class="card">
-            <div class="label">परिवार</div>
+
+            <div class="label">
+              परिवार
+            </div>
+
             <div class="value">
               ${family?.name || "—"}
             </div>
+
           </div>
 
+
           <div class="card">
-            <div class="label">मोबाइल</div>
+
+            <div class="label">
+              मोबाइल
+            </div>
+
             <div class="value">
               ${family?.mobile || "—"}
             </div>
+
           </div>
 
+
           <div class="card">
-            <div class="label">कुल बचत</div>
+
+            <div class="label">
+              मेरी कुल बचत
+            </div>
+
             <div class="value green">
               ${money(savings)}
             </div>
+
           </div>
 
+
           <div class="card">
-            <div class="label">लोन बाकी</div>
+
+            <div class="label">
+              मेरा लोन बाकी
+            </div>
+
             <div class="value red">
               ${money(loan)}
             </div>
+
           </div>
 
         </div>
 
 
+        <!-- GROUP SUMMARY -->
+
         <div class="panel" style="margin-top:15px">
 
-          <h3>बचत / भुगतान विवरण</h3>
+          <h3>
+            🏦 Family Saving Group की कुल स्थिति
+          </h3>
+
+          <div class="cards">
+
+            <div class="card">
+
+              <div class="label">
+                👨‍👩‍👧‍👦 कुल परिवार
+              </div>
+
+              <div class="value">
+                23
+              </div>
+
+            </div>
+
+
+            <div class="card">
+
+              <div class="label">
+                💰 समूह की कुल बचत
+              </div>
+
+              <div class="value green">
+                ${money(groupSavings)}
+              </div>
+
+            </div>
+
+
+            <div class="card">
+
+              <div class="label">
+                🏦 कुल Loan बाकी
+              </div>
+
+              <div class="value red">
+                ${money(groupLoan)}
+              </div>
+
+            </div>
+
+
+            <div class="card">
+
+              <div class="label">
+                💵 प्राप्त ब्याज
+              </div>
+
+              <div class="value">
+                ${money(groupInterest)}
+              </div>
+
+            </div>
+
+
+            <div class="card">
+
+              <div class="label">
+                💳 उपलब्ध राशि
+              </div>
+
+              <div class="value">
+                ${money(groupAvailable)}
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- MEMBER TRANSACTION HISTORY -->
+
+        <div class="panel" style="margin-top:15px">
+
+          <h3>
+            बचत / भुगतान विवरण
+          </h3>
 
           <div class="table">
 
             <table>
 
               <tr>
+
                 <th>तारीख</th>
+
                 <th>विवरण</th>
+
                 <th>राशि</th>
+
               </tr>
+
 
               ${(x.savings || []).map(r => `
 
                 <tr>
 
-                  <td>${r.date}</td>
+                  <td>
+                    ${r.date}
+                  </td>
 
                   <td>
                     मासिक बचत (${r.month})
@@ -1506,7 +1633,9 @@ async function loadMemberPassbook(fid){
 
                 <tr>
 
-                  <td>${r.date}</td>
+                  <td>
+                    ${r.date}
+                  </td>
 
                   <td>
                     Loan Payment
@@ -1529,22 +1658,33 @@ async function loadMemberPassbook(fid){
       </div>
 
 
-    <div class="actions" style="margin-top:15px; display:flex; gap:10px; justify-content:flex-end;">
+      <div
+        class="actions"
+        style="
+          margin-top:15px;
+          display:flex;
+          gap:10px;
+          justify-content:flex-end;
+        "
+      >
 
-  <button
-    class="btn"
-    onclick="printMemberPassbook()">
-    🖨️ Print / PDF
-  </button>
+        <button
+          class="btn"
+          onclick="printMemberPassbook()"
+        >
+          🖨️ Print / PDF
+        </button>
 
-  <button
-    class="btn"
-    onclick="logout()"
-    style="background:#d32f2f;">
-    🚪 Logout
-  </button>
 
-</div>
+        <button
+          class="btn"
+          onclick="logout()"
+          style="background:#d32f2f;"
+        >
+          🚪 Logout
+        </button>
+
+      </div>
 
     `;
 
@@ -1553,9 +1693,8 @@ async function loadMemberPassbook(fid){
     alert(e.message);
 
   }
+
 }
-
-
 /* ================= MEMBER PRINT ================= */
 
 function printMemberPassbook(){
