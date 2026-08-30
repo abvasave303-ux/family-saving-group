@@ -647,6 +647,20 @@ def passbook(fid):
         ), 403
 
     c = conn()
+    
+group_savings = c.execute(
+    "SELECT COALESCE(SUM(amount),0) x FROM savings"
+).fetchone()["x"]
+
+group_loan = c.execute(
+    "SELECT COALESCE(SUM(principal),0) x FROM loans"
+).fetchone()["x"]
+
+group_interest = c.execute(
+    "SELECT COALESCE(SUM(interest),0) x FROM payments"
+).fetchone()["x"]
+
+group_available = group_savings + group_interest - group_loan
 
     f = c.execute(
         """
