@@ -711,21 +711,18 @@ group_available = group_savings + group_interest - group_loan
 
     c.close()
 
-    return jsonify({
-        "family": dict(f),
-        "savings": [
-            dict(x)
-            for x in s
-        ],
-        "payments": [
-            dict(x)
-            for x in p
-        ],
-        "loans": [
-            dict(x)
-            for x in l
-        ]
-    })
+  return jsonify({
+    "family": dict(f),
+
+    "group_savings": group_savings,
+    "group_loan": group_loan,
+    "group_interest": group_interest,
+    "group_available": group_available,
+
+    "savings": [dict(x) for x in s],
+    "payments": [dict(x) for x in p],
+    "loans": [dict(x) for x in l]
+}) 
 
 
 # ==================================================
