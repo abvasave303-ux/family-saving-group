@@ -1,18 +1,31 @@
 from flask import Flask, request, jsonify, send_from_directory, session
-import sqlite3, os, datetime
+import sqlite3
+import os
+import datetime
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 DB = os.path.join(BASE, "family_saving.db")
 
 app = Flask(__name__, static_folder="static")
-app.secret_key = os.environ.get("SECRET_KEY", "change-this-secret-in-production")
+app.secret_key = os.environ.get(
+    "SECRET_KEY",
+    "change-this-secret-in-production"
+)
 
+
+# ==================================================
+# DATABASE CONNECTION
+# ==================================================
 
 def conn():
     c = sqlite3.connect(DB)
     c.row_factory = sqlite3.Row
     return c
 
+
+# ==================================================
+# DATABASE INITIALIZATION
+# ==================================================
 
 def init_db():
     c = conn()
@@ -74,8 +87,9 @@ def init_db():
 
         for i in range(1, 24):
             c.execute("""
-                INSERT INTO families(name, mobile, pin, created_at)
-                VALUES(?,?,?,?)
+                INSERT INTO families
+                (name, mobile, pin, created_at)
+                VALUES (?, ?, ?, ?)
             """, (
                 f"परिवार {i}",
                 "",
@@ -87,27 +101,31 @@ def init_db():
     c.close()
 
 
-# --------------------------------------------------
-# PAGE
-# --------------------------------------------------
+# ==================================================
+# HOME PAGE
+# ==================================================
 
 @app.route("/")
 def index():
     return send_from_directory("static", "index.html")
 
 
-# --------------------------------------------------
+# ==================================================
 # LOGIN
-# --------------------------------------------------
+# ==================================================
 
 @app.post("/api/login")
 def login():
 
     data = request.json or {}
+
     login_type = data.get("type", "admin")
     pin = str(data.get("pin", ""))
 
+    # -----------------------------
     # ADMIN LOGIN
+    # -----------------------------
+
     if login_type == "admin":
 
         admin_pin = os.environ.get(
@@ -116,9 +134,12 @@ def login():
         )
 
         if pin != admin_pin:
-            return jsonify(error="गलत Admin PIN"), 401
+            return jsonify(
+                error="गलत Admin PIN"
+            ), 401
 
         session.clear()
+
         session["admin"] = True
         session["family_id"] = None
 
@@ -127,18 +148,36 @@ def login():
             role="admin"
         )
 
+    # -----------------------------
     # MEMBER LOGIN
+    # -----------------------------
+
     if login_type == "member":
 
         try:
-            family_id = int(data.get("family_id"))
-        except:
-            return jsonify(error="Member चुनें"), 400
+            family_id = int(
+                data.get("family_id")
+            )
+        except (TypeError, ValueError):
+            return jsonify(
+                error="Member चुनें"
+            ), 400
 
-        family = conn().execute(
-            "SELECT * FROM families WHERE id=? AND pin=?",
-            (family_id, pin)
+        c = conn()
+
+        family = c.execute(
+            """
+            SELECT *
+            FROM families
+            WHERE id=? AND pin=?
+            """,
+            (
+                family_id,
+                pin
+            )
         ).fetchone()
+
+        c.close()
 
         if not family:
             return jsonify(
@@ -146,6 +185,7 @@ def login():
             ), 401
 
         session.clear()
+
         session["admin"] = False
         session["family_id"] = family_id
 
@@ -156,29 +196,45 @@ def login():
             name=family["name"]
         )
 
-    return jsonify(error="Invalid login type"), 400
+    return jsonify(
+        error="Invalid login type"
+    ), 400
 
+
+# ==================================================
+# LOGOUT
+# ==================================================
 
 @app.post("/api/logout")
 def logout():
 
     session.clear()
 
-    return jsonify(ok=True)
+    return jsonify(
+        ok=True
+    )
 
+
+# ==================================================
+# CURRENT USER
+# ==================================================
 
 @app.get("/api/me")
 def me():
 
     return jsonify(
-        admin=bool(session.get("admin")),
-        family_id=session.get("family_id")
+        admin=bool(
+            session.get("admin")
+        ),
+        family_id=session.get(
+            "family_id"
+        )
     )
 
 
-# --------------------------------------------------
+# ==================================================
 # SECURITY
-# --------------------------------------------------
+# ==================================================
 
 @app.before_request
 def protect_api():
@@ -194,18 +250,24 @@ def protect_api():
         and request.path not in public
     ):
 
-        if not session.get("admin") and not session.get("family_id"):
+        if (
+            not session.get("admin")
+            and not session.get("family_id")
+        ):
+
             return jsonify(
                 error="Login required"
             ), 401
 
-# --------------------------------------------------
-# ADMIN ONLY
-# --------------------------------------------------
+
+# ==================================================
+# ADMIN REQUIRED
+# ==================================================
 
 def admin_required():
 
     if not session.get("admin"):
+
         return jsonify(
             error="Admin access required"
         ), 403
@@ -213,9 +275,9 @@ def admin_required():
     return None
 
 
-# --------------------------------------------------
+# ==================================================
 # DASHBOARD
-# --------------------------------------------------
+# ==================================================
 
 @app.get("/api/dashboard")
 def dashboard():
@@ -228,20 +290,35 @@ def dashboard():
     c = conn()
 
     families = c.execute(
-        "SELECT * FROM families ORDER BY id"
+        """
+        SELECT *
+        FROM families
+        ORDER BY id
+        """
     ).fetchall()
 
     savings = c.execute(
-        "SELECT COALESCE(SUM(amount),0) x FROM savings"
+        """
+        SELECT COALESCE(SUM(amount), 0) x
+        FROM savings
+        """
     ).fetchone()["x"]
 
     loans = c.execute(
-        "SELECT COALESCE(SUM(principal),0) x FROM loans"
+        """
+        SELECT COALESCE(SUM(principal), 0) x
+        FROM loans
+        """
     ).fetchone()["x"]
 
     interest = c.execute(
-        "SELECT COALESCE(SUM(interest),0) x FROM payments"
+        """
+        SELECT COALESCE(SUM(interest), 0) x
+        FROM payments
+        """
     ).fetchone()["x"]
+
+    c.close()
 
     return jsonify({
         "families": len(families),
@@ -250,67 +327,16 @@ def dashboard():
         "interest": interest,
         "available": savings + interest - loans,
         "family_data": [
-            dict(x) for x in families
+            dict(x)
+            for x in families
         ]
     })
 
 
-# --------------------------------------------------
-# FAMILIES
-# --------------------------------------------------
-# --------------------------------------------------
-# MEMBER MANAGEMENT
-# --------------------------------------------------
+# ==================================================
+# FAMILIES - GET
+# ==================================================
 
-@app.put("/api/families/<int:fid>")
-def update_family(fid):
-
-    error = admin_required()
-
-    if error:
-        return error
-
-    d = request.json or {}
-
-    name = (d.get("name") or "").strip()
-    mobile = (d.get("mobile") or "").strip()
-    pin = str(d.get("pin") or "").strip()
-
-    if not name:
-        return jsonify(error="नाम जरूरी है"), 400
-
-    if not pin:
-        return jsonify(error="PIN जरूरी है"), 400
-
-    if len(pin) < 4:
-        return jsonify(error="PIN कम से कम 4 अंक का होना चाहिए"), 400
-
-    c = conn()
-
-    family = c.execute(
-        "SELECT id FROM families WHERE id=?",
-        (fid,)
-    ).fetchone()
-
-    if not family:
-        c.close()
-        return jsonify(error="परिवार नहीं मिला"), 404
-
-    c.execute("""
-        UPDATE families
-        SET name=?, mobile=?, pin=?
-        WHERE id=?
-    """, (
-        name,
-        mobile,
-        pin,
-        fid
-    ))
-
-    c.commit()
-    c.close()
-
-    return jsonify(ok=True)
 @app.get("/api/families")
 def get_families():
 
@@ -322,24 +348,34 @@ def get_families():
     c = conn()
 
     fs = c.execute(
-        "SELECT * FROM families ORDER BY id"
+        """
+        SELECT *
+        FROM families
+        ORDER BY id
+        """
     ).fetchall()
 
     out = []
 
     for f in fs:
 
-        s = c.execute("""
-            SELECT COALESCE(SUM(amount),0) x
+        s = c.execute(
+            """
+            SELECT COALESCE(SUM(amount), 0) x
             FROM savings
             WHERE family_id=?
-        """, (f["id"],)).fetchone()["x"]
+            """,
+            (f["id"],)
+        ).fetchone()["x"]
 
-        l = c.execute("""
-            SELECT COALESCE(SUM(principal),0) x
+        l = c.execute(
+            """
+            SELECT COALESCE(SUM(principal), 0) x
             FROM loans
             WHERE family_id=?
-        """, (f["id"],)).fetchone()["x"]
+            """,
+            (f["id"],)
+        ).fetchone()["x"]
 
         out.append({
             **dict(f),
@@ -352,6 +388,10 @@ def get_families():
     return jsonify(out)
 
 
+# ==================================================
+# ADD FAMILY
+# ==================================================
+
 @app.post("/api/families")
 def add_family():
 
@@ -362,32 +402,142 @@ def add_family():
 
     d = request.json or {}
 
-    name = (d.get("name") or "").strip()
+    name = (
+        d.get("name") or ""
+    ).strip()
+
+    mobile = (
+        d.get("mobile") or ""
+    ).strip()
+
+    pin = str(
+        d.get("pin") or "1234"
+    ).strip()
 
     if not name:
         return jsonify(
             error="नाम जरूरी है"
         ), 400
 
+    if len(pin) < 4:
+        return jsonify(
+            error="PIN कम से कम 4 अंक का होना चाहिए"
+        ), 400
+
     c = conn()
 
-    cur = c.execute("""
+    cur = c.execute(
+        """
         INSERT INTO families
-        (name,mobile,pin,created_at)
-        VALUES(?,?,?,?)
-    """, (
-        name,
-        d.get("mobile", ""),
-        d.get("pin", "1234"),
-        datetime.date.today().isoformat()
-    ))
+        (name, mobile, pin, created_at)
+        VALUES (?, ?, ?, ?)
+        """,
+        (
+            name,
+            mobile,
+            pin,
+            datetime.date.today().isoformat()
+        )
+    )
+
+    c.commit()
+
+    family_id = cur.lastrowid
+
+    c.close()
+
+    return jsonify(
+        ok=True,
+        id=family_id
+    )
+
+
+# ==================================================
+# UPDATE FAMILY
+# ==================================================
+
+@app.put("/api/families/<int:fid>")
+def update_family(fid):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    d = request.json or {}
+
+    name = (
+        d.get("name") or ""
+    ).strip()
+
+    mobile = (
+        d.get("mobile") or ""
+    ).strip()
+
+    pin = str(
+        d.get("pin") or ""
+    ).strip()
+
+    if not name:
+        return jsonify(
+            error="नाम जरूरी है"
+        ), 400
+
+    if not pin:
+        return jsonify(
+            error="PIN जरूरी है"
+        ), 400
+
+    if len(pin) < 4:
+        return jsonify(
+            error="PIN कम से कम 4 अंक का होना चाहिए"
+        ), 400
+
+    c = conn()
+
+    family = c.execute(
+        """
+        SELECT id
+        FROM families
+        WHERE id=?
+        """,
+        (fid,)
+    ).fetchone()
+
+    if not family:
+
+        c.close()
+
+        return jsonify(
+            error="परिवार नहीं मिला"
+        ), 404
+
+    c.execute(
+        """
+        UPDATE families
+        SET name=?, mobile=?, pin=?
+        WHERE id=?
+        """,
+        (
+            name,
+            mobile,
+            pin,
+            fid
+        )
+    )
 
     c.commit()
     c.close()
 
     return jsonify(
-        id=cur.lastrowid
+        ok=True
     )
+
+
+# ==================================================
+# DELETE FAMILY
+# ==================================================
+
 @app.delete("/api/families/<int:fid>")
 def delete_family(fid):
 
@@ -399,20 +549,37 @@ def delete_family(fid):
     c = conn()
 
     family = c.execute(
-        "SELECT id FROM families WHERE id=?",
+        """
+        SELECT id
+        FROM families
+        WHERE id=?
+        """,
         (fid,)
     ).fetchone()
 
     if not family:
+
         c.close()
-        return jsonify(error="परिवार नहीं मिला"), 404
 
-    # पहले संबंधित records हटाएँ
-    c.execute("DELETE FROM payments WHERE family_id=?", (fid,))
-    c.execute("DELETE FROM savings WHERE family_id=?", (fid,))
-    c.execute("DELETE FROM loans WHERE family_id=?", (fid,))
+        return jsonify(
+            error="परिवार नहीं मिला"
+        ), 404
 
-    # फिर परिवार हटाएँ
+    c.execute(
+        "DELETE FROM payments WHERE family_id=?",
+        (fid,)
+    )
+
+    c.execute(
+        "DELETE FROM savings WHERE family_id=?",
+        (fid,)
+    )
+
+    c.execute(
+        "DELETE FROM loans WHERE family_id=?",
+        (fid,)
+    )
+
     c.execute(
         "DELETE FROM families WHERE id=?",
         (fid,)
@@ -421,21 +588,27 @@ def delete_family(fid):
     c.commit()
     c.close()
 
-    return jsonify(ok=True)
-# --------------------------------------------------
+    return jsonify(
+        ok=True
+    )
+
+
+# ==================================================
 # MEMBER LIST FOR LOGIN
-# --------------------------------------------------
+# ==================================================
 
 @app.get("/api/member-list")
 def member_list():
 
     c = conn()
 
-    rows = c.execute("""
+    rows = c.execute(
+        """
         SELECT id, name
         FROM families
         ORDER BY id
-    """).fetchall()
+        """
+    ).fetchall()
 
     c.close()
 
@@ -446,19 +619,23 @@ def member_list():
         }
         for r in rows
     ])
-# --------------------------------------------------
+
+
+# ==================================================
 # MEMBER PASSBOOK
-# --------------------------------------------------
+# ==================================================
 
 @app.get("/api/family/<int:fid>/passbook")
 def passbook(fid):
 
     # ADMIN can see anyone
+
     if session.get("admin"):
 
         allowed = True
 
     # MEMBER can ONLY see own data
+
     elif session.get("family_id") == fid:
 
         allowed = True
@@ -472,51 +649,74 @@ def passbook(fid):
     c = conn()
 
     f = c.execute(
-        "SELECT * FROM families WHERE id=?",
+        """
+        SELECT *
+        FROM families
+        WHERE id=?
+        """,
         (fid,)
     ).fetchone()
 
     if not f:
+
         c.close()
 
         return jsonify(
             error="परिवार नहीं मिला"
         ), 404
 
-    s = c.execute("""
+    s = c.execute(
+        """
         SELECT *
         FROM savings
         WHERE family_id=?
         ORDER BY id DESC
-    """, (fid,)).fetchall()
+        """,
+        (fid,)
+    ).fetchall()
 
-    p = c.execute("""
+    p = c.execute(
+        """
         SELECT *
         FROM payments
         WHERE family_id=?
         ORDER BY id DESC
-    """, (fid,)).fetchall()
+        """,
+        (fid,)
+    ).fetchall()
 
-    l = c.execute("""
+    l = c.execute(
+        """
         SELECT *
         FROM loans
         WHERE family_id=?
         ORDER BY id DESC
-    """, (fid,)).fetchall()
+        """,
+        (fid,)
+    ).fetchall()
 
     c.close()
 
     return jsonify({
         "family": dict(f),
-        "savings": [dict(x) for x in s],
-        "payments": [dict(x) for x in p],
-        "loans": [dict(x) for x in l]
+        "savings": [
+            dict(x)
+            for x in s
+        ],
+        "payments": [
+            dict(x)
+            for x in p
+        ],
+        "loans": [
+            dict(x)
+            for x in l
+        ]
     })
 
 
-# --------------------------------------------------
-# SAVINGS
-# --------------------------------------------------
+# ==================================================
+# SAVINGS - GET
+# ==================================================
 
 @app.get("/api/savings")
 def savings():
@@ -528,20 +728,27 @@ def savings():
 
     c = conn()
 
-    rows = c.execute("""
+    rows = c.execute(
+        """
         SELECT s.*, f.name family
         FROM savings s
         JOIN families f
         ON f.id=s.family_id
         ORDER BY s.id DESC
-    """).fetchall()
+        """
+    ).fetchall()
 
     c.close()
 
-    return jsonify(
-        [dict(x) for x in rows]
-    )
+    return jsonify([
+        dict(x)
+        for x in rows
+    ])
 
+
+# ==================================================
+# ADD SAVING
+# ==================================================
 
 @app.post("/api/savings")
 def add_saving():
@@ -553,105 +760,206 @@ def add_saving():
 
     d = request.json or {}
 
-    amount = float(
-        d.get("amount", 0)
-    )
+    try:
+        family_id = int(
+            d.get("family_id")
+        )
+
+        amount = float(
+            d.get("amount", 0)
+        )
+
+    except (TypeError, ValueError):
+
+        return jsonify(
+            error="बचत जानकारी सही दें"
+        ), 400
+
+    month = (
+        d.get("month") or ""
+    ).strip()
 
     if amount <= 0:
+
         return jsonify(
             error="बचत राशि सही दें"
         ), 400
 
+    if not month:
+
+        return jsonify(
+            error="महीना जरूरी है"
+        ), 400
+
     c = conn()
 
-    c.execute("""
+    family = c.execute(
+        """
+        SELECT id
+        FROM families
+        WHERE id=?
+        """,
+        (family_id,)
+    ).fetchone()
+
+    if not family:
+
+        c.close()
+
+        return jsonify(
+            error="परिवार नहीं मिला"
+        ), 404
+
+    c.execute(
+        """
         INSERT INTO savings
-        (family_id,month,amount,date)
-        VALUES(?,?,?,?)
-    """, (
-        int(d["family_id"]),
-        d["month"],
-        amount,
-        d.get(
-            "date",
-            datetime.date.today().isoformat()
+        (family_id, month, amount, date)
+        VALUES (?, ?, ?, ?)
+        """,
+        (
+            family_id,
+            month,
+            amount,
+            d.get(
+                "date",
+                datetime.date.today().isoformat()
+            )
         )
-    ))
+    )
 
     c.commit()
     c.close()
 
-    return jsonify(ok=True)
+    return jsonify(
+        ok=True
+    )
+
+
+# ==================================================
+# UPDATE SAVING
+# ==================================================
+
 @app.put("/api/savings/<int:sid>")
 def update_saving(sid):
 
     error = admin_required()
+
     if error:
         return error
 
     d = request.json or {}
 
     try:
-        family_id = int(d.get("family_id"))
-        amount = float(d.get("amount", 0))
-    except:
-        return jsonify(error="बचत जानकारी सही दें"), 400
 
-    month = (d.get("month") or "").strip()
-    date = (d.get("date") or "").strip()
+        family_id = int(
+            d.get("family_id")
+        )
+
+        amount = float(
+            d.get("amount", 0)
+        )
+
+    except (TypeError, ValueError):
+
+        return jsonify(
+            error="बचत जानकारी सही दें"
+        ), 400
+
+    month = (
+        d.get("month") or ""
+    ).strip()
+
+    date = (
+        d.get("date") or ""
+    ).strip()
 
     if amount <= 0:
-        return jsonify(error="बचत राशि सही दें"), 400
+
+        return jsonify(
+            error="बचत राशि सही दें"
+        ), 400
 
     if not month or not date:
-        return jsonify(error="महीना और तारीख जरूरी है"), 400
+
+        return jsonify(
+            error="महीना और तारीख जरूरी है"
+        ), 400
 
     c = conn()
 
     row = c.execute(
-        "SELECT id FROM savings WHERE id=?",
+        """
+        SELECT id
+        FROM savings
+        WHERE id=?
+        """,
         (sid,)
     ).fetchone()
 
     if not row:
-        c.close()
-        return jsonify(error="बचत एंट्री नहीं मिली"), 404
 
-    c.execute("""
+        c.close()
+
+        return jsonify(
+            error="बचत एंट्री नहीं मिली"
+        ), 404
+
+    c.execute(
+        """
         UPDATE savings
-        SET family_id=?, month=?, amount=?, date=?
+        SET family_id=?,
+            month=?,
+            amount=?,
+            date=?
         WHERE id=?
-    """, (
-        family_id,
-        month,
-        amount,
-        date,
-        sid
-    ))
+        """,
+        (
+            family_id,
+            month,
+            amount,
+            date,
+            sid
+        )
+    )
 
     c.commit()
     c.close()
 
-    return jsonify(ok=True)
+    return jsonify(
+        ok=True
+    )
 
+
+# ==================================================
+# DELETE SAVING
+# ==================================================
 
 @app.delete("/api/savings/<int:sid>")
 def delete_saving(sid):
 
     error = admin_required()
+
     if error:
         return error
 
     c = conn()
 
     row = c.execute(
-        "SELECT id FROM savings WHERE id=?",
+        """
+        SELECT id
+        FROM savings
+        WHERE id=?
+        """,
         (sid,)
     ).fetchone()
 
     if not row:
+
         c.close()
-        return jsonify(error="बचत एंट्री नहीं मिली"), 404
+
+        return jsonify(
+            error="बचत एंट्री नहीं मिली"
+        ), 404
 
     c.execute(
         "DELETE FROM savings WHERE id=?",
@@ -661,11 +969,14 @@ def delete_saving(sid):
     c.commit()
     c.close()
 
-    return jsonify(ok=True)
+    return jsonify(
+        ok=True
+    )
 
-# --------------------------------------------------
-# LOANS
-# --------------------------------------------------
+
+# ==================================================
+# LOANS - GET
+# ==================================================
 
 @app.get("/api/loans")
 def loans():
@@ -677,20 +988,27 @@ def loans():
 
     c = conn()
 
-    rows = c.execute("""
+    rows = c.execute(
+        """
         SELECT l.*, f.name family
         FROM loans l
         JOIN families f
         ON f.id=l.family_id
         ORDER BY l.id DESC
-    """).fetchall()
+        """
+    ).fetchall()
 
     c.close()
 
-    return jsonify(
-        [dict(x) for x in rows]
-    )
+    return jsonify([
+        dict(x)
+        for x in rows
+    ])
 
+
+# ==================================================
+# ADD LOAN
+# ==================================================
 
 @app.post("/api/loans")
 def add_loan():
@@ -702,85 +1020,176 @@ def add_loan():
 
     d = request.json or {}
 
-    amount = float(
-        d.get("amount", 0)
-    )
+    try:
+
+        family_id = int(
+            d.get("family_id")
+        )
+
+        amount = float(
+            d.get("amount", 0)
+        )
+
+        rate = float(
+            d.get("rate", 2)
+        )
+
+        months = int(
+            d.get("months", 12)
+        )
+
+    except (TypeError, ValueError):
+
+        return jsonify(
+            error="लोन जानकारी सही दें"
+        ), 400
 
     if amount <= 0:
+
         return jsonify(
             error="लोन राशि सही दें"
         ), 400
 
+    if months <= 0:
+
+        return jsonify(
+            error="अवधि सही दें"
+        ), 400
+
     c = conn()
 
-    c.execute("""
+    family = c.execute(
+        """
+        SELECT id
+        FROM families
+        WHERE id=?
+        """,
+        (family_id,)
+    ).fetchone()
+
+    if not family:
+
+        c.close()
+
+        return jsonify(
+            error="परिवार नहीं मिला"
+        ), 404
+
+    c.execute(
+        """
         INSERT INTO loans
-        (family_id,original,principal,rate,months,date)
-        VALUES(?,?,?,?,?,?)
-    """, (
-        int(d["family_id"]),
-        amount,
-        amount,
-        float(d.get("rate", 2)),
-        int(d.get("months", 12)),
-        d.get(
-            "date",
-            datetime.date.today().isoformat()
+        (family_id, original, principal, rate, months, date)
+        VALUES (?, ?, ?, ?, ?, ?)
+        """,
+        (
+            family_id,
+            amount,
+            amount,
+            rate,
+            months,
+            d.get(
+                "date",
+                datetime.date.today().isoformat()
+            )
         )
-    ))
+    )
 
     c.commit()
     c.close()
 
-    return jsonify(ok=True)
+    return jsonify(
+        ok=True
+    )
+
+
+# ==================================================
+# UPDATE LOAN
+# ==================================================
 
 @app.put("/api/loans/<int:lid>")
 def update_loan(lid):
 
     error = admin_required()
+
     if error:
         return error
 
     d = request.json or {}
 
     try:
-        family_id = int(d.get("family_id"))
-        amount = float(d.get("amount", 0))
-        rate = float(d.get("rate", 2))
-        months = int(d.get("months", 12))
-    except:
-        return jsonify(error="लोन जानकारी सही दें"), 400
+
+        family_id = int(
+            d.get("family_id")
+        )
+
+        amount = float(
+            d.get("amount", 0)
+        )
+
+        rate = float(
+            d.get("rate", 2)
+        )
+
+        months = int(
+            d.get("months", 12)
+        )
+
+    except (TypeError, ValueError):
+
+        return jsonify(
+            error="लोन जानकारी सही दें"
+        ), 400
 
     if amount <= 0:
-        return jsonify(error="लोन राशि सही दें"), 400
+
+        return jsonify(
+            error="लोन राशि सही दें"
+        ), 400
 
     if months <= 0:
-        return jsonify(error="अवधि सही दें"), 400
+
+        return jsonify(
+            error="अवधि सही दें"
+        ), 400
 
     c = conn()
 
     loan = c.execute(
-        "SELECT * FROM loans WHERE id=?",
+        """
+        SELECT *
+        FROM loans
+        WHERE id=?
+        """,
         (lid,)
     ).fetchone()
 
     if not loan:
-        c.close()
-        return jsonify(error="लोन नहीं मिला"), 404
 
-    # भुगतान हो चुका हो तो original amount को सीधे बदलने से
-    # हिसाब बिगड़ सकता है, इसलिए नया principal amount के अनुसार रखा जाएगा।
-    paid_principal = loan["original"] - loan["principal"]
+        c.close()
+
+        return jsonify(
+            error="लोन नहीं मिला"
+        ), 404
+
+    paid_principal = (
+        loan["original"]
+        - loan["principal"]
+    )
 
     if amount < paid_principal:
+
         c.close()
+
         return jsonify(
             error="नई लोन राशि अब तक चुकाए गए मूलधन से कम नहीं हो सकती"
         ), 400
 
-    new_principal = amount - paid_principal
+    new_principal = (
+        amount - paid_principal
+    )
 
-    c.execute("""
+    c.execute(
+        """
         UPDATE loans
         SET family_id=?,
             original=?,
@@ -788,40 +1197,56 @@ def update_loan(lid):
             rate=?,
             months=?
         WHERE id=?
-    """, (
-        family_id,
-        amount,
-        new_principal,
-        rate,
-        months,
-        lid
-    ))
+        """,
+        (
+            family_id,
+            amount,
+            new_principal,
+            rate,
+            months,
+            lid
+        )
+    )
 
     c.commit()
     c.close()
 
-    return jsonify(ok=True)
+    return jsonify(
+        ok=True
+    )
 
+
+# ==================================================
+# DELETE LOAN
+# ==================================================
 
 @app.delete("/api/loans/<int:lid>")
 def delete_loan(lid):
 
     error = admin_required()
+
     if error:
         return error
 
     c = conn()
 
     loan = c.execute(
-        "SELECT id FROM loans WHERE id=?",
+        """
+        SELECT id
+        FROM loans
+        WHERE id=?
+        """,
         (lid,)
     ).fetchone()
 
     if not loan:
-        c.close()
-        return jsonify(error="लोन नहीं मिला"), 404
 
-    # संबंधित payment history भी हटाएँ
+        c.close()
+
+        return jsonify(
+            error="लोन नहीं मिला"
+        ), 404
+
     c.execute(
         "DELETE FROM payments WHERE loan_id=?",
         (lid,)
@@ -835,10 +1260,14 @@ def delete_loan(lid):
     c.commit()
     c.close()
 
-    return jsonify(ok=True)
-# --------------------------------------------------
-# PAYMENTS
-# --------------------------------------------------
+    return jsonify(
+        ok=True
+    )
+
+
+# ==================================================
+# PAYMENTS - GET
+# ==================================================
 
 @app.get("/api/payments")
 def payments():
@@ -850,20 +1279,27 @@ def payments():
 
     c = conn()
 
-    rows = c.execute("""
+    rows = c.execute(
+        """
         SELECT p.*, f.name family
         FROM payments p
         JOIN families f
         ON f.id=p.family_id
         ORDER BY p.id DESC
-    """).fetchall()
+        """
+    ).fetchall()
 
     c.close()
 
-    return jsonify(
-        [dict(x) for x in rows]
-    )
+    return jsonify([
+        dict(x)
+        for x in rows
+    ])
 
+
+# ==================================================
+# ADD PAYMENT
+# ==================================================
 
 @app.post("/api/payments")
 def payment():
@@ -875,30 +1311,58 @@ def payment():
 
     d = request.json or {}
 
-    amount = float(
-        d.get("amount", 0)
-    )
+    try:
 
-    lid = int(
-        d["loan_id"]
-    )
+        amount = float(
+            d.get("amount", 0)
+        )
 
-    c = conn()
+        lid = int(
+            d.get("loan_id")
+        )
 
-    l = c.execute(
-        "SELECT * FROM loans WHERE id=?",
-        (lid,)
-    ).fetchone()
-
-    if not l or amount <= 0:
-        c.close()
+    except (TypeError, ValueError):
 
         return jsonify(
             error="भुगतान जानकारी सही दें"
         ), 400
 
+    if amount <= 0:
+
+        return jsonify(
+            error="भुगतान राशि सही दें"
+        ), 400
+
+    c = conn()
+
+    l = c.execute(
+        """
+        SELECT *
+        FROM loans
+        WHERE id=?
+        """,
+        (lid,)
+    ).fetchone()
+
+    if not l:
+
+        c.close()
+
+        return jsonify(
+            error="लोन नहीं मिला"
+        ), 404
+
+    if l["principal"] <= 0:
+
+        c.close()
+
+        return jsonify(
+            error="इस लोन की पूरी राशि चुकाई जा चुकी है"
+        ), 400
+
+    # 2% interest calculation
     interest = min(
-        l["principal"] * 2 / 100,
+        l["principal"] * l["rate"] / 100,
         amount
     )
 
@@ -909,29 +1373,45 @@ def payment():
         l["principal"]
     )
 
+    # अगर payment principal से ज्यादा हो
+    actual_amount = (
+        interest + principal
+    )
+
+    new_balance = (
+        l["principal"] - principal
+    )
+
     c.execute(
-        "UPDATE loans SET principal=? WHERE id=?",
+        """
+        UPDATE loans
+        SET principal=?
+        WHERE id=?
+        """,
         (
-            l["principal"] - principal,
+            new_balance,
             lid
         )
     )
 
-    c.execute("""
+    c.execute(
+        """
         INSERT INTO payments
-        (loan_id,family_id,amount,interest,principal,date)
-        VALUES(?,?,?,?,?,?)
-    """, (
-        lid,
-        l["family_id"],
-        amount,
-        interest,
-        principal,
-        d.get(
-            "date",
-            datetime.date.today().isoformat()
+        (loan_id, family_id, amount, interest, principal, date)
+        VALUES (?, ?, ?, ?, ?, ?)
+        """,
+        (
+            lid,
+            l["family_id"],
+            actual_amount,
+            interest,
+            principal,
+            d.get(
+                "date",
+                datetime.date.today().isoformat()
+            )
         )
-    ))
+    )
 
     c.commit()
     c.close()
@@ -939,13 +1419,14 @@ def payment():
     return jsonify(
         ok=True,
         interest=interest,
-        principal=principal
+        principal=principal,
+        remaining=new_balance
     )
 
 
-# --------------------------------------------------
+# ==================================================
 # INTEREST DISTRIBUTION
-# --------------------------------------------------
+# ==================================================
 
 @app.post("/api/interest-distribution")
 def distribution():
@@ -957,11 +1438,20 @@ def distribution():
 
     d = request.json or {}
 
-    total = float(
-        d.get("total_interest", 0)
-    )
+    try:
+
+        total = float(
+            d.get("total_interest", 0)
+        )
+
+    except (TypeError, ValueError):
+
+        return jsonify(
+            error="ब्याज राशि सही दें"
+        ), 400
 
     if total <= 0:
+
         return jsonify(
             error="ब्याज राशि सही दें"
         ), 400
@@ -969,33 +1459,42 @@ def distribution():
     c = conn()
 
     total_s = c.execute(
-        "SELECT COALESCE(SUM(amount),0)x FROM savings"
+        """
+        SELECT COALESCE(SUM(amount), 0) x
+        FROM savings
+        """
     ).fetchone()["x"]
 
     if total_s <= 0:
+
         c.close()
 
         return jsonify(
             error="पहले बचत एंट्री करें"
         ), 400
 
-    rows = c.execute("""
+    rows = c.execute(
+        """
         SELECT
             f.id,
             f.name,
-            COALESCE(SUM(s.amount),0) savings
+            COALESCE(SUM(s.amount), 0) savings
         FROM families f
         LEFT JOIN savings s
         ON s.family_id=f.id
         GROUP BY f.id
         ORDER BY f.id
-    """).fetchall()
+        """
+    ).fetchall()
 
     result = []
 
     for r in rows:
 
-        share = r["savings"] / total_s
+        share = (
+            r["savings"]
+            / total_s
+        )
 
         result.append({
             **dict(r),
@@ -1003,17 +1502,20 @@ def distribution():
             "interest": total * share
         })
 
-    c.execute("""
+    c.execute(
+        """
         INSERT INTO interest_distributions
-        (total_interest,date)
-        VALUES(?,?)
-    """, (
-        total,
-        d.get(
-            "date",
-            datetime.date.today().isoformat()
+        (total_interest, date)
+        VALUES (?, ?)
+        """,
+        (
+            total,
+            d.get(
+                "date",
+                datetime.date.today().isoformat()
+            )
         )
-    ))
+    )
 
     c.commit()
     c.close()
@@ -1024,11 +1526,12 @@ def distribution():
     )
 
 
-# --------------------------------------------------
-# START
-# --------------------------------------------------
+# ==================================================
+# START APPLICATION
+# ==================================================
 
 init_db()
+
 
 if __name__ == "__main__":
 
