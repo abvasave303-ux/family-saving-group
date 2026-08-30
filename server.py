@@ -239,6 +239,8 @@ def me():
 @app.before_request
 def protect_api():
 
+    path = request.path.rstrip("/")
+
     public = (
         "/api/login",
         "/api/me",
@@ -246,8 +248,8 @@ def protect_api():
     )
 
     if (
-        request.path.startswith("/api/")
-        and request.path not in public
+        path.startswith("/api/")
+        and path not in public
     ):
 
         if (
@@ -258,7 +260,6 @@ def protect_api():
             return jsonify(
                 error="Login required"
             ), 401
-
 
 # ==================================================
 # ADMIN REQUIRED
