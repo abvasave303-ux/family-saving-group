@@ -670,7 +670,7 @@ f = c.execute(
         (fid,)
     ).fetchone()
 
-if not f:
+    if not f:
 
         c.close()
 
