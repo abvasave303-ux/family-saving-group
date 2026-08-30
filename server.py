@@ -661,8 +661,7 @@ group_interest = c.execute(
 ).fetchone()["x"]
 
 group_available = group_savings + group_interest - group_loan
-
-    f = c.execute(
+f = c.execute(
         """
         SELECT *
         FROM families
