@@ -1225,24 +1225,23 @@ function loginType(type){
 
 
 /* ================= MEMBER LIST ================= */
-
 async function loadMemberList(){
 
-  try{
+    try{
 
-    const list = await api("/api/families");
+        const list = await api("/api/member-list");
 
-    $("memberFamily").innerHTML =
-      '<option value="">परिवार चुनें...</option>' +
-      list.map(f =>
-        `<option value="${f.id}">${f.name}</option>`
-      ).join("");
+        $("memberFamily").innerHTML =
+            '<option value="">परिवार चुनें...</option>' +
+            list.map(f =>
+                `<option value="${f.id}">${f.name}</option>`
+            ).join("");
 
-  }catch(e){
+    }catch(e){
 
-    alert("Member list load नहीं हो सकी: " + e.message);
+        alert("Member list load नहीं हो सकी: " + e.message);
 
-  }
+    }
 }
 
 
