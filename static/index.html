@@ -3885,45 +3885,36 @@ async function checkAutoLogin(){
 
   try{
 
-    const user =
-      await api("/api/me");
-
+    const user = await api("/api/me");
 
     if(user && user.admin){
 
       $("login").classList.add("hidden");
-
       $("app").classList.remove("hidden");
 
       await init();
-
       return;
-
     }
-
 
     if(
       user &&
-      user.type === "member" &&
       user.family_id
     ){
 
       $("login").classList.add("hidden");
-
       $("app").classList.remove("hidden");
 
       await initMember(user);
-
+      return;
     }
 
   }catch(e){
 
-    /* Login नहीं है — login screen दिखेगी */
+    console.log("Auto login नहीं है:", e.message);
 
   }
 
 }
-
 
 /* ================= START ================= */
 
