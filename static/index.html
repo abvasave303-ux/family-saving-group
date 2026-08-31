@@ -597,6 +597,38 @@ th{
       👤 Admin &nbsp; | &nbsp; 2026-27
     </span>
 
+    <!-- 🔔 MEMBER NOTIFICATION BELL -->
+    <button
+      id="notificationBell"
+      class="btn secondary"
+      style="display:none;position:relative;"
+      onclick="openNotifications()"
+      title="Notifications">
+
+      🔔
+
+      <span
+        id="notificationCount"
+        style="
+          position:absolute;
+          top:-6px;
+          right:-6px;
+          min-width:20px;
+          height:20px;
+          padding:0 5px;
+          border-radius:50%;
+          background:#d32f2f;
+          color:white;
+          font-size:11px;
+          display:none;
+          align-items:center;
+          justify-content:center;
+        ">
+        0
+      </span>
+
+    </button>
+
     <button
       id="memberLogoutBtn"
       class="btn secondary"
@@ -608,7 +640,6 @@ th{
   </div>
 
 </header>
-
 <div class="content">
 
 
@@ -1375,6 +1406,12 @@ async function initMember(user){
 
   $("memberLogoutBtn").style.display =
     "inline-block";
+
+  $("notificationBell").style.display =
+    "inline-flex";
+
+  $("notificationCount").style.display =
+    "none";
 
   document.querySelectorAll("main section")
     .forEach(x => x.classList.add("hidden"));
