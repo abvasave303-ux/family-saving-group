@@ -671,10 +671,48 @@ def member_list():
         for r in rows
     ])
 
+# ==================================================
+# MEMBER NOTIFICATIONS
+# ==================================================
 
+@app.get("/api/notifications")
+def get_notifications():
+
+    # सिर्फ Member अपनी notifications देख सकता है
+    if session.get("admin"):
+        return jsonify(
+            error="Member access required"
+        ), 403
+
+    family_id = session.get("family_id")
+
+    if not family_id:
+        return jsonify(
+            error="Login required"
+        ), 401
+
+    c = conn()
+
+    rows = c.execute(
+        """
+        SELECT *
+        FROM notifications
+        WHERE family_id=?
+        ORDER BY id DESC
+        """,
+        (family_id,)
+    ).fetchall()
+
+    c.close()
+
+    return jsonify([
+        dict(x)
+        for x in rows
+    ])
 # ==================================================
 # MEMBER PASSBOOK
 # ==================================================
+
 @app.get("/api/family/<int:fid>/passbook")
 def passbook(fid):
 
@@ -771,7 +809,6 @@ def passbook(fid):
         "payments": [dict(x) for x in p],
         "loans": [dict(x) for x in l]
     })
-
 # ==================================================
 # SAVINGS - GET
 # ==================================================
