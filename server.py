@@ -1222,7 +1222,7 @@ def add_loan():
 
     family = c.execute(
         """
-        SELECT id
+        SELECT id, name
         FROM families
         WHERE id=?
         """,
@@ -1237,6 +1237,15 @@ def add_loan():
             error="परिवार नहीं मिला"
         ), 404
 
+    entry_date = d.get(
+        "date",
+        datetime.date.today().isoformat()
+    )
+
+    # ==============================
+    # SAVE LOAN
+    # ==============================
+
     c.execute(
         """
         INSERT INTO loans
@@ -1249,10 +1258,26 @@ def add_loan():
             amount,
             rate,
             months,
-            d.get(
-                "date",
-                datetime.date.today().isoformat()
-            )
+            entry_date
+        )
+    )
+
+    # ==============================
+    # CREATE MEMBER NOTIFICATION
+    # ==============================
+
+    c.execute(
+        """
+        INSERT INTO notifications
+        (family_id, title, message, is_read, created_at)
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            family_id,
+            "💳 Loan अपडेट",
+            f"आपके परिवार के लिए ₹{amount:.2f} का Loan अपडेट किया गया है। अवधि: {months} महीने।",
+            False,
+            datetime.datetime.now().isoformat(timespec="seconds")
         )
     )
 
@@ -1262,7 +1287,6 @@ def add_loan():
     return jsonify(
         ok=True
     )
-
 
 # ==================================================
 # UPDATE LOAN
