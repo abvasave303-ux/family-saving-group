@@ -1568,6 +1568,15 @@ def payment():
         l["principal"] - principal
     )
 
+    entry_date = d.get(
+        "date",
+        datetime.date.today().isoformat()
+    )
+
+    # ==============================
+    # UPDATE LOAN BALANCE
+    # ==============================
+
     c.execute(
         """
         UPDATE loans
@@ -1579,6 +1588,10 @@ def payment():
             lid
         )
     )
+
+    # ==============================
+    # SAVE PAYMENT
+    # ==============================
 
     c.execute(
         """
@@ -1592,10 +1605,26 @@ def payment():
             actual_amount,
             interest,
             principal,
-            d.get(
-                "date",
-                datetime.date.today().isoformat()
-            )
+            entry_date
+        )
+    )
+
+    # ==============================
+    # CREATE MEMBER NOTIFICATION
+    # ==============================
+
+    c.execute(
+        """
+        INSERT INTO notifications
+        (family_id, title, message, is_read, created_at)
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            l["family_id"],
+            "💵 Payment अपडेट",
+            f"आपके Loan का ₹{actual_amount:.2f} भुगतान अपडेट किया गया है। बाकी Loan: ₹{new_balance:.2f}",
+            False,
+            datetime.datetime.now().isoformat(timespec="seconds")
         )
     )
 
@@ -1608,7 +1637,6 @@ def payment():
         principal=principal,
         remaining=new_balance
     )
-
 
 # ==================================================
 # INTEREST DISTRIBUTION
