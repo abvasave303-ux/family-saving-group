@@ -890,7 +890,7 @@ def add_saving():
 
     family = c.execute(
         """
-        SELECT id
+        SELECT id, name
         FROM families
         WHERE id=?
         """,
@@ -905,6 +905,14 @@ def add_saving():
             error="परिवार नहीं मिला"
         ), 404
 
+    entry_date = d.get(
+        "date",
+        datetime.date.today().isoformat()
+    )
+    # ==============================
+    # SAVE MONTHLY SAVING
+    # ==============================
+
     c.execute(
         """
         INSERT INTO savings
@@ -915,10 +923,26 @@ def add_saving():
             family_id,
             month,
             amount,
-            d.get(
-                "date",
-                datetime.date.today().isoformat()
-            )
+            entry_date
+        )
+    )
+
+    # ==============================
+    # CREATE MEMBER NOTIFICATION
+    # ==============================
+
+    c.execute(
+        """
+        INSERT INTO notifications
+        (family_id, title, message, is_read, created_at)
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            family_id,
+            "💰 बचत अपडेट",
+            f"आपकी {month} महीने की ₹{amount:.2f} बचत अपडेट की गई है।",
+            False,
+            datetime.datetime.now().isoformat(timespec="seconds")
         )
     )
 
@@ -929,6 +953,49 @@ def add_saving():
         ok=True
     )
 
+    # ==============================
+    # SAVE MONTHLY SAVING
+    # ==============================
+
+    c.execute(
+        """
+        INSERT INTO savings
+        (family_id, month, amount, date)
+        VALUES (?, ?, ?, ?)
+        """,
+        (
+            family_id,
+            month,
+            amount,
+            entry_date
+        )
+    )
+
+    # ==============================
+    # CREATE MEMBER NOTIFICATION
+    # ==============================
+
+    c.execute(
+        """
+        INSERT INTO notifications
+        (family_id, title, message, is_read, created_at)
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            family_id,
+            "💰 बचत अपडेट",
+            f"आपकी {month} महीने की ₹{amount:.2f} बचत अपडेट की गई है।",
+            False,
+            datetime.datetime.now().isoformat(timespec="seconds")
+        )
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True
+    )
 
 # ==================================================
 # UPDATE SAVING
