@@ -997,7 +997,7 @@ th{
 
   <div class="panel">
 
-    <h3>किस्त / भुगतान</h3>
+    <h3>💵 ब्याज / 💰 Loan Repayment</h3>
 
     <div class="body">
 
@@ -1008,20 +1008,57 @@ th{
           <select id="rl"></select>
         </div>
 
+
         <div class="field">
-          <label>भुगतान ₹</label>
-          <input id="ra" type="number">
+          <label>भुगतान का प्रकार</label>
+
+          <select id="rt">
+
+            <option value="interest">
+              💵 सिर्फ ब्याज
+            </option>
+
+            <option value="repayment">
+              💰 Loan Repayment
+            </option>
+
+          </select>
+
         </div>
+
+
+        <div class="field">
+          <label>राशि ₹</label>
+
+          <input
+            id="ra"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="राशि डालें"
+          >
+
+        </div>
+
 
         <div class="field">
           <label>तारीख</label>
-          <input id="rd" type="date">
+
+          <input
+            id="rd"
+            type="date"
+          >
+
         </div>
+
 
         <div class="full">
 
-          <button class="btn" onclick="repay()">
-            भुगतान दर्ज करें
+          <button
+            class="btn"
+            onclick="repay()"
+          >
+            💾 भुगतान दर्ज करें
           </button>
 
         </div>
@@ -1033,9 +1070,12 @@ th{
   </div>
 
 
-  <div class="panel" style="margin-top:14px">
+  <div
+    class="panel"
+    style="margin-top:14px"
+  >
 
-    <h3>भुगतान इतिहास</h3>
+    <h3>📋 भुगतान इतिहास</h3>
 
     <div class="table">
 
@@ -1044,16 +1084,25 @@ th{
         <thead>
 
           <tr>
+
             <th>तारीख</th>
+
             <th>परिवार</th>
+
             <th>भुगतान</th>
+
             <th>ब्याज</th>
+
             <th>मूलधन</th>
+
           </tr>
 
         </thead>
 
-        <tbody id="pt"></tbody>
+
+        <tbody id="pt">
+
+        </tbody>
 
       </table>
 
@@ -1062,7 +1111,6 @@ th{
   </div>
 
 </section>
-
 
 <!-- ================= INTEREST ================= -->
 
