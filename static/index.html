@@ -1737,6 +1737,40 @@ async function loadMemberPassbook(fid){
   }
 
 }
+async function openNotifications(){
+
+  try{
+
+    const list = await api("/api/notifications");
+
+    if(!list || list.length === 0){
+
+      alert("🔔 अभी कोई notification नहीं है।");
+
+      return;
+    }
+
+    let message = "🔔 Notifications\n\n";
+
+    list.forEach((n, index) => {
+
+      message +=
+        (index + 1) + ". " +
+        n.title + "\n" +
+        n.message + "\n" +
+        "📅 " + n.created_at + "\n\n";
+
+    });
+
+    alert(message);
+
+  }catch(e){
+
+    alert("Notification load नहीं हो सकी: " + e.message);
+
+  }
+
+}
 /* ================= MEMBER PRINT ================= */
 
 function printMemberPassbook(){
