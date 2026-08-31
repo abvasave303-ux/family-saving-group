@@ -2363,6 +2363,100 @@ async function refresh(){
   }
 
 }
+  async function repay(){
+
+  try{
+
+    const loanId =
+      Number($("rl").value);
+
+    const paymentType =
+      $("rt").value;
+
+    const amount =
+      Number($("ra").value);
+
+    if(!loanId){
+
+      alert("Active Loan चुनें");
+      return;
+
+    }
+
+    if(!paymentType){
+
+      alert("भुगतान का प्रकार चुनें");
+      return;
+
+    }
+
+    if(!amount || amount <= 0){
+
+      alert("सही राशि डालें");
+      return;
+
+    }
+
+    const x =
+      await api("/api/payments",{
+
+        method:"POST",
+
+        headers:{
+          "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+          loan_id:loanId,
+
+          type:paymentType,
+
+          amount:amount,
+
+          date:$("rd").value
+
+        })
+
+      });
+
+
+    if(paymentType === "interest"){
+
+      alert(
+        "💵 ब्याज जमा हो गया।\n\n" +
+        "ब्याज: " +
+        money(x.interest) +
+        "\n" +
+        "Loan बाकी: " +
+        money(x.remaining)
+      );
+
+    }else{
+
+      alert(
+        "💰 Loan Repayment दर्ज हो गया।\n\n" +
+        "मूलधन: " +
+        money(x.principal) +
+        "\n" +
+        "Loan बाकी: " +
+        money(x.remaining)
+      );
+
+    }
+
+
+    $("ra").value = "";
+
+    await refresh();
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+}
 
 
 /* ================= SAVING ================= */
