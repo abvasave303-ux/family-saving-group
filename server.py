@@ -109,18 +109,28 @@ def init_db():
         FOREIGN KEY(family_id) REFERENCES families(id)
     );
 
-    CREATE TABLE IF NOT EXISTS interest_distributions(
-        id SERIAL PRIMARY KEY,
-        total_interest REAL NOT NULL,
-        date TEXT NOT NULL
-    );
-    """)
+CREATE TABLE IF NOT EXISTS interest_distributions(
+    id SERIAL PRIMARY KEY,
+    total_interest REAL NOT NULL,
+    date TEXT NOT NULL
+);
 
-    n = c.execute(
-        "SELECT COUNT(*) AS n FROM families"
-    ).fetchone()["n"]
+CREATE TABLE IF NOT EXISTS notifications(
+    id SERIAL PRIMARY KEY,
+    family_id INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    message TEXT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TEXT NOT NULL,
+    FOREIGN KEY(family_id) REFERENCES families(id)
+);
+""")
 
-    if n == 0:
+n = c.execute(
+    "SELECT COUNT(*) AS n FROM families"
+).fetchone()["n"]
+
+if n == 0:
 
         today = datetime.date.today().isoformat()
 
