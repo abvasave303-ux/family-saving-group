@@ -1347,15 +1347,13 @@ async function login(){
   const pin = $("pin").value.trim();
 
   if(!pin){
-
     alert("Admin PIN डालें");
     return;
-
   }
 
   try{
 
-    await api("/api/login",{
+    const user = await api("/api/login",{
 
       method:"POST",
 
@@ -1364,10 +1362,18 @@ async function login(){
       },
 
       body:JSON.stringify({
+
+        type:"admin",
+
         pin:pin
+
       })
 
     });
+
+    if(!user || !user.ok){
+      throw new Error("Admin login failed");
+    }
 
     $("login").classList.add("hidden");
     $("app").classList.remove("hidden");
@@ -1379,6 +1385,7 @@ async function login(){
     alert(e.message);
 
   }
+
 }
 
 
