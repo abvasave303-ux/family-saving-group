@@ -125,7 +125,15 @@ CREATE TABLE IF NOT EXISTS notifications(
     FOREIGN KEY(family_id) REFERENCES families(id)
 );
 """)
-
+c.execute("""
+CREATE TABLE IF NOT EXISTS fcm_tokens(
+    id SERIAL PRIMARY KEY,
+    family_id INTEGER NOT NULL UNIQUE,
+    token TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    FOREIGN KEY(family_id) REFERENCES families(id)
+)
+""")
     n = c.execute(
         "SELECT COUNT(*) AS n FROM families"
     ).fetchone()["n"]
