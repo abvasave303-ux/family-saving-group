@@ -134,32 +134,33 @@ CREATE TABLE IF NOT EXISTS fcm_tokens(
     FOREIGN KEY(family_id) REFERENCES families(id)
 )
 """)
-    n = c.execute(
-        "SELECT COUNT(*) AS n FROM families"
-    ).fetchone()["n"]
 
-    if n == 0:
+n = c.execute(
+    "SELECT COUNT(*) AS n FROM families"
+).fetchone()["n"]
 
-        today = datetime.date.today().isoformat()
+if n == 0:
 
-        for i in range(1, 24):
+    today = datetime.date.today().isoformat()
 
-            c.execute(
-                """
-                INSERT INTO families
-                (name, mobile, pin, created_at)
-                VALUES (?, ?, ?, ?)
-                """,
-                (
-                    f"परिवार {i}",
-                    "",
-                    "1234",
-                    today
-                )
+    for i in range(1, 24):
+
+        c.execute(
+            """
+            INSERT INTO families
+            (name, mobile, pin, created_at)
+            VALUES (?, ?, ?, ?)
+            """,
+            (
+                f"परिवार {i}",
+                "",
+                "1234",
+                today
             )
+        )
 
-    c.commit()
-    c.close()
+c.commit()
+c.close()
 # ==================================================
 # HOME PAGE
 # ==================================================
