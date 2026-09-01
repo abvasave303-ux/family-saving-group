@@ -1475,6 +1475,7 @@ async function initMember(user){
 
   await loadMemberPassbook(user.family_id);
 
+  await updateNotificationCount();
 }
 
 
@@ -1792,6 +1793,86 @@ async function loadMemberPassbook(fid){
   }
 
 }
+async function updateNotificationCount(){
+
+  try{
+
+    const list =
+      await api("/api/notifications");
+
+    const bell =
+      $("notificationBell");
+
+    const count =
+  $("notificationCount");
+
+if(!bell || !count) return;
+
+const unread =
+  (list || []).filter(
+    n => !n.is_read
+  ).length;
+
+if(unread > 0){
+
+  count.textContent =
+    unread > 99 ? "99+" : unread;
+
+  count.style.display =
+    "flex";
+
+}else{
+
+  count.style.display =
+    "none";
+
+}
+
+}catch(e){
+
+  console.error(
+    "Notification count error:",
+    e
+  );
+
+}
+
+}
+    const count =
+      $("notificationCount");
+
+    if(!bell || !count) return;
+
+    const unread =
+      (list || []).filter(
+        n => !n.is_read
+      ).length;
+
+    if(unread > 0){
+
+      count.textContent =
+        unread > 99 ? "99+" : unread;
+
+      count.style.display =
+        "flex";
+
+    }else{
+
+      count.style.display =
+        "none";
+
+    }
+
+  }catch(e){
+
+    console.error(
+      "Notification count error:",
+      e
+    );
+
+  }
+
+}
 async function openNotifications(){
 
   try{
@@ -1818,6 +1899,7 @@ async function openNotifications(){
     });
 
     alert(message);
+    
 
   }catch(e){
 
@@ -1863,7 +1945,7 @@ function printMemberPassbook(){
 
       <meta charset="utf-8">
 
-      <title>
+      <title>S
         Family Saving Group Passbook
       </title>
 
