@@ -65,102 +65,98 @@ def conn():
 # ==================================================
 
 def init_db():
-
     c = conn()
 
     c.executescript("""
-CREATE TABLE IF NOT EXISTS families(
-    id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    mobile TEXT DEFAULT '',
-    pin TEXT DEFAULT '1234',
-    created_at TEXT NOT NULL
-);
+    CREATE TABLE IF NOT EXISTS families(
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        mobile TEXT DEFAULT '',
+        pin TEXT DEFAULT '1234',
+        created_at TEXT NOT NULL
+    );
 
-CREATE TABLE IF NOT EXISTS savings(
-    id SERIAL PRIMARY KEY,
-    family_id INTEGER NOT NULL,
-    month TEXT NOT NULL,
-    amount REAL NOT NULL,
-    date TEXT NOT NULL,
-    FOREIGN KEY(family_id) REFERENCES families(id)
-);
+    CREATE TABLE IF NOT EXISTS savings(
+        id SERIAL PRIMARY KEY,
+        family_id INTEGER NOT NULL,
+        month TEXT NOT NULL,
+        amount REAL NOT NULL,
+        date TEXT NOT NULL,
+        FOREIGN KEY(family_id) REFERENCES families(id)
+    );
 
-CREATE TABLE IF NOT EXISTS loans(
-    id SERIAL PRIMARY KEY,
-    family_id INTEGER NOT NULL,
-    original REAL NOT NULL,
-    principal REAL NOT NULL,
-    rate REAL DEFAULT 2,
-    months INTEGER DEFAULT 12,
-    date TEXT NOT NULL,
-    FOREIGN KEY(family_id) REFERENCES families(id)
-);
+    CREATE TABLE IF NOT EXISTS loans(
+        id SERIAL PRIMARY KEY,
+        family_id INTEGER NOT NULL,
+        original REAL NOT NULL,
+        principal REAL NOT NULL,
+        rate REAL DEFAULT 2,
+        months INTEGER DEFAULT 12,
+        date TEXT NOT NULL,
+        FOREIGN KEY(family_id) REFERENCES families(id)
+    );
 
-CREATE TABLE IF NOT EXISTS payments(
-    id SERIAL PRIMARY KEY,
-    loan_id INTEGER NOT NULL,
-    family_id INTEGER NOT NULL,
-    amount REAL NOT NULL,
-    interest REAL NOT NULL,
-    principal REAL NOT NULL,
-    date TEXT NOT NULL,
-    FOREIGN KEY(loan_id) REFERENCES loans(id),
-    FOREIGN KEY(family_id) REFERENCES families(id)
-);
+    CREATE TABLE IF NOT EXISTS payments(
+        id SERIAL PRIMARY KEY,
+        loan_id INTEGER NOT NULL,
+        family_id INTEGER NOT NULL,
+        amount REAL NOT NULL,
+        interest REAL NOT NULL,
+        principal REAL NOT NULL,
+        date TEXT NOT NULL,
+        FOREIGN KEY(loan_id) REFERENCES loans(id),
+        FOREIGN KEY(family_id) REFERENCES families(id)
+    );
 
-CREATE TABLE IF NOT EXISTS interest_distributions(
-    id SERIAL PRIMARY KEY,
-    total_interest REAL NOT NULL,
-    date TEXT NOT NULL
-);
+    CREATE TABLE IF NOT EXISTS interest_distributions(
+        id SERIAL PRIMARY KEY,
+        total_interest REAL NOT NULL,
+        date TEXT NOT NULL
+    );
 
-CREATE TABLE IF NOT EXISTS notifications(
-    id SERIAL PRIMARY KEY,
-    family_id INTEGER NOT NULL,
-    title TEXT NOT NULL,
-    message TEXT NOT NULL,
-    is_read BOOLEAN DEFAULT FALSE,
-    created_at TEXT NOT NULL,
-    FOREIGN KEY(family_id) REFERENCES families(id)
-);
-""")
-c.execute("""
-CREATE TABLE IF NOT EXISTS fcm_tokens(
-    id SERIAL PRIMARY KEY,
-    family_id INTEGER NOT NULL UNIQUE,
-    token TEXT NOT NULL,
-    updated_at TEXT NOT NULL,
-    FOREIGN KEY(family_id) REFERENCES families(id)
-)
-""")
+    CREATE TABLE IF NOT EXISTS notifications(
+        id SERIAL PRIMARY KEY,
+        family_id INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        message TEXT NOT NULL,
+        is_read BOOLEAN DEFAULT FALSE,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY(family_id) REFERENCES families(id)
+    );
 
-n = c.execute(
-    "SELECT COUNT(*) AS n FROM families"
-).fetchone()["n"]
+    CREATE TABLE IF NOT EXISTS fcm_tokens(
+        id SERIAL PRIMARY KEY,
+        family_id INTEGER NOT NULL UNIQUE,
+        token TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY(family_id) REFERENCES families(id)
+    );
+    """)
 
-if n == 0:
+    n = c.execute(
+        "SELECT COUNT(*) AS n FROM families"
+    ).fetchone()["n"]
 
-    today = datetime.date.today().isoformat()
+    if n == 0:
+        today = datetime.date.today().isoformat()
 
-    for i in range(1, 24):
-
-        c.execute(
-            """
-            INSERT INTO families
-            (name, mobile, pin, created_at)
-            VALUES (?, ?, ?, ?)
-            """,
-            (
-                f"परिवार {i}",
-                "",
-                "1234",
-                today
+        for i in range(1, 24):
+            c.execute(
+                """
+                INSERT INTO families
+                (name, mobile, pin, created_at)
+                VALUES (?, ?, ?, ?)
+                """,
+                (
+                    f"परिवार {i}",
+                    "",
+                    "1234",
+                    today
+                )
             )
-        )
 
-c.commit()
-c.close()
+    c.commit()
+    c.close()
 # ==================================================
 # HOME PAGE
 # ==================================================
