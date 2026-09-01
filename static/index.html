@@ -1804,41 +1804,6 @@ async function updateNotificationCount(){
       $("notificationBell");
 
     const count =
-  $("notificationCount");
-
-if(!bell || !count) return;
-
-const unread =
-  (list || []).filter(
-    n => !n.is_read
-  ).length;
-
-if(unread > 0){
-
-  count.textContent =
-    unread > 99 ? "99+" : unread;
-
-  count.style.display =
-    "flex";
-
-}else{
-
-  count.style.display =
-    "none";
-
-}
-
-}catch(e){
-
-  console.error(
-    "Notification count error:",
-    e
-  );
-
-}
-
-}
-    const count =
       $("notificationCount");
 
     if(!bell || !count) return;
