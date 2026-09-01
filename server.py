@@ -11,7 +11,12 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 
 
 app = Flask(__name__, static_folder="static")
-
+@app.get("/firebase-messaging-sw.js")
+def firebase_messaging_sw():
+    return send_from_directory(
+        BASE,
+        "firebase-messaging-sw.js"
+    )
 app.secret_key = os.environ.get(
     "SECRET_KEY",
     "change-this-secret-in-production"
