@@ -744,6 +744,50 @@ def mark_notifications_read():
     c.close()
 
     return jsonify(ok=True)
+@app.post("/api/fcm-token")
+def save_fcm_token():
+
+    if session.get("admin"):
+        return jsonify(
+            error="Member access required"
+        ), 403
+
+    family_id = session.get("family_id")
+
+    if not family_id:
+        return jsonify(
+            error="Login required"
+        ), 401
+
+    data = request.get_json() or {}
+    token = data.get("token")
+
+    if not token:
+        return jsonify(
+            error="FCM token required"
+        ), 400
+
+    c = conn()
+
+    now = datetime.datetime.now().isoformat()
+
+    c.execute(
+        """
+        INSERT INTO fcm_tokens
+        (family_id, token, updated_at)
+        VALUES (?, ?, ?)
+        ON CONFLICT (family_id)
+        DO UPDATE SET
+            token = EXCLUDED.token,
+            updated_at = EXCLUDED.updated_at
+        """,
+        (family_id, token, now)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(ok=True)
 # ==================================================
 # MEMBER PASSBOOK
 # ==================================================
