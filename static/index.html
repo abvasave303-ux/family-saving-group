@@ -411,7 +411,10 @@ th{
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-  import { getMessaging } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js";
+  import {
+    getMessaging,
+    getToken
+  } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC0ISJyPPbn0I-uA49Dku95PFg4D5TVUnI",
@@ -424,6 +427,41 @@ th{
 
   const app = initializeApp(firebaseConfig);
   const messaging = getMessaging(app);
+
+  window.setupFCM = async function(familyId) {
+    try {
+      const permission = await Notification.requestPermission();
+
+      if (permission !== "granted") {
+        console.log("Notification permission not granted");
+        return;
+      }
+
+      const token = await getToken(messaging, {
+        vapidKey: "BOBvT5SQIyTQPPXlf2OuOEGN-x2eecqUQlyC5tE9wYmlIsyLb4OR1fbRuAWO-QXO8eXPf6EvJQ9Ym_nNofZYK5Y"
+      });
+
+      if (!token) {
+        console.log("FCM token नहीं मिला");
+        return;
+      }
+
+      await api("/api/fcm-token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          token: token
+        })
+      });
+
+      console.log("FCM token saved successfully");
+
+    } catch (e) {
+      console.error("FCM setup error:", e);
+    }
+  }
 </script>
 </head>
 
@@ -1492,6 +1530,7 @@ async function initMember(user){
   await loadMemberPassbook(user.family_id);
 
   await updateNotificationCount();
+  await setupFCM(user.family_id);
 }
 
 
