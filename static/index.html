@@ -1864,11 +1864,21 @@ async function openNotifications(){
     });
 
     alert(message);
-    
+
+    // सभी notifications को Read mark करें
+    await api("/api/notifications/read", {
+      method: "POST"
+    });
+
+    // Unread count तुरंत update करें
+    await updateNotificationCount();
 
   }catch(e){
 
-    alert("Notification load नहीं हो सकी: " + e.message);
+    alert(
+      "Notification load नहीं हो सकी: " +
+      e.message
+    );
 
   }
 
