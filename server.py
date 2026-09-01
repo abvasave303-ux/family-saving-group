@@ -709,6 +709,36 @@ def get_notifications():
         dict(x)
         for x in rows
     ])
+@app.post("/api/notifications/read")
+def mark_notifications_read():
+
+    if session.get("admin"):
+        return jsonify(
+            error="Member access required"
+        ), 403
+
+    family_id = session.get("family_id")
+
+    if not family_id:
+        return jsonify(
+            error="Login required"
+        ), 401
+
+    c = conn()
+
+    c.execute(
+        """
+        UPDATE notifications
+        SET is_read=TRUE
+        WHERE family_id=?
+        """,
+        (family_id,)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(ok=True)
 # ==================================================
 # MEMBER PASSBOOK
 # ==================================================
