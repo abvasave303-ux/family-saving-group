@@ -23,7 +23,13 @@ app.secret_key = os.environ.get(
     "SECRET_KEY",
     "change-this-secret-in-production"
 )
+# FIREBASE ADMIN
+firebase_cred = credentials.Certificate(
+    "/etc/secrets/firebase-service-account.json"
+)
 
+if not firebase_admin._apps:
+    firebase_admin.initialize_app(firebase_cred)
 
 # ==================================================
 # DATABASE CONNECTION
