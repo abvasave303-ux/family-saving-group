@@ -1074,23 +1074,7 @@ return jsonify(
     ok=True
 )
 
-    # ==============================
-    # SAVE MONTHLY SAVING
-    # ==============================
-
-    c.execute(
-        """
-        INSERT INTO savings
-        (family_id, month, amount, date)
-        VALUES (?, ?, ?, ?)
-        """,
-        (
-            family_id,
-            month,
-            amount,
-            entry_date
-        )
-    )
+    
 
     # ==============================
     # CREATE MEMBER NOTIFICATION
