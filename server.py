@@ -1078,7 +1078,6 @@ return jsonify(
 
 @app.put("/api/savings/<int:sid>")
 def update_saving(sid):
-
     error = admin_required()
 
     if error:
@@ -1087,7 +1086,6 @@ def update_saving(sid):
     d = request.json or {}
 
     try:
-
         family_id = int(
             d.get("family_id")
         )
