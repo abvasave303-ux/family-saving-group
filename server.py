@@ -939,7 +939,6 @@ def savings():
 
 @app.post("/api/savings")
 def add_saving():
-
     error = admin_required()
 
     if error:
@@ -957,7 +956,6 @@ def add_saving():
         )
 
     except (TypeError, ValueError):
-
         return jsonify(
             error="बचत जानकारी सही दें"
         ), 400
@@ -967,13 +965,11 @@ def add_saving():
     ).strip()
 
     if amount <= 0:
-
         return jsonify(
             error="बचत राशि सही दें"
         ), 400
 
     if not month:
-
         return jsonify(
             error="महीना जरूरी है"
         ), 400
@@ -990,7 +986,6 @@ def add_saving():
     ).fetchone()
 
     if not family:
-
         c.close()
 
         return jsonify(
@@ -1001,6 +996,7 @@ def add_saving():
         "date",
         datetime.date.today().isoformat()
     )
+
     # ==============================
     # SAVE MONTHLY SAVING
     # ==============================
@@ -1038,40 +1034,41 @@ def add_saving():
         )
     )
 
-c.commit()
-# ==============================
-# SEND FIREBASE PUSH NOTIFICATION
-# ==============================
+    c.commit()
 
-token_row = c.execute(
-    """
-    SELECT token
-    FROM fcm_tokens
-    WHERE family_id=?
-    """,
-    (family_id,)
-).fetchone()
+    # ==============================
+    # SEND FIREBASE PUSH NOTIFICATION
+    # ==============================
 
-if token_row:
-    try:
-        message = messaging.Message(
-            notification=messaging.Notification(
-                title="💰 बचत अपडेट",
-                body=f"आपकी {month} महीने की ₹{amount:.2f} बचत अपडेट की गई है।"
-            ),
-            token=token_row["token"]
-        )
+    token_row = c.execute(
+        """
+        SELECT token
+        FROM fcm_tokens
+        WHERE family_id=?
+        """,
+        (family_id,)
+    ).fetchone()
 
-        messaging.send(message)
+    if token_row:
+        try:
+            message = messaging.Message(
+                notification=messaging.Notification(
+                    title="💰 बचत अपडेट",
+                    body=f"आपकी {month} महीने की ₹{amount:.2f} बचत अपडेट की गई है।"
+                ),
+                token=token_row["token"]
+            )
 
-    except Exception as e:
-        print("FCM notification error:", e)
+            messaging.send(message)
 
-c.close()
+        except Exception as e:
+            print("FCM notification error:", e)
 
-return jsonify(
-    ok=True
-)
+    c.close()
+
+    return jsonify(
+        ok=True
+    )
 # ==================================================
 # UPDATE SAVING
 # ==================================================
