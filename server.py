@@ -1038,8 +1038,7 @@ def add_saving():
         )
     )
 
-    c.commit()
-
+c.commit()
 # ==============================
 # SEND FIREBASE PUSH NOTIFICATION
 # ==============================
@@ -1073,35 +1072,6 @@ c.close()
 return jsonify(
     ok=True
 )
-
-    
-
-    # ==============================
-    # CREATE MEMBER NOTIFICATION
-    # ==============================
-
-    c.execute(
-        """
-        INSERT INTO notifications
-        (family_id, title, message, is_read, created_at)
-        VALUES (?, ?, ?, ?, ?)
-        """,
-        (
-            family_id,
-            "💰 बचत अपडेट",
-            f"आपकी {month} महीने की ₹{amount:.2f} बचत अपडेट की गई है।",
-            False,
-            datetime.datetime.now().isoformat(timespec="seconds")
-        )
-    )
-
-    c.commit()
-    c.close()
-
-    return jsonify(
-        ok=True
-    )
-
 # ==================================================
 # UPDATE SAVING
 # ==================================================
