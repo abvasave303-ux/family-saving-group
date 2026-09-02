@@ -1039,11 +1039,40 @@ def add_saving():
     )
 
     c.commit()
-    c.close()
 
-    return jsonify(
-        ok=True
-    )
+# ==============================
+# SEND FIREBASE PUSH NOTIFICATION
+# ==============================
+
+token_row = c.execute(
+    """
+    SELECT token
+    FROM fcm_tokens
+    WHERE family_id=?
+    """,
+    (family_id,)
+).fetchone()
+
+if token_row:
+    try:
+        message = messaging.Message(
+            notification=messaging.Notification(
+                title="💰 बचत अपडेट",
+                body=f"आपकी {month} महीने की ₹{amount:.2f} बचत अपडेट की गई है।"
+            ),
+            token=token_row["token"]
+        )
+
+        messaging.send(message)
+
+    except Exception as e:
+        print("FCM notification error:", e)
+
+c.close()
+
+return jsonify(
+    ok=True
+)
 
     # ==============================
     # SAVE MONTHLY SAVING
