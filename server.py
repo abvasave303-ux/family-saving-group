@@ -256,22 +256,39 @@ def login():
 
         c.close()
 
-        if not family:
-            return jsonify(
-                error="गलत Member या PIN"
-            ), 401
-
-        session.clear()
-
-        session["admin"] = False
-        session["family_id"] = family_id
-
+    if not family:
         return jsonify(
-            ok=True,
-            role="member",
-            family_id=family_id,
-            name=family["name"]
-        )
+            error="गलत Member या PIN"
+        ), 401
+
+    c = conn()
+
+    active_session = c.execute(
+            """
+        SELECT session_token
+        FROM active_member_sessions
+        WHERE family_id=?
+        """,
+        (family_id,)
+    ).fetchone()
+
+    c.close()
+
+    if active_session:
+        return jsonify(
+            error="यह परिवार पहले से किसी दूसरे device पर login है।"
+        ), 409 
+    session.clear()
+
+    session["admin"] = False
+    session["family_id"] = family_id
+
+    return jsonify(
+        ok=True,
+        role="member",
+        family_id=family_id,
+        name=family["name"]
+     )
 
     return jsonify(
         error="Invalid login type"
