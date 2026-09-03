@@ -323,6 +323,27 @@ def login():
 @app.post("/api/logout")
 def logout():
 
+    family_id = session.get("family_id")
+    session_token = session.get("session_token")
+
+    if family_id and session_token:
+
+        c = conn()
+
+        c.execute(
+            """
+            DELETE FROM active_member_sessions
+            WHERE family_id=? AND session_token=?
+            """,
+            (
+                family_id,
+                session_token
+            )
+        )
+
+        c.commit()
+        c.close()
+
     session.clear()
 
     return jsonify(
