@@ -1601,7 +1601,69 @@ function openChangePin(){
   $("title").textContent =
     "🔐 Change PIN";
 }
+async function changeMemberPin(){
 
+    const currentPin = $("currentPin").value.trim();
+    const newPin = $("newPin").value.trim();
+    const confirmPin = $("confirmPin").value.trim();
+
+    if(!currentPin){
+        alert("Current PIN डालें");
+        return;
+    }
+
+    if(!newPin){
+        alert("New PIN डालें");
+        return;
+    }
+
+    if(newPin !== confirmPin){
+        alert("New PIN और Confirm PIN अलग हैं");
+        return;
+    }
+
+    if(newPin.length < 4){
+        alert("PIN कम से कम 4 अंक का होना चाहिए");
+        return;
+    }
+
+    try{
+
+        const r = await fetch("/api/member/change-pin", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                current_pin: currentPin,
+                new_pin: newPin,
+                confirm_pin: confirmPin
+            })
+        });
+
+        const data = await r.json();
+
+        if(!r.ok){
+            throw new Error(
+                data.error || "PIN change failed"
+            );
+        }
+
+        alert(
+            data.message ||
+            "PIN successfully changed"
+        );
+
+        $("currentPin").value = "";
+        $("newPin").value = "";
+        $("confirmPin").value = "";
+
+    }catch(error){
+
+        alert(error.message);
+
+    }
+}
 /* ================= MEMBER PASSBOOK ================= */
 
 async function loadMemberPassbook(fid){
