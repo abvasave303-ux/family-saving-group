@@ -2443,7 +2443,11 @@ async function refresh(){
               onclick="editMember(${f.id})">
               ✏️ Edit
             </button>
-
+            <button
+              class="btn secondary small"
+              onclick="resetMemberPin(${f.id})">
+              🔄 Reset PIN
+            </button>
           </td>
 
         </tr>
@@ -3717,7 +3721,55 @@ async function editMember(id){
   }
 
 }
+async function resetMemberPin(id){
 
+    const member = fam.find(
+        f => Number(f.id) === Number(id)
+    );
+
+    if(!member){
+        alert("Member नहीं मिला");
+        return;
+    }
+
+    const ok = confirm(
+        "क्या आप " + member.name +
+        " का PIN 1234 पर Reset करना चाहते हैं?"
+    );
+
+    if(!ok) return;
+
+    try{
+
+        await api(
+            "/api/families/" + id,
+            {
+                method:"PUT",
+
+                headers:{
+                    "Content-Type":"application/json"
+                },
+
+                body:JSON.stringify({
+                    name:member.name,
+                    mobile:member.mobile || "",
+                    pin:"1234"
+                })
+            }
+        );
+
+        alert(
+            "PIN सफलतापूर्वक 1234 पर Reset हो गया।"
+        );
+
+        await refresh();
+
+    }catch(e){
+
+        alert(e.message);
+
+    }
+}
 
 /* ================= EDIT LOAN ================= */
 
