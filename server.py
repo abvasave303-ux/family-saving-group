@@ -256,39 +256,60 @@ def login():
 
         c.close()
 
-    if not family:
-        return jsonify(
-            error="गलत Member या PIN"
-        ), 401
+        if not family:
+            return jsonify(
+                error="गलत Member या PIN"
+            ), 401
 
-    c = conn()
+        c = conn()
 
-    active_session = c.execute(
+        active_session = c.execute(
             """
-        SELECT session_token
-        FROM active_member_sessions
-        WHERE family_id=?
-        """,
-        (family_id,)
-    ).fetchone()
+            SELECT session_token
+            FROM active_member_sessions
+            WHERE family_id=?
+            """,
+            (family_id,)
+        ).fetchone()
 
-    c.close()
+        c.close()
 
-    if active_session:
+        if active_session:
+            return jsonify(
+                error="यह परिवार पहले से किसी दूसरे device पर login है।"
+            ), 409
+
+        session_token = secrets.token_urlsafe(32)
+
+        c = conn()
+
+        c.execute(
+            """
+            INSERT INTO active_member_sessions
+            (family_id, session_token, created_at)
+            VALUES (?, ?, ?)
+            """,
+            (
+                family_id,
+                session_token,
+                datetime.datetime.now().isoformat()
+            )
+        )
+
+        c.commit()
+        c.close()
+
+        session.clear()
+        session["session_token"] = session_token
+        session["admin"] = False
+        session["family_id"] = family_id
+
         return jsonify(
-            error="यह परिवार पहले से किसी दूसरे device पर login है।"
-        ), 409 
-    session.clear()
-
-    session["admin"] = False
-    session["family_id"] = family_id
-
-    return jsonify(
-        ok=True,
-        role="member",
-        family_id=family_id,
-        name=family["name"]
-     )
+            ok=True,
+            role="member",
+            family_id=family_id,
+            name=family["name"]
+        )
 
     return jsonify(
         error="Invalid login type"
