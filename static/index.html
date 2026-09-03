@@ -684,6 +684,13 @@ th{
     </button>
 
     <button
+      id="memberChangePinBtn"
+      class="btn secondary"
+      style="display:none;"
+      onclick="openChangePin()">
+      🔐 Change PIN
+    </button>    
+    <button
       id="memberLogoutBtn"
       class="btn secondary"
       style="display:none;"
@@ -1280,6 +1287,54 @@ th{
 
 </section>
 
+<!-- CHANGE PIN -->
+<section id="changePin" class="hidden">
+
+  <div class="panel">
+
+    <h3>🔐 Change PIN</h3>
+
+    <div class="body">
+
+      <div class="field">
+        <label>Current PIN</label>
+        <input
+          type="password"
+          id="currentPin"
+          maxlength="20"
+          placeholder="Current PIN">
+      </div>
+
+      <div class="field">
+        <label>New PIN</label>
+        <input
+          type="password"
+          id="newPin"
+          maxlength="20"
+          placeholder="New PIN">
+      </div>
+
+      <div class="field">
+        <label>Confirm New PIN</label>
+        <input
+          type="password"
+          id="confirmPin"
+          maxlength="20"
+          placeholder="Confirm New PIN">
+      </div>
+
+      <button
+        class="btn"
+        onclick="changeMemberPin()">
+        🔐 Change PIN
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
 
 </div>
 
@@ -1295,6 +1350,9 @@ th{
 
 
 <script>
+
+
+
 
 /* ================= BASIC ================= */
 
@@ -1515,7 +1573,8 @@ async function initMember(user){
 
   $("memberLogoutBtn").style.display =
     "inline-block";
-
+  $("memberChangePinBtn").style.display =
+    "inline-block";
   $("notificationBell").style.display =
     "inline-flex";
 
@@ -1532,7 +1591,16 @@ async function initMember(user){
   await updateNotificationCount();
   await setupFCM(user.family_id);
 }
+function openChangePin(){
 
+  document.querySelectorAll("main section")
+    .forEach(x => x.classList.add("hidden"));
+
+  $("changePin").classList.remove("hidden");
+
+  $("title").textContent =
+    "🔐 Change PIN";
+}
 
 /* ================= MEMBER PASSBOOK ================= */
 
