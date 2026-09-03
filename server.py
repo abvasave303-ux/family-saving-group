@@ -1731,20 +1731,20 @@ def payment():
                 ),
                 token=token_row["token"]
             )
+                        
+            messaging.send(message)
         
-                messaging.send(message)
+        except Exception as e:
+            print("FCM payment notification error:", e)
         
-            except Exception as e:
-                print("FCM payment notification error:", e)
+    c.close()
         
-        c.close()
-        
-        return jsonify(
-            ok=True,
-            interest=interest,
-            principal=principal,
-            remaining=new_balance
-        )
+    return jsonify(
+        ok=True,
+        interest=interest,
+        principal=principal,
+        remaining=new_balance
+    )
 
 # ==================================================
 # INTEREST DISTRIBUTION
