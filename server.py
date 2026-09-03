@@ -144,6 +144,13 @@ def init_db():
         updated_at TEXT NOT NULL,
         FOREIGN KEY(family_id) REFERENCES families(id)
     );
+    
+    CREATE TABLE IF NOT EXISTS active_member_sessions(
+        family_id INTEGER PRIMARY KEY,
+        session_token TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY(family_id) REFERENCES families(id)
+    );
     """)
 
     n = c.execute(
