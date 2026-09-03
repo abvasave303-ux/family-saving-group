@@ -1699,6 +1699,7 @@ def payment():
     )
 
     c.commit()
+
 # ==============================
 # SEND FIREBASE PUSH NOTIFICATION
 # ==============================
@@ -1725,7 +1726,16 @@ if token_row:
         messaging.send(message)
 
     except Exception as e:
-        print("FCM payment notification error:", e) 
+        print("FCM payment notification error:", e)
+
+c.close()
+
+return jsonify(
+    ok=True,
+    interest=interest,
+    principal=principal,
+    remaining=new_balance
+)
     c.close()
 
     return jsonify(
