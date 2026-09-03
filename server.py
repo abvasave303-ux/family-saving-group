@@ -1700,44 +1700,36 @@ def payment():
 
     c.commit()
 
-# ==============================
-# SEND FIREBASE PUSH NOTIFICATION
-# ==============================
-
-token_row = c.execute(
-    """
-    SELECT token
-    FROM fcm_tokens
-    WHERE family_id=?
-    """,
-    (l["family_id"],)
-).fetchone()
-
-if token_row:
-    try:
-        message = messaging.Message(
-            notification=messaging.Notification(
-                title="💵 Payment अपडेट",
-                body=f"आपके Loan का ₹{actual_amount:.2f} भुगतान अपडेट किया गया है। बाकी Loan: ₹{new_balance:.2f}"
-            ),
-            token=token_row["token"]
-        )
-
-        messaging.send(message)
-
-    except Exception as e:
-        print("FCM payment notification error:", e)
-
-c.close()
-
-return jsonify(
-    ok=True,
-    interest=interest,
-    principal=principal,
-    remaining=new_balance
-)
+    # ==============================
+    # SEND FIREBASE PUSH NOTIFICATION
+    # ==============================
+    
+    token_row = c.execute(
+        """
+        SELECT token
+        FROM fcm_tokens
+        WHERE family_id=?
+        """,
+        (l["family_id"],)
+    ).fetchone()
+    
+    if token_row:
+        try:
+            message = messaging.Message(
+                notification=messaging.Notification(
+                    title="💵 Payment अपडेट",
+                    body=f"आपके Loan का ₹{actual_amount:.2f} भुगतान अपडेट किया गया है। बाकी Loan: ₹{new_balance:.2f}"
+                ),
+                token=token_row["token"]
+            )
+    
+            messaging.send(message)
+    
+        except Exception as e:
+            print("FCM payment notification error:", e)
+    
     c.close()
-
+    
     return jsonify(
         ok=True,
         interest=interest,
