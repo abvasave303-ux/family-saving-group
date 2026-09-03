@@ -314,7 +314,96 @@ def login():
     return jsonify(
         error="Invalid login type"
     ), 400
+# ==================================================
+# MEMBER CHANGE PIN
+# ==================================================
 
+@app.post("/api/member/change-pin")
+def change_member_pin():
+
+    family_id = session.get("family_id")
+
+    if not family_id:
+        return jsonify(
+            error="Member login required"
+        ), 401
+
+    data = request.json or {}
+
+    current_pin = str(
+        data.get("current_pin", "")
+    )
+
+    new_pin = str(
+        data.get("new_pin", "")
+    )
+
+    confirm_pin = str(
+        data.get("confirm_pin", "")
+    )
+
+    if not current_pin:
+        return jsonify(
+            error="Current PIN डालें"
+        ), 400
+
+    if not new_pin:
+        return jsonify(
+            error="New PIN डालें"
+        ), 400
+
+    if new_pin != confirm_pin:
+        return jsonify(
+            error="New PIN और Confirm PIN अलग हैं"
+        ), 400
+
+    if len(new_pin) < 4:
+        return jsonify(
+            error="PIN कम से कम 4 अंक का होना चाहिए"
+        ), 400
+
+    c = conn()
+
+    family = c.execute(
+        """
+        SELECT pin
+        FROM families
+        WHERE id=?
+        """,
+        (family_id,)
+    ).fetchone()
+
+    if not family:
+        c.close()
+        return jsonify(
+            error="Member नहीं मिला"
+        ), 404
+
+    if str(family["pin"]) != current_pin:
+        c.close()
+        return jsonify(
+            error="Current PIN गलत है"
+        ), 401
+
+    c.execute(
+        """
+        UPDATE families
+        SET pin=?
+        WHERE id=?
+        """,
+        (
+            new_pin,
+            family_id
+        )
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True,
+        message="PIN successfully changed"
+    )
 
 # ==================================================
 # LOGOUT
