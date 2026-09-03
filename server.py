@@ -1714,37 +1714,37 @@ def payment():
     ).fetchone()
     
     if token_row:
-    try:
-
-        if principal == 0 and interest > 0:
-            title = "💰 Loan Interest Paid"
-            body = f"आपके Loan का ₹{interest:.2f} ब्याज भुगतान अपडेट किया गया है।"
-
-        else:
-            title = "💵 Payment अपडेट"
-            body = f"आपके Loan का ₹{actual_amount:.2f} भुगतान अपडेट किया गया है। बाकी Loan: ₹{new_balance:.2f}"
-
-        message = messaging.Message(
-            notification=messaging.Notification(
-                title=title,
-                body=body
-            ),
-            token=token_row["token"]
+        try:
+    
+            if principal == 0 and interest > 0:
+                title = "💰 Loan Interest Paid"
+                body = f"आपके Loan का ₹{interest:.2f} ब्याज भुगतान अपडेट किया गया है।"
+    
+            else:
+                title = "💵 Payment अपडेट"
+                body = f"आपके Loan का ₹{actual_amount:.2f} भुगतान अपडेट किया गया है। बाकी Loan: ₹{new_balance:.2f}"
+    
+            message = messaging.Message(
+                notification=messaging.Notification(
+                    title=title,
+                    body=body
+                ),
+                token=token_row["token"]
+            )
+        
+                messaging.send(message)
+        
+            except Exception as e:
+                print("FCM payment notification error:", e)
+        
+        c.close()
+        
+        return jsonify(
+            ok=True,
+            interest=interest,
+            principal=principal,
+            remaining=new_balance
         )
-    
-            messaging.send(message)
-    
-        except Exception as e:
-            print("FCM payment notification error:", e)
-    
-    c.close()
-    
-    return jsonify(
-        ok=True,
-        interest=interest,
-        principal=principal,
-        remaining=new_balance
-    )
 
 # ==================================================
 # INTEREST DISTRIBUTION
