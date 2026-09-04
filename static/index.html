@@ -808,6 +808,12 @@ header::after{
 .mobile-menu-btn{
   display:flex;
 }
+.side.mobile-open{
+  display:block;
+  width:230px;
+  z-index:10;
+  box-shadow:4px 0 18px rgba(0,0,0,.18);
+}
 }
 </style>
 <script type="module">
@@ -2615,7 +2621,12 @@ async function logout(){
   location.reload();
 
 }
+function toggleSidebar(){
+  const sidebar = document.querySelector(".side");
+  if(!sidebar) return;
 
+  sidebar.classList.toggle("mobile-open");
+}
 
 /* ================= NAVIGATION ================= */
 
