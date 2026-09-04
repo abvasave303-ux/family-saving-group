@@ -103,7 +103,24 @@ header{
   top:0;
   z-index:2;
 }
+/* ================= HEADER EFFECT ================= */
 
+header{
+  box-shadow:0 2px 10px rgba(22,35,59,0.06);
+  transition:box-shadow 0.25s ease;
+}
+
+header:hover{
+  box-shadow:0 4px 16px rgba(22,35,59,0.10);
+}
+
+.title{
+  transition:transform 0.2s ease;
+}
+
+.title:hover{
+  transform:translateX(2px);
+}
 .title{
   font-size:24px;
   font-weight:800;
