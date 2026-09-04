@@ -752,6 +752,15 @@ header::after{
   font-size:12px;
   font-weight:700;
 }
+/* ================= CARD ZOOM FIX ================= */
+
+#dashboard .card:hover .value{
+  transform:scale(1.05);
+}
+
+#dashboard .card .value{
+  transition:transform .2s ease;
+}
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
