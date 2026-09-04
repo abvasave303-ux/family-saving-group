@@ -404,7 +404,51 @@ def change_member_pin():
         ok=True,
         message="PIN successfully changed"
     )
+# ==================================================
+# ADMIN FORCE LOGOUT MEMBER
+# ==================================================
 
+@app.post("/api/admin/force-logout/<int:fid>")
+def admin_force_logout(fid):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    family = c.execute(
+        """
+        SELECT id, name
+        FROM families
+        WHERE id=?
+        """,
+        (fid,)
+    ).fetchone()
+
+    if not family:
+        c.close()
+
+        return jsonify(
+            error="परिवार नहीं मिला"
+        ), 404
+
+    c.execute(
+        """
+        DELETE FROM active_member_sessions
+        WHERE family_id=?
+        """,
+        (fid,)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True,
+        message=f"{family['name']} का active login सफलतापूर्वक Force Logout हो गया।"
+    )
 # ==================================================
 # LOGOUT
 # ==================================================
@@ -458,7 +502,9 @@ def me():
 
 
 # ==================================================
+
 # SECURITY
+
 # ==================================================
 
 @app.before_request
@@ -478,10 +524,27 @@ def protect_api():
     # बाकी सभी API के लिए login जरूरी है
     if request.path.startswith("/api/"):
 
-        if not session.get("admin") and not session.get("family_id"):
-            return jsonify(
-                error="Login required"
-            ), 401
+        # Admin session
+        if session.get("admin"):
+            return None
+
+        # Member session
+        if session.get("family_id"):
+
+            if not member_session_valid():
+
+                session.clear()
+
+                return jsonify(
+                    error="Session expired. Please login again."
+                ), 401
+
+            return None
+
+        # कोई valid login नहीं
+        return jsonify(
+            error="Login required"
+        ), 401
 
     return None
 
@@ -498,11 +561,45 @@ def admin_required():
         ), 403
 
     return None
+# ==================================================
+
+# MEMBER SESSION VALIDATION
+
+# ==================================================
+
+def member_session_valid():
+
+    family_id = session.get("family_id")
+    session_token = session.get("session_token")
+
+    if not family_id or not session_token:
+        return False
+
+    c = conn()
+
+    row = c.execute(
+        """
+        SELECT session_token
+        FROM active_member_sessions
+        WHERE family_id=?
+        """,
+        (family_id,)
+    ).fetchone()
+
+    c.close()
+
+    return bool(
+        row and
+        row["session_token"] == session_token
+    )
 
 
 # ==================================================
+
 # DASHBOARD
+
 # ==================================================
+
 
 @app.get("/api/dashboard")
 def dashboard():
