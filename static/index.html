@@ -149,7 +149,31 @@ header{
 .panel{
   overflow:hidden;
 }
+/* ================= DASHBOARD PANEL EFFECT ================= */
 
+#dashboard .panel{
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+#dashboard .panel:hover{
+  transform:translateY(-3px);
+  box-shadow:0 8px 24px rgba(22,35,59,0.10);
+}
+/* ================= DASHBOARD PANEL ROW EFFECT ================= */
+
+#dashboard .line{
+  transition:
+    background 0.2s ease,
+    padding-left 0.2s ease;
+  border-radius:6px;
+}
+
+#dashboard .line:hover{
+  background:#f4f8fd;
+  padding-left:6px;
+}
 .panel h3{
   font-size:15px;
   padding:14px 16px;
