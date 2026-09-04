@@ -4,7 +4,39 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Family Saving Group</title>
+/* ================= DASHBOARD CARD ANIMATION ================= */
 
+.cards .card{
+  border-radius:16px;
+  background:#ffffff;
+  box-shadow:0 4px 14px rgba(22,35,59,0.08);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+  animation: dashboardCardIn 0.5s ease both;
+}
+
+.cards .card:nth-child(1){animation-delay:0.05s}
+.cards .card:nth-child(2){animation-delay:0.10s}
+.cards .card:nth-child(3){animation-delay:0.15s}
+.cards .card:nth-child(4){animation-delay:0.20s}
+.cards .card:nth-child(5){animation-delay:0.25s}
+
+.cards .card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 8px 22px rgba(22,35,59,0.14);
+}
+
+@keyframes dashboardCardIn{
+  from{
+    opacity:0;
+    transform:translateY(12px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
 <style>
 *{box-sizing:border-box}
 
