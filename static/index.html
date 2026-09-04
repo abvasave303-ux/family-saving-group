@@ -789,6 +789,25 @@ header::after{
   #dashboard .panel{
     border-radius:14px;
   }
+  /* ================= MOBILE MENU BUTTON ================= */
+
+.mobile-menu-btn{
+  display:none;
+  border:0;
+  background:#1976d2;
+  color:#fff;
+  width:42px;
+  height:42px;
+  border-radius:10px;
+  font-size:24px;
+  cursor:pointer;
+  align-items:center;
+  justify-content:center;
+}
+
+.mobile-menu-btn{
+  display:flex;
+}
 }
 </style>
 <script type="module">
@@ -1026,7 +1045,13 @@ header::after{
   <div class="title" id="title">
     Dashboard
   </div>
-
+<button
+  id="menuBtn"
+  class="mobile-menu-btn"
+  onclick="toggleSidebar()"
+  title="Menu">
+  ☰
+</button>
   <div style="display:flex;align-items:center;gap:12px;">
 
     <span id="userInfo">
