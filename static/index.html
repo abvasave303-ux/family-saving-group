@@ -695,6 +695,22 @@ header::after{
 #dashboard .card:hover .label{
   color:#1976d2;
 }
+/* ================= DASHBOARD VALUE APPEAR ================= */
+
+#dashboard .card .value{
+  animation:valueAppear .6s ease both;
+}
+
+@keyframes valueAppear{
+  from{
+    opacity:0;
+    transform:translateY(6px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
