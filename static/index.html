@@ -766,6 +766,30 @@ header::after{
 #dashboard .card .value{
   transition:transform .2s ease;
 }
+/* ================= MOBILE DASHBOARD POLISH ================= */
+
+@media(max-width:650px){
+
+  #dashboard .cards{
+    gap:10px;
+  }
+
+  #dashboard .card{
+    padding:14px 12px;
+  }
+
+  #dashboard .card .value{
+    font-size:20px;
+  }
+
+  #dashboard .grid{
+    gap:10px;
+  }
+
+  #dashboard .panel{
+    border-radius:14px;
+  }
+}
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
