@@ -3775,7 +3775,44 @@ async function resetMemberPin(id){
 
     }
 }
+async function forceLogoutMember(id){
 
+    const member = fam.find(
+        f => Number(f.id) === Number(id)
+    );
+
+    if(!member){
+        alert("Member नहीं मिला");
+        return;
+    }
+
+    const ok = confirm(
+        "क्या आप " + member.name +
+        " का active login Force Logout करना चाहते हैं?"
+    );
+
+    if(!ok) return;
+
+    try{
+
+        await api(
+            "/api/admin/force-logout/" + id,
+            {
+                method: "POST"
+            }
+        );
+
+        alert(
+            member.name +
+            " का active login सफलतापूर्वक Force Logout हो गया।"
+        );
+
+    }catch(e){
+
+        alert(e.message);
+
+    }
+}
 /* ================= EDIT LOAN ================= */
 
 async function editLoan(id){
