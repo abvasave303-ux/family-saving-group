@@ -711,6 +711,34 @@ header::after{
     transform:translateY(0);
   }
 }
+/* ================= DASHBOARD PANEL ENTRY ================= */
+
+#dashboard .grid .panel{
+  animation:panelAppear .55s ease both;
+}
+
+#dashboard .grid .panel:nth-child(1){
+  animation-delay:.15s;
+}
+
+#dashboard .grid .panel:nth-child(2){
+  animation-delay:.22s;
+}
+
+#dashboard .grid .panel:nth-child(3){
+  animation-delay:.29s;
+}
+
+@keyframes panelAppear{
+  from{
+    opacity:0;
+    transform:translateY(10px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
