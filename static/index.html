@@ -2660,6 +2660,9 @@ function show(id, button){
       heading ? heading.textContent : id;
 
   }
+  if(window.innerWidth <= 650){
+  document.querySelector(".side").classList.remove("mobile-open");
+}
 
 }
 
