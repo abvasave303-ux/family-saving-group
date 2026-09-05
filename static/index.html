@@ -2643,21 +2643,26 @@ function toggleSidebar(){
 }
 /* ================= MOBILE SIDEBAR OUTSIDE CLICK ================= */
 document.addEventListener("click", function(e){
+
   if(window.innerWidth <= 650){
 
     const sidebar = document.querySelector(".side");
-    const menuBtn = document.querySelector("#menuBtn");
 
+    if(!sidebar) return;
+
+    /* Menu button par click ho to kuch mat karo */
+    if(e.target.closest("#menuBtn")) return;
+
+    /* Sidebar ke bahar click ho to close karo */
     if(
-      sidebar &&
       sidebar.classList.contains("mobile-open") &&
-      !sidebar.contains(e.target) &&
-      (!menuBtn || !menuBtn.contains(e.target))
+      !sidebar.contains(e.target)
     ){
       sidebar.classList.remove("mobile-open");
     }
 
   }
+
 });
 /* ================= NAVIGATION ================= */
 
