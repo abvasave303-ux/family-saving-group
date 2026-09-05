@@ -908,6 +908,8 @@ def delete_family(fid):
             error="परिवार नहीं मिला"
         ), 404
 
+    # पहले जुड़े हुए records हटाएँ
+
     c.execute(
         "DELETE FROM payments WHERE family_id=?",
         (fid,)
@@ -924,6 +926,23 @@ def delete_family(fid):
     )
 
     c.execute(
+        "DELETE FROM active_member_sessions WHERE family_id=?",
+        (fid,)
+    )
+
+    c.execute(
+        "DELETE FROM notifications WHERE family_id=?",
+        (fid,)
+    )
+
+    c.execute(
+        "DELETE FROM fcm_tokens WHERE family_id=?",
+        (fid,)
+    )
+
+    # आखिर में family हटाएँ
+
+    c.execute(
         "DELETE FROM families WHERE id=?",
         (fid,)
     )
@@ -934,7 +953,6 @@ def delete_family(fid):
     return jsonify(
         ok=True
     )
-
 
 # ==================================================
 # MEMBER LIST FOR LOGIN
