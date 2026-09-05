@@ -2628,7 +2628,24 @@ function toggleSidebar(){
 
   sidebar.classList.toggle("mobile-open");
 }
+/* ================= MOBILE SIDEBAR OUTSIDE CLICK ================= */
+document.addEventListener("click", function(e){
+  if(window.innerWidth <= 650){
 
+    const sidebar = document.querySelector(".side");
+    const menuBtn = document.querySelector("#menuBtn");
+
+    if(
+      sidebar &&
+      sidebar.classList.contains("mobile-open") &&
+      !sidebar.contains(e.target) &&
+      (!menuBtn || !menuBtn.contains(e.target))
+    ){
+      sidebar.classList.remove("mobile-open");
+    }
+
+  }
+});
 /* ================= NAVIGATION ================= */
 
 function show(id, button){
