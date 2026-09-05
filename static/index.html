@@ -476,6 +476,15 @@ th{
 .title{
   font-size:18px;
 }
+.title.repay{
+  font-size:15px;
+  white-space:nowrap;
+}
+
+.title.interest{
+  font-size:17px;
+  white-space:nowrap;
+}
 .side{
   display:block;
   transform:translateX(-100%);
@@ -2691,6 +2700,7 @@ function show(id, button){
       heading ? heading.textContent : id;
 
   }
+  $("title").className = "title " + id;
   if(window.innerWidth <= 650){
   document.querySelector(".side").classList.remove("mobile-open");
 }
