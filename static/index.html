@@ -532,6 +532,33 @@ body:has(.side.mobile-open){
   .loginbox{
     padding:22px;
   }
+/* ================= MEMBER HEADER COMPACT ================= */
+
+header{
+  gap:6px;
+}
+
+header .title{
+  flex:1;
+  min-width:0;
+  font-size:15px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+header>div:last-child{
+  gap:4px !important;
+  flex-shrink:0;
+}
+
+#notificationBell,
+#memberChangePinBtn,
+#memberLogoutBtn{
+  padding:7px 8px;
+  font-size:11px;
+  white-space:nowrap;
+}
 }
 /* ================= DASHBOARD CARD ANIMATION ================= */
 
