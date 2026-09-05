@@ -491,13 +491,34 @@ def logout():
 @app.get("/api/me")
 def me():
 
+    family_id = session.get("family_id")
+
+    name = None
+
+    if family_id:
+
+        c = conn()
+
+        family = c.execute(
+            """
+            SELECT name
+            FROM families
+            WHERE id=?
+            """,
+            (family_id,)
+        ).fetchone()
+
+        c.close()
+
+        if family:
+            name = family["name"]
+
     return jsonify(
         admin=bool(
             session.get("admin")
         ),
-        family_id=session.get(
-            "family_id"
-        )
+        family_id=family_id,
+        name=name
     )
 
 
