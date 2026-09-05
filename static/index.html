@@ -474,10 +474,15 @@ th{
 
 @media(max-width:650px){
 
-  .side{
-    display:none;
+   .side{
+    display:block;
+    transform:translateX(-100%);
+    transition:transform .25s ease;
+    will-change:transform;
   }
-
+  .side.mobile-open{
+  transform:translateX(0);
+}
   .main{
     margin-left:0;
   }
