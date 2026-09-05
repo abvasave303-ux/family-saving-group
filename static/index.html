@@ -2635,12 +2635,12 @@ async function logout(){
   location.reload();
 
 }
-function toggleSidebar(){
+window.toggleSidebar = function(){
   const sidebar = document.querySelector(".side");
   if(!sidebar) return;
 
   sidebar.classList.toggle("mobile-open");
-}
+};
 /* ================= MOBILE SIDEBAR OUTSIDE CLICK ================= */
 document.addEventListener("click", function(e){
 
