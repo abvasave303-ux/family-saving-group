@@ -907,16 +907,16 @@ header .title{
   const app = initializeApp(firebaseConfig);
   const messaging = getMessaging(app);
 onMessage(messaging, (payload) => {
- const notification = payload.notification || {};
+    const notification = payload.notification || {};
 
- if (Notification.permission === "granted") {
-  new Notification(
-   notification.title || "Family Saving Group",
-   {
-    body: notification.body || ""
-   }
-  );
- }
+    navigator.serviceWorker.ready.then((registration) => {
+        registration.showNotification(
+            notification.title || "Family Saving Group",
+            {
+                body: notification.body || ""
+            }
+        );
+    });
 });
   window.setupFCM = async function(familyId) {
     try {
