@@ -473,7 +473,13 @@ def logout():
                 session_token
             )
         )
-
+        c.execute(
+            """
+            DELETE FROM fcm_tokens
+            WHERE family_id=?
+            """,
+            (family_id,)
+        )
         c.commit()
         c.close()
 
