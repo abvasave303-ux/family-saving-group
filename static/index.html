@@ -928,7 +928,7 @@ onMessage(messaging, (payload) => {
       }
 
       const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
-
+await navigator.serviceWorker.ready;
 const token = await getToken(messaging, {
   vapidKey: "BOBvT5SQIyTQPPXlf2OuOEGN-x2eecqUQlyC5tE9wYmlIsyLb4OR1fbRuAWO-QXO8eXPf6EvJQ9Ym_nNofZYK5Y",
   serviceWorkerRegistration: registration
