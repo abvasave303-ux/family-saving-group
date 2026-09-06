@@ -890,9 +890,10 @@ header .title{
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
   import {
-    getMessaging,
-    getToken
-  } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js";
+  getMessaging,
+  getToken,
+  onMessage
+} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC0ISJyPPbn0I-uA49Dku95PFg4D5TVUnI",
@@ -905,7 +906,18 @@ header .title{
 
   const app = initializeApp(firebaseConfig);
   const messaging = getMessaging(app);
+onMessage(messaging, (payload) => {
+ const notification = payload.notification || {};
 
+ if (Notification.permission === "granted") {
+  new Notification(
+   notification.title || "Family Saving Group",
+   {
+    body: notification.body || ""
+   }
+  );
+ }
+});
   window.setupFCM = async function(familyId) {
     try {
       const permission = await Notification.requestPermission();
