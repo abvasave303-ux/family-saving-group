@@ -927,9 +927,12 @@ onMessage(messaging, (payload) => {
         return;
       }
 
-      const token = await getToken(messaging, {
-        vapidKey: "BOBvT5SQIyTQPPXlf2OuOEGN-x2eecqUQlyC5tE9wYmlIsyLb4OR1fbRuAWO-QXO8eXPf6EvJQ9Ym_nNofZYK5Y"
-      });
+      const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+
+const token = await getToken(messaging, {
+  vapidKey: "BOBvT5SQIyTQPPXlf2OuOEGN-x2eecqUQlyC5tE9wYmlIsyLb4OR1fbRuAWO-QXO8eXPf6EvJQ9Ym_nNofZYK5Y",
+  serviceWorkerRegistration: registration
+});
 
       if (!token) {
         console.log("FCM token नहीं मिला");
