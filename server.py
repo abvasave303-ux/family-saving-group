@@ -2004,7 +2004,7 @@ def payment():
         """,
         (l["family_id"],)
     ).fetchone()
-    
+    print("PAYMENT FCM TOKEN FOUND:", bool(token_row))
     if token_row:
         try:
     
