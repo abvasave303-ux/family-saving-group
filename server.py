@@ -2024,7 +2024,8 @@ def payment():
                 token=token_row["token"]
             )
                         
-            messaging.send(message)
+            response = messaging.send(message)
+            print("FCM payment sent successfully:", response)
         
         except Exception as e:
             print("FCM payment notification error:", e)
