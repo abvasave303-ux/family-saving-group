@@ -835,7 +835,7 @@ def update_family(fid):
     c = conn()
     family = c.execute(
         """
-        SELECT id
+        SELECT id, pin
         FROM families
         WHERE id=?
         """,
