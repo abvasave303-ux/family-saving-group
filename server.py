@@ -1095,6 +1095,117 @@ def save_fcm_token():
 
     return jsonify(ok=True)
 # ==================================================
+# MONTHLY REMINDER - MANUAL TEST
+# ==================================================
+
+@app.post("/api/test-monthly-reminder/<int:day>")
+def test_monthly_reminder(day):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    if day == 1:
+
+        title = "💰 मासिक बचत / ब्याज"
+
+        body = (
+            "कृपया अपनी मासिक बचत और ब्याज जमा करें।"
+        )
+
+    elif day == 14:
+
+        title = "🔔 मासिक जमा Reminder"
+
+        body = (
+            "अगर आपने अभी तक अपनी बचत/ब्याज जमा नहीं किया है। "
+            "तो कृपया 15 तारीख तक जमा करें।"
+        )
+
+    else:
+
+        return jsonify(
+            error="केवल day 1 या 14 allowed है"
+        ), 400
+
+    c = conn()
+
+    families = c.execute(
+        """
+        SELECT id
+        FROM families
+        ORDER BY id
+        """
+    ).fetchall()
+
+    sent = 0
+
+    for family in families:
+
+        family_id = family["id"]
+
+        # Notification record
+        c.execute(
+            """
+            INSERT INTO notifications
+            (family_id, title, message, is_read, created_at)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (
+                family_id,
+                title,
+                body,
+                False,
+                datetime.datetime.now().isoformat(
+                    timespec="seconds"
+                )
+            )
+        )
+
+        # FCM token
+        token_row = c.execute(
+            """
+            SELECT token
+            FROM fcm_tokens
+            WHERE family_id=?
+            """,
+            (family_id,)
+        ).fetchone()
+
+        if token_row:
+
+            try:
+
+                message = messaging.Message(
+                    notification=messaging.Notification(
+                        title=title,
+                        body=body
+                    ),
+                    token=token_row["token"]
+                )
+
+                messaging.send(message)
+
+                sent += 1
+
+            except Exception as e:
+
+                print(
+                    "Monthly reminder FCM error:",
+                    e
+                )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True,
+        reminder_day=day,
+        total_families=len(families),
+        fcm_sent=sent
+    )
+# ==================================================
 # MEMBER PASSBOOK
 # ==================================================
 
