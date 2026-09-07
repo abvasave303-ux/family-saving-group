@@ -2138,85 +2138,85 @@ def distribution():
         )
     )
 
-c.commit()
-
-# ==============================
-# CREATE INTEREST NOTIFICATION
-# + SEND FIREBASE PUSH
-# ==============================
-
-for r in result:
-
-    interest_amount = r["interest"]
-
-    if interest_amount <= 0:
-        continue
-
-    family_id = r["id"]
-
-    title = "💰 ब्याज वितरण"
-
-    body = (
-        f"आपके परिवार के खाते में "
-        f"₹{interest_amount:.2f} ब्याज वितरित किया गया है।"
-    )
-
-    # MEMBER NOTIFICATION
-    c.execute(
-        """
-        INSERT INTO notifications
-        (family_id, title, message, is_read, created_at)
-        VALUES (?, ?, ?, ?, ?)
-        """,
-        (
-            family_id,
-            title,
-            body,
-            False,
-            datetime.datetime.now().isoformat(
-                timespec="seconds"
+    c.commit()
+    
+    # ==============================
+    # CREATE INTEREST NOTIFICATION
+    # + SEND FIREBASE PUSH
+    # ==============================
+    
+    for r in result:
+    
+        interest_amount = r["interest"]
+    
+        if interest_amount <= 0:
+            continue
+    
+        family_id = r["id"]
+    
+        title = "💰 ब्याज वितरण"
+    
+        body = (
+            f"आपके परिवार के खाते में "
+            f"₹{interest_amount:.2f} ब्याज वितरित किया गया है।"
+        )
+    
+        # MEMBER NOTIFICATION
+        c.execute(
+            """
+            INSERT INTO notifications
+            (family_id, title, message, is_read, created_at)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (
+                family_id,
+                title,
+                body,
+                False,
+                datetime.datetime.now().isoformat(
+                    timespec="seconds"
+                )
             )
         )
+    
+        # FCM TOKEN
+        token_row = c.execute(
+            """
+            SELECT token
+            FROM fcm_tokens
+            WHERE family_id=?
+            """,
+            (family_id,)
+        ).fetchone()
+    
+        if token_row:
+            try:
+    
+                message = messaging.Message(
+                    notification=messaging.Notification(
+                        title=title,
+                        body=body
+                    ),
+                    token=token_row["token"]
+                )
+    
+                messaging.send(message)
+    
+            except Exception as e:
+    
+                print(
+                    "FCM interest notification error:",
+                    e
+                )
+    
+    c.commit()
+    
+    c.close()
+    
+    return jsonify(
+        total_savings=total_s,
+        result=result
     )
-
-    # FCM TOKEN
-    token_row = c.execute(
-        """
-        SELECT token
-        FROM fcm_tokens
-        WHERE family_id=?
-        """,
-        (family_id,)
-    ).fetchone()
-
-    if token_row:
-        try:
-
-            message = messaging.Message(
-                notification=messaging.Notification(
-                    title=title,
-                    body=body
-                ),
-                token=token_row["token"]
-            )
-
-            messaging.send(message)
-
-        except Exception as e:
-
-            print(
-                "FCM interest notification error:",
-                e
-            )
-
-c.commit()
-
-c.close()
-
-return jsonify(
-    total_savings=total_s,
-    result=result
-)
 
 # ==================================================
 # START APPLICATION
