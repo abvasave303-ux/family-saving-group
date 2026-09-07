@@ -545,7 +545,6 @@ header .title{
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
-  max-width:45%;
 }
 
 header>div:last-child{
@@ -886,14 +885,82 @@ header .title{
   text-overflow:ellipsis;
 }
 }
+
+/* ================= STARTUP LOADING SCREEN ================= */
+#startupLoader{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#eef7ff,#ffffff);
+  transition:opacity .35s ease, visibility .35s ease;
+}
+#startupLoader.hide{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+.startup-box{
+  width:min(90%,360px);
+  text-align:center;
+  padding:28px 22px;
+}
+.startup-logo{
+  width:88px;
+  height:88px;
+  object-fit:contain;
+  background:#fff;
+  border-radius:50%;
+  padding:5px;
+  box-shadow:0 8px 25px rgba(8,59,120,.14);
+  animation:startupFloat 1.8s ease-in-out infinite;
+}
+.startup-title{
+  margin:16px 0 5px;
+  color:#083b78;
+  font-size:24px;
+  font-weight:800;
+}
+.startup-subtitle{
+  color:#68768b;
+  font-size:13px;
+}
+.startup-spinner{
+  width:34px;
+  height:34px;
+  margin:20px auto 10px;
+  border:3px solid #dbeaf8;
+  border-top-color:#1976d2;
+  border-radius:50%;
+  animation:startupSpin .8s linear infinite;
+}
+.startup-status{
+  color:#1976d2;
+  font-size:12px;
+  font-weight:600;
+}
+@keyframes startupSpin{
+  to{transform:rotate(360deg)}
+}
+@keyframes startupFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-5px)}
+}
+@media(max-width:650px){
+  .startup-box{padding:24px 18px}
+  .startup-logo{width:76px;height:76px}
+  .startup-title{font-size:21px}
+}
+
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
   import {
-  getMessaging,
-  getToken,
-  onMessage
-} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js";
+    getMessaging,
+    getToken
+  } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC0ISJyPPbn0I-uA49Dku95PFg4D5TVUnI",
@@ -906,18 +973,7 @@ header .title{
 
   const app = initializeApp(firebaseConfig);
   const messaging = getMessaging(app);
-onMessage(messaging, (payload) => {
-    const notification = payload.notification || {};
 
-    navigator.serviceWorker.ready.then((registration) => {
-        registration.showNotification(
-            notification.title || "Family Saving Group",
-            {
-                body: notification.body || ""
-            }
-        );
-    });
-});
   window.setupFCM = async function(familyId) {
     try {
       const permission = await Notification.requestPermission();
@@ -927,12 +983,9 @@ onMessage(messaging, (payload) => {
         return;
       }
 
-      const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
-await navigator.serviceWorker.ready;
-const token = await getToken(messaging, {
-  vapidKey: "BOBvT5SQIyTQPPXlf2OuOEGN-x2eecqUQlyC5tE9wYmlIsyLb4OR1fbRuAWO-QXO8eXPf6EvJQ9Ym_nNofZYK5Y",
-  serviceWorkerRegistration: registration
-});
+      const token = await getToken(messaging, {
+        vapidKey: "BOBvT5SQIyTQPPXlf2OuOEGN-x2eecqUQlyC5tE9wYmlIsyLb4OR1fbRuAWO-QXO8eXPf6EvJQ9Ym_nNofZYK5Y"
+      });
 
       if (!token) {
         console.log("FCM token नहीं मिला");
@@ -959,6 +1012,22 @@ const token = await getToken(messaging, {
 </head>
 
 <body>
+<!-- ================= STARTUP LOADER ================= -->
+<div id="startupLoader" aria-label="Family Saving Group loading">
+  <div class="startup-box">
+    <img
+      src="/static/logo.png"
+      class="startup-logo"
+      alt="Family Saving Group"
+      onerror="this.style.display='none'"
+    >
+    <div class="startup-title">Family Saving Group</div>
+    <div class="startup-subtitle">आपका परिवार • आपकी बचत • आपका भविष्य</div>
+    <div class="startup-spinner"></div>
+    <div class="startup-status">सिस्टम तैयार हो रहा है…</div>
+  </div>
+</div>
+
 
 <!-- ================= LOGIN ================= -->
 
@@ -2682,7 +2751,20 @@ function printMemberPassbook(){
         };
       <\/script>
 
-    </body>
+    
+<script>
+window.addEventListener("load", function(){
+  const loader = document.getElementById("startupLoader");
+  if(loader){
+    loader.classList.add("hide");
+    setTimeout(function(){
+      loader.remove();
+    }, 400);
+  }
+});
+</script>
+
+</body>
 
     </html>
 
