@@ -973,7 +973,22 @@ header .title{
 
   const app = initializeApp(firebaseConfig);
   const messaging = getMessaging(app);
+  onMessage(messaging, (payload) => {
 
+    const notification = payload.notification || {};
+
+    navigator.serviceWorker.ready.then((registration) => {
+
+        registration.showNotification(
+            notification.title || "Family Saving Group",
+            {
+                body: notification.body || ""
+            }
+        );
+
+    });
+
+});
   window.setupFCM = async function(familyId) {
     try {
       const permission = await Notification.requestPermission();
