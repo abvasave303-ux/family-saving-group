@@ -3858,7 +3858,17 @@ async function passbook(){
                 </tr>
 
               `).join("")}
-
+              ${(x.loans || []).map(r => `
+               <tr>
+                <td>${r.date}</td>
+                <td>
+                 Loan दिया गया
+                </td>
+                <td class="red">
+                 ${money(r.original)}
+                </td>
+               </tr>
+              `).join("")}
             </table>
 
           </div>
