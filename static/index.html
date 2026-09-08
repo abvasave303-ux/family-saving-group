@@ -1583,7 +1583,8 @@ header .title{
             <th>महीना</th>
             <th>परिवार</th>
             <th>राशि</th>
-            <th>विवरण / Action</th>
+            <th>विवरण</th>
+            <th>Action</th>
           </tr>
 
         </thead>
@@ -3126,13 +3127,13 @@ async function refresh(){
           </td>
 
           <td>
+            ${x.kind === "debit" ? (x.reason || "—") : "—"}
+          </td>
+
+          <td>
             ${
               x.kind === "debit"
               ? `
-                <div class="debit-reason">
-                  ${x.reason ? x.reason : "—"}
-                </div>
-
                 <div class="debit-actions">
                   <button
                     class="btn secondary small"
@@ -3168,7 +3169,7 @@ async function refresh(){
       `).join("")
       ||
       `<tr>
-        <td colspan="5" class="empty">
+        <td colspan="6" class="empty">
           कोई एंट्री नहीं
         </td>
       </tr>`;
