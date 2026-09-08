@@ -3181,7 +3181,23 @@ async function refresh(){
           <td>
             ${
               x.kind === "debit"
-              ? (x.reason ? x.reason : "—")
+              ? `
+                <div>
+                  ${x.reason ? x.reason : "—"}
+                </div>
+
+                <button
+                  class="btn secondary small"
+                  onclick="editSavingDebit(${x.id})">
+                  ✏️ Edit
+                </button>
+
+                <button
+                  class="btn danger small"
+                  onclick="deleteSavingDebit(${x.id})">
+                  🗑️ Delete
+                </button>
+              `
               : `
                 <button
                   class="btn secondary small"
@@ -3509,6 +3525,111 @@ async function saveDebit(){
 
     $("da").value = "";
     $("dre").value = "";
+
+    await refresh();
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+}
+
+
+/* ================= EDIT SAVING DEBIT ================= */
+
+async function editSavingDebit(id){
+
+  try{
+
+    const row =
+      savingDebits.find(x => Number(x.id) === Number(id));
+
+    if(!row){
+      alert("डेबिट एंट्री नहीं मिली");
+      return;
+    }
+
+    const amount =
+      prompt("नई Debit राशि:", row.amount);
+
+    if(amount === null){
+      return;
+    }
+
+    const value =
+      Number(amount);
+
+    if(!value || value <= 0){
+      alert("सही Debit राशि डालें");
+      return;
+    }
+
+    const date =
+      prompt("तारीख (YYYY-MM-DD):", row.date || "");
+
+    if(date === null){
+      return;
+    }
+
+    const reason =
+      prompt("कारण:", row.reason || "");
+
+    if(reason === null){
+      return;
+    }
+
+    await api("/api/saving-debits/" + id,{
+
+      method:"PUT",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+
+        family_id:Number(row.family_id),
+
+        amount:value,
+
+        date:date,
+
+        reason:reason
+
+      })
+
+    });
+
+    alert("✏️ Debit अपडेट हो गया");
+
+    await refresh();
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+}
+
+
+async function deleteSavingDebit(id){
+
+  if(!confirm("क्या यह Debit entry delete करनी है?")){
+    return;
+  }
+
+  try{
+
+    await api("/api/saving-debits/" + id,{
+
+      method:"DELETE"
+
+    });
+
+    alert("🗑️ Debit delete हो गया");
 
     await refresh();
 
