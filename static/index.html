@@ -958,9 +958,11 @@ header .title{
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
   import {
+    import {
     getMessaging,
-    getToken
-  } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js";
+    getToken,
+    onMessage
+} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC0ISJyPPbn0I-uA49Dku95PFg4D5TVUnI",
