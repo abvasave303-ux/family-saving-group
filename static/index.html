@@ -2518,78 +2518,7 @@ async function loadMemberPassbook(fid){
               </tr>
 
 
-              ${(x.savings || []).map(r => {
-
-                const isDebit =
-                  String(r.month || "").toLowerCase().includes("debit");
-
-                return `
-
-                  <tr>
-
-                    <td>
-                      ${r.date}
-                    </td>
-
-                    <td>
-                      ${
-                        isDebit
-                        ? `Debit / निकासी${r.reason ? " (" + r.reason + ")" : ""}`
-                        : `मासिक बचत (${r.month})`
-                      }
-                    </td>
-
-                    <td class="${isDebit ? "red" : "green"}">
-                      ${money(r.amount)}
-                    </td>
-
-                  </tr>
-
-                `;
-
-              }).join("")}
-
-
-              ${(x.loans || []).map(r => `
-
-                <tr>
-
-                  <td>
-                    ${r.date}
-                  </td>
-
-                  <td>
-                    Loan लिया गया
-                  </td>
-
-                  <td class="red">
-                    -${money(r.original || r.principal || 0)}
-                  </td>
-
-                </tr>
-
-              `).join("")}
-
-
-              ${(x.payments || []).map(r => `
-
-                <tr>
-
-                  <td>
-                    ${r.date}
-                  </td>
-
-                  <td>
-                    Loan Payment
-                  </td>
-
-                  <td>
-                    ${money(r.amount)}
-                  </td>
-
-                </tr>
-
-              `).join("")}
+              ${buildPassbookLedger(x)}
 
             </table>
 
@@ -3926,6 +3855,68 @@ async function dist(){
 
 /* ================= PASSBOOK ================= */
 
+function buildPassbookLedger(x){
+
+  const rows = [];
+
+  (x.loans || []).forEach(r => {
+    rows.push({
+      date: r.date || "",
+      order: 1,
+      detail: "Loan लिया गया",
+      amount: -Math.abs(Number(r.original || r.principal || 0)),
+      className: "red"
+    });
+  });
+
+  (x.savings || []).forEach(r => {
+    rows.push({
+      date: r.date || "",
+      order: 2,
+      detail: `मासिक बचत (${r.month || ""})`,
+      amount: Math.abs(Number(r.amount || 0)),
+      className: "green"
+    });
+  });
+
+  (x.saving_debits || []).forEach(r => {
+    rows.push({
+      date: r.date || "",
+      order: 3,
+      detail: `Debit / निकासी${r.reason ? " (" + r.reason + ")" : ""}`,
+      amount: -Math.abs(Number(r.amount || 0)),
+      className: "red"
+    });
+  });
+
+  (x.payments || []).forEach(r => {
+    rows.push({
+      date: r.date || "",
+      order: 4,
+      detail: "Loan Payment",
+      amount: Math.abs(Number(r.amount || 0)),
+      className: "green"
+    });
+  });
+
+  rows.sort((a,b) => {
+    const dateCompare = String(b.date).localeCompare(String(a.date));
+    return dateCompare !== 0 ? dateCompare : a.order - b.order;
+  });
+
+  return rows.map(r => `
+    <tr>
+      <td>${r.date}</td>
+      <td>${r.detail}</td>
+      <td class="${r.className}">${money(r.amount)}</td>
+    </tr>
+  `).join("") ||
+  `<tr>
+    <td colspan="3" class="empty">कोई एंट्री नहीं</td>
+  </tr>`;
+}
+
+
 async function passbook(){
 
   const familyId =
@@ -4092,65 +4083,7 @@ async function passbook(){
               </tr>
 
 
-              ${(x.savings || []).map(r => `
-
-                <tr>
-
-                  <td>${r.date}</td>
-
-                  <td>
-                    ${
-                      Number(r.amount || 0) < 0
-                      ? (r.month || "Debit / निकासी")
-                      : `मासिक बचत (${r.month})`
-                    }
-                  </td>
-
-                  <td class="${Number(r.amount || 0) < 0 ? "red" : "green"}">
-                    ${money(r.amount)}
-                  </td>
-
-                </tr>
-
-              `).join("")}
-
-
-              ${(x.loans || []).map(r => `
-
-                <tr>
-
-                  <td>${r.date}</td>
-
-                  <td>
-                    Loan लिया गया
-                  </td>
-
-                  <td class="red">
-                    ${money(-Math.abs(Number(r.original || r.principal || 0)))}
-                  </td>
-
-                </tr>
-
-              `).join("")}
-
-
-              ${(x.payments || []).map(r => `
-
-                <tr>
-
-                  <td>${r.date}</td>
-
-                  <td>
-                    Loan Payment
-                  </td>
-
-                  <td>
-                    ${money(r.amount)}
-                  </td>
-
-                </tr>
-
-              `).join("")}
+              ${buildPassbookLedger(x)}
 
             </table>
 
