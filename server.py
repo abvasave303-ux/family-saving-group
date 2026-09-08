@@ -721,11 +721,20 @@ def get_families():
 
         s = c.execute(
             """
-            SELECT COALESCE(SUM(amount), 0) x
-            FROM savings
-            WHERE family_id=?
+            SELECT
+                (
+                    SELECT COALESCE(SUM(amount), 0)
+                    FROM savings
+                    WHERE family_id=?
+                )
+                -
+                (
+                    SELECT COALESCE(SUM(amount), 0)
+                    FROM saving_debits
+                    WHERE family_id=?
+                ) x
             """,
-            (f["id"],)
+            (f["id"], f["id"])
         ).fetchone()["x"]
 
         l = c.execute(
