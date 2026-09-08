@@ -1984,6 +1984,32 @@ def add_loan():
     )
 
     c.commit()
+
+    # ==============================
+    # SEND FIREBASE PUSH NOTIFICATION
+    # ==============================
+    token_row = c.execute(
+        """
+        SELECT token
+        FROM fcm_tokens
+        WHERE family_id=?
+        """,
+        (family_id,)
+    ).fetchone()
+
+    if token_row:
+        try:
+            message = messaging.Message(
+                notification=messaging.Notification(
+                    title="💳 Loan अपडेट",
+                    body=f"आपके परिवार के लिए ₹{amount:.2f} का Loan अपडेट किया गया है। अवधि: {months} महीने।"
+                ),
+                token=token_row["token"]
+            )
+            messaging.send(message)
+        except Exception as e:
+            print("FCM loan notification error:", e)
+
     c.close()
 
     return jsonify(
