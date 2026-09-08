@@ -1142,7 +1142,18 @@ def passbook(fid):
     c = conn()
 
     group_savings = c.execute(
-        "SELECT COALESCE(SUM(amount),0) x FROM savings"
+        """
+        SELECT
+            (
+                SELECT COALESCE(SUM(amount),0)
+                FROM savings
+            )
+            -
+            (
+                SELECT COALESCE(SUM(amount),0)
+                FROM saving_debits
+            ) x
+        """
     ).fetchone()["x"]
 
     group_loan = c.execute(
@@ -1185,6 +1196,38 @@ def passbook(fid):
         (fid,)
     ).fetchall()
 
+    debits = c.execute(
+        """
+        SELECT id, family_id, amount, date, reason
+        FROM saving_debits
+        WHERE family_id=?
+        ORDER BY id DESC
+        """,
+        (fid,)
+    ).fetchall()
+
+    # Keep original deposits untouched; merge debit transactions only
+    # into the passbook response as negative ledger rows.
+    passbook_savings = [
+        dict(x)
+        for x in s
+    ] + [
+        {
+            "id": -int(x["id"]),
+            "family_id": x["family_id"],
+            "month": "Debit / निकासी",
+            "amount": -float(x["amount"] or 0),
+            "date": x["date"],
+            "reason": x["reason"] or ""
+        }
+        for x in debits
+    ]
+
+    passbook_savings.sort(
+        key=lambda x: (str(x.get("date") or ""), int(x.get("id") or 0)),
+        reverse=True
+    )
+
     p = c.execute(
         """
         SELECT *
@@ -1215,7 +1258,7 @@ def passbook(fid):
         "group_interest": group_interest,
         "group_available": group_available,
 
-        "savings": [dict(x) for x in s],
+        "savings": passbook_savings,
         "payments": [dict(x) for x in p],
         "loans": [dict(x) for x in l]
     })
