@@ -1135,10 +1135,42 @@ def send_monthly_reminder(day):
     ).fetchall()
 
     sent = 0
+    skipped = 0
+
+    today = datetime.datetime.now().date().isoformat()
 
     for family in families:
 
         family_id = family["id"]
+
+        # =====================================
+        # DUPLICATE REMINDER CHECK
+        # =====================================
+
+        existing = c.execute(
+            """
+            SELECT id
+            FROM notifications
+            WHERE family_id=?
+              AND title=?
+              AND created_at LIKE ?
+            LIMIT 1
+            """,
+            (
+                family_id,
+                title,
+                today + "%"
+            )
+        ).fetchone()
+
+        if existing:
+
+            skipped += 1
+            continue
+
+        # =====================================
+        # CREATE MEMBER NOTIFICATION
+        # =====================================
 
         c.execute(
             """
@@ -1156,6 +1188,10 @@ def send_monthly_reminder(day):
                 )
             )
         )
+
+        # =====================================
+        # FCM TOKEN
+        # =====================================
 
         token_row = c.execute(
             """
@@ -1196,7 +1232,8 @@ def send_monthly_reminder(day):
         "ok": True,
         "reminder_day": day,
         "total_families": len(families),
-        "fcm_sent": sent
+        "fcm_sent": sent,
+        "skipped_duplicates": skipped
     }
 # ==================================================
 # MONTHLY REMINDER - MANUAL TEST
