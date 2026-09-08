@@ -651,8 +651,16 @@ def dashboard():
 
     savings = c.execute(
         """
-        SELECT COALESCE(SUM(amount), 0) x
-        FROM savings
+        SELECT
+            (
+                SELECT COALESCE(SUM(amount), 0)
+                FROM savings
+            )
+            -
+            (
+                SELECT COALESCE(SUM(amount), 0)
+                FROM saving_debits
+            ) x
         """
     ).fetchone()["x"]
 
