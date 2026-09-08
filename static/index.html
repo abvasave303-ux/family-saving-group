@@ -11,7 +11,12 @@
 body{
   margin:0;
   font-family:Arial,"Noto Sans Devanagari",sans-serif;
-  background:#eef4fa;
+  background:
+    linear-gradient(120deg,rgba(170,215,255,.72),rgba(235,220,255,.62),rgba(190,235,255,.68),rgba(220,245,225,.58)),
+    var(--login-bg-image);
+  background-size: 220% 220%, cover;
+  background-position: 0% 50%, center;
+  animation: pageBgGradient 12s ease-in-out infinite;
   color:#16233b;
 }
 
@@ -376,6 +381,11 @@ th{
   animation:progressShine 2.5s infinite;
 }
 
+@keyframes pageBgGradient{
+  0%,100%{background-position:0% 50%,center}
+  50%{background-position:100% 50%,center}
+}
+
 @keyframes progressShine{
   0%{
     left:-60px;
@@ -403,13 +413,13 @@ th{
 
 .loginbox{
   width:min(420px,94vw);
-  background:linear-gradient(120deg,rgba(255,255,255,.97),rgba(224,241,255,.94),rgba(242,233,255,.94),rgba(255,255,255,.97));
-  background-size:300% 300%;
+  background:linear-gradient(120deg,rgba(255,255,255,.98),rgba(190,225,255,.94),rgba(220,205,255,.94),rgba(255,255,255,.98),rgba(185,225,255,.94));
+  background-size:400% 400%;
   padding:30px;
   border-radius:18px;
   box-shadow:0 15px 45px rgba(23,54,93,.16);
   border:1px solid #e1eaf5;
-  animation:loginCardGradient 14s ease-in-out infinite;
+  animation:loginCardGradient 9s ease-in-out infinite;
 }
 
 @keyframes loginCardGradient{
