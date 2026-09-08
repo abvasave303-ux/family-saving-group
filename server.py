@@ -1205,6 +1205,16 @@ def passbook(fid):
         (fid,)
     ).fetchall()
 
+    d = c.execute(
+        """
+        SELECT *
+        FROM saving_debits
+        WHERE family_id=?
+        ORDER BY id DESC
+        """,
+        (fid,)
+    ).fetchall()
+
     c.close()
 
     return jsonify({
@@ -1217,7 +1227,8 @@ def passbook(fid):
 
         "savings": [dict(x) for x in s],
         "payments": [dict(x) for x in p],
-        "loans": [dict(x) for x in l]
+        "loans": [dict(x) for x in l],
+        "saving_debits": [dict(x) for x in d]
     })
 # ==================================================
 # SAVINGS - GET
