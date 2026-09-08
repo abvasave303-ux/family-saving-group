@@ -94,6 +94,10 @@ body{
 
 .main{
   margin-left:230px;
+  min-height:100vh;
+  background:linear-gradient(120deg,rgba(232,245,255,.72),rgba(255,255,255,.86),rgba(244,238,255,.72),rgba(232,245,255,.72));
+  background-size:300% 300%;
+  animation:postLoginGradient 18s ease-in-out infinite;
 }
 
 header{
@@ -384,6 +388,11 @@ th{
 @keyframes pageBgGradient{
   0%,100%{background-position:0% 50%,center}
   50%{background-position:100% 50%,center}
+}
+
+@keyframes postLoginGradient{
+  0%,100%{background-position:0% 50%}
+  50%{background-position:100% 50%}
 }
 
 @keyframes progressShine{
