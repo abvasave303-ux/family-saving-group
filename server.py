@@ -1472,6 +1472,38 @@ def add_saving_debit():
 
 
 # ==================================================
+# GET SAVING DEBITS
+# ==================================================
+
+@app.get("/api/saving-debits")
+def get_saving_debits():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    rows = c.execute(
+        """
+        SELECT d.*, f.name family
+        FROM saving_debits d
+        JOIN families f
+        ON f.id=d.family_id
+        ORDER BY d.id DESC
+        """
+    ).fetchall()
+
+    c.close()
+
+    return jsonify([
+        dict(x)
+        for x in rows
+    ])
+
+
+# ==================================================
 # UPDATE SAVING
 # ==================================================
 
