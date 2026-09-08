@@ -2795,20 +2795,6 @@ function printMemberPassbook(){
           window.print();
         };
       <\/script>
-
-    
-<script>
-window.addEventListener("load", function(){
-  const loader = document.getElementById("startupLoader");
-  if(loader){
-    loader.classList.add("hide");
-    setTimeout(function(){
-      loader.remove();
-    }, 400);
-  }
-});
-</script>
-
 </body>
 
     </html>
@@ -4764,5 +4750,17 @@ document.addEventListener(
 
 </script>
 
+
+<script>
+window.addEventListener("load", function(){
+  const loader = document.getElementById("startupLoader");
+  if(loader){
+    loader.classList.add("hide");
+    setTimeout(function(){
+      loader.remove();
+    }, 400);
+  }
+});
+</script>
 </body>
 </html>
