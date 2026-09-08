@@ -4356,6 +4356,25 @@ async function editFamily(id){
   if(mobile === null) return;
 
 
+
+  const pin =
+    prompt(
+      "Member Login PIN बदलें",
+      family.pin || ""
+    );
+
+  if(pin === null) return;
+
+  const cleanPin = pin.trim();
+
+  if(cleanPin.length < 4){
+
+    alert("PIN कम से कम 4 अंक का होना चाहिए");
+    return;
+
+  }
+
+
   if(!name.trim()){
 
     alert("परिवार का नाम जरूरी है");
@@ -4380,7 +4399,9 @@ async function editFamily(id){
 
           name:name.trim(),
 
-          mobile:mobile.trim()
+          mobile:mobile.trim(),
+
+          pin:cleanPin
 
         })
 
