@@ -403,11 +403,18 @@ th{
 
 .loginbox{
   width:min(420px,94vw);
-  background:rgba(255,255,255,.96);
+  background:linear-gradient(120deg,rgba(255,255,255,.97),rgba(224,241,255,.94),rgba(242,233,255,.94),rgba(255,255,255,.97));
+  background-size:300% 300%;
   padding:30px;
   border-radius:18px;
   box-shadow:0 15px 45px rgba(23,54,93,.16);
   border:1px solid #e1eaf5;
+  animation:loginCardGradient 14s ease-in-out infinite;
+}
+
+@keyframes loginCardGradient{
+  0%,100%{background-position:0% 50%}
+  50%{background-position:100% 50%}
 }
 
 .login-logo{
