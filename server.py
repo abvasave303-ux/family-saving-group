@@ -473,13 +473,7 @@ def logout():
                 session_token
             )
         )
-        c.execute(
-            """
-            DELETE FROM fcm_tokens
-            WHERE family_id=?
-            """,
-            (family_id,)
-        )
+
         c.commit()
         c.close()
 
@@ -832,10 +826,21 @@ def update_family(fid):
             error="नाम जरूरी है"
         ), 400
 
+    if not pin:
+        return jsonify(
+            error="PIN जरूरी है"
+        ), 400
+
+    if len(pin) < 4:
+        return jsonify(
+            error="PIN कम से कम 4 अंक का होना चाहिए"
+        ), 400
+
     c = conn()
+
     family = c.execute(
         """
-        SELECT id, pin
+        SELECT id
         FROM families
         WHERE id=?
         """,
@@ -849,13 +854,7 @@ def update_family(fid):
         return jsonify(
             error="परिवार नहीं मिला"
         ), 404
-    if not pin:
-        pin = family["pin"]
-    elif len(pin) < 4:
-        c.close()
-        return jsonify(
-            error="PIN कम से कम 4 अंक का होना चाहिए"
-        ), 400
+
     c.execute(
         """
         UPDATE families
@@ -1094,162 +1093,6 @@ def save_fcm_token():
     c.close()
 
     return jsonify(ok=True)
-# ==================================================
-# MONTHLY REMINDER FUNCTION
-# ==================================================
-
-def send_monthly_reminder(day):
-
-    if day == 1:
-
-        title = "💰 मासिक बचत / ब्याज"
-
-        body = (
-            "कृपया अपनी मासिक बचत और ब्याज जमा करें।"
-        )
-
-    elif day == 14:
-
-        title = "🔔 मासिक जमा Reminder"
-
-        body = (
-            "अगर आपने अभी तक अपनी बचत/ब्याज जमा नहीं किया है। "
-            "तो कृपया 15 तारीख तक जमा करें।"
-        )
-
-    else:
-
-        return {
-            "ok": False,
-            "error": "केवल day 1 या 14 allowed है"
-        }
-
-    c = conn()
-
-    families = c.execute(
-        """
-        SELECT id
-        FROM families
-        ORDER BY id
-        """
-    ).fetchall()
-
-    sent = 0
-    skipped = 0
-
-    today = datetime.datetime.now().date().isoformat()
-
-    for family in families:
-
-        family_id = family["id"]
-
-        # =====================================
-        # DUPLICATE REMINDER CHECK
-        # =====================================
-
-        existing = c.execute(
-            """
-            SELECT id
-            FROM notifications
-            WHERE family_id=?
-              AND title=?
-              AND created_at LIKE ?
-            LIMIT 1
-            """,
-            (
-                family_id,
-                title,
-                today + "%"
-            )
-        ).fetchone()
-
-        if existing:
-
-            skipped += 1
-            continue
-
-        # =====================================
-        # CREATE MEMBER NOTIFICATION
-        # =====================================
-
-        c.execute(
-            """
-            INSERT INTO notifications
-            (family_id, title, message, is_read, created_at)
-            VALUES (?, ?, ?, ?, ?)
-            """,
-            (
-                family_id,
-                title,
-                body,
-                False,
-                datetime.datetime.now().isoformat(
-                    timespec="seconds"
-                )
-            )
-        )
-
-        # =====================================
-        # FCM TOKEN
-        # =====================================
-
-        token_row = c.execute(
-            """
-            SELECT token
-            FROM fcm_tokens
-            WHERE family_id=?
-            """,
-            (family_id,)
-        ).fetchone()
-
-        if token_row:
-
-            try:
-
-                message = messaging.Message(
-                    notification=messaging.Notification(
-                        title=title,
-                        body=body
-                    ),
-                    token=token_row["token"]
-                )
-
-                messaging.send(message)
-
-                sent += 1
-
-            except Exception as e:
-
-                print(
-                    "Monthly reminder FCM error:",
-                    e
-                )
-
-    c.commit()
-    c.close()
-
-    return {
-        "ok": True,
-        "reminder_day": day,
-        "total_families": len(families),
-        "fcm_sent": sent,
-        "skipped_duplicates": skipped
-    }
-# ==================================================
-# MONTHLY REMINDER - MANUAL TEST
-# ==================================================
-
-@app.post("/api/test-monthly-reminder/<int:day>")
-def test_monthly_reminder(day):
-
-    error = admin_required()
-
-    if error:
-        return error
-
-    result = send_monthly_reminder(day)
-
-    return jsonify(result)
 # ==================================================
 # MEMBER PASSBOOK
 # ==================================================
@@ -2161,7 +2004,7 @@ def payment():
         """,
         (l["family_id"],)
     ).fetchone()
-    print("PAYMENT FCM TOKEN FOUND:", bool(token_row))
+    
     if token_row:
         try:
     
@@ -2181,8 +2024,7 @@ def payment():
                 token=token_row["token"]
             )
                         
-            response = messaging.send(message)
-            print("FCM payment sent successfully:", response)
+            messaging.send(message)
         
         except Exception as e:
             print("FCM payment notification error:", e)
@@ -2290,84 +2132,13 @@ def distribution():
     )
 
     c.commit()
-    
-    # ==============================
-    # CREATE INTEREST NOTIFICATION
-    # + SEND FIREBASE PUSH
-    # ==============================
-    
-    for r in result:
-    
-        interest_amount = r["interest"]
-    
-        if interest_amount <= 0:
-            continue
-    
-        family_id = r["id"]
-    
-        title = "💰 ब्याज वितरण"
-    
-        body = (
-            f"आपके परिवार के खाते में "
-            f"₹{interest_amount:.2f} ब्याज वितरित किया गया है।"
-        )
-    
-        # MEMBER NOTIFICATION
-        c.execute(
-            """
-            INSERT INTO notifications
-            (family_id, title, message, is_read, created_at)
-            VALUES (?, ?, ?, ?, ?)
-            """,
-            (
-                family_id,
-                title,
-                body,
-                False,
-                datetime.datetime.now().isoformat(
-                    timespec="seconds"
-                )
-            )
-        )
-    
-        # FCM TOKEN
-        token_row = c.execute(
-            """
-            SELECT token
-            FROM fcm_tokens
-            WHERE family_id=?
-            """,
-            (family_id,)
-        ).fetchone()
-    
-        if token_row:
-            try:
-    
-                message = messaging.Message(
-                    notification=messaging.Notification(
-                        title=title,
-                        body=body
-                    ),
-                    token=token_row["token"]
-                )
-    
-                messaging.send(message)
-    
-            except Exception as e:
-    
-                print(
-                    "FCM interest notification error:",
-                    e
-                )
-    
-    c.commit()
-    
     c.close()
-    
+
     return jsonify(
         total_savings=total_s,
         result=result
     )
+
 
 # ==================================================
 # START APPLICATION
