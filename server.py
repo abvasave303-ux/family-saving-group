@@ -852,21 +852,11 @@ def update_family(fid):
             error="नाम जरूरी है"
         ), 400
 
-    if not pin:
-        return jsonify(
-            error="PIN जरूरी है"
-        ), 400
-
-    if len(pin) < 4:
-        return jsonify(
-            error="PIN कम से कम 4 अंक का होना चाहिए"
-        ), 400
-
     c = conn()
 
     family = c.execute(
         """
-        SELECT id
+        SELECT id, pin
         FROM families
         WHERE id=?
         """,
@@ -880,6 +870,22 @@ def update_family(fid):
         return jsonify(
             error="परिवार नहीं मिला"
         ), 404
+
+    # PIN blank ho to existing PIN ko preserve karo.
+    if not pin:
+        pin = str(family["pin"] or "").strip()
+
+    if not pin:
+        c.close()
+        return jsonify(
+            error="PIN जरूरी है"
+        ), 400
+
+    if len(pin) < 4:
+        c.close()
+        return jsonify(
+            error="PIN कम से कम 4 अंक का होना चाहिए"
+        ), 400
 
     c.execute(
         """
