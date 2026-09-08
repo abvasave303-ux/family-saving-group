@@ -1567,7 +1567,7 @@ header .title{
             <th>महीना</th>
             <th>परिवार</th>
             <th>राशि</th>
-            <th>Action</th>
+            <th>विवरण / Action</th>
           </tr>
 
         </thead>
@@ -2967,6 +2967,9 @@ async function refresh(){
     const savings =
       await api("/api/savings");
 
+    const savingDebits =
+      await api("/api/saving-debits");
+
 
     const currentMonthIndex =
       new Date().getMonth() - 3;
@@ -3104,35 +3107,63 @@ async function refresh(){
       </tr>`;
 
 
+    const ledgerRows = [
+      ...savings.map(x => ({
+        kind: "saving",
+        id: Number(x.id),
+        date: x.date,
+        month: x.month,
+        family: x.family,
+        amount: Number(x.amount || 0)
+      })),
+      ...savingDebits.map(x => ({
+        kind: "debit",
+        id: Number(x.id),
+        date: x.date,
+        month: "Debit",
+        family: x.family,
+        amount: -Number(x.amount || 0),
+        reason: x.reason || ""
+      }))
+    ].sort((a,b) =>
+      String(b.date).localeCompare(String(a.date)) ||
+      b.id - a.id
+    );
+
+
     $("st").innerHTML =
-      savings.map(x => `
+      ledgerRows.map(x => `
 
         <tr>
 
           <td>${x.date}</td>
 
-          <td>${x.month}</td>
+          <td>${x.kind === "debit" ? "Debit / निकासी" : x.month}</td>
 
           <td>${x.family}</td>
 
-          <td class="green">
+          <td class="${x.kind === "debit" ? "red" : "green"}">
             ${money(x.amount)}
           </td>
 
           <td>
+            ${
+              x.kind === "debit"
+              ? (x.reason ? x.reason : "—")
+              : `
+                <button
+                  class="btn secondary small"
+                  onclick="editSaving(${x.id})">
+                  ✏️ Edit
+                </button>
 
-            <button
-              class="btn secondary small"
-              onclick="editSaving(${x.id})">
-              ✏️ Edit
-            </button>
-
-            <button
-              class="btn danger small"
-              onclick="deleteSaving(${x.id})">
-              🗑️ Delete
-            </button>
-
+                <button
+                  class="btn danger small"
+                  onclick="deleteSaving(${x.id})">
+                  🗑️ Delete
+                </button>
+              `
+            }
           </td>
 
         </tr>
