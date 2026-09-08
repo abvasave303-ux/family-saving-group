@@ -947,6 +947,11 @@ def delete_family(fid):
     )
 
     c.execute(
+        "DELETE FROM saving_debits WHERE family_id=?",
+        (fid,)
+    )
+
+    c.execute(
         "DELETE FROM loans WHERE family_id=?",
         (fid,)
     )
