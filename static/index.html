@@ -173,6 +173,19 @@ header:hover{
 .orange{color:#c66d14}
 .red{color:#c73535}
 
+/* Debit ledger: keep reason and actions from colliding */
+.debit-reason{
+  white-space:normal;
+  overflow-wrap:anywhere;
+  margin-bottom:6px;
+}
+.debit-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  align-items:center;
+}
+
 .grid{
   display:grid;
   grid-template-columns:1fr 1.5fr 1fr;
@@ -3184,21 +3197,23 @@ async function refresh(){
             ${
               x.kind === "debit"
               ? `
-                <div>
+                <div class="debit-reason">
                   ${x.reason ? x.reason : "—"}
                 </div>
 
-                <button
-                  class="btn secondary small"
-                  onclick="editSavingDebit(${x.id})">
-                  ✏️ Edit
-                </button>
+                <div class="debit-actions">
+                  <button
+                    class="btn secondary small"
+                    onclick="editSavingDebit(${x.id})">
+                    ✏️ Edit
+                  </button>
 
-                <button
-                  class="btn danger small"
-                  onclick="deleteSavingDebit(${x.id})">
-                  🗑️ Delete
-                </button>
+                  <button
+                    class="btn danger small"
+                    onclick="deleteSavingDebit(${x.id})">
+                    🗑️ Delete
+                  </button>
+                </div>
               `
               : `
                 <button
