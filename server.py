@@ -2498,6 +2498,59 @@ def distribution():
     )
 
     c.commit()
+
+    # ==============================
+    # CREATE MEMBER NOTIFICATIONS
+    # + SEND FIREBASE PUSH
+    # ==============================
+    for r in result:
+
+        interest_amount = r["interest"]
+
+        if interest_amount <= 0:
+            continue
+
+        title = "💰 ब्याज वितरण"
+        body = f"आपके परिवार के खाते में ₹{interest_amount:.2f} ब्याज वितरित किया गया है।"
+
+        c.execute(
+            """
+            INSERT INTO notifications
+            (family_id, title, message, is_read, created_at)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (
+                r["id"],
+                title,
+                body,
+                False,
+                datetime.datetime.now().isoformat(timespec="seconds")
+            )
+        )
+
+        token_row = c.execute(
+            """
+            SELECT token
+            FROM fcm_tokens
+            WHERE family_id=?
+            """,
+            (r["id"],)
+        ).fetchone()
+
+        if token_row:
+            try:
+                message = messaging.Message(
+                    notification=messaging.Notification(
+                        title=title,
+                        body=body
+                    ),
+                    token=token_row["token"]
+                )
+                messaging.send(message)
+            except Exception as e:
+                print("FCM interest distribution notification error:", e)
+
+    c.commit()
     c.close()
 
     return jsonify(
