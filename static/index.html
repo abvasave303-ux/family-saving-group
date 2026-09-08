@@ -959,9 +959,8 @@ header .title{
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
   import {
     getMessaging,
-    getToken,
-    onMessage
-} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js";
+    getToken
+  } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC0ISJyPPbn0I-uA49Dku95PFg4D5TVUnI",
@@ -974,22 +973,7 @@ header .title{
 
   const app = initializeApp(firebaseConfig);
   const messaging = getMessaging(app);
-  onMessage(messaging, (payload) => {
 
-    const notification = payload.notification || {};
-
-    navigator.serviceWorker.ready.then((registration) => {
-
-        registration.showNotification(
-            notification.title || "Family Saving Group",
-            {
-                body: notification.body || ""
-            }
-        );
-
-    });
-
-});
   window.setupFCM = async function(familyId) {
     try {
       const permission = await Notification.requestPermission();
@@ -1514,6 +1498,51 @@ header .title{
             बचत जमा करें
           </button>
 
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="panel" style="margin-top:14px">
+
+    <h3>💸 बचत से Debit / निकासी</h3>
+
+    <div class="body">
+
+      <div class="notice">
+        Debit आपकी उपलब्ध बचत से अधिक नहीं हो सकता।
+      </div>
+
+      <div class="form">
+
+        <div class="field">
+          <label>परिवार</label>
+          <select id="df"></select>
+        </div>
+
+        <div class="field">
+          <label>Debit राशि ₹</label>
+          <input id="da" type="number" min="0.01" step="0.01" placeholder="राशि">
+        </div>
+
+        <div class="field">
+          <label>तारीख</label>
+          <input id="ddate" type="date">
+        </div>
+
+        <div class="field">
+          <label>कारण (वैकल्पिक)</label>
+          <input id="dre" type="text" placeholder="जैसे जरूरत के लिए">
+        </div>
+
+        <div class="full">
+          <button class="btn danger" onclick="saveDebit()">
+            💸 Debit दर्ज करें
+          </button>
         </div>
 
       </div>
@@ -2516,17 +2545,6 @@ async function loadMemberPassbook(fid){
                 </tr>
 
               `).join("")}
-              ${(x.loans || []).map(r => `
-               <tr>
-                <td>${r.date}</td>
-                <td>
-                 Loan दिया गया
-                </td>
-                <td class="red">
-                 ${money(r.original)}
-                </td>
-               </tr>
-              `).join("")}
 
             </table>
 
@@ -2757,9 +2775,7 @@ function printMemberPassbook(){
         .red{
           color:#c73535;
         }
-        @page{
-          size:A4 portrait;
-        }
+
         @media print{
           body{
             margin:12mm;
@@ -2779,6 +2795,20 @@ function printMemberPassbook(){
           window.print();
         };
       <\/script>
+
+    
+<script>
+window.addEventListener("load", function(){
+  const loader = document.getElementById("startupLoader");
+  if(loader){
+    loader.classList.add("hide");
+    setTimeout(function(){
+      loader.remove();
+    }, 400);
+  }
+});
+</script>
+
 </body>
 
     </html>
@@ -2875,7 +2905,7 @@ async function init(){
   const today =
     new Date().toISOString().slice(0,10);
 
-  ["sd","ld","rd","dd"].forEach(id => {
+  ["sd","ddate","ld","rd","dd"].forEach(id => {
 
     if($(id)){
       $(id).value = today;
@@ -2901,7 +2931,7 @@ async function refresh(){
 
     fam = await api("/api/families");
 
-    ["sf","lf","pf"].forEach(id => {
+    ["sf","df","lf","pf"].forEach(id => {
 
       if(!$(id)) return;
 
@@ -3390,6 +3420,58 @@ async function saveSaving(){
 }
 
 
+/* ================= SAVING DEBIT ================= */
+
+async function saveDebit(){
+
+  try{
+
+    const amount =
+      Number($("da").value);
+
+    if(!amount || amount <= 0){
+      alert("सही Debit राशि डालें");
+      return;
+    }
+
+    await api("/api/saving-debits",{
+
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+
+        family_id:Number($("df").value),
+
+        amount:amount,
+
+        date:$("ddate").value,
+
+        reason:$("dre").value.trim()
+
+      })
+
+    });
+
+    alert("💸 Debit दर्ज हो गया");
+
+    $("da").value = "";
+    $("dre").value = "";
+
+    await refresh();
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+}
+
+
 /* ================= EDIT SAVING ================= */
 
 async function editSaving(id){
@@ -3859,17 +3941,7 @@ async function passbook(){
                 </tr>
 
               `).join("")}
-              ${(x.loans || []).map(r => `
-               <tr>
-                <td>${r.date}</td>
-                <td>
-                 Loan दिया गया
-                </td>
-                <td class="red">
-                 ${money(r.original)}
-                </td>
-               </tr>
-              `).join("")}
+
             </table>
 
           </div>
@@ -4028,9 +4100,7 @@ function printPassbook(){
         .red{
           color:#c73535;
         }
-        @page{
-          size:A4 portrait;
-        }
+
         @media print{
 
           body{
@@ -4694,17 +4764,5 @@ document.addEventListener(
 
 </script>
 
-
-<script>
-window.addEventListener("load", function(){
-  const loader = document.getElementById("startupLoader");
-  if(loader){
-    loader.classList.add("hide");
-    setTimeout(function(){
-      loader.remove();
-    }, 400);
-  }
-});
-</script>
 </body>
 </html>
