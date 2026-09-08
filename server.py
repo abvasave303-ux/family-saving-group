@@ -99,6 +99,15 @@ def init_db():
         FOREIGN KEY(family_id) REFERENCES families(id)
     );
 
+    CREATE TABLE IF NOT EXISTS saving_debits(
+        id SERIAL PRIMARY KEY,
+        family_id INTEGER NOT NULL,
+        amount REAL NOT NULL,
+        date TEXT NOT NULL,
+        reason TEXT DEFAULT '',
+        FOREIGN KEY(family_id) REFERENCES families(id)
+    );
+
     CREATE TABLE IF NOT EXISTS loans(
         id SERIAL PRIMARY KEY,
         family_id INTEGER NOT NULL,
@@ -1361,6 +1370,107 @@ def add_saving():
     return jsonify(
         ok=True
     )
+# ==================================================
+# ADD SAVING DEBIT / WITHDRAWAL
+# ==================================================
+
+@app.post("/api/saving-debits")
+def add_saving_debit():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    d = request.json or {}
+
+    try:
+        family_id = int(d.get("family_id"))
+        amount = float(d.get("amount", 0))
+    except (TypeError, ValueError):
+        return jsonify(
+            error="डेबिट जानकारी सही दें"
+        ), 400
+
+    if amount <= 0:
+        return jsonify(
+            error="डेबिट राशि सही दें"
+        ), 400
+
+    c = conn()
+
+    family = c.execute(
+        """
+        SELECT id, name
+        FROM families
+        WHERE id=?
+        """,
+        (family_id,)
+    ).fetchone()
+
+    if not family:
+        c.close()
+        return jsonify(
+            error="परिवार नहीं मिला"
+        ), 404
+
+    deposit_row = c.execute(
+        """
+        SELECT COALESCE(SUM(amount), 0) AS total
+        FROM savings
+        WHERE family_id=?
+        """,
+        (family_id,)
+    ).fetchone()
+
+    debit_row = c.execute(
+        """
+        SELECT COALESCE(SUM(amount), 0) AS total
+        FROM saving_debits
+        WHERE family_id=?
+        """,
+        (family_id,)
+    ).fetchone()
+
+    available = float(deposit_row["total"] or 0) - float(debit_row["total"] or 0)
+
+    if amount > available:
+        c.close()
+        return jsonify(
+            error=f"उपलब्ध बचत ₹{available:.2f} है। इससे ज्यादा डेबिट नहीं कर सकते।"
+        ), 400
+
+    entry_date = d.get(
+        "date",
+        datetime.date.today().isoformat()
+    )
+
+    reason = (
+        d.get("reason") or ""
+    ).strip()
+
+    c.execute(
+        """
+        INSERT INTO saving_debits
+        (family_id, amount, date, reason)
+        VALUES (?, ?, ?, ?)
+        """,
+        (
+            family_id,
+            amount,
+            entry_date,
+            reason
+        )
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True
+    )
+
+
 # ==================================================
 # UPDATE SAVING
 # ==================================================
