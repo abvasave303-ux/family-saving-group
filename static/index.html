@@ -2505,7 +2505,39 @@ async function loadMemberPassbook(fid){
               </tr>
 
 
-              ${(x.savings || []).map(r => `
+              ${(x.savings || []).map(r => {
+
+                const isDebit =
+                  String(r.month || "").toLowerCase().includes("debit");
+
+                return `
+
+                  <tr>
+
+                    <td>
+                      ${r.date}
+                    </td>
+
+                    <td>
+                      ${
+                        isDebit
+                        ? `Debit / निकासी${r.reason ? " (" + r.reason + ")" : ""}`
+                        : `मासिक बचत (${r.month})`
+                      }
+                    </td>
+
+                    <td class="${isDebit ? "red" : "green"}">
+                      ${money(r.amount)}
+                    </td>
+
+                  </tr>
+
+                `;
+
+              }).join("")}
+
+
+              ${(x.loans || []).map(r => `
 
                 <tr>
 
@@ -2514,11 +2546,11 @@ async function loadMemberPassbook(fid){
                   </td>
 
                   <td>
-                    मासिक बचत (${r.month})
+                    Loan लिया गया
                   </td>
 
-                  <td class="green">
-                    ${money(r.amount)}
+                  <td class="red">
+                    -${money(r.original || r.principal || 0)}
                   </td>
 
                 </tr>
