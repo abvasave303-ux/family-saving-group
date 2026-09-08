@@ -2943,6 +2943,8 @@ async function init(){
 
 /* ================= REFRESH ================= */
 
+let savingDebits = [];
+
 async function refresh(){
 
   try{
@@ -2999,7 +3001,7 @@ async function refresh(){
     const savings =
       await api("/api/savings");
 
-    const savingDebits =
+    savingDebits =
       await api("/api/saving-debits");
 
 
