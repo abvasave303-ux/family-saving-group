@@ -975,8 +975,9 @@ header .title{
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
   import {
     getMessaging,
-    getToken
-  } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js";
+    getToken,
+    onMessage
+} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC0ISJyPPbn0I-uA49Dku95PFg4D5TVUnI",
@@ -989,6 +990,18 @@ header .title{
 
   const app = initializeApp(firebaseConfig);
   const messaging = getMessaging(app);
+
+onMessage(messaging, (payload) => {
+    const notification = payload.notification || {};
+    navigator.serviceWorker.ready.then((registration) => {
+        registration.showNotification(
+            notification.title || "Family Saving Group",
+            {
+                body: notification.body || ""
+            }
+        );
+    });
+});
 
   window.setupFCM = async function(familyId) {
     try {
