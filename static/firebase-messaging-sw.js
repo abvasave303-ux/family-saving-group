@@ -16,3 +16,15 @@ firebase.initializeApp({
 });
 
 const messaging = firebase.messaging();
+messaging.onBackgroundMessage((payload) => {
+
+    const notification = payload.notification || {};
+
+    self.registration.showNotification(
+        notification.title || "Family Saving Group",
+        {
+            body: notification.body || ""
+        }
+    );
+
+});
