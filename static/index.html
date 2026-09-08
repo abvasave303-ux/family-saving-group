@@ -3929,11 +3929,34 @@ async function passbook(){
                   <td>${r.date}</td>
 
                   <td>
-                    मासिक बचत (${r.month})
+                    ${
+                      Number(r.amount || 0) < 0
+                      ? (r.month || "Debit / निकासी")
+                      : `मासिक बचत (${r.month})`
+                    }
                   </td>
 
-                  <td class="green">
+                  <td class="${Number(r.amount || 0) < 0 ? "red" : "green"}">
                     ${money(r.amount)}
+                  </td>
+
+                </tr>
+
+              `).join("")}
+
+
+              ${(x.loans || []).map(r => `
+
+                <tr>
+
+                  <td>${r.date}</td>
+
+                  <td>
+                    Loan लिया गया
+                  </td>
+
+                  <td class="red">
+                    ${money(-Math.abs(Number(r.original || r.principal || 0)))}
                   </td>
 
                 </tr>
