@@ -1142,18 +1142,7 @@ def passbook(fid):
     c = conn()
 
     group_savings = c.execute(
-        """
-        SELECT
-            (
-                SELECT COALESCE(SUM(amount),0)
-                FROM savings
-            )
-            -
-            (
-                SELECT COALESCE(SUM(amount),0)
-                FROM saving_debits
-            ) x
-        """
+        "SELECT COALESCE(SUM(amount),0) x FROM savings"
     ).fetchone()["x"]
 
     group_loan = c.execute(
@@ -1196,38 +1185,6 @@ def passbook(fid):
         (fid,)
     ).fetchall()
 
-    debits = c.execute(
-        """
-        SELECT id, family_id, amount, date, reason
-        FROM saving_debits
-        WHERE family_id=?
-        ORDER BY id DESC
-        """,
-        (fid,)
-    ).fetchall()
-
-    # Keep original deposits untouched; merge debit transactions only
-    # into the passbook response as negative ledger rows.
-    passbook_savings = [
-        dict(x)
-        for x in s
-    ] + [
-        {
-            "id": -int(x["id"]),
-            "family_id": x["family_id"],
-            "month": "Debit / निकासी",
-            "amount": -float(x["amount"] or 0),
-            "date": x["date"],
-            "reason": x["reason"] or ""
-        }
-        for x in debits
-    ]
-
-    passbook_savings.sort(
-        key=lambda x: (str(x.get("date") or ""), int(x.get("id") or 0)),
-        reverse=True
-    )
-
     p = c.execute(
         """
         SELECT *
@@ -1258,7 +1215,7 @@ def passbook(fid):
         "group_interest": group_interest,
         "group_available": group_available,
 
-        "savings": passbook_savings,
+        "savings": [dict(x) for x in s],
         "payments": [dict(x) for x in p],
         "loans": [dict(x) for x in l]
     })
@@ -1561,6 +1518,176 @@ def get_saving_debits():
         dict(x)
         for x in rows
     ])
+
+
+# ==================================================
+# UPDATE SAVING DEBIT
+# ==================================================
+
+@app.put("/api/saving-debits/<int:did>")
+def update_saving_debit(did):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    d = request.json or {}
+
+    try:
+        family_id = int(d.get("family_id"))
+        amount = float(d.get("amount", 0))
+    except (TypeError, ValueError):
+        return jsonify(
+            error="डेबिट जानकारी सही दें"
+        ), 400
+
+    if amount <= 0:
+        return jsonify(
+            error="डेबिट राशि सही दें"
+        ), 400
+
+    c = conn()
+
+    old = c.execute(
+        """
+        SELECT id, family_id, amount, date, reason
+        FROM saving_debits
+        WHERE id=?
+        """,
+        (did,)
+    ).fetchone()
+
+    if not old:
+        c.close()
+        return jsonify(
+            error="डेबिट एंट्री नहीं मिली"
+        ), 404
+
+    family = c.execute(
+        """
+        SELECT id
+        FROM families
+        WHERE id=?
+        """,
+        (family_id,)
+    ).fetchone()
+
+    if not family:
+        c.close()
+        return jsonify(
+            error="परिवार नहीं मिला"
+        ), 404
+
+    deposit_row = c.execute(
+        """
+        SELECT COALESCE(SUM(amount), 0) AS total
+        FROM savings
+        WHERE family_id=?
+        """,
+        (family_id,)
+    ).fetchone()
+
+    debit_row = c.execute(
+        """
+        SELECT COALESCE(SUM(amount), 0) AS total
+        FROM saving_debits
+        WHERE family_id=?
+          AND id<>?
+        """,
+        (family_id, did)
+    ).fetchone()
+
+    available = (
+        float(deposit_row["total"] or 0)
+        -
+        float(debit_row["total"] or 0)
+    )
+
+    if amount > available:
+        c.close()
+        return jsonify(
+            error=f"उपलब्ध बचत ₹{available:.2f} है। इससे ज्यादा डेबिट नहीं कर सकते।"
+        ), 400
+
+    entry_date = (
+        d.get("date")
+        or old["date"]
+        or datetime.date.today().isoformat()
+    )
+
+    reason = (
+        d.get("reason")
+        if d.get("reason") is not None
+        else (old["reason"] or "")
+    ).strip()
+
+    c.execute(
+        """
+        UPDATE saving_debits
+        SET family_id=?, amount=?, date=?, reason=?
+        WHERE id=?
+        """,
+        (
+            family_id,
+            amount,
+            entry_date,
+            reason,
+            did
+        )
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True
+    )
+
+
+# ==================================================
+# DELETE SAVING DEBIT
+# ==================================================
+
+@app.delete("/api/saving-debits/<int:did>")
+def delete_saving_debit(did):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    row = c.execute(
+        """
+        SELECT id
+        FROM saving_debits
+        WHERE id=?
+        """,
+        (did,)
+    ).fetchone()
+
+    if not row:
+        c.close()
+        return jsonify(
+            error="डेबिट एंट्री नहीं मिली"
+        ), 404
+
+    c.execute(
+        """
+        DELETE FROM saving_debits
+        WHERE id=?
+        """,
+        (did,)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True
+    )
 
 
 # ==================================================
