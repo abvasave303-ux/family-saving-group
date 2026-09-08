@@ -92,16 +92,20 @@ body{
 .nav button.active{
   background:#1976d2;
 }
-
 .main{
   margin-left:230px;
   min-height:100vh;
-  background:
-    linear-gradient(rgba(255,255,255,.78),rgba(255,255,255,.78)),
-    url("/static/bagground.png");
-  background-size:cover;
-  background-position:center;
+  background:linear-gradient(
+    120deg,
+    rgba(232,245,255,.72),
+    rgba(255,255,255,.86),
+    rgba(244,238,255,.72),
+    rgba(232,245,255,.72)
+  );
+  background-size:300% 300%;
+  animation:postLoginGradient 18s ease-in-out infinite;
 }
+
 
 header{
   height:65px;
