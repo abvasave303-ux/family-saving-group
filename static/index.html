@@ -4014,15 +4014,17 @@ function filterYearlyRecord(selectedYear){
       "yearlyDetailedLedger"
     );
   
-  if(
-    ledger &&
-    data
-  ){
-    ledger.innerHTML =
-      buildYearlyLedger(
-        data,
-        selectedYear
-      );
+if(
+  ledger &&
+  data
+){
+  ledger.innerHTML =
+    buildYearlyLedger(
+      data,
+      selectedYear
+    );
+}
+
 }
 
 function buildYearlyLedger(x, selectedYear){
