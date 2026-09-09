@@ -136,7 +136,15 @@ def init_db():
         total_interest REAL NOT NULL,
         date TEXT NOT NULL
     );
-
+    CREATE TABLE IF NOT EXISTS interest_credits(
+        id SERIAL PRIMARY KEY,
+        family_id INTEGER NOT NULL,
+        amount REAL NOT NULL,
+        date TEXT NOT NULL,
+        distribution_id INTEGER,
+        FOREIGN KEY(family_id) REFERENCES families(id),
+        FOREIGN KEY(distribution_id) REFERENCES interest_distributions(id)
+    );
     CREATE TABLE IF NOT EXISTS notifications(
         id SERIAL PRIMARY KEY,
         family_id INTEGER NOT NULL,
