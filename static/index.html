@@ -2537,7 +2537,15 @@ async function loadMemberPassbook(fid){
     );
     
     const overallSaving = savings + interestTotal;
+    const debitTotal =
+      (x.saving_debits || []).reduce(
+        (a,r) =>
+          a + Number(r.amount || 0),
+        0
+      );
 
+    const finalSaving =
+      overallSaving - debitTotal;
     const loan = (x.loans || []).reduce(
       (a,r) => a + Number(r.principal || 0),
       0
