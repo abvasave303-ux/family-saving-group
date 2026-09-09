@@ -4479,6 +4479,7 @@ async function passbook(){
           a + Number(r.amount || 0),
         0
       );
+    
     const interestTotal =
       (x.interest_credits || []).reduce(
         (a,r) =>
@@ -4488,13 +4489,18 @@ async function passbook(){
     
     const overallSaving =
       savingsTotal + interestTotal;
-
-    const loanTotal =
-      (x.loans || []).reduce(
+    
+    const debitTotal =
+      (x.saving_debits || []).reduce(
         (a,r) =>
-          a + Number(r.principal || 0),
+          a + Number(r.amount || 0),
         0
       );
+    
+    const finalSaving =
+      overallSaving - debitTotal;
+    
+    const loanTotal =
 
 
     $("pr").innerHTML = `
