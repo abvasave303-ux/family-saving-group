@@ -99,15 +99,6 @@ def init_db():
         FOREIGN KEY(family_id) REFERENCES families(id)
     );
 
-    CREATE TABLE IF NOT EXISTS saving_debits(
-        id SERIAL PRIMARY KEY,
-        family_id INTEGER NOT NULL,
-        amount REAL NOT NULL,
-        date TEXT NOT NULL,
-        reason TEXT DEFAULT '',
-        FOREIGN KEY(family_id) REFERENCES families(id)
-    );
-
     CREATE TABLE IF NOT EXISTS loans(
         id SERIAL PRIMARY KEY,
         family_id INTEGER NOT NULL,
@@ -136,15 +127,7 @@ def init_db():
         total_interest REAL NOT NULL,
         date TEXT NOT NULL
     );
-    CREATE TABLE IF NOT EXISTS interest_credits(
-        id SERIAL PRIMARY KEY,
-        family_id INTEGER NOT NULL,
-        amount REAL NOT NULL,
-        date TEXT NOT NULL,
-        distribution_id INTEGER,
-        FOREIGN KEY(family_id) REFERENCES families(id),
-        FOREIGN KEY(distribution_id) REFERENCES interest_distributions(id)
-    );
+
     CREATE TABLE IF NOT EXISTS notifications(
         id SERIAL PRIMARY KEY,
         family_id INTEGER NOT NULL,
@@ -659,21 +642,8 @@ def dashboard():
 
     savings = c.execute(
         """
-        SELECT
-            (
-                SELECT COALESCE(SUM(amount), 0)
-                FROM savings
-            )
-            -
-            (
-                SELECT COALESCE(SUM(amount), 0)
-                FROM saving_debits
-            )
-            +
-            (
-                SELECT COALESCE(SUM(amount), 0)
-                FROM interest_credits
-            ) x
+        SELECT COALESCE(SUM(amount), 0) x
+        FROM savings
         """
     ).fetchone()["x"]
 
@@ -686,10 +656,10 @@ def dashboard():
 
     interest = c.execute(
         """
-        SELECT COALESCE(SUM(interest), 0) x
-        FROM payments
-        """
-    ).fetchone()["x"]
+        SELECT
+            COALESCE((SELECT SUM(interest) FROM payments), 0)
+            -
+            COALESCE((SELECT SUM(total_interest) FROM interest_distributions), 0)
 
     c.close()
 
@@ -734,20 +704,11 @@ def get_families():
 
         s = c.execute(
             """
-            SELECT
-                (
-                    SELECT COALESCE(SUM(amount), 0)
-                    FROM savings
-                    WHERE family_id=?
-                )
-                -
-                (
-                    SELECT COALESCE(SUM(amount), 0)
-                    FROM saving_debits
-                    WHERE family_id=?
-                ) x
+            SELECT COALESCE(SUM(amount), 0) x
+            FROM savings
+            WHERE family_id=?
             """,
-            (f["id"], f["id"])
+            (f["id"],)
         ).fetchone()["x"]
 
         l = c.execute(
@@ -865,11 +826,21 @@ def update_family(fid):
             error="नाम जरूरी है"
         ), 400
 
+    if not pin:
+        return jsonify(
+            error="PIN जरूरी है"
+        ), 400
+
+    if len(pin) < 4:
+        return jsonify(
+            error="PIN कम से कम 4 अंक का होना चाहिए"
+        ), 400
+
     c = conn()
 
     family = c.execute(
         """
-        SELECT id, pin
+        SELECT id
         FROM families
         WHERE id=?
         """,
@@ -883,22 +854,6 @@ def update_family(fid):
         return jsonify(
             error="परिवार नहीं मिला"
         ), 404
-
-    # PIN blank ho to existing PIN ko preserve karo.
-    if not pin:
-        pin = str(family["pin"] or "").strip()
-
-    if not pin:
-        c.close()
-        return jsonify(
-            error="PIN जरूरी है"
-        ), 400
-
-    if len(pin) < 4:
-        c.close()
-        return jsonify(
-            error="PIN कम से कम 4 अंक का होना चाहिए"
-        ), 400
 
     c.execute(
         """
@@ -953,8 +908,6 @@ def delete_family(fid):
             error="परिवार नहीं मिला"
         ), 404
 
-    # पहले जुड़े हुए records हटाएँ
-
     c.execute(
         "DELETE FROM payments WHERE family_id=?",
         (fid,)
@@ -966,31 +919,9 @@ def delete_family(fid):
     )
 
     c.execute(
-        "DELETE FROM saving_debits WHERE family_id=?",
-        (fid,)
-    )
-
-    c.execute(
         "DELETE FROM loans WHERE family_id=?",
         (fid,)
     )
-
-    c.execute(
-        "DELETE FROM active_member_sessions WHERE family_id=?",
-        (fid,)
-    )
-
-    c.execute(
-        "DELETE FROM notifications WHERE family_id=?",
-        (fid,)
-    )
-
-    c.execute(
-        "DELETE FROM fcm_tokens WHERE family_id=?",
-        (fid,)
-    )
-
-    # आखिर में family हटाएँ
 
     c.execute(
         "DELETE FROM families WHERE id=?",
@@ -1003,6 +934,7 @@ def delete_family(fid):
     return jsonify(
         ok=True
     )
+
 
 # ==================================================
 # MEMBER LIST FOR LOGIN
@@ -1166,15 +1098,7 @@ def passbook(fid):
     c = conn()
 
     group_savings = c.execute(
-        """
-        SELECT
-          COALESCE((SELECT SUM(amount) FROM savings),0)
-          -
-          COALESCE((SELECT SUM(amount) FROM saving_debits),0)
-          +
-          COALESCE((SELECT SUM(amount) FROM interest_credits),0)
-        x
-        """
+        "SELECT COALESCE(SUM(amount),0) x FROM savings"
     ).fetchone()["x"]
 
     group_loan = c.execute(
@@ -1182,13 +1106,7 @@ def passbook(fid):
     ).fetchone()["x"]
 
     group_interest = c.execute(
-        """
-        SELECT
-          COALESCE((SELECT SUM(interest) FROM payments),0)
-          -
-          COALESCE((SELECT SUM(total_interest) FROM interest_distributions),0)
-        x
-        """
+        "SELECT COALESCE(SUM(interest),0) x FROM payments"
     ).fetchone()["x"]
 
     group_available = (
@@ -1243,104 +1161,6 @@ def passbook(fid):
         (fid,)
     ).fetchall()
 
-    d = c.execute(
-        """
-        SELECT *
-        FROM saving_debits
-        WHERE family_id=?
-        ORDER BY id DESC
-        """,
-        (fid,)
-    ).fetchall()
-# ==============================
-# INTEREST CREDITS
-# ==============================
-    ic = c.execute(
-        """
-        SELECT *
-        FROM interest_credits
-        WHERE family_id=?
-        ORDER BY id DESC
-        """,
-        (fid,)
-    ).fetchall()
-# ==============================
-# FINANCIAL YEAR RECORDS
-# APRIL TO MARCH
-# ==============================
-
-    yearly_records = {}
-    
-    for r in s:
-        amount = float(r["amount"] or 0)
-        dt = str(r["date"])
-    
-        year = int(dt[:4])
-        month = int(dt[5:7])
-    
-        fy_start = year if month >= 4 else year - 1
-        fy_name = f"{fy_start}-{str(fy_start + 1)[-2:]}"
-    
-        if fy_name not in yearly_records:
-            yearly_records[fy_name] = {
-                "financial_year": fy_name,
-                "saving": 0,
-                "interest": 0,
-                "debit": 0
-            }
-    
-        yearly_records[fy_name]["saving"] += amount
-    
-    
-    for r in ic:
-        amount = float(r["amount"] or 0)
-        dt = str(r["date"])
-    
-        year = int(dt[:4])
-        month = int(dt[5:7])
-    
-        fy_start = year if month >= 4 else year - 1
-        fy_name = f"{fy_start}-{str(fy_start + 1)[-2:]}"
-    
-        if fy_name not in yearly_records:
-            yearly_records[fy_name] = {
-                "financial_year": fy_name,
-                "saving": 0,
-                "interest": 0,
-                "debit": 0
-            }
-    
-        yearly_records[fy_name]["interest"] += amount
-    
-    
-    for r in d:
-        amount = float(r["amount"] or 0)
-        dt = str(r["date"])
-    
-        year = int(dt[:4])
-        month = int(dt[5:7])
-    
-        fy_start = year if month >= 4 else year - 1
-        fy_name = f"{fy_start}-{str(fy_start + 1)[-2:]}"
-    
-        if fy_name not in yearly_records:
-            yearly_records[fy_name] = {
-                "financial_year": fy_name,
-                "saving": 0,
-                "interest": 0,
-                "debit": 0
-            }
-    
-        yearly_records[fy_name]["debit"] += amount
-    
-    
-    yearly_records = list(yearly_records.values())
-    
-    for r in yearly_records:
-        r["net_saving"] = (
-            r["saving"]
-            + r["interest"]
-        )
     c.close()
 
     return jsonify({
@@ -1353,10 +1173,7 @@ def passbook(fid):
 
         "savings": [dict(x) for x in s],
         "payments": [dict(x) for x in p],
-        "loans": [dict(x) for x in l],
-        "saving_debits": [dict(x) for x in d],
-        "interest_credits": [dict(x) for x in ic],
-        "yearly_records": yearly_records
+        "loans": [dict(x) for x in l]
     })
 # ==================================================
 # SAVINGS - GET
@@ -1526,309 +1343,6 @@ def add_saving():
     return jsonify(
         ok=True
     )
-# ==================================================
-# ADD SAVING DEBIT / WITHDRAWAL
-# ==================================================
-
-@app.post("/api/saving-debits")
-def add_saving_debit():
-
-    error = admin_required()
-
-    if error:
-        return error
-
-    d = request.json or {}
-
-    try:
-        family_id = int(d.get("family_id"))
-        amount = float(d.get("amount", 0))
-    except (TypeError, ValueError):
-        return jsonify(
-            error="डेबिट जानकारी सही दें"
-        ), 400
-
-    if amount <= 0:
-        return jsonify(
-            error="डेबिट राशि सही दें"
-        ), 400
-
-    c = conn()
-
-    family = c.execute(
-        """
-        SELECT id, name
-        FROM families
-        WHERE id=?
-        """,
-        (family_id,)
-    ).fetchone()
-
-    if not family:
-        c.close()
-        return jsonify(
-            error="परिवार नहीं मिला"
-        ), 404
-
-    deposit_row = c.execute(
-        """
-        SELECT COALESCE(SUM(amount), 0) AS total
-        FROM savings
-        WHERE family_id=?
-        """,
-        (family_id,)
-    ).fetchone()
-
-    debit_row = c.execute(
-        """
-        SELECT COALESCE(SUM(amount), 0) AS total
-        FROM saving_debits
-        WHERE family_id=?
-        """,
-        (family_id,)
-    ).fetchone()
-
-    available = float(deposit_row["total"] or 0) - float(debit_row["total"] or 0)
-
-    if amount > available:
-        c.close()
-        return jsonify(
-            error=f"उपलब्ध बचत ₹{available:.2f} है। इससे ज्यादा डेबिट नहीं कर सकते।"
-        ), 400
-
-    entry_date = d.get(
-        "date",
-        datetime.date.today().isoformat()
-    )
-
-    reason = (
-        d.get("reason") or ""
-    ).strip()
-
-    c.execute(
-        """
-        INSERT INTO saving_debits
-        (family_id, amount, date, reason)
-        VALUES (?, ?, ?, ?)
-        """,
-        (
-            family_id,
-            amount,
-            entry_date,
-            reason
-        )
-    )
-
-    c.commit()
-    c.close()
-
-    return jsonify(
-        ok=True
-    )
-
-
-# ==================================================
-# GET SAVING DEBITS
-# ==================================================
-
-@app.get("/api/saving-debits")
-def get_saving_debits():
-
-    error = admin_required()
-
-    if error:
-        return error
-
-    c = conn()
-
-    rows = c.execute(
-        """
-        SELECT d.*, f.name family
-        FROM saving_debits d
-        JOIN families f
-        ON f.id=d.family_id
-        ORDER BY d.id DESC
-        """
-    ).fetchall()
-
-    c.close()
-
-    return jsonify([
-        dict(x)
-        for x in rows
-    ])
-
-
-# ==================================================
-# UPDATE SAVING DEBIT
-# ==================================================
-
-@app.put("/api/saving-debits/<int:did>")
-def update_saving_debit(did):
-
-    error = admin_required()
-
-    if error:
-        return error
-
-    d = request.json or {}
-
-    try:
-        family_id = int(d.get("family_id"))
-        amount = float(d.get("amount", 0))
-    except (TypeError, ValueError):
-        return jsonify(
-            error="डेबिट जानकारी सही दें"
-        ), 400
-
-    if amount <= 0:
-        return jsonify(
-            error="डेबिट राशि सही दें"
-        ), 400
-
-    c = conn()
-
-    old = c.execute(
-        """
-        SELECT id, family_id, amount, date, reason
-        FROM saving_debits
-        WHERE id=?
-        """,
-        (did,)
-    ).fetchone()
-
-    if not old:
-        c.close()
-        return jsonify(
-            error="डेबिट एंट्री नहीं मिली"
-        ), 404
-
-    family = c.execute(
-        """
-        SELECT id
-        FROM families
-        WHERE id=?
-        """,
-        (family_id,)
-    ).fetchone()
-
-    if not family:
-        c.close()
-        return jsonify(
-            error="परिवार नहीं मिला"
-        ), 404
-
-    deposit_row = c.execute(
-        """
-        SELECT COALESCE(SUM(amount), 0) AS total
-        FROM savings
-        WHERE family_id=?
-        """,
-        (family_id,)
-    ).fetchone()
-
-    debit_row = c.execute(
-        """
-        SELECT COALESCE(SUM(amount), 0) AS total
-        FROM saving_debits
-        WHERE family_id=?
-          AND id<>?
-        """,
-        (family_id, did)
-    ).fetchone()
-
-    available = (
-        float(deposit_row["total"] or 0)
-        -
-        float(debit_row["total"] or 0)
-    )
-
-    if amount > available:
-        c.close()
-        return jsonify(
-            error=f"उपलब्ध बचत ₹{available:.2f} है। इससे ज्यादा डेबिट नहीं कर सकते।"
-        ), 400
-
-    entry_date = (
-        d.get("date")
-        or old["date"]
-        or datetime.date.today().isoformat()
-    )
-
-    reason = (
-        d.get("reason")
-        if d.get("reason") is not None
-        else (old["reason"] or "")
-    ).strip()
-
-    c.execute(
-        """
-        UPDATE saving_debits
-        SET family_id=?, amount=?, date=?, reason=?
-        WHERE id=?
-        """,
-        (
-            family_id,
-            amount,
-            entry_date,
-            reason,
-            did
-        )
-    )
-
-    c.commit()
-    c.close()
-
-    return jsonify(
-        ok=True
-    )
-
-
-# ==================================================
-# DELETE SAVING DEBIT
-# ==================================================
-
-@app.delete("/api/saving-debits/<int:did>")
-def delete_saving_debit(did):
-
-    error = admin_required()
-
-    if error:
-        return error
-
-    c = conn()
-
-    row = c.execute(
-        """
-        SELECT id
-        FROM saving_debits
-        WHERE id=?
-        """,
-        (did,)
-    ).fetchone()
-
-    if not row:
-        c.close()
-        return jsonify(
-            error="डेबिट एंट्री नहीं मिली"
-        ), 404
-
-    c.execute(
-        """
-        DELETE FROM saving_debits
-        WHERE id=?
-        """,
-        (did,)
-    )
-
-    c.commit()
-    c.close()
-
-    return jsonify(
-        ok=True
-    )
-
-
 # ==================================================
 # UPDATE SAVING
 # ==================================================
@@ -2112,32 +1626,6 @@ def add_loan():
     )
 
     c.commit()
-
-    # ==============================
-    # SEND FIREBASE PUSH NOTIFICATION
-    # ==============================
-    token_row = c.execute(
-        """
-        SELECT token
-        FROM fcm_tokens
-        WHERE family_id=?
-        """,
-        (family_id,)
-    ).fetchone()
-
-    if token_row:
-        try:
-            message = messaging.Message(
-                notification=messaging.Notification(
-                    title="💳 Loan अपडेट",
-                    body=f"आपके परिवार के लिए ₹{amount:.2f} का Loan अपडेट किया गया है। अवधि: {months} महीने।"
-                ),
-                token=token_row["token"]
-            )
-            messaging.send(message)
-        except Exception as e:
-            print("FCM loan notification error:", e)
-
     c.close()
 
     return jsonify(
@@ -2610,104 +2098,20 @@ def distribution():
             "interest": total * share
         })
 
-    distribution_date = d.get(
-        "date",
-        datetime.date.today().isoformat()
-    )
-    
-    distribution_row = c.execute(
+    c.execute(
         """
         INSERT INTO interest_distributions
         (total_interest, date)
         VALUES (?, ?)
-        RETURNING id
         """,
         (
             total,
-            distribution_date
-        )
-    ).fetchone()
-    
-    distribution_id = distribution_row["id"]
-    
-    # ==============================
-    # SAVE FAMILY-WISE INTEREST CREDIT
-    # ==============================
-    
-    for r in result:
-    
-        interest_amount = r["interest"]
-    
-        if interest_amount <= 0:
-            continue
-    
-        c.execute(
-            """
-            INSERT INTO interest_credits
-            (family_id, amount, date, distribution_id)
-            VALUES (?, ?, ?, ?)
-            """,
-            (
-                r["id"],
-                interest_amount,
-                distribution_date,
-                distribution_id
+            d.get(
+                "date",
+                datetime.date.today().isoformat()
             )
         )
-    
-    c.commit()
-
-
-    # ==============================
-    # CREATE MEMBER NOTIFICATIONS
-    # + SEND FIREBASE PUSH
-    # ==============================
-    for r in result:
-
-        interest_amount = r["interest"]
-
-        if interest_amount <= 0:
-            continue
-
-        title = "💰 ब्याज वितरण"
-        body = f"आपके परिवार के खाते में ₹{interest_amount:.2f} ब्याज वितरित किया गया है।"
-
-        c.execute(
-            """
-            INSERT INTO notifications
-            (family_id, title, message, is_read, created_at)
-            VALUES (?, ?, ?, ?, ?)
-            """,
-            (
-                r["id"],
-                title,
-                body,
-                False,
-                datetime.datetime.now().isoformat(timespec="seconds")
-            )
-        )
-
-        token_row = c.execute(
-            """
-            SELECT token
-            FROM fcm_tokens
-            WHERE family_id=?
-            """,
-            (r["id"],)
-        ).fetchone()
-
-        if token_row:
-            try:
-                message = messaging.Message(
-                    notification=messaging.Notification(
-                        title=title,
-                        body=body
-                    ),
-                    token=token_row["token"]
-                )
-                messaging.send(message)
-            except Exception as e:
-                print("FCM interest distribution notification error:", e)
+    )
 
     c.commit()
     c.close()
@@ -2715,35 +2119,6 @@ def distribution():
     return jsonify(
         total_savings=total_s,
         result=result
-    )
-
-
-# ==================================================
-# INTEREST DISTRIBUTION HISTORY
-# ==================================================
-
-@app.get("/api/interest-distributions")
-def interest_distributions():
-
-    error = admin_required()
-
-    if error:
-        return error
-
-    c = conn()
-
-    rows = c.execute(
-        """
-        SELECT id, total_interest, date
-        FROM interest_distributions
-        ORDER BY id DESC
-        """
-    ).fetchall()
-
-    c.close()
-
-    return jsonify(
-        distributions=[dict(row) for row in rows]
     )
 
 
