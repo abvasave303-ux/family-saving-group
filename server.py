@@ -686,11 +686,8 @@ def dashboard():
 
     interest = c.execute(
         """
-        SELECT
-            COALESCE((SELECT SUM(interest) FROM payments), 0)
-            -
-            COALESCE((SELECT SUM(total_interest) FROM interest_distributions), 0)
-            x
+        SELECT COALESCE(SUM(interest), 0) x
+        FROM payments
         """
     ).fetchone()["x"]
 
@@ -2718,6 +2715,35 @@ def distribution():
     return jsonify(
         total_savings=total_s,
         result=result
+    )
+
+
+# ==================================================
+# INTEREST DISTRIBUTION HISTORY
+# ==================================================
+
+@app.get("/api/interest-distributions")
+def interest_distributions():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    rows = c.execute(
+        """
+        SELECT id, total_interest, date
+        FROM interest_distributions
+        ORDER BY id DESC
+        """
+    ).fetchall()
+
+    c.close()
+
+    return jsonify(
+        distributions=[dict(row) for row in rows]
     )
 
 
