@@ -1337,7 +1337,7 @@ def passbook(fid):
         "payments": [dict(x) for x in p],
         "loans": [dict(x) for x in l],
         "saving_debits": [dict(x) for x in d],
-        "interest_credits": [dict(x) for x in ic]
+        "interest_credits": [dict(x) for x in ic],
         "yearly_records": yearly_records
     })
 # ==================================================
