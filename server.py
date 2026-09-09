@@ -686,8 +686,10 @@ def dashboard():
 
     interest = c.execute(
         """
-        SELECT COALESCE(SUM(interest), 0) x
-        FROM payments
+        SELECT
+            COALESCE((SELECT SUM(interest) FROM payments), 0)
+            -
+            COALESCE((SELECT SUM(total_interest) FROM interest_distributions), 0) x
         """
     ).fetchone()["x"]
 
@@ -2708,67 +2710,6 @@ def distribution():
         total_savings=total_s,
         result=result
     )
-
-
-# ==================================================
-# REVERSE INTEREST DISTRIBUTION
-# ==================================================
-
-@app.post("/api/interest-distribution/<int:distribution_id>/reverse")
-def reverse_interest_distribution(distribution_id):
-
-    error = admin_required()
-
-    if error:
-        return error
-
-    c = conn()
-
-    distribution = c.execute(
-        """
-        SELECT id, total_interest, date
-        FROM interest_distributions
-        WHERE id=?
-        """,
-        (distribution_id,)
-    ).fetchone()
-
-    if not distribution:
-
-        c.close()
-
-        return jsonify(
-            error="यह ब्याज वितरण नहीं मिला"
-        ), 404
-
-    # पहले उसी distribution से जुड़े family-wise interest credits हटाएँ
-    c.execute(
-        """
-        DELETE FROM interest_credits
-        WHERE distribution_id=?
-        """,
-        (distribution_id,)
-    )
-
-    # फिर मूल distribution record हटाएँ
-    c.execute(
-        """
-        DELETE FROM interest_distributions
-        WHERE id=?
-        """,
-        (distribution_id,)
-    )
-
-    c.commit()
-    c.close()
-
-    return jsonify(
-        ok=True,
-        reversed_distribution_id=distribution_id,
-        total_interest=distribution["total_interest"],
-        date=distribution["date"]
-    )
-
 
 
 # ==================================================
