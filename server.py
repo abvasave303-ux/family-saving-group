@@ -2710,6 +2710,36 @@ def distribution():
     )
 
 
+
+# ==================================================
+# INTEREST DISTRIBUTION HISTORY
+# ==================================================
+
+@app.get("/api/interest-distributions")
+def interest_distributions():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    rows = c.execute(
+        """
+        SELECT id, total_interest, date
+        FROM interest_distributions
+        ORDER BY id DESC
+        """
+    ).fetchall()
+
+    c.close()
+
+    return jsonify({
+        "distributions": [dict(r) for r in rows]
+    })
+
+
 # ==================================================
 # REVERSE INTEREST DISTRIBUTION
 # ==================================================
