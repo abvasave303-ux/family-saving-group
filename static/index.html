@@ -4127,7 +4127,47 @@ async function passbook(){
 
         </div>
 
+        <div class="panel" style="margin-top:15px">
 
+          <h3>📅 वित्तीय वर्ष का रिकॉर्ड</h3>
+        
+          <div class="table">
+        
+            <table>
+        
+              <tr>
+                <th>वित्तीय वर्ष</th>
+                <th>कुल बचत</th>
+                <th>ब्याज लाभ</th>
+                <th>निकासी</th>
+                <th>Net Saving</th>
+              </tr>
+        
+              ${
+                (x.yearly_records || []).map(r => `
+                  <tr>
+                    <td>${r.financial_year}</td>
+                    <td class="green">${money(r.saving)}</td>
+                    <td class="green">${money(r.interest)}</td>
+                    <td class="red">${money(r.debit)}</td>
+                    <td class="green">${money(r.net_saving)}</td>
+                  </tr>
+                `).join("")
+                ||
+                `
+                  <tr>
+                    <td colspan="5" class="empty">
+                      कोई वार्षिक रिकॉर्ड नहीं
+                    </td>
+                  </tr>
+                `
+              }
+        
+            </table>
+        
+          </div>
+        
+        </div>
         <div class="panel" style="margin-top:15px">
 
           <h3>
