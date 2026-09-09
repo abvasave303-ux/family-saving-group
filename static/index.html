@@ -2372,6 +2372,50 @@ function filterMemberYearlyRecord(selectedYear){
 
   });
 
+
+  const detailPanel =
+    document.getElementById(
+      "memberYearlyDetailPanel"
+    );
+
+  const detailLedger =
+    document.getElementById(
+      "memberYearlyDetailedLedger"
+    );
+
+
+  const data =
+    window.currentMemberPassbookData;
+
+
+  if(
+    detailPanel &&
+    detailLedger
+  ){
+
+    if(!selectedYear){
+
+      detailPanel.style.display = "none";
+
+    }
+    else{
+
+      detailPanel.style.display = "";
+
+      if(data){
+
+        detailLedger.innerHTML =
+          buildMemberYearlyLedger(
+            data,
+            selectedYear
+          );
+
+      }
+
+    }
+
+  }
+
 }
 function buildMemberYearlyLedger(x, selectedYear){
 
@@ -2479,6 +2523,7 @@ async function loadMemberPassbook(fid){
 
     const x =
       await api("/api/family/" + fid + "/passbook");
+    window.currentMemberPassbookData = x;
 
     const family = x.family;
 
