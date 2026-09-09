@@ -2373,6 +2373,106 @@ function filterMemberYearlyRecord(selectedYear){
   });
 
 }
+function buildMemberYearlyLedger(x, selectedYear){
+
+  const rows = [];
+
+  const getFY = (date) => {
+
+    const dt = String(date || "");
+    const year = Number(dt.slice(0,4));
+    const month = Number(dt.slice(5,7));
+
+    if(!year || !month) return "";
+
+    const startYear =
+      month >= 4 ? year : year - 1;
+
+    return `${startYear}-${String(startYear + 1).slice(-2)}`;
+  };
+
+
+  (x.savings || []).forEach(r => {
+
+    if(
+      selectedYear &&
+      getFY(r.date) !== selectedYear
+    ) return;
+
+    rows.push({
+      date: r.date || "",
+      detail: `मासिक बचत (${r.month || ""})`,
+      amount: Math.abs(Number(r.amount || 0)),
+      className: "green"
+    });
+
+  });
+
+
+  (x.interest_credits || []).forEach(r => {
+
+    if(
+      selectedYear &&
+      getFY(r.date) !== selectedYear
+    ) return;
+
+    rows.push({
+      date: r.date || "",
+      detail: "ब्याज लाभ",
+      amount: Math.abs(Number(r.amount || 0)),
+      className: "green"
+    });
+
+  });
+
+
+  (x.saving_debits || []).forEach(r => {
+
+    if(
+      selectedYear &&
+      getFY(r.date) !== selectedYear
+    ) return;
+
+    rows.push({
+      date: r.date || "",
+      detail:
+        `Debit / निकासी${
+          r.reason
+            ? " (" + r.reason + ")"
+            : ""
+        }`,
+      amount: -Math.abs(Number(r.amount || 0)),
+      className: "red"
+    });
+
+  });
+
+
+  rows.sort((a,b) =>
+    String(b.date).localeCompare(
+      String(a.date)
+    )
+  );
+
+
+  return rows.map(r => `
+    <tr>
+      <td>${r.date}</td>
+      <td>${r.detail}</td>
+      <td class="${r.className}">
+        ${money(r.amount)}
+      </td>
+    </tr>
+  `).join("")
+  ||
+  `
+    <tr>
+      <td colspan="3" class="empty">
+        इस वित्तीय वर्ष में कोई एंट्री नहीं
+      </td>
+    </tr>
+  `;
+}
 async function loadMemberPassbook(fid){
 
   try{
