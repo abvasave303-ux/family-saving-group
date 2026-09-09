@@ -1161,7 +1161,13 @@ def passbook(fid):
     c = conn()
 
     group_savings = c.execute(
-        "SELECT COALESCE(SUM(amount),0) x FROM savings"
+        """
+        SELECT
+          COALESCE((SELECT SUM(amount) FROM savings),0)
+          -
+          COALESCE((SELECT SUM(amount) FROM saving_debits),0)
+        x
+        """
     ).fetchone()["x"]
 
     group_loan = c.execute(
