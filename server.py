@@ -2501,22 +2501,53 @@ def distribution():
             "interest": total * share
         })
 
-    c.execute(
+    distribution_date = d.get(
+        "date",
+        datetime.date.today().isoformat()
+    )
+    
+    distribution_row = c.execute(
         """
         INSERT INTO interest_distributions
         (total_interest, date)
         VALUES (?, ?)
+        RETURNING id
         """,
         (
             total,
-            d.get(
-                "date",
-                datetime.date.today().isoformat()
+            distribution_date
+        )
+    ).fetchone()
+    
+    distribution_id = distribution_row["id"]
+    
+    # ==============================
+    # SAVE FAMILY-WISE INTEREST CREDIT
+    # ==============================
+    
+    for r in result:
+    
+        interest_amount = r["interest"]
+    
+        if interest_amount <= 0:
+            continue
+    
+        c.execute(
+            """
+            INSERT INTO interest_credits
+            (family_id, amount, date, distribution_id)
+            VALUES (?, ?, ?, ?)
+            """,
+            (
+                r["id"],
+                interest_amount,
+                distribution_date,
+                distribution_id
             )
         )
-    )
-
+    
     c.commit()
+
 
     # ==============================
     # CREATE MEMBER NOTIFICATIONS
