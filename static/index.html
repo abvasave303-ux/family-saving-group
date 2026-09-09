@@ -3974,7 +3974,37 @@ function buildPassbookLedger(x){
   </tr>`;
 }
 
+function filterYearlyRecord(selectedYear){
 
+  const rows =
+    document.querySelectorAll(
+      "#pr table:nth-of-type(1) tr"
+    );
+
+  rows.forEach((row, index) => {
+
+    if(index === 0) return;
+
+    const yearCell =
+      row.querySelector("td");
+
+    if(!yearCell) return;
+
+    const year =
+      yearCell.textContent.trim();
+
+    if(
+      !selectedYear ||
+      year === selectedYear
+    ){
+      row.style.display = "";
+    }else{
+      row.style.display = "none";
+    }
+
+  });
+
+}
 async function passbook(){
 
   const familyId =
@@ -4130,7 +4160,44 @@ async function passbook(){
         <div class="panel" style="margin-top:15px">
 
           <h3>📅 वित्तीय वर्ष का रिकॉर्ड</h3>
-        
+          <div style="
+            margin:10px 0;
+            display:flex;
+            align-items:center;
+            gap:10px;
+            flex-wrap:wrap;
+          ">
+          
+            <label>
+              वित्तीय वर्ष चुनें:
+            </label>
+          
+            <select
+              id="yearSelect"
+              onchange="filterYearlyRecord(this.value)"
+              style="
+                padding:8px 12px;
+                border:1px solid #d5deea;
+                border-radius:8px;
+                background:#fff;
+              "
+            >
+              <option value="">सभी वर्ष</option>
+          
+              ${
+                [...new Set(
+                  (x.yearly_records || [])
+                    .map(r => r.financial_year)
+                )].map(year => `
+                  <option value="${year}">
+                    ${year}
+                  </option>
+                `).join("")
+              }
+          
+            </select>
+          
+          </div>
           <div class="table">
         
             <table>
