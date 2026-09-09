@@ -2341,7 +2341,38 @@ async function changeMemberPin(){
     }
 }
 /* ================= MEMBER PASSBOOK ================= */
+function filterMemberYearlyRecord(selectedYear){
 
+  const rows =
+    document.querySelectorAll(
+      "#memberYearlyRecordTable tr"
+    );
+
+  rows.forEach((row, index) => {
+
+    if(index === 0) return;
+
+    const yearCell =
+      row.querySelector("td");
+
+    if(!yearCell) return;
+
+    const year =
+      yearCell.textContent.trim();
+
+    if(
+      !selectedYear ||
+      year === selectedYear
+    ){
+      row.style.display = "";
+    }
+    else{
+      row.style.display = "none";
+    }
+
+  });
+
+}
 async function loadMemberPassbook(fid){
 
   try{
@@ -2565,7 +2596,7 @@ async function loadMemberPassbook(fid){
         
             <select
               id="memberYearSelect"
-              style="
+              onchange="filterMemberYearlyRecord(this.value)"
                 padding:8px 12px;
                 border:1px solid #d5deea;
                 border-radius:8px;
