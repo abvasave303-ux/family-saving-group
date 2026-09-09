@@ -4014,26 +4014,15 @@ function filterYearlyRecord(selectedYear){
       "yearlyDetailedLedger"
     );
   
-  const ledgerPanel =
-    ledger?.closest(".panel");
-  
-  if(ledgerPanel){
-  
-    if(!selectedYear){
-  
-      ledgerPanel.style.display = "none";
-  
-    }
-    else{
-  
-      ledgerPanel.style.display = "";
-  
-      if(data){
-        ledger.innerHTML =
-          buildYearlyLedger(
-            data,
-            selectedYear
-          );
+  if(
+    ledger &&
+    data
+  ){
+    ledger.innerHTML =
+      buildYearlyLedger(
+        data,
+        selectedYear
+      );
       }
   
     }
