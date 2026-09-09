@@ -3978,7 +3978,7 @@ function filterYearlyRecord(selectedYear){
 
   const rows =
     document.querySelectorAll(
-      "#pr table:nth-of-type(1) tr"
+      "#yearlyRecordTable tr"
     );
 
   rows.forEach((row, index) => {
@@ -3998,11 +3998,34 @@ function filterYearlyRecord(selectedYear){
       year === selectedYear
     ){
       row.style.display = "";
-    }else{
+    }
+    else{
       row.style.display = "none";
     }
 
   });
+
+
+  const data =
+    window.currentPassbookData;
+
+  const ledger =
+    document.getElementById(
+      "yearlyDetailedLedger"
+    );
+
+  if(
+    ledger &&
+    data
+  ){
+
+    ledger.innerHTML =
+      buildYearlyLedger(
+        data,
+        selectedYear
+      );
+
+  }
 
 }
 function buildYearlyLedger(x, selectedYear){
@@ -4120,7 +4143,7 @@ async function passbook(){
         familyId +
         "/passbook"
       );
-
+    window.currentPassbookData = x;
 
     const family =
       fam.find(
@@ -4298,17 +4321,17 @@ async function passbook(){
             </select>
           
           </div>
-          <div class="table">
+         <div class="table">
         
-            <table>
+          <table id="yearlyRecordTable">
         
-              <tr>
-                <th>वित्तीय वर्ष</th>
-                <th>कुल बचत</th>
-                <th>ब्याज लाभ</th>
-                <th>निकासी</th>
-                <th>Net Saving</th>
-              </tr>
+            <tr>
+              <th>वित्तीय वर्ष</th>
+              <th>कुल बचत</th>
+              <th>ब्याज लाभ</th>
+              <th>निकासी</th>
+              <th>Net Saving</th>
+            </tr>
         
               ${
                 (x.yearly_records || []).map(r => `
