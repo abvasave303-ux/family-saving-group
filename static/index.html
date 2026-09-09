@@ -4010,23 +4010,37 @@ function filterYearlyRecord(selectedYear){
     window.currentPassbookData;
 
   const ledger =
-    document.getElementById(
-      "yearlyDetailedLedger"
-    );
-  
-if(
-  ledger &&
-  data
-){
-  ledger.innerHTML =
-    buildYearlyLedger(
-      data,
-      selectedYear
-    );
-}
+  document.getElementById(
+    "yearlyDetailedLedger"
+  );
+
+const ledgerPanel =
+  ledger?.closest(".panel");
+
+if(ledgerPanel){
+
+  if(!selectedYear){
+
+    ledgerPanel.style.display = "none";
+
+  }
+  else{
+
+    ledgerPanel.style.display = "";
+
+    if(data){
+
+      ledger.innerHTML =
+        buildYearlyLedger(
+          data,
+          selectedYear
+        );
+
+    }
+
+  }
 
 }
-
 function buildYearlyLedger(x, selectedYear){
 
   const rows = [];
