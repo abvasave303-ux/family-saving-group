@@ -1182,7 +1182,12 @@ def passbook(fid):
     ).fetchone()["x"]
 
     group_interest = c.execute(
-        "SELECT COALESCE(SUM(interest),0) x FROM payments"
+        """
+        SELECT
+            COALESCE((SELECT SUM(interest) FROM payments), 0)
+            -
+            COALESCE((SELECT SUM(total_interest) FROM interest_distributions), 0) x
+        """
     ).fetchone()["x"]
 
     group_available = (
