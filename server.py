@@ -1245,6 +1245,84 @@ def passbook(fid):
         """,
         (fid,)
     ).fetchall()
+# ==============================
+# FINANCIAL YEAR RECORDS
+# APRIL TO MARCH
+# ==============================
+
+    yearly_records = {}
+    
+    for r in s:
+        amount = float(r["amount"] or 0)
+        dt = str(r["date"])
+    
+        year = int(dt[:4])
+        month = int(dt[5:7])
+    
+        fy_start = year if month >= 4 else year - 1
+        fy_name = f"{fy_start}-{str(fy_start + 1)[-2:]}"
+    
+        if fy_name not in yearly_records:
+            yearly_records[fy_name] = {
+                "financial_year": fy_name,
+                "saving": 0,
+                "interest": 0,
+                "debit": 0
+            }
+    
+        yearly_records[fy_name]["saving"] += amount
+    
+    
+    for r in ic:
+        amount = float(r["amount"] or 0)
+        dt = str(r["date"])
+    
+        year = int(dt[:4])
+        month = int(dt[5:7])
+    
+        fy_start = year if month >= 4 else year - 1
+        fy_name = f"{fy_start}-{str(fy_start + 1)[-2:]}"
+    
+        if fy_name not in yearly_records:
+            yearly_records[fy_name] = {
+                "financial_year": fy_name,
+                "saving": 0,
+                "interest": 0,
+                "debit": 0
+            }
+    
+        yearly_records[fy_name]["interest"] += amount
+    
+    
+    for r in d:
+        amount = float(r["amount"] or 0)
+        dt = str(r["date"])
+    
+        year = int(dt[:4])
+        month = int(dt[5:7])
+    
+        fy_start = year if month >= 4 else year - 1
+        fy_name = f"{fy_start}-{str(fy_start + 1)[-2:]}"
+    
+        if fy_name not in yearly_records:
+            yearly_records[fy_name] = {
+                "financial_year": fy_name,
+                "saving": 0,
+                "interest": 0,
+                "debit": 0
+            }
+    
+        yearly_records[fy_name]["debit"] += amount
+    
+    
+    yearly_records = list(yearly_records.values())
+    
+    for r in yearly_records:
+        r["net_saving"] = (
+            r["saving"]
+            + r["interest"]
+            - r["debit"]
+        )
     c.close()
 
     return jsonify({
@@ -1260,6 +1338,7 @@ def passbook(fid):
         "loans": [dict(x) for x in l],
         "saving_debits": [dict(x) for x in d],
         "interest_credits": [dict(x) for x in ic]
+        "yearly_records": yearly_records
     })
 # ==================================================
 # SAVINGS - GET
