@@ -2713,6 +2713,91 @@ def distribution():
 
 
 # ==================================================
+# INTEREST DISTRIBUTION HISTORY
+# ==================================================
+
+@app.get("/api/interest-distributions")
+def interest_distributions():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    rows = c.execute(
+        """
+        SELECT id, total_interest, date
+        FROM interest_distributions
+        ORDER BY id DESC
+        """
+    ).fetchall()
+
+    c.close()
+
+    return jsonify(
+        distributions=[dict(x) for x in rows]
+    )
+
+
+# ==================================================
+# REVERSE INTEREST DISTRIBUTION
+# ==================================================
+
+@app.post("/api/interest-distribution/<int:distribution_id>/reverse")
+def reverse_interest_distribution(distribution_id):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    distribution = c.execute(
+        """
+        SELECT id, total_interest, date
+        FROM interest_distributions
+        WHERE id=?
+        """,
+        (distribution_id,)
+    ).fetchone()
+
+    if not distribution:
+        c.close()
+        return jsonify(
+            error="यह ब्याज वितरण नहीं मिला"
+        ), 404
+
+    c.execute(
+        """
+        DELETE FROM interest_credits
+        WHERE distribution_id=?
+        """,
+        (distribution_id,)
+    )
+
+    c.execute(
+        """
+        DELETE FROM interest_distributions
+        WHERE id=?
+        """,
+        (distribution_id,)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True,
+        reversed_distribution_id=distribution_id,
+        total_interest=distribution["total_interest"],
+        date=distribution["date"]
+    )
+
+
+# ==================================================
 # START APPLICATION
 # ==================================================
 
