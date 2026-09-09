@@ -1883,6 +1883,22 @@ onMessage(messaging, (payload) => {
 
       <div id="dr" style="margin-top:15px"></div>
 
+      <div class="panel" style="margin-top:15px">
+
+        <h3>↩️ ब्याज वितरण वापस करें</h3>
+
+        <div class="body">
+
+          <button class="btn secondary" onclick="loadInterestDistributions()">
+            पुराने वितरण देखें
+          </button>
+
+          <div id="interestDistributionHistory" style="margin-top:15px"></div>
+
+        </div>
+
+      </div>
+
     </div>
 
   </div>
@@ -4213,6 +4229,81 @@ async function dist(){
 
   }
 
+}
+
+
+async function loadInterestDistributions(){
+
+  try{
+
+    const x = await api("/api/interest-distributions");
+    const box = $("interestDistributionHistory");
+
+    if(!box) return;
+
+    const rows = x.distributions || [];
+
+    if(!rows.length){
+      box.innerHTML = '<div class="notice">अभी कोई ब्याज वितरण रिकॉर्ड नहीं है।</div>';
+      return;
+    }
+
+    box.innerHTML = `
+      <div class="table">
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>तारीख</th>
+            <th>ब्याज</th>
+            <th>Action</th>
+          </tr>
+          ${rows.map(r => `
+            <tr>
+              <td>${r.id}</td>
+              <td>${r.date || "—"}</td>
+              <td class="green">${money(r.total_interest)}</td>
+              <td>
+                <button class="btn secondary" onclick="reverseInterestDistribution(${Number(r.id)})">
+                  ↩️ Reverse
+                </button>
+              </td>
+            </tr>
+          `).join("")}
+        </table>
+      </div>
+    `;
+
+  }catch(e){
+    alert(e.message);
+  }
+}
+
+async function reverseInterestDistribution(id){
+
+  if(!confirm(
+    "क्या आप इस ब्याज वितरण को Reverse करना चाहते हैं?\n\nइससे इस distribution के interest credits हट जाएंगे।"
+  )){
+    return;
+  }
+
+  try{
+
+    const x = await api(
+      "/api/interest-distribution/" + id + "/reverse",
+      { method:"POST" }
+    );
+
+    alert(
+      "ब्याज वितरण Reverse हो गया।\n\nब्याज: " +
+      money(x.total_interest)
+    );
+
+    await loadInterestDistributions();
+    await refresh();
+
+  }catch(e){
+    alert(e.message);
+  }
 }
 
 
