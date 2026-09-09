@@ -2711,6 +2711,67 @@ def distribution():
 
 
 # ==================================================
+# REVERSE INTEREST DISTRIBUTION
+# ==================================================
+
+@app.post("/api/interest-distribution/<int:distribution_id>/reverse")
+def reverse_interest_distribution(distribution_id):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    distribution = c.execute(
+        """
+        SELECT id, total_interest, date
+        FROM interest_distributions
+        WHERE id=?
+        """,
+        (distribution_id,)
+    ).fetchone()
+
+    if not distribution:
+
+        c.close()
+
+        return jsonify(
+            error="यह ब्याज वितरण नहीं मिला"
+        ), 404
+
+    # पहले उसी distribution से जुड़े family-wise interest credits हटाएँ
+    c.execute(
+        """
+        DELETE FROM interest_credits
+        WHERE distribution_id=?
+        """,
+        (distribution_id,)
+    )
+
+    # फिर मूल distribution record हटाएँ
+    c.execute(
+        """
+        DELETE FROM interest_distributions
+        WHERE id=?
+        """,
+        (distribution_id,)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True,
+        reversed_distribution_id=distribution_id,
+        total_interest=distribution["total_interest"],
+        date=distribution["date"]
+    )
+
+
+
+# ==================================================
 # START APPLICATION
 # ==================================================
 
