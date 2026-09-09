@@ -3927,11 +3927,20 @@ function buildPassbookLedger(x){
       className: "green"
     });
   });
+    (x.interest_credits || []).forEach(r => {
+    rows.push({
+      date: r.date || "",
+      order: 3,
+      detail: "ब्याज लाभ",
+      amount: Math.abs(Number(r.amount || 0)),
+      className: "green"
+    });
+  });
 
   (x.saving_debits || []).forEach(r => {
     rows.push({
       date: r.date || "",
-      order: 3,
+      order: 4,
       detail: `Debit / निकासी${r.reason ? " (" + r.reason + ")" : ""}`,
       amount: -Math.abs(Number(r.amount || 0)),
       className: "red"
@@ -3941,7 +3950,7 @@ function buildPassbookLedger(x){
   (x.payments || []).forEach(r => {
     rows.push({
       date: r.date || "",
-      order: 4,
+      order: 5,
       detail: "Loan Payment",
       amount: Math.abs(Number(r.amount || 0)),
       className: "green"
