@@ -668,6 +668,11 @@ def dashboard():
             (
                 SELECT COALESCE(SUM(amount), 0)
                 FROM saving_debits
+            )
+            +
+            (
+                SELECT COALESCE(SUM(amount), 0)
+                FROM interest_credits
             ) x
         """
     ).fetchone()["x"]
