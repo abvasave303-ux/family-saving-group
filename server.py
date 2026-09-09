@@ -1321,7 +1321,6 @@ def passbook(fid):
         r["net_saving"] = (
             r["saving"]
             + r["interest"]
-            - r["debit"]
         )
     c.close()
 
