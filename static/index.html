@@ -11,7 +11,13 @@
 body{
   margin:0;
   font-family:Arial,"Noto Sans Devanagari",sans-serif;
-  background:#eef4fa;
+  background:
+  linear-gradient(120deg,rgba(232,245,255,.82),rgba(255,255,255,.84),rgba(244,238,255,.78),rgba(232,245,255,.82)),
+  url("/static/bagground.png");
+  
+  background-size:300% 300%, cover;
+  background-position:0% 50%, center;
+  animation:postLoginGradient 18s ease-in-out infinite;
   color:#16233b;
 }
 
@@ -86,10 +92,20 @@ body{
 .nav button.active{
   background:#1976d2;
 }
-
 .main{
   margin-left:230px;
+  min-height:100vh;
+  background:linear-gradient(
+    120deg,
+    rgba(232,245,255,.72),
+    rgba(255,255,255,.86),
+    rgba(244,238,255,.72),
+    rgba(232,245,255,.72)
+  );
+  background-size:300% 300%;
+  animation:postLoginGradient 18s ease-in-out infinite;
 }
+
 
 header{
   height:65px;
@@ -172,6 +188,22 @@ header:hover{
 .blue{color:#1769c2}
 .orange{color:#c66d14}
 .red{color:#c73535}
+
+/* Debit ledger: keep reason and actions from colliding */
+.debit-reason{
+  white-space:normal;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+  max-width:180px;
+  line-height:1.35;
+  margin-bottom:6px;
+}
+.debit-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  align-items:center;
+}
 
 .grid{
   display:grid;
@@ -360,6 +392,16 @@ th{
   animation:progressShine 2.5s infinite;
 }
 
+@keyframes pageBgGradient{
+  0%,100%{background-position:0% 50%,center}
+  50%{background-position:100% 50%,center}
+}
+
+@keyframes postLoginGradient{
+  0%,100%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+}
+
 @keyframes progressShine{
   0%{
     left:-60px;
@@ -376,22 +418,28 @@ th{
   padding:20px;
 }
 
-.login{
-  min-height:100vh;
-  display:grid;
-  place-items:center;
-  padding:20px;
-  background:
-    radial-gradient(circle at top left,#dceeff 0,#eef6ff 35%,#f7fbff 100%);
-}
+ .login{
+   min-height:100vh;
+   display:grid;
+   place-items:center;
+   padding:20px;
+   background:transparent;
+ }
 
 .loginbox{
   width:min(420px,94vw);
-  background:rgba(255,255,255,.96);
+  background:linear-gradient(120deg,rgba(255,255,255,.98),rgba(190,225,255,.94),rgba(220,205,255,.94),rgba(255,255,255,.98),rgba(185,225,255,.94));
+  background-size:400% 400%;
   padding:30px;
   border-radius:18px;
   box-shadow:0 15px 45px rgba(23,54,93,.16);
   border:1px solid #e1eaf5;
+  animation:loginCardGradient 9s ease-in-out infinite;
+}
+
+@keyframes loginCardGradient{
+  0%,100%{background-position:0% 50%}
+  50%{background-position:100% 50%}
 }
 
 .login-logo{
@@ -885,13 +933,83 @@ header .title{
   text-overflow:ellipsis;
 }
 }
+
+/* ================= STARTUP LOADING SCREEN ================= */
+#startupLoader{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#eef7ff,#ffffff);
+  transition:opacity .35s ease, visibility .35s ease;
+}
+#startupLoader.hide{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+.startup-box{
+  width:min(90%,360px);
+  text-align:center;
+  padding:28px 22px;
+}
+.startup-logo{
+  width:88px;
+  height:88px;
+  object-fit:contain;
+  background:#fff;
+  border-radius:50%;
+  padding:5px;
+  box-shadow:0 8px 25px rgba(8,59,120,.14);
+  animation:startupFloat 1.8s ease-in-out infinite;
+}
+.startup-title{
+  margin:16px 0 5px;
+  color:#083b78;
+  font-size:24px;
+  font-weight:800;
+}
+.startup-subtitle{
+  color:#68768b;
+  font-size:13px;
+}
+.startup-spinner{
+  width:34px;
+  height:34px;
+  margin:20px auto 10px;
+  border:3px solid #dbeaf8;
+  border-top-color:#1976d2;
+  border-radius:50%;
+  animation:startupSpin .8s linear infinite;
+}
+.startup-status{
+  color:#1976d2;
+  font-size:12px;
+  font-weight:600;
+}
+@keyframes startupSpin{
+  to{transform:rotate(360deg)}
+}
+@keyframes startupFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-5px)}
+}
+@media(max-width:650px){
+  .startup-box{padding:24px 18px}
+  .startup-logo{width:76px;height:76px}
+  .startup-title{font-size:21px}
+}
+
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
   import {
     getMessaging,
-    getToken
-  } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js";
+    getToken,
+    onMessage
+} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC0ISJyPPbn0I-uA49Dku95PFg4D5TVUnI",
@@ -904,6 +1022,18 @@ header .title{
 
   const app = initializeApp(firebaseConfig);
   const messaging = getMessaging(app);
+
+onMessage(messaging, (payload) => {
+    const notification = payload.notification || {};
+    navigator.serviceWorker.ready.then((registration) => {
+        registration.showNotification(
+            notification.title || "Family Saving Group",
+            {
+                body: notification.body || ""
+            }
+        );
+    });
+});
 
   window.setupFCM = async function(familyId) {
     try {
@@ -943,6 +1073,22 @@ header .title{
 </head>
 
 <body>
+<!-- ================= STARTUP LOADER ================= -->
+<div id="startupLoader" aria-label="Family Saving Group loading">
+  <div class="startup-box">
+    <img
+      src="/static/logo.png"
+      class="startup-logo"
+      alt="Family Saving Group"
+      onerror="this.style.display='none'"
+    >
+    <div class="startup-title">Family Saving Group</div>
+    <div class="startup-subtitle">आपका परिवार • आपकी बचत • आपका भविष्य</div>
+    <div class="startup-spinner"></div>
+    <div class="startup-status">सिस्टम तैयार हो रहा है…</div>
+  </div>
+</div>
+
 
 <!-- ================= LOGIN ================= -->
 
@@ -1424,6 +1570,51 @@ header .title{
 
   <div class="panel" style="margin-top:14px">
 
+    <h3>💸 बचत से Debit / निकासी</h3>
+
+    <div class="body">
+
+      <div class="notice">
+        Debit आपकी उपलब्ध बचत से अधिक नहीं हो सकता।
+      </div>
+
+      <div class="form">
+
+        <div class="field">
+          <label>परिवार</label>
+          <select id="df"></select>
+        </div>
+
+        <div class="field">
+          <label>Debit राशि ₹</label>
+          <input id="da" type="number" min="0.01" step="0.01" placeholder="राशि">
+        </div>
+
+        <div class="field">
+          <label>तारीख</label>
+          <input id="ddate" type="date">
+        </div>
+
+        <div class="field">
+          <label>कारण (वैकल्पिक)</label>
+          <input id="dre" type="text" placeholder="जैसे जरूरत के लिए">
+        </div>
+
+        <div class="full">
+          <button class="btn danger" onclick="saveDebit()">
+            💸 Debit दर्ज करें
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="panel" style="margin-top:14px">
+
     <h3>बचत लेजर</h3>
 
     <div class="table">
@@ -1437,6 +1628,7 @@ header .title{
             <th>महीना</th>
             <th>परिवार</th>
             <th>राशि</th>
+            <th>विवरण</th>
             <th>Action</th>
           </tr>
 
@@ -1690,22 +1882,6 @@ header .title{
       </div>
 
       <div id="dr" style="margin-top:15px"></div>
-
-      <div class="panel" style="margin-top:15px">
-
-        <h3>↩️ ब्याज वितरण वापस करें</h3>
-
-        <div class="body">
-
-          <button class="btn secondary" onclick="loadInterestDistributions()">
-            पुराने वितरण देखें
-          </button>
-
-          <div id="interestDistributionHistory" style="margin-top:15px"></div>
-
-        </div>
-
-      </div>
 
     </div>
 
@@ -2165,13 +2341,189 @@ async function changeMemberPin(){
     }
 }
 /* ================= MEMBER PASSBOOK ================= */
+function filterMemberYearlyRecord(selectedYear){
 
+  const rows =
+    document.querySelectorAll(
+      "#memberYearlyRecordTable tr"
+    );
+
+  rows.forEach((row, index) => {
+
+    if(index === 0) return;
+
+    const yearCell =
+      row.querySelector("td");
+
+    if(!yearCell) return;
+
+    const year =
+      yearCell.textContent.trim();
+
+    if(
+      !selectedYear ||
+      year === selectedYear
+    ){
+      row.style.display = "";
+    }
+    else{
+      row.style.display = "none";
+    }
+
+  });
+
+
+  const detailPanel =
+    document.getElementById(
+      "memberYearlyDetailPanel"
+    );
+
+  const detailLedger =
+    document.getElementById(
+      "memberYearlyDetailedLedger"
+    );
+
+
+  const data =
+    window.currentMemberPassbookData;
+
+
+  if(
+    detailPanel &&
+    detailLedger
+  ){
+
+    if(!selectedYear){
+
+      detailPanel.style.display = "none";
+
+    }
+    else{
+
+      detailPanel.style.display = "";
+
+      if(data){
+
+        detailLedger.innerHTML =
+          buildMemberYearlyLedger(
+            data,
+            selectedYear
+          );
+
+      }
+
+    }
+
+  }
+
+}
+function buildMemberYearlyLedger(x, selectedYear){
+
+  const rows = [];
+
+  const getFY = (date) => {
+
+    const dt = String(date || "");
+    const year = Number(dt.slice(0,4));
+    const month = Number(dt.slice(5,7));
+
+    if(!year || !month) return "";
+
+    const startYear =
+      month >= 4 ? year : year - 1;
+
+    return `${startYear}-${String(startYear + 1).slice(-2)}`;
+  };
+
+
+  (x.savings || []).forEach(r => {
+
+    if(
+      selectedYear &&
+      getFY(r.date) !== selectedYear
+    ) return;
+
+    rows.push({
+      date: r.date || "",
+      detail: `मासिक बचत (${r.month || ""})`,
+      amount: Math.abs(Number(r.amount || 0)),
+      className: "green"
+    });
+
+  });
+
+
+  (x.interest_credits || []).forEach(r => {
+
+    if(
+      selectedYear &&
+      getFY(r.date) !== selectedYear
+    ) return;
+
+    rows.push({
+      date: r.date || "",
+      detail: "ब्याज लाभ",
+      amount: Math.abs(Number(r.amount || 0)),
+      className: "green"
+    });
+
+  });
+
+
+  (x.saving_debits || []).forEach(r => {
+
+    if(
+      selectedYear &&
+      getFY(r.date) !== selectedYear
+    ) return;
+
+    rows.push({
+      date: r.date || "",
+      detail:
+        `Debit / निकासी${
+          r.reason
+            ? " (" + r.reason + ")"
+            : ""
+        }`,
+      amount: -Math.abs(Number(r.amount || 0)),
+      className: "red"
+    });
+
+  });
+
+
+  rows.sort((a,b) =>
+    String(b.date).localeCompare(
+      String(a.date)
+    )
+  );
+
+
+  return rows.map(r => `
+    <tr>
+      <td>${r.date}</td>
+      <td>${r.detail}</td>
+      <td class="${r.className}">
+        ${money(r.amount)}
+      </td>
+    </tr>
+  `).join("")
+  ||
+  `
+    <tr>
+      <td colspan="3" class="empty">
+        इस वित्तीय वर्ष में कोई एंट्री नहीं
+      </td>
+    </tr>
+  `;
+}
 async function loadMemberPassbook(fid){
 
   try{
 
     const x =
       await api("/api/family/" + fid + "/passbook");
+    window.currentMemberPassbookData = x;
 
     const family = x.family;
 
@@ -2179,7 +2531,21 @@ async function loadMemberPassbook(fid){
       (a,r) => a + Number(r.amount || 0),
       0
     );
+    const interestTotal = (x.interest_credits || []).reduce(
+      (a,r) => a + Number(r.amount || 0),
+      0
+    );
+    
+    const overallSaving = savings + interestTotal;
+    const debitTotal =
+      (x.saving_debits || []).reduce(
+        (a,r) =>
+          a + Number(r.amount || 0),
+        0
+      );
 
+    const finalSaving =
+      overallSaving - debitTotal;
     const loan = (x.loans || []).reduce(
       (a,r) => a + Number(r.principal || 0),
       0
@@ -2268,7 +2634,7 @@ async function loadMemberPassbook(fid){
             </div>
 
             <div class="value green">
-              ${money(savings)}
+              ${money(finalSaving)}
             </div>
 
           </div>
@@ -2367,7 +2733,131 @@ async function loadMemberPassbook(fid){
 
         </div>
 
+        <!-- YEARLY FINANCIAL RECORD -->
+        
+        <div class="panel" style="margin-top:15px">
+        
+          <h3>
+            📅 वित्तीय वर्ष का रिकॉर्ड
+          </h3>
+        
+          <div style="
+            margin:10px 0;
+            display:flex;
+            align-items:center;
+            gap:10px;
+            flex-wrap:wrap;
+          ">
+        
+            <label>
+              वित्तीय वर्ष चुनें:
+            </label>
+        
+            <select
+              id="memberYearSelect"
+              onchange="filterMemberYearlyRecord(this.value)"
+                padding:8px 12px;
+                border:1px solid #d5deea;
+                border-radius:8px;
+                background:#fff;
+              "
+            >
+        
+              <option value="">
+                सभी वर्ष
+              </option>
+        
+              ${
+                [...new Set(
+                  (x.yearly_records || [])
+                    .map(r => r.financial_year)
+                )].map(year => `
+                  <option value="${year}">
+                    ${year}
+                  </option>
+                `).join("")
+              }
+        
+            </select>
+        
+          </div>
+        
+        
+          <div class="table">
+        
+            <table id="memberYearlyRecordTable">
+        
+              <tr>
+                <th>वित्तीय वर्ष</th>
+                <th>कुल बचत</th>
+                <th>ब्याज लाभ</th>
+                <th>निकासी</th>
+                <th>Net Saving</th>
+              </tr>
+        
+              ${
+                (x.yearly_records || []).map(r => `
+                  <tr>
+                    <td>${r.financial_year}</td>
+                    <td class="green">
+                      ${money(r.saving)}
+                    </td>
+                    <td class="green">
+                      ${money(r.interest)}
+                    </td>
+                    <td class="red">
+                      ${money(r.debit)}
+                    </td>
+                    <td class="green">
+                      ${money(r.net_saving)}
+                    </td>
+                  </tr>
+                `).join("")
+                ||
+                `
+                  <tr>
+                    <td colspan="5" class="empty">
+                      कोई वार्षिक रिकॉर्ड नहीं
+                    </td>
+                  </tr>
+                `
+              }
+        
+            </table>
+        
+          </div>
+        
+        </div>
+        <!-- SELECTED YEAR DETAIL -->
 
+        <div
+          id="memberYearlyDetailPanel"
+          class="panel"
+          style="margin-top:15px;display:none;"
+        >
+        
+          <h3>
+            📋 चयनित वित्तीय वर्ष का विवरण
+          </h3>
+        
+          <div class="table">
+        
+            <table>
+        
+              <tr>
+                <th>तारीख</th>
+                <th>विवरण</th>
+                <th>राशि</th>
+              </tr>
+        
+              <tbody id="memberYearlyDetailedLedger">
+              </tbody>
+        
+            </table>
+        
+          </div>
+        
+        </div>
         <!-- MEMBER TRANSACTION HISTORY -->
 
         <div class="panel" style="margin-top:15px">
@@ -2391,46 +2881,7 @@ async function loadMemberPassbook(fid){
               </tr>
 
 
-              ${(x.savings || []).map(r => `
-
-                <tr>
-
-                  <td>
-                    ${r.date}
-                  </td>
-
-                  <td>
-                    मासिक बचत (${r.month})
-                  </td>
-
-                  <td class="green">
-                    ${money(r.amount)}
-                  </td>
-
-                </tr>
-
-              `).join("")}
-
-
-              ${(x.payments || []).map(r => `
-
-                <tr>
-
-                  <td>
-                    ${r.date}
-                  </td>
-
-                  <td>
-                    Loan Payment
-                  </td>
-
-                  <td>
-                    ${money(r.amount)}
-                  </td>
-
-                </tr>
-
-              `).join("")}
+              ${buildPassbookLedger(x)}
 
             </table>
 
@@ -2681,8 +3132,7 @@ function printMemberPassbook(){
           window.print();
         };
       <\/script>
-
-    </body>
+</body>
 
     </html>
 
@@ -2778,7 +3228,7 @@ async function init(){
   const today =
     new Date().toISOString().slice(0,10);
 
-  ["sd","ld","rd","dd"].forEach(id => {
+  ["sd","ddate","ld","rd","dd"].forEach(id => {
 
     if($(id)){
       $(id).value = today;
@@ -2798,13 +3248,15 @@ async function init(){
 
 /* ================= REFRESH ================= */
 
+let savingDebits = [];
+
 async function refresh(){
 
   try{
 
     fam = await api("/api/families");
 
-    ["sf","lf","pf"].forEach(id => {
+    ["sf","df","lf","pf"].forEach(id => {
 
       if(!$(id)) return;
 
@@ -2853,6 +3305,9 @@ async function refresh(){
 
     const savings =
       await api("/api/savings");
+
+    savingDebits =
+      await api("/api/saving-debits");
 
 
     const currentMonthIndex =
@@ -2991,35 +3446,81 @@ async function refresh(){
       </tr>`;
 
 
+    const ledgerRows = [
+      ...savings.map(x => ({
+        kind: "saving",
+        id: Number(x.id),
+        date: x.date,
+        month: x.month,
+        family: x.family,
+        amount: Number(x.amount || 0)
+      })),
+      ...savingDebits.map(x => ({
+        kind: "debit",
+        id: Number(x.id),
+        date: x.date,
+        month: "Debit",
+        family: x.family,
+        amount: -Number(x.amount || 0),
+        reason: x.reason || ""
+      }))
+    ].sort((a,b) =>
+      String(b.date).localeCompare(String(a.date)) ||
+      b.id - a.id
+    );
+
+
     $("st").innerHTML =
-      savings.map(x => `
+      ledgerRows.map(x => `
 
         <tr>
 
           <td>${x.date}</td>
 
-          <td>${x.month}</td>
+          <td>${x.kind === "debit" ? "Debit / निकासी" : x.month}</td>
 
           <td>${x.family}</td>
 
-          <td class="green">
+          <td class="${x.kind === "debit" ? "red" : "green"}">
             ${money(x.amount)}
           </td>
 
           <td>
+            ${x.kind === "debit" ? (x.reason || "—") : "—"}
+          </td>
 
-            <button
-              class="btn secondary small"
-              onclick="editSaving(${x.id})">
-              ✏️ Edit
-            </button>
+          <td>
+            ${
+              x.kind === "debit"
+              ? `
+                <div class="debit-actions">
+                  <button
+                    class="btn secondary small"
+                    onclick="editSavingDebit(${x.id})">
+                    ✏️ Edit
+                  </button>
 
-            <button
-              class="btn danger small"
-              onclick="deleteSaving(${x.id})">
-              🗑️ Delete
-            </button>
+                  <button
+                    class="btn danger small"
+                    onclick="deleteSavingDebit(${x.id})">
+                    🗑️ Delete
+                  </button>
+                </div>
+              `
+              : `
+                <button
+                  class="btn secondary small"
+                  onclick="editSaving(${x.id})">
+                  ✏️ Edit
+                </button>
 
+                <button
+                  class="btn danger small"
+                  onclick="deleteSaving(${x.id})">
+                  🗑️ Delete
+                </button>
+              `
+            }
           </td>
 
         </tr>
@@ -3027,7 +3528,7 @@ async function refresh(){
       `).join("")
       ||
       `<tr>
-        <td colspan="5" class="empty">
+        <td colspan="6" class="empty">
           कोई एंट्री नहीं
         </td>
       </tr>`;
@@ -3281,6 +3782,163 @@ async function saveSaving(){
     });
 
     alert("बचत दर्ज हो गई");
+
+    await refresh();
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+}
+
+
+/* ================= SAVING DEBIT ================= */
+
+async function saveDebit(){
+
+  try{
+
+    const amount =
+      Number($("da").value);
+
+    if(!amount || amount <= 0){
+      alert("सही Debit राशि डालें");
+      return;
+    }
+
+    await api("/api/saving-debits",{
+
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+
+        family_id:Number($("df").value),
+
+        amount:amount,
+
+        date:$("ddate").value,
+
+        reason:$("dre").value.trim()
+
+      })
+
+    });
+
+    alert("💸 Debit दर्ज हो गया");
+
+    $("da").value = "";
+    $("dre").value = "";
+
+    await refresh();
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+}
+
+
+/* ================= EDIT SAVING DEBIT ================= */
+
+async function editSavingDebit(id){
+
+  try{
+
+    const row =
+      savingDebits.find(x => Number(x.id) === Number(id));
+
+    if(!row){
+      alert("डेबिट एंट्री नहीं मिली");
+      return;
+    }
+
+    const amount =
+      prompt("नई Debit राशि:", row.amount);
+
+    if(amount === null){
+      return;
+    }
+
+    const value =
+      Number(amount);
+
+    if(!value || value <= 0){
+      alert("सही Debit राशि डालें");
+      return;
+    }
+
+    const date =
+      prompt("तारीख (YYYY-MM-DD):", row.date || "");
+
+    if(date === null){
+      return;
+    }
+
+    const reason =
+      prompt("कारण:", row.reason || "");
+
+    if(reason === null){
+      return;
+    }
+
+    await api("/api/saving-debits/" + id,{
+
+      method:"PUT",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+
+        family_id:Number(row.family_id),
+
+        amount:value,
+
+        date:date,
+
+        reason:reason
+
+      })
+
+    });
+
+    alert("✏️ Debit अपडेट हो गया");
+
+    await refresh();
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+}
+
+
+async function deleteSavingDebit(id){
+
+  if(!confirm("क्या यह Debit entry delete करनी है?")){
+    return;
+  }
+
+  try{
+
+    await api("/api/saving-debits/" + id,{
+
+      method:"DELETE"
+
+    });
+
+    alert("🗑️ Debit delete हो गया");
 
     await refresh();
 
@@ -3558,111 +4216,246 @@ async function dist(){
 }
 
 
-async function loadInterestDistributions(){
+/* ================= PASSBOOK ================= */
 
-  try{
+function buildPassbookLedger(x){
 
-    const x =
-      await api("/api/interest-distributions");
+  const rows = [];
 
-    const box =
-      $("interestDistributionHistory");
+  (x.loans || []).forEach(r => {
+    rows.push({
+      date: r.date || "",
+      order: 1,
+      detail: "Loan लिया गया",
+      amount: -Math.abs(Number(r.original || r.principal || 0)),
+      className: "red"
+    });
+  });
 
-    if(!box) return;
+  (x.savings || []).forEach(r => {
+    rows.push({
+      date: r.date || "",
+      order: 2,
+      detail: `मासिक बचत (${r.month || ""})`,
+      amount: Math.abs(Number(r.amount || 0)),
+      className: "green"
+    });
+  });
+    (x.interest_credits || []).forEach(r => {
+    rows.push({
+      date: r.date || "",
+      order: 3,
+      detail: "ब्याज लाभ",
+      amount: Math.abs(Number(r.amount || 0)),
+      className: "green"
+    });
+  });
 
-    const rows = x.distributions || [];
+  (x.saving_debits || []).forEach(r => {
+    rows.push({
+      date: r.date || "",
+      order: 4,
+      detail: `Debit / निकासी${r.reason ? " (" + r.reason + ")" : ""}`,
+      amount: -Math.abs(Number(r.amount || 0)),
+      className: "red"
+    });
+  });
 
-    if(!rows.length){
+  (x.payments || []).forEach(r => {
+    rows.push({
+      date: r.date || "",
+      order: 5,
+      detail: "Loan Payment",
+      amount: Math.abs(Number(r.amount || 0)),
+      className: "green"
+    });
+  });
 
-      box.innerHTML =
-        '<div class="notice">अभी कोई ब्याज वितरण रिकॉर्ड नहीं है।</div>';
-      return;
+  rows.sort((a,b) => {
+    const dateCompare = String(b.date).localeCompare(String(a.date));
+    return dateCompare !== 0 ? dateCompare : a.order - b.order;
+  });
+
+  return rows.map(r => `
+    <tr>
+      <td>${r.date}</td>
+      <td>${r.detail}</td>
+      <td class="${r.className}">${money(r.amount)}</td>
+    </tr>
+  `).join("") ||
+  `<tr>
+    <td colspan="3" class="empty">कोई एंट्री नहीं</td>
+  </tr>`;
+}
+
+function filterYearlyRecord(selectedYear){
+
+  const rows =
+    document.querySelectorAll(
+      "#yearlyRecordTable tr"
+    );
+
+  rows.forEach((row, index) => {
+
+    if(index === 0) return;
+
+    const yearCell =
+      row.querySelector("td");
+
+    if(!yearCell) return;
+
+    const year =
+      yearCell.textContent.trim();
+
+    if(
+      !selectedYear ||
+      year === selectedYear
+    ){
+      row.style.display = "";
+    }
+    else{
+      row.style.display = "none";
+    }
+
+  });
+
+
+  const data =
+    window.currentPassbookData;
+
+  const ledger =
+  document.getElementById(
+    "yearlyDetailedLedger"
+  );
+
+const ledgerPanel =
+  ledger?.closest(".panel");
+
+if(ledgerPanel){
+
+  if(!selectedYear){
+
+    ledgerPanel.style.display = "none";
+
+  }
+  else{
+
+    ledgerPanel.style.display = "";
+
+    if(data){
+
+      ledger.innerHTML =
+        buildYearlyLedger(
+          data,
+          selectedYear
+        );
 
     }
 
-    box.innerHTML = `
-
-      <div class="table">
-
-        <table>
-
-          <tr>
-            <th>ID</th>
-            <th>तारीख</th>
-            <th>ब्याज</th>
-            <th>Action</th>
-          </tr>
-
-          ${rows.map(r => `
-
-            <tr>
-              <td>${r.id}</td>
-              <td>${r.date || "—"}</td>
-              <td class="green">${money(r.total_interest)}</td>
-              <td>
-                <button
-                  class="btn secondary"
-                  onclick="reverseInterestDistribution(${Number(r.id)})">
-                  ↩️ Reverse
-                </button>
-              </td>
-            </tr>
-
-          `).join("")}
-
-        </table>
-
-      </div>
-
-    `;
-
-  }catch(e){
-
-    alert(e.message);
-
   }
 
 }
-
-
-async function reverseInterestDistribution(id){
-
-  if(!confirm(
-    "क्या आप इस ब्याज वितरण को Reverse करना चाहते हैं?\n\nइससे इस distribution के interest credits हट जाएंगे।"
-  )){
-    return;
-  }
-
-  try{
-
-    const x =
-      await api(
-        "/api/interest-distribution/" +
-        id +
-        "/reverse",
-        { method:"POST" }
-      );
-
-    alert(
-      "ब्याज वितरण Reverse हो गया।\n\n" +
-      "ब्याज: " +
-      money(x.total_interest)
-    );
-
-    await loadInterestDistributions();
-    await refresh();
-
-  }catch(e){
-
-    alert(e.message);
-
-  }
-
 }
+function buildYearlyLedger(x, selectedYear){
+
+  const rows = [];
+
+  const getFY = (date) => {
+
+    const dt = String(date || "");
+    const year = Number(dt.slice(0,4));
+    const month = Number(dt.slice(5,7));
+
+    if(!year || !month) return "";
+
+    const startYear =
+      month >= 4 ? year : year - 1;
+
+    return `${startYear}-${String(startYear + 1).slice(-2)}`;
+  };
 
 
-/* ================= PASSBOOK ================= */
+  (x.savings || []).forEach(r => {
 
+    if(
+      selectedYear &&
+      getFY(r.date) !== selectedYear
+    ) return;
+
+    rows.push({
+      date: r.date || "",
+      detail: `मासिक बचत (${r.month || ""})`,
+      amount: Math.abs(Number(r.amount || 0)),
+      className: "green"
+    });
+
+  });
+
+
+  (x.interest_credits || []).forEach(r => {
+
+    if(
+      selectedYear &&
+      getFY(r.date) !== selectedYear
+    ) return;
+
+    rows.push({
+      date: r.date || "",
+      detail: "ब्याज लाभ",
+      amount: Math.abs(Number(r.amount || 0)),
+      className: "green"
+    });
+
+  });
+
+
+  (x.saving_debits || []).forEach(r => {
+
+    if(
+      selectedYear &&
+      getFY(r.date) !== selectedYear
+    ) return;
+
+    rows.push({
+      date: r.date || "",
+      detail:
+        `Debit / निकासी${
+          r.reason
+            ? " (" + r.reason + ")"
+            : ""
+        }`,
+      amount: -Math.abs(Number(r.amount || 0)),
+      className: "red"
+    });
+
+  });
+
+
+  rows.sort((a,b) =>
+    String(b.date).localeCompare(
+      String(a.date)
+    )
+  );
+
+
+  return rows.map(r => `
+    <tr>
+      <td>${r.date}</td>
+      <td>${r.detail}</td>
+      <td class="${r.className}">
+        ${money(r.amount)}
+      </td>
+    </tr>
+  `).join("")
+  ||
+  `
+    <tr>
+      <td colspan="3" class="empty">
+        इस वित्तीय वर्ष में कोई एंट्री नहीं
+      </td>
+    </tr>
+  `;
+}
 async function passbook(){
 
   const familyId =
@@ -3678,7 +4471,7 @@ async function passbook(){
         familyId +
         "/passbook"
       );
-
+    window.currentPassbookData = x;
 
     const family =
       fam.find(
@@ -3694,16 +4487,34 @@ async function passbook(){
           a + Number(r.amount || 0),
         0
       );
-
-
+    
+    const interestTotal =
+      (x.interest_credits || []).reduce(
+        (a,r) =>
+          a + Number(r.amount || 0),
+        0
+      );
+    
+    const overallSaving =
+      savingsTotal + interestTotal;
+    
+    const debitTotal =
+      (x.saving_debits || []).reduce(
+        (a,r) =>
+          a + Number(r.amount || 0),
+        0
+      );
+    
+    const finalSaving =
+      overallSaving - debitTotal;
+    
     const loanTotal =
       (x.loans || []).reduce(
         (a,r) =>
           a + Number(r.principal || 0),
         0
       );
-
-
+    
     $("pr").innerHTML = `
 
       <div id="printPassbook">
@@ -3787,7 +4598,7 @@ async function passbook(){
             </div>
 
             <div class="value green">
-              ${money(savingsTotal)}
+              ${money(finalSaving)}
             </div>
 
           </div>
@@ -3807,7 +4618,111 @@ async function passbook(){
 
         </div>
 
+        <div class="panel" style="margin-top:15px">
 
+          <h3>📅 वित्तीय वर्ष का रिकॉर्ड</h3>
+          <div style="
+            margin:10px 0;
+            display:flex;
+            align-items:center;
+            gap:10px;
+            flex-wrap:wrap;
+          ">
+          
+            <label>
+              वित्तीय वर्ष चुनें:
+            </label>
+          
+            <select
+              id="yearSelect"
+              onchange="filterYearlyRecord(this.value)"
+              style="
+                padding:8px 12px;
+                border:1px solid #d5deea;
+                border-radius:8px;
+                background:#fff;
+              "
+            >
+              <option value="">सभी वर्ष</option>
+          
+              ${
+                [...new Set(
+                  (x.yearly_records || [])
+                    .map(r => r.financial_year)
+                )].map(year => `
+                  <option value="${year}">
+                    ${year}
+                  </option>
+                `).join("")
+              }
+          
+            </select>
+          
+          </div>
+         <div class="table">
+        
+          <table id="yearlyRecordTable">
+        
+            <tr>
+              <th>वित्तीय वर्ष</th>
+              <th>कुल बचत</th>
+              <th>ब्याज लाभ</th>
+              <th>निकासी</th>
+              <th>Net Saving</th>
+            </tr>
+        
+              ${
+                (x.yearly_records || []).map(r => `
+                  <tr>
+                    <td>${r.financial_year}</td>
+                    <td class="green">${money(r.saving)}</td>
+                    <td class="green">${money(r.interest)}</td>
+                    <td class="red">${money(r.debit)}</td>
+                    <td class="green">${money(r.net_saving)}</td>
+                  </tr>
+                `).join("")
+                ||
+                `
+                  <tr>
+                    <td colspan="5" class="empty">
+                      कोई वार्षिक रिकॉर्ड नहीं
+                    </td>
+                  </tr>
+                `
+              }
+        
+            </table>
+        
+          </div>
+        
+        </div>
+        <div
+          class="panel"
+          style="margin-top:15px"
+        >
+        
+          <h3>
+            📋 चयनित वित्तीय वर्ष का विवरण
+          </h3>
+        
+          <div class="table">
+        
+            <table>
+        
+              <tr>
+                <th>तारीख</th>
+                <th>विवरण</th>
+                <th>राशि</th>
+              </tr>
+        
+              <tbody id="yearlyDetailedLedger">
+              </tbody>
+        
+            </table>
+        
+          </div>
+        
+        </div>
         <div class="panel" style="margin-top:15px">
 
           <h3>
@@ -3829,42 +4744,7 @@ async function passbook(){
               </tr>
 
 
-              ${(x.savings || []).map(r => `
-
-                <tr>
-
-                  <td>${r.date}</td>
-
-                  <td>
-                    मासिक बचत (${r.month})
-                  </td>
-
-                  <td class="green">
-                    ${money(r.amount)}
-                  </td>
-
-                </tr>
-
-              `).join("")}
-
-
-              ${(x.payments || []).map(r => `
-
-                <tr>
-
-                  <td>${r.date}</td>
-
-                  <td>
-                    Loan Payment
-                  </td>
-
-                  <td>
-                    ${money(r.amount)}
-                  </td>
-
-                </tr>
-
-              `).join("")}
+              ${buildPassbookLedger(x)}
 
             </table>
 
@@ -4025,14 +4905,18 @@ function printPassbook(){
           color:#c73535;
         }
 
-        @media print{
-
-          body{
-            margin:12mm;
-          }
-
+        @page{
+          size:A4 portrait;
+          margin:12mm;
         }
-
+        
+        @media print{
+        
+          body{
+            margin:0;
+          }
+        
+        }
       </style>
 
     </head>
@@ -4095,6 +4979,25 @@ async function editFamily(id){
   if(mobile === null) return;
 
 
+
+  const pin =
+    prompt(
+      "Member Login PIN बदलें",
+      family.pin || ""
+    );
+
+  if(pin === null) return;
+
+  const cleanPin = pin.trim();
+
+  if(cleanPin.length < 4){
+
+    alert("PIN कम से कम 4 अंक का होना चाहिए");
+    return;
+
+  }
+
+
   if(!name.trim()){
 
     alert("परिवार का नाम जरूरी है");
@@ -4119,7 +5022,9 @@ async function editFamily(id){
 
           name:name.trim(),
 
-          mobile:mobile.trim()
+          mobile:mobile.trim(),
+
+          pin:cleanPin
 
         })
 
@@ -4688,5 +5593,17 @@ document.addEventListener(
 
 </script>
 
+
+<script>
+window.addEventListener("load", function(){
+  const loader = document.getElementById("startupLoader");
+  if(loader){
+    loader.classList.add("hide");
+    setTimeout(function(){
+      loader.remove();
+    }, 400);
+  }
+});
+</script>
 </body>
 </html>
