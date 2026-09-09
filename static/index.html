@@ -4501,8 +4501,12 @@ async function passbook(){
       overallSaving - debitTotal;
     
     const loanTotal =
-
-
+      (x.loans || []).reduce(
+        (a,r) =>
+          a + Number(r.principal || 0),
+        0
+      );
+    
     $("pr").innerHTML = `
 
       <div id="printPassbook">
