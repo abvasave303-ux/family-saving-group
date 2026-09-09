@@ -4881,14 +4881,18 @@ function printPassbook(){
           color:#c73535;
         }
 
-        @media print{
-
-          body{
-            margin:12mm;
-          }
-
+        @page{
+          size:A4 portrait;
+          margin:12mm;
         }
-
+        
+        @media print{
+        
+          body{
+            margin:0;
+          }
+        
+        }
       </style>
 
     </head>
