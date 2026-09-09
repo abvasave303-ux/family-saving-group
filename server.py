@@ -45,7 +45,7 @@ class DBConnection:
         )
 
     def execute(self, sql, params=None):
-        # à¤ªà¥à¤°à¤¾à¤¨à¥‡ SQLite ? placeholders à¤•à¥‹ PostgreSQL %s à¤®à¥‡à¤‚ à¤¬à¤¦à¤²à¥‡à¤‚
+        # पुराने SQLite ? placeholders को PostgreSQL %s में बदलें
         sql = sql.replace("?", "%s")
 
         cursor = self.connection.cursor()
@@ -53,7 +53,7 @@ class DBConnection:
         return cursor
 
     def executescript(self, sql):
-        # PostgreSQL à¤®à¥‡à¤‚ à¤à¤•-à¤à¤• statement à¤šà¤²à¤¾à¤à¤
+        # PostgreSQL में एक-एक statement चलाएँ
         statements = [
             x.strip()
             for x in sql.split(";")
@@ -186,7 +186,7 @@ def init_db():
                 VALUES (?, ?, ?, ?)
                 """,
                 (
-                    f"à¤ªà¤°à¤¿à¤µà¤¾à¤° {i}",
+                    f"परिवार {i}",
                     "",
                     "1234",
                     today
@@ -229,7 +229,7 @@ def login():
 
         if pin != admin_pin:
             return jsonify(
-                error="à¤—à¤²à¤¤ Admin PIN"
+                error="गलत Admin PIN"
             ), 401
 
         session.clear()
@@ -254,7 +254,7 @@ def login():
             )
         except (TypeError, ValueError):
             return jsonify(
-                error="Member à¤šà¥à¤¨à¥‡à¤‚"
+                error="Member चुनें"
             ), 400
 
         c = conn()
@@ -275,7 +275,7 @@ def login():
 
         if not family:
             return jsonify(
-                error="à¤—à¤²à¤¤ Member à¤¯à¤¾ PIN"
+                error="गलत Member या PIN"
             ), 401
 
         c = conn()
@@ -293,7 +293,7 @@ def login():
 
         if active_session:
             return jsonify(
-                error="à¤¯à¤¹ à¤ªà¤°à¤¿à¤µà¤¾à¤° à¤ªà¤¹à¤²à¥‡ à¤¸à¥‡ à¤•à¤¿à¤¸à¥€ à¤¦à¥‚à¤¸à¤°à¥‡ device à¤ªà¤° login à¤¹à¥ˆà¥¤"
+                error="यह परिवार पहले से किसी दूसरे device पर login है।"
             ), 409
 
         session_token = secrets.token_urlsafe(32)
@@ -361,22 +361,22 @@ def change_member_pin():
 
     if not current_pin:
         return jsonify(
-            error="Current PIN à¤¡à¤¾à¤²à¥‡à¤‚"
+            error="Current PIN डालें"
         ), 400
 
     if not new_pin:
         return jsonify(
-            error="New PIN à¤¡à¤¾à¤²à¥‡à¤‚"
+            error="New PIN डालें"
         ), 400
 
     if new_pin != confirm_pin:
         return jsonify(
-            error="New PIN à¤”à¤° Confirm PIN à¤…à¤²à¤— à¤¹à¥ˆà¤‚"
+            error="New PIN और Confirm PIN अलग हैं"
         ), 400
 
     if len(new_pin) < 4:
         return jsonify(
-            error="PIN à¤•à¤® à¤¸à¥‡ à¤•à¤® 4 à¤…à¤‚à¤• à¤•à¤¾ à¤¹à¥‹à¤¨à¤¾ à¤šà¤¾à¤¹à¤¿à¤"
+            error="PIN कम से कम 4 अंक का होना चाहिए"
         ), 400
 
     c = conn()
@@ -393,13 +393,13 @@ def change_member_pin():
     if not family:
         c.close()
         return jsonify(
-            error="Member à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¤¾"
+            error="Member नहीं मिला"
         ), 404
 
     if str(family["pin"]) != current_pin:
         c.close()
         return jsonify(
-            error="Current PIN à¤—à¤²à¤¤ à¤¹à¥ˆ"
+            error="Current PIN गलत है"
         ), 401
 
     c.execute(
@@ -448,7 +448,7 @@ def admin_force_logout(fid):
         c.close()
 
         return jsonify(
-            error="à¤ªà¤°à¤¿à¤µà¤¾à¤° à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¤¾"
+            error="परिवार नहीं मिला"
         ), 404
 
     c.execute(
@@ -464,7 +464,7 @@ def admin_force_logout(fid):
 
     return jsonify(
         ok=True,
-        message=f"{family['name']} à¤•à¤¾ active login à¤¸à¤«à¤²à¤¤à¤¾à¤ªà¥‚à¤°à¥à¤µà¤• Force Logout à¤¹à¥‹ à¤—à¤¯à¤¾à¥¤"
+        message=f"{family['name']} का active login सफलतापूर्वक Force Logout हो गया।"
     )
 # ==================================================
 # LOGOUT
@@ -548,18 +548,18 @@ def me():
 @app.before_request
 def protect_api():
 
-    # à¤¯à¥‡ API à¤¬à¤¿à¤¨à¤¾ login à¤•à¥‡ à¤­à¥€ à¤šà¤²à¥‡à¤‚à¤—à¥€
+    # ये API बिना login के भी चलेंगी
     public = {
         "/api/login",
         "/api/me",
         "/api/member-list"
     }
 
-    # Public API à¤•à¥‹ security check à¤¸à¥‡ à¤¬à¤¾à¤¹à¤° à¤°à¤–à¥‡à¤‚
+    # Public API को security check से बाहर रखें
     if request.path in public:
         return None
 
-    # à¤¬à¤¾à¤•à¥€ à¤¸à¤­à¥€ API à¤•à¥‡ à¤²à¤¿à¤ login à¤œà¤°à¥‚à¤°à¥€ à¤¹à¥ˆ
+    # बाकी सभी API के लिए login जरूरी है
     if request.path.startswith("/api/"):
 
         # Admin session
@@ -579,7 +579,7 @@ def protect_api():
 
             return None
 
-        # à¤•à¥‹à¤ˆ valid login à¤¨à¤¹à¥€à¤‚
+        # कोई valid login नहीं
         return jsonify(
             error="Login required"
         ), 401
@@ -801,12 +801,12 @@ def add_family():
 
     if not name:
         return jsonify(
-            error="à¤¨à¤¾à¤® à¤œà¤°à¥‚à¤°à¥€ à¤¹à¥ˆ"
+            error="नाम जरूरी है"
         ), 400
 
     if len(pin) < 4:
         return jsonify(
-            error="PIN à¤•à¤® à¤¸à¥‡ à¤•à¤® 4 à¤…à¤‚à¤• à¤•à¤¾ à¤¹à¥‹à¤¨à¤¾ à¤šà¤¾à¤¹à¤¿à¤"
+            error="PIN कम से कम 4 अंक का होना चाहिए"
         ), 400
 
     c = conn()
@@ -865,7 +865,7 @@ def update_family(fid):
 
     if not name:
         return jsonify(
-            error="à¤¨à¤¾à¤® à¤œà¤°à¥‚à¤°à¥€ à¤¹à¥ˆ"
+            error="नाम जरूरी है"
         ), 400
 
     c = conn()
@@ -884,7 +884,7 @@ def update_family(fid):
         c.close()
 
         return jsonify(
-            error="à¤ªà¤°à¤¿à¤µà¤¾à¤° à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¤¾"
+            error="परिवार नहीं मिला"
         ), 404
 
     # PIN blank ho to existing PIN ko preserve karo.
@@ -894,13 +894,13 @@ def update_family(fid):
     if not pin:
         c.close()
         return jsonify(
-            error="PIN à¤œà¤°à¥‚à¤°à¥€ à¤¹à¥ˆ"
+            error="PIN जरूरी है"
         ), 400
 
     if len(pin) < 4:
         c.close()
         return jsonify(
-            error="PIN à¤•à¤® à¤¸à¥‡ à¤•à¤® 4 à¤…à¤‚à¤• à¤•à¤¾ à¤¹à¥‹à¤¨à¤¾ à¤šà¤¾à¤¹à¤¿à¤"
+            error="PIN कम से कम 4 अंक का होना चाहिए"
         ), 400
 
     c.execute(
@@ -953,10 +953,10 @@ def delete_family(fid):
         c.close()
 
         return jsonify(
-            error="à¤ªà¤°à¤¿à¤µà¤¾à¤° à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¤¾"
+            error="परिवार नहीं मिला"
         ), 404
 
-    # à¤ªà¤¹à¤²à¥‡ à¤œà¥à¤¡à¤¼à¥‡ à¤¹à¥à¤ records à¤¹à¤Ÿà¤¾à¤à¤
+    # पहले जुड़े हुए records हटाएँ
 
     c.execute(
         "DELETE FROM payments WHERE family_id=?",
@@ -993,7 +993,7 @@ def delete_family(fid):
         (fid,)
     )
 
-    # à¤†à¤–à¤¿à¤° à¤®à¥‡à¤‚ family à¤¹à¤Ÿà¤¾à¤à¤
+    # आखिर में family हटाएँ
 
     c.execute(
         "DELETE FROM families WHERE id=?",
@@ -1041,7 +1041,7 @@ def member_list():
 @app.get("/api/notifications")
 def get_notifications():
 
-    # à¤¸à¤¿à¤°à¥à¤« Member à¤…à¤ªà¤¨à¥€ notifications à¤¦à¥‡à¤– à¤¸à¤•à¤¤à¤¾ à¤¹à¥ˆ
+    # सिर्फ Member अपनी notifications देख सकता है
     if session.get("admin"):
         return jsonify(
             error="Member access required"
@@ -1163,7 +1163,7 @@ def passbook(fid):
 
     else:
         return jsonify(
-            error="à¤†à¤ªà¤•à¥‹ à¤‡à¤¸ à¤ªà¤°à¤¿à¤µà¤¾à¤° à¤•à¤¾ data à¤¦à¥‡à¤–à¤¨à¥‡ à¤•à¥€ à¤…à¤¨à¥à¤®à¤¤à¤¿ à¤¨à¤¹à¥€à¤‚ à¤¹à¥ˆ"
+            error="आपको इस परिवार का data देखने की अनुमति नहीं है"
         ), 403
 
     c = conn()
@@ -1213,7 +1213,7 @@ def passbook(fid):
         c.close()
 
         return jsonify(
-            error="à¤ªà¤°à¤¿à¤µà¤¾à¤° à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¤¾"
+            error="परिवार नहीं मिला"
         ), 404
 
     s = c.execute(
@@ -1417,7 +1417,7 @@ def add_saving():
 
     except (TypeError, ValueError):
         return jsonify(
-            error="à¤¬à¤šà¤¤ à¤œà¤¾à¤¨à¤•à¤¾à¤°à¥€ à¤¸à¤¹à¥€ à¤¦à¥‡à¤‚"
+            error="बचत जानकारी सही दें"
         ), 400
 
     month = (
@@ -1426,12 +1426,12 @@ def add_saving():
 
     if amount <= 0:
         return jsonify(
-            error="à¤¬à¤šà¤¤ à¤°à¤¾à¤¶à¤¿ à¤¸à¤¹à¥€ à¤¦à¥‡à¤‚"
+            error="बचत राशि सही दें"
         ), 400
 
     if not month:
         return jsonify(
-            error="à¤®à¤¹à¥€à¤¨à¤¾ à¤œà¤°à¥‚à¤°à¥€ à¤¹à¥ˆ"
+            error="महीना जरूरी है"
         ), 400
 
     c = conn()
@@ -1449,7 +1449,7 @@ def add_saving():
         c.close()
 
         return jsonify(
-            error="à¤ªà¤°à¤¿à¤µà¤¾à¤° à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¤¾"
+            error="परिवार नहीं मिला"
         ), 404
 
     entry_date = d.get(
@@ -1487,8 +1487,8 @@ def add_saving():
         """,
         (
             family_id,
-            "ðŸ’° à¤¬à¤šà¤¤ à¤…à¤ªà¤¡à¥‡à¤Ÿ",
-            f"à¤†à¤ªà¤•à¥€ {month} à¤®à¤¹à¥€à¤¨à¥‡ à¤•à¥€ â‚¹{amount:.2f} à¤¬à¤šà¤¤ à¤…à¤ªà¤¡à¥‡à¤Ÿ à¤•à¥€ à¤—à¤ˆ à¤¹à¥ˆà¥¤",
+            "💰 बचत अपडेट",
+            f"आपकी {month} महीने की ₹{amount:.2f} बचत अपडेट की गई है।",
             False,
             datetime.datetime.now().isoformat(timespec="seconds")
         )
@@ -1513,8 +1513,8 @@ def add_saving():
         try:
             message = messaging.Message(
                 notification=messaging.Notification(
-                    title="ðŸ’° à¤¬à¤šà¤¤ à¤…à¤ªà¤¡à¥‡à¤Ÿ",
-                    body=f"à¤†à¤ªà¤•à¥€ {month} à¤®à¤¹à¥€à¤¨à¥‡ à¤•à¥€ â‚¹{amount:.2f} à¤¬à¤šà¤¤ à¤…à¤ªà¤¡à¥‡à¤Ÿ à¤•à¥€ à¤—à¤ˆ à¤¹à¥ˆà¥¤"
+                    title="💰 बचत अपडेट",
+                    body=f"आपकी {month} महीने की ₹{amount:.2f} बचत अपडेट की गई है।"
                 ),
                 token=token_row["token"]
             )
@@ -1548,12 +1548,12 @@ def add_saving_debit():
         amount = float(d.get("amount", 0))
     except (TypeError, ValueError):
         return jsonify(
-            error="à¤¡à¥‡à¤¬à¤¿à¤Ÿ à¤œà¤¾à¤¨à¤•à¤¾à¤°à¥€ à¤¸à¤¹à¥€ à¤¦à¥‡à¤‚"
+            error="डेबिट जानकारी सही दें"
         ), 400
 
     if amount <= 0:
         return jsonify(
-            error="à¤¡à¥‡à¤¬à¤¿à¤Ÿ à¤°à¤¾à¤¶à¤¿ à¤¸à¤¹à¥€ à¤¦à¥‡à¤‚"
+            error="डेबिट राशि सही दें"
         ), 400
 
     c = conn()
@@ -1570,7 +1570,7 @@ def add_saving_debit():
     if not family:
         c.close()
         return jsonify(
-            error="à¤ªà¤°à¤¿à¤µà¤¾à¤° à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¤¾"
+            error="परिवार नहीं मिला"
         ), 404
 
     deposit_row = c.execute(
@@ -1596,7 +1596,7 @@ def add_saving_debit():
     if amount > available:
         c.close()
         return jsonify(
-            error=f"à¤‰à¤ªà¤²à¤¬à¥à¤§ à¤¬à¤šà¤¤ â‚¹{available:.2f} à¤¹à¥ˆà¥¤ à¤‡à¤¸à¤¸à¥‡ à¤œà¥à¤¯à¤¾à¤¦à¤¾ à¤¡à¥‡à¤¬à¤¿à¤Ÿ à¤¨à¤¹à¥€à¤‚ à¤•à¤° à¤¸à¤•à¤¤à¥‡à¥¤"
+            error=f"उपलब्ध बचत ₹{available:.2f} है। इससे ज्यादा डेबिट नहीं कर सकते।"
         ), 400
 
     entry_date = d.get(
@@ -1681,12 +1681,12 @@ def update_saving_debit(did):
         amount = float(d.get("amount", 0))
     except (TypeError, ValueError):
         return jsonify(
-            error="à¤¡à¥‡à¤¬à¤¿à¤Ÿ à¤œà¤¾à¤¨à¤•à¤¾à¤°à¥€ à¤¸à¤¹à¥€ à¤¦à¥‡à¤‚"
+            error="डेबिट जानकारी सही दें"
         ), 400
 
     if amount <= 0:
         return jsonify(
-            error="à¤¡à¥‡à¤¬à¤¿à¤Ÿ à¤°à¤¾à¤¶à¤¿ à¤¸à¤¹à¥€ à¤¦à¥‡à¤‚"
+            error="डेबिट राशि सही दें"
         ), 400
 
     c = conn()
@@ -1703,7 +1703,7 @@ def update_saving_debit(did):
     if not old:
         c.close()
         return jsonify(
-            error="à¤¡à¥‡à¤¬à¤¿à¤Ÿ à¤à¤‚à¤Ÿà¥à¤°à¥€ à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¥€"
+            error="डेबिट एंट्री नहीं मिली"
         ), 404
 
     family = c.execute(
@@ -1718,7 +1718,7 @@ def update_saving_debit(did):
     if not family:
         c.close()
         return jsonify(
-            error="à¤ªà¤°à¤¿à¤µà¤¾à¤° à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¤¾"
+            error="परिवार नहीं मिला"
         ), 404
 
     deposit_row = c.execute(
@@ -1749,7 +1749,7 @@ def update_saving_debit(did):
     if amount > available:
         c.close()
         return jsonify(
-            error=f"à¤‰à¤ªà¤²à¤¬à¥à¤§ à¤¬à¤šà¤¤ â‚¹{available:.2f} à¤¹à¥ˆà¥¤ à¤‡à¤¸à¤¸à¥‡ à¤œà¥à¤¯à¤¾à¤¦à¤¾ à¤¡à¥‡à¤¬à¤¿à¤Ÿ à¤¨à¤¹à¥€à¤‚ à¤•à¤° à¤¸à¤•à¤¤à¥‡à¥¤"
+            error=f"उपलब्ध बचत ₹{available:.2f} है। इससे ज्यादा डेबिट नहीं कर सकते।"
         ), 400
 
     entry_date = (
@@ -1813,7 +1813,7 @@ def delete_saving_debit(did):
     if not row:
         c.close()
         return jsonify(
-            error="à¤¡à¥‡à¤¬à¤¿à¤Ÿ à¤à¤‚à¤Ÿà¥à¤°à¥€ à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¥€"
+            error="डेबिट एंट्री नहीं मिली"
         ), 404
 
     c.execute(
@@ -1857,7 +1857,7 @@ def update_saving(sid):
     except (TypeError, ValueError):
 
         return jsonify(
-            error="à¤¬à¤šà¤¤ à¤œà¤¾à¤¨à¤•à¤¾à¤°à¥€ à¤¸à¤¹à¥€ à¤¦à¥‡à¤‚"
+            error="बचत जानकारी सही दें"
         ), 400
 
     month = (
@@ -1871,13 +1871,13 @@ def update_saving(sid):
     if amount <= 0:
 
         return jsonify(
-            error="à¤¬à¤šà¤¤ à¤°à¤¾à¤¶à¤¿ à¤¸à¤¹à¥€ à¤¦à¥‡à¤‚"
+            error="बचत राशि सही दें"
         ), 400
 
     if not month or not date:
 
         return jsonify(
-            error="à¤®à¤¹à¥€à¤¨à¤¾ à¤”à¤° à¤¤à¤¾à¤°à¥€à¤– à¤œà¤°à¥‚à¤°à¥€ à¤¹à¥ˆ"
+            error="महीना और तारीख जरूरी है"
         ), 400
 
     c = conn()
@@ -1896,7 +1896,7 @@ def update_saving(sid):
         c.close()
 
         return jsonify(
-            error="à¤¬à¤šà¤¤ à¤à¤‚à¤Ÿà¥à¤°à¥€ à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¥€"
+            error="बचत एंट्री नहीं मिली"
         ), 404
 
     c.execute(
@@ -1953,7 +1953,7 @@ def delete_saving(sid):
         c.close()
 
         return jsonify(
-            error="à¤¬à¤šà¤¤ à¤à¤‚à¤Ÿà¥à¤°à¥€ à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¥€"
+            error="बचत एंट्री नहीं मिली"
         ), 404
 
     c.execute(
@@ -2036,19 +2036,19 @@ def add_loan():
     except (TypeError, ValueError):
 
         return jsonify(
-            error="à¤²à¥‹à¤¨ à¤œà¤¾à¤¨à¤•à¤¾à¤°à¥€ à¤¸à¤¹à¥€ à¤¦à¥‡à¤‚"
+            error="लोन जानकारी सही दें"
         ), 400
 
     if amount <= 0:
 
         return jsonify(
-            error="à¤²à¥‹à¤¨ à¤°à¤¾à¤¶à¤¿ à¤¸à¤¹à¥€ à¤¦à¥‡à¤‚"
+            error="लोन राशि सही दें"
         ), 400
 
     if months <= 0:
 
         return jsonify(
-            error="à¤…à¤µà¤§à¤¿ à¤¸à¤¹à¥€ à¤¦à¥‡à¤‚"
+            error="अवधि सही दें"
         ), 400
 
     c = conn()
@@ -2067,7 +2067,7 @@ def add_loan():
         c.close()
 
         return jsonify(
-            error="à¤ªà¤°à¤¿à¤µà¤¾à¤° à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¤¾"
+            error="परिवार नहीं मिला"
         ), 404
 
     entry_date = d.get(
@@ -2107,8 +2107,8 @@ def add_loan():
         """,
         (
             family_id,
-            "ðŸ’³ Loan à¤…à¤ªà¤¡à¥‡à¤Ÿ",
-            f"à¤†à¤ªà¤•à¥‡ à¤ªà¤°à¤¿à¤µà¤¾à¤° à¤•à¥‡ à¤²à¤¿à¤ â‚¹{amount:.2f} à¤•à¤¾ Loan à¤…à¤ªà¤¡à¥‡à¤Ÿ à¤•à¤¿à¤¯à¤¾ à¤—à¤¯à¤¾ à¤¹à¥ˆà¥¤ à¤…à¤µà¤§à¤¿: {months} à¤®à¤¹à¥€à¤¨à¥‡à¥¤",
+            "💳 Loan अपडेट",
+            f"आपके परिवार के लिए ₹{amount:.2f} का Loan अपडेट किया गया है। अवधि: {months} महीने।",
             False,
             datetime.datetime.now().isoformat(timespec="seconds")
         )
@@ -2132,8 +2132,8 @@ def add_loan():
         try:
             message = messaging.Message(
                 notification=messaging.Notification(
-                    title="ðŸ’³ Loan à¤…à¤ªà¤¡à¥‡à¤Ÿ",
-                    body=f"à¤†à¤ªà¤•à¥‡ à¤ªà¤°à¤¿à¤µà¤¾à¤° à¤•à¥‡ à¤²à¤¿à¤ â‚¹{amount:.2f} à¤•à¤¾ Loan à¤…à¤ªà¤¡à¥‡à¤Ÿ à¤•à¤¿à¤¯à¤¾ à¤—à¤¯à¤¾ à¤¹à¥ˆà¥¤ à¤…à¤µà¤§à¤¿: {months} à¤®à¤¹à¥€à¤¨à¥‡à¥¤"
+                    title="💳 Loan अपडेट",
+                    body=f"आपके परिवार के लिए ₹{amount:.2f} का Loan अपडेट किया गया है। अवधि: {months} महीने।"
                 ),
                 token=token_row["token"]
             )
@@ -2182,19 +2182,19 @@ def update_loan(lid):
     except (TypeError, ValueError):
 
         return jsonify(
-            error="à¤²à¥‹à¤¨ à¤œà¤¾à¤¨à¤•à¤¾à¤°à¥€ à¤¸à¤¹à¥€ à¤¦à¥‡à¤‚"
+            error="लोन जानकारी सही दें"
         ), 400
 
     if amount <= 0:
 
         return jsonify(
-            error="à¤²à¥‹à¤¨ à¤°à¤¾à¤¶à¤¿ à¤¸à¤¹à¥€ à¤¦à¥‡à¤‚"
+            error="लोन राशि सही दें"
         ), 400
 
     if months <= 0:
 
         return jsonify(
-            error="à¤…à¤µà¤§à¤¿ à¤¸à¤¹à¥€ à¤¦à¥‡à¤‚"
+            error="अवधि सही दें"
         ), 400
 
     c = conn()
@@ -2213,7 +2213,7 @@ def update_loan(lid):
         c.close()
 
         return jsonify(
-            error="à¤²à¥‹à¤¨ à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¤¾"
+            error="लोन नहीं मिला"
         ), 404
 
     paid_principal = (
@@ -2226,7 +2226,7 @@ def update_loan(lid):
         c.close()
 
         return jsonify(
-            error="à¤¨à¤ˆ à¤²à¥‹à¤¨ à¤°à¤¾à¤¶à¤¿ à¤…à¤¬ à¤¤à¤• à¤šà¥à¤•à¤¾à¤ à¤—à¤ à¤®à¥‚à¤²à¤§à¤¨ à¤¸à¥‡ à¤•à¤® à¤¨à¤¹à¥€à¤‚ à¤¹à¥‹ à¤¸à¤•à¤¤à¥€"
+            error="नई लोन राशि अब तक चुकाए गए मूलधन से कम नहीं हो सकती"
         ), 400
 
     new_principal = (
@@ -2289,7 +2289,7 @@ def delete_loan(lid):
         c.close()
 
         return jsonify(
-            error="à¤²à¥‹à¤¨ à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¤¾"
+            error="लोन नहीं मिला"
         ), 404
 
     c.execute(
@@ -2369,13 +2369,13 @@ def payment():
     except (TypeError, ValueError):
 
         return jsonify(
-            error="à¤­à¥à¤—à¤¤à¤¾à¤¨ à¤œà¤¾à¤¨à¤•à¤¾à¤°à¥€ à¤¸à¤¹à¥€ à¤¦à¥‡à¤‚"
+            error="भुगतान जानकारी सही दें"
         ), 400
 
     if amount <= 0:
 
         return jsonify(
-            error="à¤­à¥à¤—à¤¤à¤¾à¤¨ à¤°à¤¾à¤¶à¤¿ à¤¸à¤¹à¥€ à¤¦à¥‡à¤‚"
+            error="भुगतान राशि सही दें"
         ), 400
 
     c = conn()
@@ -2394,7 +2394,7 @@ def payment():
         c.close()
 
         return jsonify(
-            error="à¤²à¥‹à¤¨ à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¤¾"
+            error="लोन नहीं मिला"
         ), 404
 
     if l["principal"] <= 0:
@@ -2402,7 +2402,7 @@ def payment():
         c.close()
 
         return jsonify(
-            error="à¤‡à¤¸ à¤²à¥‹à¤¨ à¤•à¥€ à¤ªà¥‚à¤°à¥€ à¤°à¤¾à¤¶à¤¿ à¤šà¥à¤•à¤¾à¤ˆ à¤œà¤¾ à¤šà¥à¤•à¥€ à¤¹à¥ˆ"
+            error="इस लोन की पूरी राशि चुकाई जा चुकी है"
         ), 400
 
     # 2% interest calculation
@@ -2418,7 +2418,7 @@ def payment():
         l["principal"]
     )
 
-    # à¤…à¤—à¤° payment principal à¤¸à¥‡ à¤œà¥à¤¯à¤¾à¤¦à¤¾ à¤¹à¥‹
+    # अगर payment principal से ज्यादा हो
     actual_amount = (
         interest + principal
     )
@@ -2480,8 +2480,8 @@ def payment():
         """,
         (
             l["family_id"],
-            "ðŸ’µ Payment à¤…à¤ªà¤¡à¥‡à¤Ÿ",
-            f"à¤†à¤ªà¤•à¥‡ Loan à¤•à¤¾ â‚¹{actual_amount:.2f} à¤­à¥à¤—à¤¤à¤¾à¤¨ à¤…à¤ªà¤¡à¥‡à¤Ÿ à¤•à¤¿à¤¯à¤¾ à¤—à¤¯à¤¾ à¤¹à¥ˆà¥¤ à¤¬à¤¾à¤•à¥€ Loan: â‚¹{new_balance:.2f}",
+            "💵 Payment अपडेट",
+            f"आपके Loan का ₹{actual_amount:.2f} भुगतान अपडेट किया गया है। बाकी Loan: ₹{new_balance:.2f}",
             False,
             datetime.datetime.now().isoformat(timespec="seconds")
         )
@@ -2506,12 +2506,12 @@ def payment():
         try:
     
             if principal == 0 and interest > 0:
-                title = "ðŸ’° Loan Interest Paid"
-                body = f"à¤†à¤ªà¤•à¥‡ Loan à¤•à¤¾ â‚¹{interest:.2f} à¤¬à¥à¤¯à¤¾à¤œ à¤­à¥à¤—à¤¤à¤¾à¤¨ à¤…à¤ªà¤¡à¥‡à¤Ÿ à¤•à¤¿à¤¯à¤¾ à¤—à¤¯à¤¾ à¤¹à¥ˆà¥¤"
+                title = "💰 Loan Interest Paid"
+                body = f"आपके Loan का ₹{interest:.2f} ब्याज भुगतान अपडेट किया गया है।"
     
             else:
-                title = "ðŸ’µ Payment à¤…à¤ªà¤¡à¥‡à¤Ÿ"
-                body = f"à¤†à¤ªà¤•à¥‡ Loan à¤•à¤¾ â‚¹{actual_amount:.2f} à¤­à¥à¤—à¤¤à¤¾à¤¨ à¤…à¤ªà¤¡à¥‡à¤Ÿ à¤•à¤¿à¤¯à¤¾ à¤—à¤¯à¤¾ à¤¹à¥ˆà¥¤ à¤¬à¤¾à¤•à¥€ Loan: â‚¹{new_balance:.2f}"
+                title = "💵 Payment अपडेट"
+                body = f"आपके Loan का ₹{actual_amount:.2f} भुगतान अपडेट किया गया है। बाकी Loan: ₹{new_balance:.2f}"
     
             message = messaging.Message(
                 notification=messaging.Notification(
@@ -2558,13 +2558,13 @@ def distribution():
     except (TypeError, ValueError):
 
         return jsonify(
-            error="à¤¬à¥à¤¯à¤¾à¤œ à¤°à¤¾à¤¶à¤¿ à¤¸à¤¹à¥€ à¤¦à¥‡à¤‚"
+            error="ब्याज राशि सही दें"
         ), 400
 
     if total <= 0:
 
         return jsonify(
-            error="à¤¬à¥à¤¯à¤¾à¤œ à¤°à¤¾à¤¶à¤¿ à¤¸à¤¹à¥€ à¤¦à¥‡à¤‚"
+            error="ब्याज राशि सही दें"
         ), 400
 
     c = conn()
@@ -2581,7 +2581,7 @@ def distribution():
         c.close()
 
         return jsonify(
-            error="à¤ªà¤¹à¤²à¥‡ à¤¬à¤šà¤¤ à¤à¤‚à¤Ÿà¥à¤°à¥€ à¤•à¤°à¥‡à¤‚"
+            error="पहले बचत एंट्री करें"
         ), 400
 
     rows = c.execute(
@@ -2672,8 +2672,8 @@ def distribution():
         if interest_amount <= 0:
             continue
 
-        title = "ðŸ’° à¤¬à¥à¤¯à¤¾à¤œ à¤µà¤¿à¤¤à¤°à¤£"
-        body = f"à¤†à¤ªà¤•à¥‡ à¤ªà¤°à¤¿à¤µà¤¾à¤° à¤•à¥‡ à¤–à¤¾à¤¤à¥‡ à¤®à¥‡à¤‚ â‚¹{interest_amount:.2f} à¤¬à¥à¤¯à¤¾à¤œ à¤µà¤¿à¤¤à¤°à¤¿à¤¤ à¤•à¤¿à¤¯à¤¾ à¤—à¤¯à¤¾ à¤¹à¥ˆà¥¤"
+        title = "💰 ब्याज वितरण"
+        body = f"आपके परिवार के खाते में ₹{interest_amount:.2f} ब्याज वितरित किया गया है।"
 
         c.execute(
             """
@@ -2719,6 +2719,38 @@ def distribution():
         total_savings=total_s,
         result=result
     )
+
+
+# ==================================================
+# GET INTEREST DISTRIBUTION HISTORY
+# ==================================================
+
+@app.get("/api/interest-distributions")
+def get_interest_distributions():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    rows = c.execute(
+        """
+        SELECT *
+        FROM interest_distributions
+        ORDER BY id DESC
+        """
+    ).fetchall()
+
+    c.close()
+
+    return jsonify({
+        "distributions": [
+            dict(x)
+            for x in rows
+        ]
+    })
 
 
 # ==================================================
