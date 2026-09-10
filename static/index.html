@@ -1832,6 +1832,8 @@ onMessage(messaging, (payload) => {
 
             <th>मूलधन</th>
 
+            <th>Action</th>
+
           </tr>
 
         </thead>
@@ -3644,12 +3646,21 @@ async function refresh(){
             ${money(x.principal)}
           </td>
 
+          <td>
+            <button
+              class="btn danger"
+              onclick="deletePayment(${x.id})"
+            >
+              🗑️ Delete
+            </button>
+          </td>
+
         </tr>
 
       `).join("")
       ||
       `<tr>
-        <td colspan="5" class="empty">
+        <td colspan="6" class="empty">
           कोई भुगतान नहीं
         </td>
       </tr>`;
@@ -3663,6 +3674,36 @@ async function refresh(){
   }
 
 }
+  async function deletePayment(id){
+
+    if(!confirm(
+      "क्या आप यह भुगतान रिकॉर्ड delete करना चाहते हैं? Loan balance वापस adjust होगा।"
+    )){
+      return;
+    }
+
+    try{
+
+      await api(
+        "/api/payments/" + id,
+        {
+          method:"DELETE"
+        }
+      );
+
+      alert("भुगतान रिकॉर्ड delete हो गया और Loan balance वापस adjust हो गया।");
+
+      await refresh();
+
+    }catch(e){
+
+      alert(e.message);
+
+    }
+
+  }
+
+
   async function repay(){
 
   try{
