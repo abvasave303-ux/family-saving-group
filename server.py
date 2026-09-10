@@ -2663,6 +2663,20 @@ def distribution():
             error="पहले बचत एंट्री करें"
         ), 400
 
+    # ==============================================
+    # TIME-WEIGHTED INTEREST DISTRIBUTION
+    # अधिक समय तक रखी बचत को अधिक ब्याज लाभ मिलेगा।
+    # ==============================================
+    try:
+        distribution_dt = datetime.date.fromisoformat(
+            d.get("date") or datetime.date.today().isoformat()
+        )
+    except (TypeError, ValueError):
+        c.close()
+        return jsonify(
+            error="ब्याज वितरण की तारीख सही दें"
+        ), 400
+
     rows = c.execute(
         """
         SELECT
@@ -2677,13 +2691,56 @@ def distribution():
         """
     ).fetchall()
 
-    result = []
+    total_weighted_s = 0
+    weighted_rows = []
 
     for r in rows:
+        weighted_savings = 0
+
+        savings_rows = c.execute(
+            """
+            SELECT amount, date
+            FROM savings
+            WHERE family_id=?
+            """,
+            (r["id"],)
+        ).fetchall()
+
+        for s in savings_rows:
+            try:
+                saving_dt = datetime.date.fromisoformat(
+                    str(s["date"])
+                )
+            except (TypeError, ValueError):
+                continue
+
+            holding_days = (distribution_dt - saving_dt).days
+
+            if holding_days > 0:
+                weighted_savings += (
+                    float(s["amount"] or 0) * holding_days
+                )
+
+        total_weighted_s += weighted_savings
+
+        weighted_rows.append({
+            **dict(r),
+            "weighted_savings": weighted_savings
+        })
+
+    if total_weighted_s <= 0:
+        c.close()
+        return jsonify(
+            error="ब्याज वितरण के लिए तारीख तक कोई बचत उपलब्ध नहीं है"
+        ), 400
+
+    result = []
+
+    for r in weighted_rows:
 
         share = (
-            r["savings"]
-            / total_s
+            r["weighted_savings"]
+            / total_weighted_s
         )
 
         result.append({
