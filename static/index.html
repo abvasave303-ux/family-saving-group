@@ -1083,7 +1083,7 @@ onMessage(messaging, (payload) => {
       onerror="this.style.display='none'"
     >
     <div class="startup-title">Family Saving Group</div>
-    <div class="startup-subtitle">आपका परिवार • आपकी बचत • आपका भविष्य</div>
+    <div class="startup-subtitle">आपका सदस्य • आपकी बचत • आपका भविष्य</div>
     <div class="startup-spinner"></div>
     <div class="startup-status">सिस्टम तैयार हो रहा है…</div>
   </div>
@@ -1156,11 +1156,11 @@ onMessage(messaging, (payload) => {
     <div id="memberLogin" class="hidden">
 
       <label style="font-size:13px;">
-        👤 अपना परिवार चुनें
+        👤 अपना सदस्य चुनें
       </label>
 
       <select id="memberFamily">
-        <option value="">परिवार चुनें...</option>
+        <option value="">सदस्य चुनें...</option>
       </select>
 
       <label style="font-size:13px;">
@@ -1208,7 +1208,7 @@ onMessage(messaging, (payload) => {
     👨‍👩‍👧‍👦 Family Saving Group
 
     <small>
-      एक परिवार • एक बचत • उज्ज्वल भविष्य
+      एक सदस्य • एक बचत • उज्ज्वल भविष्य
     </small>
 
   </div>
@@ -1220,7 +1220,7 @@ onMessage(messaging, (payload) => {
     </button>
 
     <button onclick="show('families',this)">
-      👥 परिवार
+      👥 सदस्य
     </button>
 
     <button onclick="show('members',this)">
@@ -1341,7 +1341,7 @@ onMessage(messaging, (payload) => {
   <div class="cards">
 
     <div class="card">
-      <div class="label">कुल परिवार</div>
+      <div class="label">कुल सदस्य</div>
       <div class="value blue" id="cf">23</div>
     </div>
 
@@ -1386,7 +1386,7 @@ onMessage(messaging, (payload) => {
       <div class="body">
 
         <div class="notice">
-          23 परिवार × ₹2,000 =
+          23 सदस्य × ₹2,000 =
           <b>₹46,000</b>
           सामान्य मासिक लक्ष्य।
         </div>
@@ -1439,14 +1439,14 @@ onMessage(messaging, (payload) => {
   <div class="actions">
 
     <button class="btn" onclick="addFamily()">
-      + परिवार जोड़ें
+      + सदस्य जोड़ें
     </button>
 
   </div>
 
   <div class="panel">
 
-    <h3>परिवार सूची</h3>
+    <h3>सदस्य सूची</h3>
 
     <div class="table">
 
@@ -1456,7 +1456,7 @@ onMessage(messaging, (payload) => {
 
           <tr>
             <th>#</th>
-            <th>परिवार</th>
+            <th>सदस्य</th>
             <th>मोबाइल</th>
             <th>कुल बचत</th>
             <th>लोन बाकी</th>
@@ -1534,7 +1534,7 @@ onMessage(messaging, (payload) => {
       <div class="form">
 
         <div class="field">
-          <label>परिवार</label>
+          <label>सदस्य</label>
           <select id="sf"></select>
         </div>
 
@@ -1581,7 +1581,7 @@ onMessage(messaging, (payload) => {
       <div class="form">
 
         <div class="field">
-          <label>परिवार</label>
+          <label>सदस्य</label>
           <select id="df"></select>
         </div>
 
@@ -1626,7 +1626,7 @@ onMessage(messaging, (payload) => {
           <tr>
             <th>तारीख</th>
             <th>महीना</th>
-            <th>परिवार</th>
+            <th>सदस्य</th>
             <th>राशि</th>
             <th>विवरण</th>
             <th>Action</th>
@@ -1662,7 +1662,7 @@ onMessage(messaging, (payload) => {
       <div class="form">
 
         <div class="field">
-          <label>परिवार</label>
+          <label>सदस्य</label>
           <select id="lf"></select>
         </div>
 
@@ -1707,7 +1707,7 @@ onMessage(messaging, (payload) => {
         <thead>
 
           <tr>
-            <th>परिवार</th>
+            <th>सदस्य</th>
             <th>मूल लोन</th>
             <th>2%</th>
             <th>बाकी</th>
@@ -1824,7 +1824,7 @@ onMessage(messaging, (payload) => {
 
             <th>तारीख</th>
 
-            <th>परिवार</th>
+            <th>सदस्य</th>
 
             <th>भुगतान</th>
 
@@ -1920,7 +1920,7 @@ onMessage(messaging, (payload) => {
 
       <div class="field">
 
-        <label>परिवार</label>
+        <label>सदस्य</label>
 
         <select
           id="pf"
@@ -1955,7 +1955,7 @@ onMessage(messaging, (payload) => {
       <button
         class="btn secondary"
         onclick="exportData('families')">
-        परिवार
+        सदस्य
       </button>
 
       <button
@@ -2133,7 +2133,7 @@ async function loadMemberList(){
         const list = await api("/api/member-list");
 
         $("memberFamily").innerHTML =
-            '<option value="">परिवार चुनें...</option>' +
+            '<option value="">सदस्य चुनें...</option>' +
             list.map(f =>
                 `<option value="${f.id}">${f.name}</option>`
             ).join("");
@@ -2204,7 +2204,7 @@ async function memberLogin(){
 
   if(!familyId){
 
-    alert("अपना परिवार चुनें");
+    alert("अपना सदस्य चुनें");
     return;
 
   }
@@ -2602,7 +2602,7 @@ async function loadMemberPassbook(fid){
           </h2>
 
           <div>
-            एक परिवार • एक बचत • उज्ज्वल भविष्य
+            एक सदस्य • एक बचत • उज्ज्वल भविष्य
           </div>
 
           <h3>DIGITAL PASSBOOK</h3>
@@ -2622,7 +2622,7 @@ async function loadMemberPassbook(fid){
           <div class="card">
 
             <div class="label">
-              परिवार
+              सदस्य
             </div>
 
             <div class="value">
@@ -2686,7 +2686,7 @@ async function loadMemberPassbook(fid){
             <div class="card">
 
               <div class="label">
-                👨‍👩‍👧‍👦 कुल परिवार
+                👨‍👩‍👧‍👦 कुल सदस्य
               </div>
 
               <div class="value">
@@ -3304,7 +3304,7 @@ async function refresh(){
     $("sum").innerHTML = `
 
       <div class="line">
-        <span>कुल परिवार</span>
+        <span>कुल सदस्य</span>
         <b>${d.families ?? fam.length}</b>
       </div>
 
@@ -3402,7 +3402,7 @@ async function refresh(){
       ||
       `<tr>
         <td colspan="6" class="empty">
-          कोई परिवार नहीं
+          कोई सदस्य नहीं
         </td>
       </tr>`;
 
@@ -4230,7 +4230,7 @@ async function dist(){
         <table>
 
           <tr>
-            <th>परिवार</th>
+            <th>सदस्य</th>
             <th>बचत</th>
             <th>हिस्सा</th>
             <th>ब्याज</th>
@@ -4675,7 +4675,7 @@ async function passbook(){
           </h2>
 
           <div style="margin-top:5px;">
-            एक परिवार • एक बचत • उज्ज्वल भविष्य
+            एक सदस्य • एक बचत • उज्ज्वल भविष्य
           </div>
 
           <h3 style="margin:10px 0 0;">
@@ -4700,7 +4700,7 @@ async function passbook(){
           <div class="card">
 
             <div class="label">
-              परिवार
+              सदस्य
             </div>
 
             <div class="value">
@@ -5087,7 +5087,7 @@ async function editFamily(id){
 
   if(!family){
 
-    alert("परिवार नहीं मिला");
+    alert("सदस्य नहीं मिला");
     return;
 
   }
@@ -5095,7 +5095,7 @@ async function editFamily(id){
 
   const name =
     prompt(
-      "परिवार का नाम बदलें",
+      "सदस्य का नाम बदलें",
       family.name
     );
 
@@ -5132,7 +5132,7 @@ async function editFamily(id){
 
   if(!name.trim()){
 
-    alert("परिवार का नाम जरूरी है");
+    alert("सदस्य का नाम जरूरी है");
     return;
 
   }
@@ -5165,7 +5165,7 @@ async function editFamily(id){
 
 
     alert(
-      "परिवार की जानकारी अपडेट हो गई"
+      "सदस्य की जानकारी अपडेट हो गई"
     );
 
     await refresh();
@@ -5190,7 +5190,7 @@ async function deleteFamily(id){
 
   if(!family){
 
-    alert("परिवार नहीं मिला");
+    alert("सदस्य नहीं मिला");
     return;
 
   }
@@ -5217,7 +5217,7 @@ async function deleteFamily(id){
     );
 
 
-    alert("परिवार Delete हो गया");
+    alert("सदस्य Delete हो गया");
 
     await refresh();
 
@@ -5235,7 +5235,7 @@ async function deleteFamily(id){
 async function addFamily(){
 
   const name =
-    prompt("परिवार का नाम");
+    prompt("सदस्य का नाम");
 
   if(!name || !name.trim()) return;
 
@@ -5270,7 +5270,7 @@ async function addFamily(){
     );
 
 
-    alert("परिवार जोड़ दिया गया");
+    alert("सदस्य जोड़ दिया गया");
 
     await refresh();
 
