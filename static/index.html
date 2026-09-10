@@ -3164,7 +3164,7 @@ function printMemberPassbook(){
     </head>
 
     <body>
-      <button class="no-print" onclick="window.close()">✕ Close</button>
+      <button class="no-print" onclick="window.close(); setTimeout(function(){ history.back(); }, 100);">✕ Close</button>
 
       ${content}
 
