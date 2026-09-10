@@ -2343,6 +2343,85 @@ def payments():
 
 
 # ==================================================
+# DELETE PAYMENT
+# ==================================================
+
+@app.delete("/api/payments/<int:pid>")
+def delete_payment(pid):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    payment_row = c.execute(
+        """
+        SELECT *
+        FROM payments
+        WHERE id=?
+        """,
+        (pid,)
+    ).fetchone()
+
+    if not payment_row:
+
+        c.close()
+
+        return jsonify(
+            error="भुगतान रिकॉर्ड नहीं मिला"
+        ), 404
+
+    loan = c.execute(
+        """
+        SELECT id, principal
+        FROM loans
+        WHERE id=?
+        """,
+        (payment_row["loan_id"],)
+    ).fetchone()
+
+    if not loan:
+
+        c.close()
+
+        return jsonify(
+            error="इस भुगतान से जुड़ा Loan नहीं मिला"
+        ), 404
+
+    # Deleted payment का मूलधन Loan balance में वापस जोड़ें
+    restored_balance = (
+        loan["principal"] + payment_row["principal"]
+    )
+
+    c.execute(
+        """
+        UPDATE loans
+        SET principal=?
+        WHERE id=?
+        """,
+        (
+            restored_balance,
+            payment_row["loan_id"]
+        )
+    )
+
+    c.execute(
+        "DELETE FROM payments WHERE id=?",
+        (pid,)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True,
+        remaining=restored_balance
+    )
+
+
+# ==================================================
 # ADD PAYMENT
 # ==================================================
 
