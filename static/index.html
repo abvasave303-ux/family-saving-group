@@ -3136,12 +3136,35 @@ function printMemberPassbook(){
             margin:12mm;
           }
         }
-
+      .no-print{
+        position:fixed;
+        top:15px;
+        right:15px;
+        padding:9px 14px;
+        border:0;
+        border-radius:7px;
+        background:#c73535;
+        color:#fff;
+        font-weight:700;
+        cursor:pointer;
+      }
+      
+      @media print{
+        .no-print{
+          display:none !important;
+        }
+      
+        body{
+          margin:12mm;
+        }
+      }
+      
       </style>
 
     </head>
 
     <body>
+      <button class="no-print" onclick="window.close()">✕ Close</button>
 
       ${content}
 
