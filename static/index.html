@@ -107,6 +107,93 @@ body{
 }
 
 
+/* ================= MEMBER SIDEBAR ================= */
+
+#memberSidebar{
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+  width:230px;
+  background:#083b78;
+  color:#fff;
+  padding:18px 12px;
+  overflow-y:auto;
+  z-index:1001;
+  box-shadow:4px 0 15px rgba(0,0,0,.18);
+}
+
+#memberSidebar .brand{
+  text-align:center;
+  font-size:20px;
+  font-weight:800;
+  padding:10px;
+}
+
+#memberSidebar .brand img{
+  width:90px;
+  height:90px;
+  object-fit:contain;
+  display:block;
+  margin:0 auto 8px;
+  background:#fff;
+  border-radius:50%;
+  padding:5px;
+}
+
+#memberSidebar .brand small{
+  display:block;
+  font-size:11px;
+  font-weight:400;
+  margin-top:5px;
+}
+
+#memberSidebar .nav{
+  margin-top:18px;
+}
+
+#memberSidebar .nav button{
+  width:100%;
+  padding:11px;
+  margin:4px 0;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  color:#fff;
+  text-align:left;
+  font-size:14px;
+  cursor:pointer;
+  transition:background .2s ease, transform .2s ease, padding-left .2s ease;
+}
+
+#memberSidebar .nav button:hover{
+  transform:translateX(3px);
+  padding-left:14px;
+  background:#1976d2;
+}
+
+#memberSidebar + .main{
+  margin-left:230px;
+}
+
+@media(max-width:650px){
+  #memberSidebar{
+    width:230px;
+    transform:translateX(-100%);
+    transition:transform .25s ease;
+    pointer-events:none;
+  }
+
+  #memberSidebar.mobile-open{
+    transform:translateX(0);
+    pointer-events:auto;
+  }
+
+  #memberSidebar + .main{
+    margin-left:0;
+  }
+}
+
 header{
   height:65px;
   background:#fff;
@@ -1258,6 +1345,7 @@ onMessage(messaging, (payload) => {
   </div>
 
 </aside>
+
 <!-- ================= MEMBER SIDEBAR ================= -->
 <div id="memberSidebar" style="display:none;">
 
@@ -1298,6 +1386,7 @@ onMessage(messaging, (payload) => {
   </div>
 
 </div>
+
 
 <main class="main">
 <header>
@@ -2295,9 +2384,12 @@ async function memberLogin(){
 async function initMember(user){
 
   document.querySelector(".side").style.display = "none";
-  document.getElementById("memberSidebar").style.display = "block";
 
-  document.querySelector(".main").style.marginLeft = "0";
+  const memberSidebar = $("memberSidebar");
+  if(memberSidebar){
+    memberSidebar.style.display = "block";
+    memberSidebar.classList.remove("mobile-open");
+  }
 
   $("title").textContent =
     "📒 " + user.name + " - Passbook";
@@ -3240,6 +3332,13 @@ async function logout(){
 
 }
 function toggleSidebar(){
+  const memberSidebar = document.getElementById("memberSidebar");
+
+  if(memberSidebar && memberSidebar.style.display !== "none"){
+    memberSidebar.classList.toggle("mobile-open");
+    return;
+  }
+
   const sidebar = document.querySelector(".side");
   if(!sidebar) return;
 
@@ -3249,6 +3348,7 @@ document.addEventListener("click", function(e){
   if(window.innerWidth <= 650){
 
     const sidebar = document.querySelector(".side");
+    const memberSidebar = document.getElementById("memberSidebar");
     const menuBtn = document.querySelector("#menuBtn");
 
     if(
@@ -3258,6 +3358,15 @@ document.addEventListener("click", function(e){
       !menuBtn.contains(e.target)
     ){
       sidebar.classList.remove("mobile-open");
+    }
+
+    if(
+      memberSidebar &&
+      memberSidebar.classList.contains("mobile-open") &&
+      !memberSidebar.contains(e.target) &&
+      !menuBtn.contains(e.target)
+    ){
+      memberSidebar.classList.remove("mobile-open");
     }
 
   }
@@ -5112,7 +5221,6 @@ function printPassbook(){
           }
         
         }
-
       </style>
 
     </head>
