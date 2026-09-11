@@ -1275,7 +1275,7 @@ onMessage(messaging, (payload) => {
 
   <div class="nav">
 
-    <button onclick="memberGoPassbook()">
+    <button onclick="document.getElementById('passbook').scrollIntoView({behavior:'smooth'})">
       📒 My Passbook
     </button>
 
@@ -1283,7 +1283,7 @@ onMessage(messaging, (payload) => {
       🔔 Notifications
     </button>
 
-    <button onclick="memberGoPrint()">
+    <button onclick="printMemberPassbook()">
       🖨️ Print Passbook
     </button>
 
