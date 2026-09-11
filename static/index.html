@@ -993,74 +993,7 @@ header .title{
   .startup-title{font-size:21px}
 }
 
-</style>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-  import {
-    getMessaging,
-    getToken,
-    onMessage
-} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyC0ISJyPPbn0I-uA49Dku95PFg4D5TVUnI",
-    authDomain: "family-saving-group.firebaseapp.com",
-    projectId: "family-saving-group",
-    storageBucket: "family-saving-group.firebasestorage.app",
-    messagingSenderId: "857357671416",
-    appId: "1:857357671416:web:de5586c374dec2d3be540d"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const messaging = getMessaging(app);
-
-onMessage(messaging, (payload) => {
-    const notification = payload.notification || {};
-    navigator.serviceWorker.ready.then((registration) => {
-        registration.showNotification(
-            notification.title || "Family Saving Group",
-            {
-                body: notification.body || ""
-            }
-        );
-    });
-});
-
-  window.setupFCM = async function(familyId) {
-    try {
-      const permission = await Notification.requestPermission();
-
-      if (permission !== "granted") {
-        console.log("Notification permission not granted");
-        return;
-      }
-
-      const token = await getToken(messaging, {
-        vapidKey: "BOBvT5SQIyTQPPXlf2OuOEGN-x2eecqUQlyC5tE9wYmlIsyLb4OR1fbRuAWO-QXO8eXPf6EvJQ9Ym_nNofZYK5Y"
-      });
-
-      if (!token) {
-        console.log("FCM token नहीं मिला");
-        return;
-      }
-
-      await api("/api/fcm-token", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          token: token
-        })
-      });
-
-      console.log("FCM token saved successfully");
-
-    } catch (e) {
-      console.error("FCM setup error:", e);
-    }
-  }
-</script>
 
 /* ================= MEMBER SIDEBAR ================= */
 
@@ -1147,6 +1080,74 @@ onMessage(messaging, (payload) => {
     margin-left:0 !important;
   }
 }
+</style>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+  import {
+    getMessaging,
+    getToken,
+    onMessage
+} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC0ISJyPPbn0I-uA49Dku95PFg4D5TVUnI",
+    authDomain: "family-saving-group.firebaseapp.com",
+    projectId: "family-saving-group",
+    storageBucket: "family-saving-group.firebasestorage.app",
+    messagingSenderId: "857357671416",
+    appId: "1:857357671416:web:de5586c374dec2d3be540d"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const messaging = getMessaging(app);
+
+onMessage(messaging, (payload) => {
+    const notification = payload.notification || {};
+    navigator.serviceWorker.ready.then((registration) => {
+        registration.showNotification(
+            notification.title || "Family Saving Group",
+            {
+                body: notification.body || ""
+            }
+        );
+    });
+});
+
+  window.setupFCM = async function(familyId) {
+    try {
+      const permission = await Notification.requestPermission();
+
+      if (permission !== "granted") {
+        console.log("Notification permission not granted");
+        return;
+      }
+
+      const token = await getToken(messaging, {
+        vapidKey: "BOBvT5SQIyTQPPXlf2OuOEGN-x2eecqUQlyC5tE9wYmlIsyLb4OR1fbRuAWO-QXO8eXPf6EvJQ9Ym_nNofZYK5Y"
+      });
+
+      if (!token) {
+        console.log("FCM token नहीं मिला");
+        return;
+      }
+
+      await api("/api/fcm-token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          token: token
+        })
+      });
+
+      console.log("FCM token saved successfully");
+
+    } catch (e) {
+      console.error("FCM setup error:", e);
+    }
+  }
+</script>
 
 </head>
 
