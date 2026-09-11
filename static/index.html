@@ -1218,7 +1218,44 @@ header .title{
   .member-activity-row{padding:13px 14px}
   .member-activity-amount{font-size:16px}
 }
+/* ================= MEMBER DASHBOARD CARD ANIMATION ================= */
 
+.member-dashboard-card{
+  transition:transform 0.25s ease, box-shadow 0.25s ease;
+  animation:memberDashboardCardIn 0.5s ease both;
+}
+
+.member-dashboard-card:nth-child(1){
+  animation-delay:0.05s;
+}
+
+.member-dashboard-card:nth-child(2){
+  animation-delay:0.10s;
+}
+
+.member-dashboard-card:nth-child(3){
+  animation-delay:0.15s;
+}
+
+.member-dashboard-card:nth-child(4){
+  animation-delay:0.20s;
+}
+
+.member-dashboard-card:hover{
+  transform:translateY(-4px) scale(1.02);
+  box-shadow:0 8px 22px rgba(22,35,59,0.14);
+}
+
+@keyframes memberDashboardCardIn{
+  from{
+    opacity:0;
+    transform:translateY(12px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
