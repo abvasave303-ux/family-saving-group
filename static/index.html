@@ -107,93 +107,6 @@ body{
 }
 
 
-/* ================= MEMBER SIDEBAR ================= */
-
-#memberSidebar{
-  position:fixed;
-  left:0;
-  top:0;
-  bottom:0;
-  width:230px;
-  background:#083b78;
-  color:#fff;
-  padding:18px 12px;
-  overflow-y:auto;
-  z-index:1001;
-  box-shadow:4px 0 15px rgba(0,0,0,.18);
-}
-
-#memberSidebar .brand{
-  text-align:center;
-  font-size:20px;
-  font-weight:800;
-  padding:10px;
-}
-
-#memberSidebar .brand img{
-  width:90px;
-  height:90px;
-  object-fit:contain;
-  display:block;
-  margin:0 auto 8px;
-  background:#fff;
-  border-radius:50%;
-  padding:5px;
-}
-
-#memberSidebar .brand small{
-  display:block;
-  font-size:11px;
-  font-weight:400;
-  margin-top:5px;
-}
-
-#memberSidebar .nav{
-  margin-top:18px;
-}
-
-#memberSidebar .nav button{
-  width:100%;
-  padding:11px;
-  margin:4px 0;
-  border:0;
-  border-radius:8px;
-  background:transparent;
-  color:#fff;
-  text-align:left;
-  font-size:14px;
-  cursor:pointer;
-  transition:background .2s ease, transform .2s ease, padding-left .2s ease;
-}
-
-#memberSidebar .nav button:hover{
-  transform:translateX(3px);
-  padding-left:14px;
-  background:#1976d2;
-}
-
-#memberSidebar + .main{
-  margin-left:230px;
-}
-
-@media(max-width:650px){
-  #memberSidebar{
-    width:230px;
-    transform:translateX(-100%);
-    transition:transform .25s ease;
-    pointer-events:none;
-  }
-
-  #memberSidebar.mobile-open{
-    transform:translateX(0);
-    pointer-events:auto;
-  }
-
-  #memberSidebar + .main{
-    margin-left:0;
-  }
-}
-
 header{
   height:65px;
   background:#fff;
@@ -687,9 +600,7 @@ header>div:last-child{
   flex-shrink:0;
 }
 
-#notificationBell,
-#memberChangePinBtn,
-#memberLogoutBtn{
+#notificationBell{
   padding:7px 8px;
   font-size:11px;
   white-space:nowrap;
@@ -1001,13 +912,6 @@ header::after{
 }
 /* ================= MEMBER HEADER MOBILE ================= */
 
-#memberChangePinBtn,
-#memberLogoutBtn{
-  padding:8px 10px;
-  font-size:12px;
-  white-space:nowrap;
-}
-
 #notificationBell{
   padding:8px 10px;
 }
@@ -1157,6 +1061,93 @@ onMessage(messaging, (payload) => {
     }
   }
 </script>
+
+/* ================= MEMBER SIDEBAR ================= */
+
+#memberSidebar{
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+  width:230px;
+  background:#083b78;
+  color:#fff;
+  padding:18px 12px;
+  overflow-y:auto;
+  z-index:1001;
+  box-shadow:4px 0 15px rgba(0,0,0,0.12);
+  box-sizing:border-box;
+}
+
+#memberSidebar .brand{
+  text-align:center;
+  font-size:20px;
+  font-weight:800;
+  padding:10px;
+}
+
+#memberSidebar .brand img{
+  width:90px;
+  height:90px;
+  object-fit:contain;
+  display:block;
+  margin:0 auto 8px;
+  background:#fff;
+  border-radius:50%;
+  padding:5px;
+}
+
+#memberSidebar .brand small{
+  display:block;
+  font-size:11px;
+  font-weight:400;
+  margin-top:5px;
+}
+
+#memberSidebar .nav{
+  margin-top:18px;
+}
+
+#memberSidebar .nav button{
+  width:100%;
+  padding:11px;
+  margin:4px 0;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  color:#fff;
+  text-align:left;
+  font-size:14px;
+  cursor:pointer;
+}
+
+#memberSidebar .nav button:hover,
+#memberSidebar .nav button.active{
+  background:#1976d2;
+}
+
+.member-main{
+  margin-left:230px !important;
+}
+
+@media(max-width:650px){
+  #memberSidebar{
+    width:230px;
+    transform:translateX(-100%);
+    transition:transform .25s ease;
+    pointer-events:none;
+  }
+
+  #memberSidebar.mobile-open{
+    transform:translateX(0);
+    pointer-events:auto;
+  }
+
+  .member-main{
+    margin-left:0 !important;
+  }
+}
+
 </head>
 
 <body>
@@ -1346,6 +1337,8 @@ onMessage(messaging, (payload) => {
 
 </aside>
 
+
+
 <!-- ================= MEMBER SIDEBAR ================= -->
 <div id="memberSidebar" style="display:none;">
 
@@ -1363,20 +1356,28 @@ onMessage(messaging, (payload) => {
 
   <div class="nav">
 
-    <button onclick="document.getElementById('passbook').scrollIntoView({behavior:'smooth'})">
+    <button onclick="memberGoTo('passbook', this)" class="active">
       📒 My Passbook
     </button>
 
-    <button onclick="openNotifications()">
+    <button onclick="memberNotifications()">
       🔔 Notifications
     </button>
 
-    <button onclick="printMemberPassbook()">
+    <button onclick="memberPrint()">
       🖨️ Print Passbook
     </button>
 
-    <button onclick="openChangePin()">
+    <button onclick="memberChangePinMenu()">
       🔐 Change PIN
+    </button>
+
+    <button onclick="memberFinancialInfo()">
+      📅 Financial Information
+    </button>
+
+    <button onclick="memberLedger()">
+      📋 Ledger
     </button>
 
     <button onclick="logout()">
@@ -1384,9 +1385,7 @@ onMessage(messaging, (payload) => {
     </button>
 
   </div>
-
 </div>
-
 
 <main class="main">
 <header>
@@ -1440,23 +1439,7 @@ onMessage(messaging, (payload) => {
       </span>
 
     </button>
-
-    <button
-      id="memberChangePinBtn"
-      class="btn secondary"
-      style="display:none;"
-      onclick="openChangePin()">
-      🔐 Change PIN
-    </button>    
-    <button
-      id="memberLogoutBtn"
-      class="btn secondary"
-      style="display:none;"
-      onclick="logout()">
-      🚪 Logout
-    </button>
-
-  </div>
+</div>
 
 </header>
 <div class="content">
@@ -2383,6 +2366,8 @@ async function memberLogin(){
 
 async function initMember(user){
 
+  currentLoginType = "member";
+
   document.querySelector(".side").style.display = "none";
 
   const memberSidebar = $("memberSidebar");
@@ -2391,16 +2376,17 @@ async function initMember(user){
     memberSidebar.classList.remove("mobile-open");
   }
 
+  const main = document.querySelector(".main");
+  if(main){
+    main.classList.add("member-main");
+  }
+
   $("title").textContent =
     "📒 " + user.name + " - Passbook";
 
   $("userInfo").textContent =
     "👤 " + user.name;
 
-  $("memberLogoutBtn").style.display =
-    "inline-block";
-  $("memberChangePinBtn").style.display =
-    "inline-block";
   $("notificationBell").style.display =
     "inline-flex";
 
@@ -2483,6 +2469,9 @@ async function changeMemberPin(){
         $("currentPin").value = "";
         $("newPin").value = "";
         $("confirmPin").value = "";
+
+        alert("PIN बदल गया है। अब नए PIN से दोबारा Login करें।");
+        await logout();
 
     }catch(error){
 
@@ -2885,7 +2874,7 @@ async function loadMemberPassbook(fid){
 
         <!-- YEARLY FINANCIAL RECORD -->
         
-        <div class="panel" style="margin-top:15px">
+        <div id="memberFinancialInfo" class="panel" style="margin-top:15px">
         
           <h3>
             📅 वित्तीय वर्ष का रिकॉर्ड
@@ -3010,7 +2999,7 @@ async function loadMemberPassbook(fid){
         </div>
         <!-- MEMBER TRANSACTION HISTORY -->
 
-        <div class="panel" style="margin-top:15px">
+        <div id="memberLedger" class="panel" style="margin-top:15px">
 
           <h3>
             बचत / भुगतान विवरण
@@ -3332,45 +3321,104 @@ async function logout(){
 
 }
 function toggleSidebar(){
-  const memberSidebar = document.getElementById("memberSidebar");
 
-  if(memberSidebar && memberSidebar.style.display !== "none"){
-    memberSidebar.classList.toggle("mobile-open");
-    return;
-  }
+  const sidebar =
+    currentLoginType === "member"
+      ? document.querySelector("#memberSidebar")
+      : document.querySelector(".side");
 
-  const sidebar = document.querySelector(".side");
   if(!sidebar) return;
 
-  sidebar.classList.toggle("mobile-open");
+  if(window.innerWidth <= 650){
+    sidebar.classList.toggle("mobile-open");
+  }
 }
 document.addEventListener("click", function(e){
   if(window.innerWidth <= 650){
 
-    const sidebar = document.querySelector(".side");
-    const memberSidebar = document.getElementById("memberSidebar");
+    const sidebar =
+      currentLoginType === "member"
+        ? document.querySelector("#memberSidebar")
+        : document.querySelector(".side");
+
     const menuBtn = document.querySelector("#menuBtn");
 
     if(
       sidebar &&
       sidebar.classList.contains("mobile-open") &&
       !sidebar.contains(e.target) &&
+      menuBtn &&
       !menuBtn.contains(e.target)
     ){
       sidebar.classList.remove("mobile-open");
     }
 
-    if(
-      memberSidebar &&
-      memberSidebar.classList.contains("mobile-open") &&
-      !memberSidebar.contains(e.target) &&
-      !menuBtn.contains(e.target)
-    ){
-      memberSidebar.classList.remove("mobile-open");
-    }
-
   }
 });
+
+/* ================= MEMBER SIDEBAR ACTIONS ================= */
+
+function closeMemberSidebar(){
+  const sidebar = $("memberSidebar");
+  if(sidebar && window.innerWidth <= 650){
+    sidebar.classList.remove("mobile-open");
+  }
+}
+
+function memberGoTo(id, button){
+  closeMemberSidebar();
+
+  document.querySelectorAll("main section")
+    .forEach(x => x.classList.add("hidden"));
+
+  const section = $(id);
+  if(!section) return;
+
+  section.classList.remove("hidden");
+
+  document.querySelectorAll("#memberSidebar .nav button")
+    .forEach(x => x.classList.remove("active"));
+
+  if(button){
+    button.classList.add("active");
+  }
+
+  if(id === "passbook"){
+    $("title").textContent = "📒 My Passbook";
+  }
+}
+
+function memberNotifications(){
+  closeMemberSidebar();
+  openNotifications();
+}
+
+function memberPrint(){
+  closeMemberSidebar();
+  printMemberPassbook();
+}
+
+function memberChangePinMenu(){
+  closeMemberSidebar();
+  openChangePin();
+}
+
+function memberFinancialInfo(){
+  closeMemberSidebar();
+  const target = $("memberFinancialInfo");
+  if(target){
+    target.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+}
+
+function memberLedger(){
+  closeMemberSidebar();
+  const target = $("memberLedger");
+  if(target){
+    target.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+}
+
 /* ================= NAVIGATION ================= */
 
 function show(id, button){
@@ -3404,8 +3452,8 @@ function show(id, button){
 
   }
   $("title").className = "title " + id;
-  if(window.innerWidth <= 650){
-  document.querySelector(".side").classList.remove("mobile-open");
+  if(window.innerWidth <= 650 && currentLoginType !== "member"){
+  document.querySelector(".side")?.classList.remove("mobile-open");
 }
 
 }
