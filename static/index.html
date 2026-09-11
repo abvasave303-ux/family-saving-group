@@ -1346,11 +1346,26 @@ header .title{
 
 @media(max-width:650px){
 
-    #familyGroupDashboard .cards{
-      grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  #familyGroupDashboard .cards{
+      display:grid;
+      grid-template-columns:1fr 1fr;
       gap:10px;
-    }
-
+      width:100%;
+      min-width:0;
+  }
+  
+  #familyGroupDashboard .card{
+      width:100%;
+      min-width:0;
+      max-width:100%;
+      min-height:125px;
+      padding:17px 14px;
+      box-sizing:border-box;
+  }
+  
+  #familyGroupDashboard .card:nth-child(5){
+      grid-column:1 / -1;
+  }
   #familyGroupDashboard .card{
     min-height:125px;
     padding:17px 14px;
