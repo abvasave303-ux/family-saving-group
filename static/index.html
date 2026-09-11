@@ -3718,7 +3718,8 @@ function memberDashboard(button){
 
   window.scrollTo({top:0, behavior:"smooth"});
 }
-function openFamilyGroupDashboard(button){
+
+async function openFamilyGroupDashboard(button){
 
   closeMemberSidebar();
 
@@ -3733,7 +3734,7 @@ function openFamilyGroupDashboard(button){
     section.id = "familyGroupDashboard";
 
     section.innerHTML = `
-      <div class="panel" style="margin-bottom:18px;">
+      <div class="panel">
         <h3>🏢 Family Saving Group की कुल स्थिति</h3>
 
         <div class="cards">
@@ -3781,33 +3782,45 @@ function openFamilyGroupDashboard(button){
 
   $("title").textContent = "🏢 Family Group Dashboard";
 
+  try{
+
+    const user = await api("/api/me");
+
+    if(!user || !user.family_id){
+      throw new Error("Member session नहीं मिली");
+    }
+
+    const x = await api(
+      "/api/family/" + user.family_id + "/passbook"
+    );
+
+    $("fgdFamilies").textContent = "23";
+
+    $("fgdSavings").textContent =
+      money(x.group_savings);
+
+    $("fgdLoans").textContent =
+      money(x.group_loan);
+
+    $("fgdInterest").textContent =
+      money(x.group_interest);
+
+    $("fgdAvailable").textContent =
+      money(x.group_available);
+
+  }catch(e){
+
+    console.error(e);
+
+    alert(
+      "Family Group Dashboard data load नहीं हो सका: " +
+      e.message
+    );
+  }
+
   window.scrollTo({
     top:0,
     behavior:"smooth"
-  });
-
-  api("/api/dashboard").then(d => {
-
-    $("fgdFamilies").textContent =
-      d.families ?? 0;
-
-    $("fgdSavings").textContent =
-      money(d.savings);
-
-    $("fgdLoans").textContent =
-      money(d.loans);
-
-    $("fgdInterest").textContent =
-      money(d.interest);
-
-    $("fgdAvailable").textContent =
-      money(d.available);
-
-  }).catch(e => {
-
-    console.error(e);
-    alert("Family Group Dashboard data load नहीं हो सका: " + e.message);
-
   });
 }
 function closeMemberSidebar(){
