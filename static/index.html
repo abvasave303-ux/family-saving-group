@@ -1378,9 +1378,24 @@ header .title{
   }
   
   #familyGroupDashboard .cards{
-    width:100%;
-    max-width:100%;
-    box-sizing:border-box;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      width:100%;
+      min-width:0;
+  }
+  
+  #familyGroupDashboard .card{
+      width:100%;
+      min-width:0;
+      max-width:100%;
+      min-height:125px;
+      padding:17px 14px;
+      box-sizing:border-box;
+  }
+  
+  #familyGroupDashboard .card:nth-child(5){
+      grid-column:1 / -1;
   }
   
   #familyGroupDashboard .cards{
