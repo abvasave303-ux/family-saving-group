@@ -2875,7 +2875,7 @@ async function loadMemberPassbook(fid){
 
         <!-- YEARLY FINANCIAL RECORD -->
         
-        <div id="memberFinancialInfo" class="panel" style="margin-top:15px">
+        <div id="memberFinancialInfo" class="panel" style="margin-top:15px;display:none;">
         
           <h3>
             📅 वित्तीय वर्ष का रिकॉर्ड
@@ -3000,7 +3000,7 @@ async function loadMemberPassbook(fid){
         </div>
         <!-- MEMBER TRANSACTION HISTORY -->
 
-        <div id="memberLedger" class="panel" style="margin-top:15px">
+        <div id="memberLedger" class="panel" style="margin-top:15px;display:none;">
 
           <h3>
             बचत / भुगतान विवरण
@@ -3408,6 +3408,7 @@ function memberFinancialInfo(){
   closeMemberSidebar();
   const target = $("memberFinancialInfo");
   if(target){
+    target.style.display = "";
     target.scrollIntoView({behavior:"smooth", block:"start"});
   }
 }
@@ -3416,6 +3417,7 @@ function memberLedger(){
   closeMemberSidebar();
   const target = $("memberLedger");
   if(target){
+    target.style.display = "";
     target.scrollIntoView({behavior:"smooth", block:"start"});
   }
 }
