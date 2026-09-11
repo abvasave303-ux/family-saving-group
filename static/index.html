@@ -1242,8 +1242,16 @@ header .title{
 }
 
 .member-dashboard-card:hover{
-  transform:translateY(-4px) scale(1.02);
-  box-shadow:0 8px 22px rgba(22,35,59,0.14);
+  transform:translateY(-8px) scale(1.03);
+  box-shadow:0 12px 26px rgba(22,35,59,0.18);
+}
+
+.member-dashboard-card .member-card-value{
+  transition:transform 0.25s ease;
+}
+
+.member-dashboard-card:hover .member-card-value{
+  transform:scale(1.08);
 }
 
 @keyframes memberDashboardCardIn{
