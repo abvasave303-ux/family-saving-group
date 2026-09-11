@@ -1357,7 +1357,11 @@ onMessage(messaging, (payload) => {
 
   <div class="nav">
 
-    <button onclick="memberGoTo('passbook', this)" class="active">
+    <button onclick="memberDashboard(this)" class="active">
+      🏠 Dashboard
+    </button>
+
+    <button onclick="memberGoTo('passbook', this)">
       📒 My Passbook
     </button>
 
@@ -2399,6 +2403,14 @@ async function initMember(user){
 
   $("passbook").classList.remove("hidden");
 
+  const memberPassbook = $("passbook");
+  if(memberPassbook){
+    const heading = memberPassbook.querySelector("h3");
+    const memberField = memberPassbook.querySelector(".field");
+    if(heading) heading.style.display = "none";
+    if(memberField) memberField.style.display = "none";
+  }
+
   await loadMemberPassbook(user.family_id);
 
   await updateNotificationCount();
@@ -3358,6 +3370,29 @@ document.addEventListener("click", function(e){
 });
 
 /* ================= MEMBER SIDEBAR ACTIONS ================= */
+
+function memberDashboard(button){
+  closeMemberSidebar();
+
+  document.querySelectorAll("main section")
+    .forEach(x => x.classList.add("hidden"));
+
+  const section = $("passbook");
+  if(!section) return;
+
+  section.classList.remove("hidden");
+
+  document.querySelectorAll("#memberSidebar .nav button")
+    .forEach(x => x.classList.remove("active"));
+
+  if(button){
+    button.classList.add("active");
+  }
+
+  $("title").textContent = "🏠 Dashboard";
+
+  window.scrollTo({top:0, behavior:"smooth"});
+}
 
 function closeMemberSidebar(){
   const sidebar = $("memberSidebar");
