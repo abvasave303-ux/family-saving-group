@@ -1338,6 +1338,57 @@ header .title{
     font-size:20px;
   }
 }
+/* ================= FAMILY GROUP DASHBOARD CARD ANIMATION ================= */
+
+#familyGroupDashboard .card{
+  transition:transform 0.25s ease, box-shadow 0.25s ease;
+  animation:familyGroupCardIn 0.5s ease both;
+}
+
+#familyGroupDashboard .card:nth-child(1){
+  animation-delay:0.05s;
+}
+
+#familyGroupDashboard .card:nth-child(2){
+  animation-delay:0.10s;
+}
+
+#familyGroupDashboard .card:nth-child(3){
+  animation-delay:0.15s;
+}
+
+#familyGroupDashboard .card:nth-child(4){
+  animation-delay:0.20s;
+}
+
+#familyGroupDashboard .card:nth-child(5){
+  animation-delay:0.25s;
+}
+
+#familyGroupDashboard .card:hover{
+  transform:translateY(-8px) scale(1.03);
+  box-shadow:0 12px 26px rgba(22,35,59,0.18);
+}
+
+#familyGroupDashboard .card .value{
+  transition:transform 0.25s ease;
+}
+
+#familyGroupDashboard .card:hover .value{
+  transform:scale(1.08);
+}
+
+@keyframes familyGroupCardIn{
+  from{
+    opacity:0;
+    transform:translateY(12px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
