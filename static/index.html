@@ -3725,15 +3725,52 @@ function openFamilyGroupDashboard(button){
   document.querySelectorAll("main section")
     .forEach(x => x.classList.add("hidden"));
 
-  const section = $("dashboard");
+  let section = $("familyGroupDashboard");
 
-  if(!section) return;
+  if(!section){
+
+    section = document.createElement("section");
+    section.id = "familyGroupDashboard";
+
+    section.innerHTML = `
+      <div class="panel" style="margin-bottom:18px;">
+        <h3>🏢 Family Saving Group की कुल स्थिति</h3>
+
+        <div class="cards">
+
+          <div class="card">
+            <div class="label">👨‍👩‍👧‍👦 कुल सदस्य</div>
+            <div class="value blue" id="fgdFamilies">0</div>
+          </div>
+
+          <div class="card">
+            <div class="label">💰 समूह की कुल बचत</div>
+            <div class="value green" id="fgdSavings">₹0</div>
+          </div>
+
+          <div class="card">
+            <div class="label">🏦 कुल Loan बाकी</div>
+            <div class="value red" id="fgdLoans">₹0</div>
+          </div>
+
+          <div class="card">
+            <div class="label">💵 प्राप्त ब्याज</div>
+            <div class="value orange" id="fgdInterest">₹0</div>
+          </div>
+
+          <div class="card">
+            <div class="label">💳 उपलब्ध राशि</div>
+            <div class="value" id="fgdAvailable">₹0</div>
+          </div>
+
+        </div>
+      </div>
+    `;
+
+    document.querySelector("main").appendChild(section);
+  }
 
   section.classList.remove("hidden");
-
-  if(currentLoginType === "member"){
-    renderMemberDashboard();
-  }
 
   document.querySelectorAll("#memberSidebar .nav button")
     .forEach(x => x.classList.remove("active"));
@@ -3747,6 +3784,30 @@ function openFamilyGroupDashboard(button){
   window.scrollTo({
     top:0,
     behavior:"smooth"
+  });
+
+  api("/api/dashboard").then(d => {
+
+    $("fgdFamilies").textContent =
+      d.families ?? 0;
+
+    $("fgdSavings").textContent =
+      money(d.savings);
+
+    $("fgdLoans").textContent =
+      money(d.loans);
+
+    $("fgdInterest").textContent =
+      money(d.interest);
+
+    $("fgdAvailable").textContent =
+      money(d.available);
+
+  }).catch(e => {
+
+    console.error(e);
+    alert("Family Group Dashboard data load नहीं हो सका: " + e.message);
+
   });
 }
 function closeMemberSidebar(){
