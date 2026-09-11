@@ -3718,7 +3718,37 @@ function memberDashboard(button){
 
   window.scrollTo({top:0, behavior:"smooth"});
 }
+function openFamilyGroupDashboard(button){
 
+  closeMemberSidebar();
+
+  document.querySelectorAll("main section")
+    .forEach(x => x.classList.add("hidden"));
+
+  const section = $("dashboard");
+
+  if(!section) return;
+
+  section.classList.remove("hidden");
+
+  if(currentLoginType === "member"){
+    renderMemberDashboard();
+  }
+
+  document.querySelectorAll("#memberSidebar .nav button")
+    .forEach(x => x.classList.remove("active"));
+
+  if(button){
+    button.classList.add("active");
+  }
+
+  $("title").textContent = "🏢 Family Group Dashboard";
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+}
 function closeMemberSidebar(){
   const sidebar = $("memberSidebar");
   if(sidebar && window.innerWidth <= 650){
