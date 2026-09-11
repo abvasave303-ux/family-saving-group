@@ -1286,8 +1286,15 @@ header .title{
 /* ================= FAMILY GROUP DASHBOARD 2 COLUMN ================= */
 
 #familyGroupDashboard .cards{
-  grid-template-columns:1fr 1fr;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
   gap:12px;
+}
+
+#familyGroupDashboard .card{
+  min-width:0;
+  width:100%;
+  box-sizing:border-box;
+  min-height:120px;
 }
 
 #familyGroupDashboard .card{
@@ -1300,16 +1307,33 @@ header .title{
 
 @media(max-width:650px){
 
-  #familyGroupDashboard .cards{
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-  }
+    #familyGroupDashboard .cards{
+      grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+      gap:10px;
+    }
 
   #familyGroupDashboard .card{
     min-height:115px;
     padding:14px 12px;
   }
-
+  #familyGroupDashboard{
+    width:100%;
+    max-width:100%;
+    box-sizing:border-box;
+    overflow-x:hidden;
+  }
+  
+  #familyGroupDashboard .cards{
+    width:100%;
+    max-width:100%;
+    box-sizing:border-box;
+  }
+  
+  #familyGroupDashboard .card{
+    min-width:0;
+    max-width:100%;
+    box-sizing:border-box;
+  }
   #familyGroupDashboard .card .value{
     font-size:20px;
   }
