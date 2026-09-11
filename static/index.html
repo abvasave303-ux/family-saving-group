@@ -993,74 +993,7 @@ header .title{
   .startup-title{font-size:21px}
 }
 
-</style>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-  import {
-    getMessaging,
-    getToken,
-    onMessage
-} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyC0ISJyPPbn0I-uA49Dku95PFg4D5TVUnI",
-    authDomain: "family-saving-group.firebaseapp.com",
-    projectId: "family-saving-group",
-    storageBucket: "family-saving-group.firebasestorage.app",
-    messagingSenderId: "857357671416",
-    appId: "1:857357671416:web:de5586c374dec2d3be540d"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const messaging = getMessaging(app);
-
-onMessage(messaging, (payload) => {
-    const notification = payload.notification || {};
-    navigator.serviceWorker.ready.then((registration) => {
-        registration.showNotification(
-            notification.title || "Family Saving Group",
-            {
-                body: notification.body || ""
-            }
-        );
-    });
-});
-
-  window.setupFCM = async function(familyId) {
-    try {
-      const permission = await Notification.requestPermission();
-
-      if (permission !== "granted") {
-        console.log("Notification permission not granted");
-        return;
-      }
-
-      const token = await getToken(messaging, {
-        vapidKey: "BOBvT5SQIyTQPPXlf2OuOEGN-x2eecqUQlyC5tE9wYmlIsyLb4OR1fbRuAWO-QXO8eXPf6EvJQ9Ym_nNofZYK5Y"
-      });
-
-      if (!token) {
-        console.log("FCM token नहीं मिला");
-        return;
-      }
-
-      await api("/api/fcm-token", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          token: token
-        })
-      });
-
-      console.log("FCM token saved successfully");
-
-    } catch (e) {
-      console.error("FCM setup error:", e);
-    }
-  }
-</script>
 
 /* ================= MEMBER SIDEBAR ================= */
 
@@ -1147,6 +1080,74 @@ onMessage(messaging, (payload) => {
     margin-left:0 !important;
   }
 }
+</style>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+  import {
+    getMessaging,
+    getToken,
+    onMessage
+} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC0ISJyPPbn0I-uA49Dku95PFg4D5TVUnI",
+    authDomain: "family-saving-group.firebaseapp.com",
+    projectId: "family-saving-group",
+    storageBucket: "family-saving-group.firebasestorage.app",
+    messagingSenderId: "857357671416",
+    appId: "1:857357671416:web:de5586c374dec2d3be540d"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const messaging = getMessaging(app);
+
+onMessage(messaging, (payload) => {
+    const notification = payload.notification || {};
+    navigator.serviceWorker.ready.then((registration) => {
+        registration.showNotification(
+            notification.title || "Family Saving Group",
+            {
+                body: notification.body || ""
+            }
+        );
+    });
+});
+
+  window.setupFCM = async function(familyId) {
+    try {
+      const permission = await Notification.requestPermission();
+
+      if (permission !== "granted") {
+        console.log("Notification permission not granted");
+        return;
+      }
+
+      const token = await getToken(messaging, {
+        vapidKey: "BOBvT5SQIyTQPPXlf2OuOEGN-x2eecqUQlyC5tE9wYmlIsyLb4OR1fbRuAWO-QXO8eXPf6EvJQ9Ym_nNofZYK5Y"
+      });
+
+      if (!token) {
+        console.log("FCM token नहीं मिला");
+        return;
+      }
+
+      await api("/api/fcm-token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          token: token
+        })
+      });
+
+      console.log("FCM token saved successfully");
+
+    } catch (e) {
+      console.error("FCM setup error:", e);
+    }
+  }
+</script>
 
 </head>
 
@@ -1355,11 +1356,12 @@ onMessage(messaging, (payload) => {
   </div>
 
   <div class="nav">
-    <button onclick="memberGoTo('dashboard', this)">
+
+    <button onclick="memberDashboard(this)" class="active">
       🏠 Dashboard
     </button>
-    
-    <button onclick="memberGoTo('passbook', this)" class="active">
+
+    <button onclick="memberGoTo('passbook', this)">
       📒 My Passbook
     </button>
 
@@ -2401,6 +2403,14 @@ async function initMember(user){
 
   $("passbook").classList.remove("hidden");
 
+  const memberPassbook = $("passbook");
+  if(memberPassbook){
+    const heading = memberPassbook.querySelector("h3");
+    const memberField = memberPassbook.querySelector(".field");
+    if(heading) heading.style.display = "none";
+    if(memberField) memberField.style.display = "none";
+  }
+
   await loadMemberPassbook(user.family_id);
 
   await updateNotificationCount();
@@ -2877,7 +2887,7 @@ async function loadMemberPassbook(fid){
 
         <!-- YEARLY FINANCIAL RECORD -->
         
-        <div id="memberFinancialInfo" class="panel" style="margin-top:15px">
+        <div id="memberFinancialInfo" class="panel" style="margin-top:15px;display:none;">
         
           <h3>
             📅 वित्तीय वर्ष का रिकॉर्ड
@@ -3002,7 +3012,7 @@ async function loadMemberPassbook(fid){
         </div>
         <!-- MEMBER TRANSACTION HISTORY -->
 
-        <div id="memberLedger" class="panel" style="margin-top:15px">
+        <div id="memberLedger" class="panel" style="margin-top:15px;display:none;">
 
           <h3>
             बचत / भुगतान विवरण
@@ -3361,6 +3371,29 @@ document.addEventListener("click", function(e){
 
 /* ================= MEMBER SIDEBAR ACTIONS ================= */
 
+function memberDashboard(button){
+  closeMemberSidebar();
+
+  document.querySelectorAll("main section")
+    .forEach(x => x.classList.add("hidden"));
+
+  const section = $("passbook");
+  if(!section) return;
+
+  section.classList.remove("hidden");
+
+  document.querySelectorAll("#memberSidebar .nav button")
+    .forEach(x => x.classList.remove("active"));
+
+  if(button){
+    button.classList.add("active");
+  }
+
+  $("title").textContent = "🏠 Dashboard";
+
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
 function closeMemberSidebar(){
   const sidebar = $("memberSidebar");
   if(sidebar && window.innerWidth <= 650){
@@ -3410,6 +3443,7 @@ function memberFinancialInfo(){
   closeMemberSidebar();
   const target = $("memberFinancialInfo");
   if(target){
+    target.style.display = "";
     target.scrollIntoView({behavior:"smooth", block:"start"});
   }
 }
@@ -3418,6 +3452,7 @@ function memberLedger(){
   closeMemberSidebar();
   const target = $("memberLedger");
   if(target){
+    target.style.display = "";
     target.scrollIntoView({behavior:"smooth", block:"start"});
   }
 }
