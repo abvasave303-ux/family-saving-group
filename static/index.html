@@ -1283,6 +1283,37 @@ header .title{
     transform:translateY(0);
   }
 }
+/* ================= FAMILY GROUP DASHBOARD 2 COLUMN ================= */
+
+#familyGroupDashboard .cards{
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+#familyGroupDashboard .card{
+  min-height:120px;
+}
+
+#familyGroupDashboard .card:nth-child(5){
+  grid-column:1 / -1;
+}
+
+@media(max-width:650px){
+
+  #familyGroupDashboard .cards{
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  #familyGroupDashboard .card{
+    min-height:115px;
+    padding:14px 12px;
+  }
+
+  #familyGroupDashboard .card .value{
+    font-size:20px;
+  }
+}
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
