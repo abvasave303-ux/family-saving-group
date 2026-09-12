@@ -3129,6 +3129,39 @@ async function changeMemberPin(){
 
     }
 }
+/* ================= MEMBER LEDGER ================= */
+
+function filterLedgerYearlyRecord(selectedYear){
+
+  const rows =
+    document.querySelectorAll(
+      "#ledgerYearlyRecords tr"
+    );
+
+  rows.forEach(row => {
+
+    const yearCell =
+      row.querySelector("td");
+
+    if(!yearCell) return;
+
+    const year =
+      yearCell.textContent.trim();
+
+    if(
+      !selectedYear ||
+      year === selectedYear
+    ){
+      row.style.display = "";
+    }
+    else{
+      row.style.display = "none";
+    }
+
+  });
+
+}
+
 /* ================= MEMBER PASSBOOK ================= */
 function filterMemberYearlyRecord(selectedYear){
 
