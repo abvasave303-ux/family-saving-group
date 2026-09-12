@@ -1850,7 +1850,7 @@ onMessage(messaging, (payload) => {
       📒 My Passbook
     </button>
 
-    <button onclick="memberLedger()">
+    <button onclick="memberLedger(this)">
       📋 Ledger
     </button>
 
@@ -4458,11 +4458,18 @@ function memberFinancialInfo(){
     target.scrollIntoView({behavior:"smooth", block:"start"});
   }
 }
-function memberLedger(){
+function memberLedger(button){
 
   closeMemberSidebar();
 
-  // पहले सभी member sections hide करो
+  document.querySelectorAll("#memberSidebar .nav button")
+    .forEach(x => x.classList.remove("active"));
+
+  if(button){
+    button.classList.add("active");
+  }
+
+  // पहले सभी member sections hide करोो
   document.querySelectorAll("main section")
     .forEach(x => x.classList.add("hidden"));
 
