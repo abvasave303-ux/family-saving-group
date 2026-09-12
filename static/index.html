@@ -1467,6 +1467,51 @@ header .title{
     transform:translateY(0);
   }
 }
+/* ================= FAMILY GROUP WELCOME ================= */
+
+#familyGroupDashboard .family-welcome{
+    width:100%;
+    box-sizing:border-box;
+    margin-bottom:14px;
+    padding:22px 28px;
+    border-radius:16px;
+    border:1px solid #d8e7f5;
+    background:linear-gradient(135deg,#eef8ff,#f8fcff);
+    box-shadow:0 4px 15px rgba(22,35,59,0.08);
+    text-align:center;
+    overflow:hidden;
+}
+
+#familyGroupDashboard .family-welcome h2{
+    margin:0;
+    color:#315fe8;
+    font-size:32px;
+    font-weight:800;
+    letter-spacing:.5px;
+}
+
+#familyGroupDashboard .family-welcome p{
+    margin:8px 0 0;
+    color:#42658c;
+    font-size:14px;
+    font-weight:600;
+}
+
+@media(max-width:650px){
+    #familyGroupDashboard .family-welcome{
+        padding:18px 14px;
+        margin-bottom:10px;
+    }
+
+    #familyGroupDashboard .family-welcome h2{
+        font-size:23px;
+        line-height:1.25;
+    }
+
+    #familyGroupDashboard .family-welcome p{
+        font-size:12px;
+    }
+}
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
@@ -3919,7 +3964,12 @@ async function openFamilyGroupDashboard(button){
 
     section.innerHTML = `
       
-
+        <div class="family-welcome">
+            <h2>🏢 WELCOME TO FAMILY SAVING GROUP</h2>
+            <p>Together We Save | Stronger Families | Brighter Tomorrow</p>
+        </div>
+        
+        
         <div class="cards">
 
 
