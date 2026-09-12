@@ -4300,16 +4300,20 @@ function memberFinancialInfo(){
     target.scrollIntoView({behavior:"smooth", block:"start"});
   }
 }
-
 function memberLedger(){
 
   closeMemberSidebar();
 
+  // पहले सभी member sections hide करो
+  document.querySelectorAll("main section")
+    .forEach(x => x.classList.add("hidden"));
+
+  // अब सिर्फ नया Ledger खोलो
   const target = $("memberLedgerSection");
 
   if(target){
 
-    target.style.display = "";
+    target.classList.remove("hidden");
 
     target.scrollIntoView({
       behavior:"smooth",
@@ -4320,6 +4324,7 @@ function memberLedger(){
 
   $("title").textContent = "📋 Ledger";
 }
+
 /* ================= NAVIGATION ================= */
 
 function show(id, button){
