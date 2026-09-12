@@ -2533,6 +2533,20 @@ onMessage(messaging, (payload) => {
 
     <h3>📋 Member Ledger</h3>
 
+    <div id="ledgerMemberNameCard" style="
+      margin:12px 0 15px;
+      padding:12px 16px;
+      border-left:4px solid #1976d2;
+      border-radius:8px;
+      background:#f7fbff;
+    ">
+      <div style="font-size:12px;opacity:.75;">सदस्य</div>
+      <div id="ledgerMemberName"
+           style="font-size:20px;font-weight:700;margin-top:2px;">
+        —
+      </div>
+    </div>
+
     <div class="body">
 
       <!-- Financial Year Record -->
@@ -3474,6 +3488,11 @@ if(ledgerYearSelect){
 
     const family = x.family;
 
+    const ledgerMemberName = document.getElementById("ledgerMemberName");
+    if(ledgerMemberName){
+      ledgerMemberName.textContent = family?.name || "—";
+    }
+
     const savings = (x.savings || []).reduce(
       (a,r) => a + Number(r.amount || 0),
       0
@@ -3807,19 +3826,7 @@ if(ledgerYearSelect){
         </div>
         <!-- MEMBER TRANSACTION HISTORY -->
 
-        <div id="ledgerMemberNameCard" class="card" style="
-  margin-top:15px;
-  margin-bottom:15px;
-  padding:14px 18px;
-  border-left:4px solid #1976d2;
-">
-  <div class="label">सदस्य</div>
-  <div class="value" style="font-size:20px;font-weight:700;">
-    ${family?.name || "—"}
-  </div>
-</div>
-
-<div id="memberLedger" class="panel" style="margin-top:15px;display:none;">
+        <div id="memberLedger" class="panel" style="margin-top:15px;display:none;">
 
           <h3>
             बचत / भुगतान विवरण
