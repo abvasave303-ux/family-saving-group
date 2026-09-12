@@ -3131,34 +3131,106 @@ async function changeMemberPin(){
 }
 /* ================= MEMBER LEDGER ================= */
 
+/* ================= MEMBER LEDGER ================= */
+
 function filterLedgerYearlyRecord(selectedYear){
 
-  const rows =
-    document.querySelectorAll(
-      "#ledgerYearlyRecords tr"
+  const data =
+    window.currentMemberPassbookData;
+
+  const tableBody =
+    document.getElementById(
+      "ledgerYearlyRecords"
     );
+
+  if(!tableBody || !data) return;
+
+
+  const records =
+    data.yearly_records || [];
+
+
+  tableBody.innerHTML =
+    records.map(r => `
+
+      <tr
+        data-financial-year="${r.financial_year}"
+      >
+
+        <td>
+          ${r.financial_year}
+        </td>
+
+        <td class="green">
+          ${money(r.saving)}
+        </td>
+
+        <td class="green">
+          ${money(r.interest)}
+        </td>
+
+        <td class="red">
+          ${money(r.debit)}
+        </td>
+
+        <td class="green">
+          ${money(r.net_saving)}
+        </td>
+
+      </tr>
+
+    `).join("");
+
+
+  const rows =
+    tableBody.querySelectorAll("tr");
+
 
   rows.forEach(row => {
 
-    const yearCell =
-      row.querySelector("td");
-
-    if(!yearCell) return;
-
     const year =
-      yearCell.textContent.trim();
+      row.dataset.financialYear;
 
     if(
       !selectedYear ||
       year === selectedYear
     ){
+
       row.style.display = "";
-    }
-    else{
+
+    }else{
+
       row.style.display = "none";
+
     }
 
   });
+
+
+  const detailBody =
+    document.getElementById(
+      "ledgerYearlyDetailed"
+    );
+
+  if(!detailBody) return;
+
+
+  if(!selectedYear){
+
+    detailBody.innerHTML = "";
+
+    return;
+
+  }
+
+
+  detailBody.innerHTML = `
+    <tr>
+      <td colspan="3" class="empty">
+        वित्तीय वर्ष ${selectedYear} का विवरण
+      </td>
+    </tr>
+  `;
 
 }
 
