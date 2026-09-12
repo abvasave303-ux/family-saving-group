@@ -3411,6 +3411,39 @@ function buildMemberYearlyLedger(x, selectedYear){
     </tr>
   `;
 }
+function getLedgerNetTotal(x){
+
+    let total = 0;
+
+    // Loan
+    (x.loans || []).forEach(r => {
+        total -= Math.abs(
+            Number(r.original || r.principal || 0)
+        );
+    });
+
+    // Savings
+    (x.savings || []).forEach(r => {
+        total += Number(r.amount || 0);
+    });
+
+    // Interest Credit
+    (x.interest_credits || []).forEach(r => {
+        total += Number(r.amount || 0);
+    });
+
+    // Saving Debit / निकासी
+    (x.saving_debits || []).forEach(r => {
+        total -= Number(r.amount || 0);
+    });
+
+    // Loan Payment
+    (x.payments || []).forEach(r => {
+        total += Number(r.amount || 0);
+    });
+
+    return total;
+}
 async function loadMemberPassbook(fid){
 
   try{
@@ -3797,7 +3830,7 @@ if(ledgerYearSelect){
               </tr>
 
 
-              ${buildPassbookLedger(x)}
+              ${buildPassbookLedger(x, true)}
 
             </table>
 
