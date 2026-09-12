@@ -628,7 +628,12 @@ header>div:last-child{
   transform:translateY(-4px) scale(1.02);
   box-shadow:0 8px 22px rgba(22,35,59,0.14);
 }
-
+#familyGroupDashboard .cards .card:nth-child(5):hover{
+    transform:translateY(-2px) scale(1.01);
+}
+#familyGroupDashboard .cards .card:nth-child(5) .value{
+    margin-left:10px;
+}
 @keyframes dashboardCardIn{
   from{
     opacity:0;
@@ -1103,10 +1108,29 @@ header .title{
   color:#083b78;
   font-size:30px;
 }
+.member-welcome h2{
+    animation:memberNameLoop 20s ease both infinite;
+}
 .member-welcome .welcome-label{
   color:#55708f;
   font-size:15px;
   font-weight:600;
+}
+@keyframes memberNameLoop{
+    0%{
+        opacity:0;
+        transform:translateY(20px);
+    }
+
+    10%{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+    100%{
+        opacity:1;
+        transform:translateY(0);
+    }
 }
 .member-welcome .welcome-sub{
   color:#1976d2;
@@ -1218,7 +1242,231 @@ header .title{
   .member-activity-row{padding:13px 14px}
   .member-activity-amount{font-size:16px}
 }
+/* ================= MEMBER DASHBOARD CARD ANIMATION ================= */
 
+.member-dashboard-card{
+  transition:transform 0.25s ease, box-shadow 0.25s ease;
+  animation:memberDashboardCardIn 0.5s ease both;
+}
+
+.member-dashboard-card:nth-child(1){
+  animation-delay:0.05s;
+}
+
+.member-dashboard-card:nth-child(2){
+  animation-delay:0.10s;
+}
+
+.member-dashboard-card:nth-child(3){
+  animation-delay:0.15s;
+}
+
+.member-dashboard-card:nth-child(4){
+  animation-delay:0.20s;
+}
+
+.member-dashboard-card:hover{
+  transform:translateY(-14px) scale(1.03);
+  box-shadow:0 12px 26px rgba(22,35,59,0.18);
+}
+
+.member-dashboard-card .member-card-value{
+  transition:transform 0.25s ease;
+}
+
+.member-dashboard-card:hover .member-card-value{
+  transform:scale(1.08);
+}
+
+@keyframes memberDashboardCardIn{
+  from{
+    opacity:0;
+    transform:translateY(12px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+/* ================= FAMILY GROUP DASHBOARD 2 COLUMN ================= */
+
+#familyGroupDashboard .cards{
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:12px;
+}
+
+#familyGroupDashboard .card{
+  min-width:0;
+  width:100%;
+  box-sizing:border-box;
+  min-height:120px;
+}
+/* FAMILY GROUP CARD - MEMBER DASHBOARD SIZE + SOFT COLORS */
+
+#familyGroupDashboard .card{
+  min-height:145px;
+  padding:22px 24px;
+  border-radius:16px;
+  box-sizing:border-box;
+  min-width:0;
+  width:100%;
+}
+
+/* Soft background matching value color */
+
+#familyGroupDashboard .card:nth-child(1){
+  background:#eef6ff;
+}
+
+#familyGroupDashboard .card:nth-child(2){
+  background:#eefaf3;
+}
+
+#familyGroupDashboard .card:nth-child(3){
+  background:#fff1f2;
+}
+
+#familyGroupDashboard .card:nth-child(4){
+  background:#fff8ed;
+}
+
+#familyGroupDashboard .card:nth-child(5){
+  background:#f3f2ff;
+}
+
+/* Value size like Member Dashboard */
+
+#familyGroupDashboard .card .value{
+    font-size:34px;
+    font-weight:800;
+    transform-origin:left center;
+}
+#familyGroupDashboard .card{
+  min-height:125px;
+  padding:17px 14px;
+}
+
+#familyGroupDashboard .card:nth-child(5){
+  grid-column:1 / -1;
+}
+
+@media(max-width:650px){
+
+  #familyGroupDashboard .cards{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      width:100%;
+      min-width:0;
+  }
+}
+  #familyGroupDashboard .card{
+      width:100%;
+      min-width:0;
+      max-width:100%;
+      min-height:125px;
+      padding:17px 14px;
+      box-sizing:border-box;
+  }
+  
+  #familyGroupDashboard .card:nth-child(5){
+      grid-column:1 / -1;
+  }
+  #familyGroupDashboard .card{
+      min-height:110px;
+      padding:13px 12px;
+  }
+  #familyGroupDashboard{
+      width:100%;
+      max-width:100%;
+      box-sizing:border-box;
+      overflow-x:hidden;
+      padding-left:10px;
+      padding-right:10px;
+  }
+  
+  #familyGroupDashboard .cards{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      width:calc(100% - 20px);
+      min-width:0;
+  }
+  
+  #familyGroupDashboard .card{
+      width:100%;
+      min-width:0;
+      max-width:100%;
+      min-height:125px;
+      padding:17px 14px;
+      box-sizing:border-box;
+  }
+  
+  #familyGroupDashboard .card:nth-child(5){
+      grid-column:1 / -1;
+  }
+  
+  #familyGroupDashboard .cards{
+    width:100%;
+    max-width:100%;
+    box-sizing:border-box;
+    overflow:hidden;
+  }
+  #familyGroupDashboard .card .value{
+    font-size:20px;
+  }
+}
+/* ================= FAMILY GROUP DASHBOARD CARD ANIMATION ================= */
+
+#familyGroupDashboard .card{
+  transition:transform 0.25s ease, box-shadow 0.25s ease;
+  animation:familyGroupCardIn 0.5s ease both;
+}
+
+#familyGroupDashboard .card:nth-child(1){
+  animation-delay:0.05s;
+}
+
+#familyGroupDashboard .card:nth-child(2){
+  animation-delay:0.10s;
+}
+
+#familyGroupDashboard .card:nth-child(3){
+  animation-delay:0.15s;
+}
+
+#familyGroupDashboard .card:nth-child(4){
+  animation-delay:0.20s;
+}
+
+#familyGroupDashboard .card:nth-child(5){
+  animation-delay:0.25s;
+}
+
+#familyGroupDashboard .cards > .card:hover{
+    transform:translateY(-4px) scale(1.02);
+    box-shadow:0 8px 22px rgba(22,35,59,0.14);
+}
+
+#familyGroupDashboard .cards > .card:hover .value{
+    transform:scale(1.05);
+}
+
+#familyGroupDashboard .card:hover .value{
+  transform:scale(1.08);
+}
+
+@keyframes familyGroupCardIn{
+  from{
+    opacity:0;
+    transform:translateY(12px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
@@ -1498,6 +1746,10 @@ onMessage(messaging, (payload) => {
 
     <button onclick="memberDashboard(this)" class="active">
       🏠 Dashboard
+    </button>
+
+    <button onclick="openFamilyGroupDashboard(this)">
+      🏢 Family Group Dashboard
     </button>
 
     <button onclick="memberGoTo('passbook', this)">
@@ -2950,83 +3202,42 @@ async function loadMemberPassbook(fid){
         </div>
 
 
-        <!-- GROUP SUMMARY -->
+<!-- ================= FAMILY GROUP DASHBOARD ================= -->
+<section id="familyGroupDashboard" class="hidden">
 
-        <div class="panel" style="margin-top:15px">
-
-          <h3>
-            🏦 Family Saving Group की कुल स्थिति
-          </h3>
-
-          <div class="cards">
-
-            <div class="card">
-
-              <div class="label">
-                👨‍👩‍👧‍👦 कुल सदस्य
-              </div>
-
-              <div class="value">
-                23
-              </div>
-
-            </div>
-
-
-            <div class="card">
-
-              <div class="label">
-                💰 समूह की कुल बचत
-              </div>
-
-              <div class="value green">
-                ${money(groupSavings)}
-              </div>
-
-            </div>
-
-
-            <div class="card">
-
-              <div class="label">
-                🏦 कुल Loan बाकी
-              </div>
-
-              <div class="value red">
-                ${money(groupLoan)}
-              </div>
-
-            </div>
-
-
-            <div class="card">
-
-              <div class="label">
-                💵 प्राप्त ब्याज
-              </div>
-
-              <div class="value">
-                ${money(groupInterest)}
-              </div>
-
-            </div>
-
-
-            <div class="card">
-
-              <div class="label">
-                💳 उपलब्ध राशि
-              </div>
-
-              <div class="value">
-                ${money(groupAvailable)}
-              </div>
-
-            </div>
-
-          </div>
-
+    <div class="welcome-card">
+        <div>
+            <div class="welcome-small">Welcome,</div>
+            <div class="welcome-name">🏢 Family Saving Group</div>
+            <div class="welcome-subtitle">Family Group Dashboard</div>
         </div>
+    </div>
+
+    <div class="cards">
+
+        <div class="card">
+            <div class="label">💰 समूह की कुल बचत</div>
+            <div class="value green" id="groupSaving">₹0</div>
+        </div>
+
+        <div class="card">
+            <div class="label">🏦 कुल Loan बाकी</div>
+            <div class="value red" id="groupLoan">₹0</div>
+        </div>
+
+        <div class="card">
+            <div class="label">💵 प्राप्त ब्याज</div>
+            <div class="value orange" id="groupInterest">₹0</div>
+        </div>
+
+        <div class="card">
+            <div class="label">💳 उपलब्ध राशि</div>
+            <div class="value blue" id="groupAvailable">₹0</div>
+        </div>
+
+    </div>
+
+</section>
 
         <!-- YEARLY FINANCIAL RECORD -->
         
@@ -3651,6 +3862,110 @@ function memberDashboard(button){
   window.scrollTo({top:0, behavior:"smooth"});
 }
 
+async function openFamilyGroupDashboard(button){
+
+  closeMemberSidebar();
+
+  document.querySelectorAll("main section")
+    .forEach(x => x.classList.add("hidden"));
+
+  let section = $("familyGroupDashboard");
+
+  if(!section){
+
+    section = document.createElement("section");
+    section.id = "familyGroupDashboard";
+
+    section.innerHTML = `
+      <div class="panel">
+        <h3>🏢 Family Saving Group की कुल स्थिति</h3>
+
+        <div class="cards">
+
+          <div class="card">
+            <div class="label">👨‍👩‍👧‍👦 कुल सदस्य</div>
+            <div class="value blue" id="fgdFamilies">0</div>
+          </div>
+
+          <div class="card">
+            <div class="label">💰 समूह की कुल बचत</div>
+            <div class="value green" id="fgdSavings">₹0</div>
+          </div>
+
+          <div class="card">
+            <div class="label">🏦 कुल Loan बाकी</div>
+            <div class="value red" id="fgdLoans">₹0</div>
+          </div>
+
+          <div class="card">
+            <div class="label">💵 प्राप्त ब्याज</div>
+            <div class="value orange" id="fgdInterest">₹0</div>
+          </div>
+
+          <div class="card">
+            <div class="label">💳 उपलब्ध राशि</div>
+            <div class="value" id="fgdAvailable">₹0</div>
+          </div>
+
+        </div>
+      </div>
+    `;
+
+    document.querySelector("main").appendChild(section);
+  }
+
+  section.classList.remove("hidden");
+
+  document.querySelectorAll("#memberSidebar .nav button")
+    .forEach(x => x.classList.remove("active"));
+
+  if(button){
+    button.classList.add("active");
+  }
+
+  $("title").textContent = "🏢 Family Group Dashboard";
+
+  try{
+
+    const user = await api("/api/me");
+
+    if(!user || !user.family_id){
+      throw new Error("Member session नहीं मिली");
+    }
+
+    const x = await api(
+      "/api/family/" + user.family_id + "/passbook"
+    );
+
+    $("fgdFamilies").textContent = "23";
+
+    $("fgdSavings").textContent =
+      money(x.group_savings);
+
+    $("fgdLoans").textContent =
+      money(x.group_loan);
+
+    $("fgdInterest").textContent =
+      money(x.group_interest);
+
+    $("fgdAvailable").textContent =
+      money(x.group_available);
+
+  }catch(e){
+
+    console.error(e);
+
+    alert(
+      "Family Group Dashboard data load नहीं हो सका: " +
+      e.message
+    );
+  }
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+}
 function closeMemberSidebar(){
   const sidebar = $("memberSidebar");
   if(sidebar && window.innerWidth <= 650){
