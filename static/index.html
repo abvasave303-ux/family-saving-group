@@ -3393,23 +3393,42 @@ function buildMemberYearlyLedger(x, selectedYear){
   );
 
 
-  return rows.map(r => `
-    <tr>
-      <td>${r.date}</td>
-      <td>${r.detail}</td>
-      <td class="${r.className}">
-        ${money(r.amount)}
-      </td>
-    </tr>
-  `).join("")
-  ||
-  `
-    <tr>
-      <td colspan="3" class="empty">
-        इस वित्तीय वर्ष में कोई एंट्री नहीं
-      </td>
-    </tr>
-  `;
+return rows.length
+  ? rows.map(r => `
+      <tr>
+        <td>${r.date}</td>
+        <td>${r.detail}</td>
+        <td class="${r.className}">
+          ${money(r.amount)}
+        </td>
+      </tr>
+    `).join("") +
+    (
+      showTotal
+        ? `
+          <tr>
+            <td colspan="2" style="
+              text-align:right;
+              font-weight:bold;
+            ">
+              Net Total
+            </td>
+            <td class="green" style="
+              font-weight:bold;
+            ">
+              ${money(getLedgerNetTotal(x))}
+            </td>
+          </tr>
+        `
+        : ""
+    )
+  : `
+      <tr>
+        <td colspan="3" class="empty">
+          इस वित्तीय वर्ष में कोई एंट्री नहीं
+        </td>
+      </tr>
+    `;
 }
 function getLedgerNetTotal(x){
 
