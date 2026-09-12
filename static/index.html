@@ -3418,6 +3418,28 @@ async function loadMemberPassbook(fid){
     const x =
       await api("/api/family/" + fid + "/passbook");
     window.currentMemberPassbookData = x;
+    const ledgerYearSelect =
+  document.getElementById("ledgerYearSelect");
+
+if(ledgerYearSelect){
+
+  const years = [
+    ...new Set(
+      (x.yearly_records || [])
+        .map(r => r.financial_year)
+        .filter(Boolean)
+    )
+  ];
+
+  ledgerYearSelect.innerHTML =
+    `<option value="">सभी वर्ष</option>` +
+    years.map(year => `
+      <option value="${year}">
+        ${year}
+      </option>
+    `).join("");
+
+}
 
     const family = x.family;
 
