@@ -4142,14 +4142,24 @@ function memberFinancialInfo(){
 }
 
 function memberLedger(){
-  closeMemberSidebar();
-  const target = $("memberLedger");
-  if(target){
-    target.style.display = "";
-    target.scrollIntoView({behavior:"smooth", block:"start"});
-  }
-}
 
+  closeMemberSidebar();
+
+  const target = $("memberFinancialInfo");
+
+  if(target){
+
+    target.style.display = "";
+
+    target.scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
+
+  }
+
+  $("title").textContent = "📋 Ledger";
+}
 /* ================= NAVIGATION ================= */
 
 function show(id, button){
