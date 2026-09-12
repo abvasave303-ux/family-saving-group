@@ -2525,6 +2525,166 @@ onMessage(messaging, (payload) => {
   </div>
 
 </section>
+<!-- ================= MEMBER LEDGER ================= -->
+
+<section id="memberLedgerSection" class="hidden">
+
+  <div class="panel">
+
+    <h3>📋 Member Ledger</h3>
+
+    <div class="body">
+
+      <!-- Financial Year Record -->
+      <div class="panel" style="margin-top:0;">
+
+        <h3>📅 वित्तीय वर्ष का रिकॉर्ड</h3>
+
+        <div style="
+          margin:10px 0;
+          display:flex;
+          align-items:center;
+          gap:10px;
+          flex-wrap:wrap;
+        ">
+
+          <label>
+            वित्तीय वर्ष चुनें:
+          </label>
+
+          <select
+            id="ledgerYearSelect"
+            onchange="filterLedgerYearlyRecord(this.value)"
+            style="
+              padding:8px 12px;
+              border:1px solid #d5deea;
+              border-radius:8px;
+              background:#fff;
+            "
+          >
+
+            <option value="">
+              सभी वर्ष
+            </option>
+
+          </select>
+
+        </div>
+
+        <div class="table">
+
+          <table id="ledgerYearlyRecordTable">
+
+            <tr>
+              <th>वित्तीय वर्ष</th>
+              <th>कुल बचत</th>
+              <th>ब्याज लाभ</th>
+              <th>निकासी</th>
+              <th>Net Saving</th>
+            </tr>
+
+            <tbody id="ledgerYearlyRecords">
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+
+      <!-- Selected Financial Year Details -->
+      <div class="panel" style="margin-top:15px;">
+
+        <h3>
+          📋 चयनित वित्तीय वर्ष का विवरण
+        </h3>
+
+        <div class="table">
+
+          <table>
+
+            <tr>
+              <th>तारीख</th>
+              <th>विवरण</th>
+              <th>राशि</th>
+            </tr>
+
+            <tbody id="ledgerYearlyDetailed">
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+
+      <!-- Savings / Payment Details -->
+      <div class="panel" style="margin-top:15px;">
+
+        <h3>
+          बचत / भुगतान विवरण
+        </h3>
+
+        <div class="table">
+
+          <table>
+
+            <tr>
+              <th>तारीख</th>
+              <th>विवरण</th>
+              <th>राशि</th>
+            </tr>
+
+            <tbody id="ledgerTransactions">
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+
+      <!-- Signature -->
+      <div style="
+        margin-top:25px;
+        display:flex;
+        justify-content:space-between;
+        font-size:12px;
+      ">
+
+        <div>
+          सदस्य हस्ताक्षर
+        </div>
+
+        <div>
+          Admin हस्ताक्षर
+        </div>
+
+      </div>
+
+
+      <!-- Print -->
+      <div style="
+        margin-top:15px;
+        text-align:right;
+      ">
+
+        <button
+          class="btn"
+          onclick="printMemberLedger()">
+          🖨️ Print Ledger
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
 
 
 <!-- ================= REPORTS ================= -->
