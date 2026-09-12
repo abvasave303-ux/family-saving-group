@@ -1388,9 +1388,16 @@ header .title{
       display:grid;
       grid-template-columns:1fr 1fr;
       gap:10px;
-      width:100%;
+      width:calc(100% - 20px);
       min-width:0;
   }
+  @media(min-width:651px){
+    #familyGroupDashboard .cards{
+        width:calc(100% - 20px);
+        margin-left:auto;
+        margin-right:auto;
+    }
+}
   
   #familyGroupDashboard .card{
       width:100%;
