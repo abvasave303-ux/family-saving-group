@@ -5655,8 +5655,7 @@ async function reverseInterestDistribution(id){
 
 /* ================= PASSBOOK ================= */
 
-function buildPassbookLedger(x){
-
+function buildPassbookLedger(x, showTotal = false){
   const rows = [];
 
   (x.loans || []).forEach(r => {
