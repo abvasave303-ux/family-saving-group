@@ -3966,6 +3966,75 @@ async function openNotifications(){
   }
 
 }
+/* ================= MEMBER LEDGER PRINT ================= */
+
+function printMemberLedger(){
+
+  const section = $("memberLedgerSection");
+
+  if(!section){
+    alert("Ledger तैयार नहीं है");
+    return;
+  }
+
+  const clone = section.cloneNode(true);
+
+  clone.querySelectorAll("button").forEach(btn => btn.remove());
+  clone.querySelectorAll(".hidden").forEach(el => el.classList.remove("hidden"));
+
+  const content = clone.innerHTML;
+  const w = window.open("", "_blank");
+
+  if(!w){
+    alert("Print window नहीं खुली। Browser में popup allow करें।");
+    return;
+  }
+
+  w.document.write(`
+    <!doctype html>
+    <html lang="hi">
+    <head>
+      <meta charset="utf-8">
+      <title>Family Saving Group Ledger</title>
+      <style>
+        body{
+          font-family:Arial,"Noto Sans Devanagari",sans-serif;
+          padding:20px;
+          color:#16233b;
+        }
+        h3{margin-top:10px;}
+        .panel{
+          border:1px solid #d5deea;
+          border-radius:10px;
+          padding:14px;
+          margin-bottom:15px;
+        }
+        .table{width:100%;overflow:visible;}
+        table{width:100%;border-collapse:collapse;}
+        th,td{padding:8px;border:1px solid #ddd;text-align:left;}
+        th{background:#f5f7fb;}
+        .green{color:#20864b;}
+        .red{color:#c73535;}
+        select{border:1px solid #ddd;padding:6px;}
+        @media print{
+          body{margin:10mm;}
+          select{border:0;appearance:none;}
+        }
+      </style>
+    </head>
+    <body>
+      <h2>Family Saving Group — Member Ledger</h2>
+      ${content}
+      <script>
+        window.onload=function(){window.print();};
+      <\/script>
+    </body>
+    </html>
+  `);
+
+  w.document.close();
+}
+
 /* ================= MEMBER PRINT ================= */
 
 function printMemberPassbook(){
@@ -4469,7 +4538,7 @@ function memberLedger(button){
     button.classList.add("active");
   }
 
-  // पहले सभी member sections hide करोो
+  // पहले सभी member sections hide करो
   document.querySelectorAll("main section")
     .forEach(x => x.classList.add("hidden"));
 
