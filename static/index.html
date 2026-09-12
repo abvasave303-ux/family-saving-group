@@ -5712,16 +5712,45 @@ function buildPassbookLedger(x, showTotal = false){
     return dateCompare !== 0 ? dateCompare : a.order - b.order;
   });
 
-  return rows.map(r => `
+const ledgerRows = rows.map(r =>
+  `
+  <tr>
+    <td>${r.date}</td>
+    <td>${r.detail}</td>
+    <td class="${r.className}">
+      ${money(r.amount)}
+    </td>
+  </tr>
+  `
+).join("");
+
+if (!ledgerRows) {
+  return `
     <tr>
-      <td>${r.date}</td>
-      <td>${r.detail}</td>
-      <td class="${r.className}">${money(r.amount)}</td>
+      <td colspan="3" class="empty">
+        इस वित्तीय वर्ष में कोई एंट्री नहीं
+      </td>
     </tr>
-  `).join("") ||
-  `<tr>
-    <td colspan="3" class="empty">कोई एंट्री नहीं</td>
-  </tr>`;
+  `;
+}
+
+if (showTotal) {
+  return ledgerRows + `
+    <tr style="
+      font-weight:bold;
+      border-top:2px solid #1976d2;
+    ">
+      <td colspan="2" style="text-align:right;">
+        Net Total
+      </td>
+      <td class="green">
+        ${money(getLedgerNetTotal(x))}
+      </td>
+    </tr>
+  `;
+}
+
+return ledgerRows;
 }
 
 function filterYearlyRecord(selectedYear){
