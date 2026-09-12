@@ -4501,6 +4501,25 @@ function memberLedger(){
 
   }
 
+  // Ledger data + Net Total दिखाएँ
+  const data = window.currentMemberPassbookData;
+
+  if(data){
+
+    // वित्तीय वर्ष की रिकॉर्ड table भरें
+    filterLedgerYearlyRecord("");
+
+    // सभी transactions + नीचे Net Total
+    const transactionBody =
+      document.getElementById("ledgerTransactions");
+
+    if(transactionBody){
+      transactionBody.innerHTML =
+        buildPassbookLedger(data, true);
+    }
+
+  }
+
   $("title").textContent = "📋 Ledger";
 }
 
