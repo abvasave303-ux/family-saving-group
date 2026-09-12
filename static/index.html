@@ -3202,83 +3202,42 @@ async function loadMemberPassbook(fid){
         </div>
 
 
-        <!-- GROUP SUMMARY -->
+<!-- ================= FAMILY GROUP DASHBOARD ================= -->
+<section id="familyGroupDashboard" class="hidden">
 
-        <div class="panel" style="margin-top:15px">
-
-          <h3>
-            🏦 Family Saving Group की कुल स्थिति
-          </h3>
-
-          <div class="cards">
-
-            <div class="card">
-
-              <div class="label">
-                👨‍👩‍👧‍👦 कुल सदस्य
-              </div>
-
-              <div class="value">
-                23
-              </div>
-
-            </div>
-
-
-            <div class="card">
-
-              <div class="label">
-                💰 समूह की कुल बचत
-              </div>
-
-              <div class="value green">
-                ${money(groupSavings)}
-              </div>
-
-            </div>
-
-
-            <div class="card">
-
-              <div class="label">
-                🏦 कुल Loan बाकी
-              </div>
-
-              <div class="value red">
-                ${money(groupLoan)}
-              </div>
-
-            </div>
-
-
-            <div class="card">
-
-              <div class="label">
-                💵 प्राप्त ब्याज
-              </div>
-
-              <div class="value">
-                ${money(groupInterest)}
-              </div>
-
-            </div>
-
-
-            <div class="card">
-
-              <div class="label">
-                💳 उपलब्ध राशि
-              </div>
-
-              <div class="value">
-                ${money(groupAvailable)}
-              </div>
-
-            </div>
-
-          </div>
-
+    <div class="welcome-card">
+        <div>
+            <div class="welcome-small">Welcome,</div>
+            <div class="welcome-name">🏢 Family Saving Group</div>
+            <div class="welcome-subtitle">Family Group Dashboard</div>
         </div>
+    </div>
+
+    <div class="cards">
+
+        <div class="card">
+            <div class="label">💰 समूह की कुल बचत</div>
+            <div class="value green" id="groupSaving">₹0</div>
+        </div>
+
+        <div class="card">
+            <div class="label">🏦 कुल Loan बाकी</div>
+            <div class="value red" id="groupLoan">₹0</div>
+        </div>
+
+        <div class="card">
+            <div class="label">💵 प्राप्त ब्याज</div>
+            <div class="value orange" id="groupInterest">₹0</div>
+        </div>
+
+        <div class="card">
+            <div class="label">💳 उपलब्ध राशि</div>
+            <div class="value blue" id="groupAvailable">₹0</div>
+        </div>
+
+    </div>
+
+</section>
 
         <!-- YEARLY FINANCIAL RECORD -->
         
