@@ -3224,13 +3224,11 @@ function filterLedgerYearlyRecord(selectedYear){
   }
 
 
-  detailBody.innerHTML = `
-    <tr>
-      <td colspan="3" class="empty">
-        वित्तीय वर्ष ${selectedYear} का विवरण
-      </td>
-    </tr>
-  `;
+  detailBody.innerHTML =
+    buildMemberYearlyLedger(
+      data,
+      selectedYear
+    );
 
 }
 
@@ -3402,26 +3400,7 @@ return rows.length
           ${money(r.amount)}
         </td>
       </tr>
-    `).join("") +
-    (
-      showTotal
-        ? `
-          <tr>
-            <td colspan="2" style="
-              text-align:right;
-              font-weight:bold;
-            ">
-              Net Total
-            </td>
-            <td class="green" style="
-              font-weight:bold;
-            ">
-              ${money(getLedgerNetTotal(x))}
-            </td>
-          </tr>
-        `
-        : ""
-    )
+    `).join("")
   : `
       <tr>
         <td colspan="3" class="empty">
