@@ -3807,7 +3807,19 @@ if(ledgerYearSelect){
         </div>
         <!-- MEMBER TRANSACTION HISTORY -->
 
-        <div id="memberLedger" class="panel" style="margin-top:15px;display:none;">
+        <div id="ledgerMemberNameCard" class="card" style="
+  margin-top:15px;
+  margin-bottom:15px;
+  padding:14px 18px;
+  border-left:4px solid #1976d2;
+">
+  <div class="label">सदस्य</div>
+  <div class="value" style="font-size:20px;font-weight:700;">
+    ${family?.name || "—"}
+  </div>
+</div>
+
+<div id="memberLedger" class="panel" style="margin-top:15px;display:none;">
 
           <h3>
             बचत / भुगतान विवरण
