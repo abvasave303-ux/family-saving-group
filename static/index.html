@@ -1080,6 +1080,145 @@ header .title{
     margin-left:0 !important;
   }
 }
+
+/* ================= MEMBER DASHBOARD UI ================= */
+.member-dashboard{
+  max-width:1180px;
+  margin:0 auto;
+}
+.member-welcome{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  padding:24px 28px;
+  margin-bottom:18px;
+  border-radius:18px;
+  background:linear-gradient(135deg,#e7f3ff,#f4f9ff);
+  border:1px solid #d7e8fa;
+  box-shadow:0 5px 20px rgba(22,35,59,.07);
+}
+.member-welcome h2{
+  margin:4px 0 4px;
+  color:#083b78;
+  font-size:30px;
+}
+.member-welcome .welcome-label{
+  color:#55708f;
+  font-size:15px;
+  font-weight:600;
+}
+.member-welcome .welcome-sub{
+  color:#1976d2;
+  font-size:14px;
+}
+.member-welcome-icon{
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#dceeff;
+  color:#1769c2;
+  font-size:58px;
+  flex-shrink:0;
+}
+.member-dashboard-cards{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:16px;
+  margin-bottom:18px;
+}
+.member-dashboard-card{
+  min-height:145px;
+  padding:22px 24px;
+  border-radius:16px;
+  background:#fff;
+  border:1px solid #e4eaf2;
+  box-shadow:0 5px 18px rgba(22,35,59,.07);
+  position:relative;
+  overflow:hidden;
+}
+.member-dashboard-card::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  width:100%;
+  height:4px;
+  background:#1976d2;
+}
+.member-dashboard-card.green::before{background:#20864b}
+.member-dashboard-card.red::before{background:#c73535}
+.member-dashboard-card.orange::before{background:#c66d14}
+.member-dashboard-card .member-card-label{
+  font-size:14px;
+  color:#68768b;
+  font-weight:700;
+  margin-bottom:12px;
+}
+.member-dashboard-card .member-card-value{
+  font-size:34px;
+  font-weight:800;
+  color:#16233b;
+}
+.member-dashboard-card.green .member-card-value{color:#20864b}
+.member-dashboard-card.red .member-card-value{color:#c73535}
+.member-dashboard-card.orange .member-card-value{color:#c66d14}
+.member-activity{
+  background:#fff;
+  border:1px solid #e4eaf2;
+  border-radius:16px;
+  box-shadow:0 5px 18px rgba(22,35,59,.07);
+  overflow:hidden;
+}
+.member-activity h3{
+  margin:0;
+  padding:16px 20px;
+  font-size:18px;
+  border-bottom:1px solid #edf0f4;
+}
+.member-activity-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  padding:15px 20px;
+  border-bottom:1px solid #edf0f4;
+}
+.member-activity-row:last-child{border-bottom:0}
+.member-activity-left{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
+}
+.member-activity-icon{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#eef7ff;
+  flex-shrink:0;
+  font-size:20px;
+}
+.member-activity-title{font-weight:700;color:#16233b}
+.member-activity-date{font-size:12px;color:#68768b;margin-top:3px}
+.member-activity-amount{font-size:18px;font-weight:800;white-space:nowrap}
+.member-activity-empty{padding:24px;color:#68768b;text-align:center}
+@media(max-width:650px){
+  .member-welcome{padding:18px;align-items:flex-start}
+  .member-welcome h2{font-size:23px}
+  .member-welcome-icon{width:70px;height:70px;font-size:38px}
+  .member-dashboard-cards{grid-template-columns:1fr 1fr;gap:10px}
+  .member-dashboard-card{min-height:125px;padding:17px 14px}
+  .member-dashboard-card .member-card-label{font-size:12px}
+  .member-dashboard-card .member-card-value{font-size:24px}
+  .member-activity-row{padding:13px 14px}
+  .member-activity-amount{font-size:16px}
+}
+
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
@@ -2411,7 +2550,11 @@ async function initMember(user){
     if(memberField) memberField.style.display = "none";
   }
 
+  window.currentMemberUser = user;
+
   await loadMemberPassbook(user.family_id);
+
+  memberDashboard();
 
   await updateNotificationCount();
   await setupFCM(user.family_id);
@@ -3371,22 +3514,136 @@ document.addEventListener("click", function(e){
 
 /* ================= MEMBER SIDEBAR ACTIONS ================= */
 
+function renderMemberDashboard(){
+
+  const section = $("dashboard");
+  const user = window.currentMemberUser;
+  const x = window.currentMemberPassbookData;
+
+  if(!section || !user || !x) return;
+
+  const savingsRows = x.savings || [];
+  const interestRows = x.interest_credits || [];
+  const debitRows = x.saving_debits || [];
+  const loanRows = x.loans || [];
+
+  const savingsTotal = savingsRows.reduce((a,r) => a + Number(r.amount || 0), 0);
+  const interestTotal = interestRows.reduce((a,r) => a + Number(r.amount || 0), 0);
+  const debitTotal = debitRows.reduce((a,r) => a + Number(r.amount || 0), 0);
+  const memberSaving = savingsTotal + interestTotal - debitTotal;
+  const loanTotal = loanRows.reduce((a,r) => a + Number(r.principal || 0), 0);
+
+  const now = new Date();
+  const fyStart = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1;
+  const fyEnd = String((fyStart + 1) % 100).padStart(2,"0");
+  const currentFY = fyStart + "-" + fyEnd;
+  const getFYLocal = (date) => {
+    if(!date) return "";
+    const d = new Date(date);
+    if(Number.isNaN(d.getTime())) return "";
+    const y = d.getMonth() >= 3 ? d.getFullYear() : d.getFullYear() - 1;
+    return y + "-" + String((y + 1) % 100).padStart(2,"0");
+  };
+  const yearlySavings = savingsRows
+    .filter(r => getFYLocal(r.date) === currentFY)
+    .reduce((a,r) => a + Number(r.amount || 0), 0);
+
+  const activities = [];
+  savingsRows.forEach(r => activities.push({
+    date:r.date || "",
+    title:"महीने की बचत जमा",
+    amount:Number(r.amount || 0),
+    icon:"💰",
+    cls:"green"
+  }));
+  interestRows.forEach(r => activities.push({
+    date:r.date || "",
+    title:"ब्याज प्राप्त",
+    amount:Number(r.amount || 0),
+    icon:"📈",
+    cls:"orange"
+  }));
+  debitRows.forEach(r => activities.push({
+    date:r.date || "",
+    title:"बचत निकासी",
+    amount:-Math.abs(Number(r.amount || 0)),
+    icon:"↘️",
+    cls:"red"
+  }));
+  activities.sort((a,b) => String(b.date).localeCompare(String(a.date)));
+
+  section.innerHTML = `
+    <div class="member-dashboard">
+      <div class="member-welcome">
+        <div>
+          <div class="welcome-label">Welcome,</div>
+          <h2>${user.name || "Member"}</h2>
+          <div class="welcome-sub">Member Dashboard</div>
+        </div>
+        <div class="member-welcome-icon">👤</div>
+      </div>
+
+      <div class="member-dashboard-cards">
+        <div class="member-dashboard-card green">
+          <div class="member-card-label">💰 मेरी कुल बचत</div>
+          <div class="member-card-value">${money(memberSaving)}</div>
+        </div>
+        <div class="member-dashboard-card red">
+          <div class="member-card-label">🏦 मेरा बाकी लोन</div>
+          <div class="member-card-value">${money(loanTotal)}</div>
+        </div>
+        <div class="member-dashboard-card">
+          <div class="member-card-label">📅 इस साल की बचत</div>
+          <div class="member-card-value">${money(yearlySavings)}</div>
+        </div>
+        <div class="member-dashboard-card orange">
+          <div class="member-card-label">📈 मुझे प्राप्त ब्याज</div>
+          <div class="member-card-value">${money(interestTotal)}</div>
+        </div>
+      </div>
+
+      <div class="member-activity">
+        <h3>🕒 हाल की गतिविधि</h3>
+        ${activities.slice(0,5).map(r => `
+          <div class="member-activity-row">
+            <div class="member-activity-left">
+              <div class="member-activity-icon">${r.icon}</div>
+              <div>
+                <div class="member-activity-title">${r.title}</div>
+                <div class="member-activity-date">${r.date || "—"}</div>
+              </div>
+            </div>
+            <div class="member-activity-amount ${r.cls}">${money(r.amount)}</div>
+          </div>
+        `).join("") || `<div class="member-activity-empty">अभी कोई गतिविधि नहीं है।</div>`}
+      </div>
+    </div>
+  `;
+}
+
 function memberDashboard(button){
   closeMemberSidebar();
 
   document.querySelectorAll("main section")
     .forEach(x => x.classList.add("hidden"));
 
-  const section = $("passbook");
+  const section = $("dashboard");
   if(!section) return;
 
   section.classList.remove("hidden");
+
+  if(currentLoginType === "member"){
+    renderMemberDashboard();
+  }
 
   document.querySelectorAll("#memberSidebar .nav button")
     .forEach(x => x.classList.remove("active"));
 
   if(button){
     button.classList.add("active");
+  }else{
+    const dashboardButton = document.querySelector('#memberSidebar .nav button[onclick*="memberDashboard"]');
+    if(dashboardButton) dashboardButton.classList.add("active");
   }
 
   $("title").textContent = "🏠 Dashboard";
