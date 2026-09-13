@@ -3722,11 +3722,7 @@ if(ledgerYearSelect){
             </thead>
 
             <tbody id="memberTransactionLedgerBody">
-                <tr>
-                    <td colspan="5" class="empty">
-                        कोई Transaction उपलब्ध नहीं
-                    </td>
-                </tr>
+                ${buildMemberTransactionLedger(x)}
             </tbody>
 
         </table>
@@ -5779,6 +5775,119 @@ if (showTotal) {
 }
 
 return ledgerRows;
+}
+
+function buildMemberTransactionLedger(x){
+  const rows = [];
+
+  (x.loans || []).forEach(r => {
+    rows.push({
+      date: r.date || "",
+      order: 1,
+      detail: "Loan लिया गया",
+      amount: -Math.abs(Number(r.original || r.principal || 0))
+    });
+  });
+
+  (x.savings || []).forEach(r => {
+    rows.push({
+      date: r.date || "",
+      order: 2,
+      detail: `मासिक बचत (${r.month || ""})`,
+      amount: Math.abs(Number(r.amount || 0))
+    });
+  });
+
+  (x.interest_credits || []).forEach(r => {
+    rows.push({
+      date: r.date || "",
+      order: 3,
+      detail: "ब्याज लाभ",
+      amount: Math.abs(Number(r.amount || 0))
+    });
+  });
+
+  (x.saving_debits || []).forEach(r => {
+    rows.push({
+      date: r.date || "",
+      order: 4,
+      detail: `Debit / निकासी${r.reason ? " (" + r.reason + ")" : ""}`,
+      amount: -Math.abs(Number(r.amount || 0))
+    });
+  });
+
+  (x.payments || []).forEach(r => {
+    rows.push({
+      date: r.date || "",
+      order: 5,
+      detail: "Loan Payment",
+      amount: Math.abs(Number(r.amount || 0))
+    });
+  });
+
+  if(!rows.length){
+    return `
+      <tr>
+        <td colspan="5" class="empty">
+          कोई Transaction उपलब्ध नहीं
+        </td>
+      </tr>
+    `;
+  }
+
+  // पहले पुराने से नए क्रम में balance निकालें
+  rows.sort((a,b) => {
+    const dateCompare = String(a.date).localeCompare(String(b.date));
+    return dateCompare !== 0 ? dateCompare : a.order - b.order;
+  });
+
+  let balance = 0;
+
+  rows.forEach(r => {
+    balance += r.amount;
+    r.balance = balance;
+  });
+
+  const total = balance;
+
+  // Passbook में नया transaction ऊपर दिखे
+  rows.reverse();
+
+  const ledgerRows = rows.map(r => {
+    const isDeposit = r.amount >= 0;
+    const amount = Math.abs(r.amount);
+    const balanceClass = r.balance < 0 ? "red" : "green";
+
+    return `
+      <tr>
+        <td>${r.date}</td>
+        <td>${r.detail}</td>
+        <td class="green">
+          ${isDeposit ? money(amount) : "—"}
+        </td>
+        <td class="red">
+          ${!isDeposit ? money(amount) : "—"}
+        </td>
+        <td class="${balanceClass}">
+          ${money(r.balance)}
+        </td>
+      </tr>
+    `;
+  }).join("");
+
+  return ledgerRows + `
+    <tr style="
+      font-weight:bold;
+      border-top:2px solid #1976d2;
+    ">
+      <td colspan="4" style="text-align:right;">
+        Net Total
+      </td>
+      <td class="${total < 0 ? "red" : "green"}">
+        ${money(total)}
+      </td>
+    </tr>
+  `;
 }
 
 function filterYearlyRecord(selectedYear){
