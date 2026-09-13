@@ -4626,9 +4626,10 @@ function memberLedger(button){
 
     target.classList.remove("hidden");
 
-    target.scrollIntoView({
-      behavior:"smooth",
-      block:"start"
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "smooth"
     });
 
   }
