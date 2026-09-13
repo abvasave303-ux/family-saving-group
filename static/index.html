@@ -1676,6 +1676,52 @@ onMessage(messaging, (payload) => {
     border-color: #3b82f6 !important;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18) !important;
 }
+/* ===== Ledger Brand Header ===== */
+
+.ledger-brand-header{
+  text-align:center;
+  padding:16px 10px 14px;
+  margin:12px 0 15px;
+  background:#f7fbff;
+  border:1px solid #dbe7f3;
+  border-radius:10px;
+}
+
+.ledger-brand-logo{
+  width:78px;
+  height:78px;
+  object-fit:contain;
+  display:block;
+  margin:0 auto 5px;
+}
+
+.ledger-brand-title{
+  font-size:24px;
+  font-weight:700;
+  color:#0b3d82;
+  line-height:1.2;
+}
+
+.ledger-brand-subtitle{
+  margin-top:3px;
+  font-size:14px;
+  color:#334155;
+}
+
+@media(max-width:650px){
+  .ledger-brand-logo{
+    width:68px;
+    height:68px;
+  }
+
+  .ledger-brand-title{
+    font-size:21px;
+  }
+
+  .ledger-brand-subtitle{
+    font-size:13px;
+  }
+}
 </style>
 </head>
 
@@ -2579,6 +2625,19 @@ onMessage(messaging, (payload) => {
   <div class="panel">
 
     <h3>📋 Member Ledger</h3>
+  <div class="ledger-brand-header">
+  <img src="/static/logo.png"
+       alt="Family Saving Group"
+       class="ledger-brand-logo">
+
+  <div class="ledger-brand-title">
+    Family Saving Group
+  </div>
+
+  <div class="ledger-brand-subtitle">
+    एक परिवार • एक बचत • उज्ज्वल भविष्य
+  </div>
+</div>
 
     <div id="ledgerMemberNameCard" style="
       margin:12px 0 15px;
