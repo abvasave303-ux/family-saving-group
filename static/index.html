@@ -5936,10 +5936,12 @@ function buildMemberTransactionLedger(x){
         <td>${r.date}</td>
         <td>${r.detail}</td>
         <td class="green">
-          ${isExcluded && r.displayType === "deposit" ? money(displayAmount) : (!isExcluded && isDeposit ? money(amount) : "—")}
+          ${!isExcluded && isDeposit ? money(amount) : "—"}
         </td>
         <td class="red">
-          ${isExcluded && r.displayType === "withdrawal" ? money(displayAmount) : (!isExcluded && !isDeposit ? money(amount) : "—")}
+          ${isExcluded && r.displayType === "withdrawal"
+            ? money(displayAmount)
+            : (!isExcluded && !isDeposit ? money(amount) : "—")}
         </td>
         <td class="${balanceClass}">
           ${money(r.balance)}
