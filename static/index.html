@@ -3533,12 +3533,9 @@ function getLedgerNetTotal(x){
 
     let total = 0;
 
-    // Loan
-    (x.loans || []).forEach(r => {
-        total -= Math.abs(
-            Number(r.original || r.principal || 0)
-        );
-    });
+    // केवल बचत खाते की entries Net Total में आएँगी।
+    // Loan लिया गया, Loan Repayment और Loan Interest
+    // savings balance का हिस्सा नहीं हैं।
 
     // Savings
     (x.savings || []).forEach(r => {
@@ -3555,13 +3552,9 @@ function getLedgerNetTotal(x){
         total -= Number(r.amount || 0);
     });
 
-    // Loan Payment
-    (x.payments || []).forEach(r => {
-        total += Number(r.amount || 0);
-    });
-
     return total;
 }
+
 async function loadMemberPassbook(fid){
     window.scrollTo({
         top: 0,
@@ -5780,49 +5773,101 @@ return ledgerRows;
 function buildMemberTransactionLedger(x){
   const rows = [];
 
+  // Loan entry केवल विवरण में दिखाई जाएगी।
+  // इसका savings balance / Net Total पर कोई असर नहीं होगा।
   (x.loans || []).forEach(r => {
     rows.push({
       date: r.date || "",
       order: 1,
       detail: "Loan लिया गया",
-      amount: -Math.abs(Number(r.original || r.principal || 0))
+      amount: 0,
+      affectsBalance: false,
+      excluded: true
     });
   });
 
+  // Monthly Savings = savings balance में जमा
   (x.savings || []).forEach(r => {
     rows.push({
       date: r.date || "",
       order: 2,
       detail: `मासिक बचत (${r.month || ""})`,
-      amount: Math.abs(Number(r.amount || 0))
+      amount: Math.abs(Number(r.amount || 0)),
+      affectsBalance: true
     });
   });
 
+  // Interest Credit = savings balance में जमा
   (x.interest_credits || []).forEach(r => {
     rows.push({
       date: r.date || "",
       order: 3,
       detail: "ब्याज लाभ",
-      amount: Math.abs(Number(r.amount || 0))
+      amount: Math.abs(Number(r.amount || 0)),
+      affectsBalance: true
     });
   });
 
+  // Saving Debit = savings balance से निकासी
   (x.saving_debits || []).forEach(r => {
     rows.push({
       date: r.date || "",
       order: 4,
       detail: `Debit / निकासी${r.reason ? " (" + r.reason + ")" : ""}`,
-      amount: -Math.abs(Number(r.amount || 0))
+      amount: -Math.abs(Number(r.amount || 0)),
+      affectsBalance: true
     });
   });
 
+  // Loan repayment और उसका interest केवल transaction list में रहेंगे।
+  // दोनों savings balance / Net Total में शामिल नहीं होंगे।
   (x.payments || []).forEach(r => {
-    rows.push({
-      date: r.date || "",
-      order: 5,
-      detail: "Loan Payment",
-      amount: Math.abs(Number(r.amount || 0))
-    });
+    const principal = Math.abs(Number(r.principal || 0));
+    const interest = Math.abs(Number(r.interest || 0));
+    const totalAmount = Math.abs(Number(r.amount || 0));
+
+    // Principal repayment अलग entry
+    if(principal > 0){
+      rows.push({
+        date: r.date || "",
+        order: 5,
+        detail: "Loan Repayment",
+        amount: 0,
+        displayAmount: principal,
+        displayType: "deposit",
+        affectsBalance: false,
+        excluded: true
+      });
+    }
+
+    // Loan interest paid अलग entry
+    if(interest > 0){
+      rows.push({
+        date: r.date || "",
+        order: 6,
+        detail: "Loan Interest Paid",
+        amount: 0,
+        displayAmount: interest,
+        displayType: "deposit",
+        affectsBalance: false,
+        excluded: true
+      });
+    }
+
+    // पुराने/अलग payment data में principal/interest fields न हों
+    // तो पूरी payment राशि सिर्फ विवरण में दिखाएँ।
+    if(principal === 0 && interest === 0 && totalAmount > 0){
+      rows.push({
+        date: r.date || "",
+        order: 5,
+        detail: "Loan Repayment",
+        amount: 0,
+        displayAmount: totalAmount,
+        displayType: "deposit",
+        affectsBalance: false,
+        excluded: true
+      });
+    }
   });
 
   if(!rows.length){
@@ -5835,7 +5880,7 @@ function buildMemberTransactionLedger(x){
     `;
   }
 
-  // पहले पुराने से नए क्रम में balance निकालें
+  // पहले पुराने से नए क्रम में balance निकालें।
   rows.sort((a,b) => {
     const dateCompare = String(a.date).localeCompare(String(b.date));
     return dateCompare !== 0 ? dateCompare : a.order - b.order;
@@ -5844,18 +5889,24 @@ function buildMemberTransactionLedger(x){
   let balance = 0;
 
   rows.forEach(r => {
-    balance += r.amount;
+    if(r.affectsBalance){
+      balance += r.amount;
+    }
+    // Loan entries में balance वही रहेगा।
     r.balance = balance;
   });
-
-  const total = balance;
 
   // Passbook में नया transaction ऊपर दिखे
   rows.reverse();
 
   const ledgerRows = rows.map(r => {
+    const isExcluded = r.excluded === true;
     const isDeposit = r.amount >= 0;
     const amount = Math.abs(r.amount);
+    const displayAmount =
+      r.displayAmount !== undefined
+        ? r.displayAmount
+        : amount;
     const balanceClass = r.balance < 0 ? "red" : "green";
 
     return `
@@ -5863,10 +5914,10 @@ function buildMemberTransactionLedger(x){
         <td>${r.date}</td>
         <td>${r.detail}</td>
         <td class="green">
-          ${isDeposit ? money(amount) : "—"}
+          ${isExcluded ? "—" : (isDeposit ? money(amount) : "—")}
         </td>
         <td class="red">
-          ${!isDeposit ? money(amount) : "—"}
+          ${isExcluded ? "—" : (!isDeposit ? money(amount) : "—")}
         </td>
         <td class="${balanceClass}">
           ${money(r.balance)}
@@ -5874,6 +5925,10 @@ function buildMemberTransactionLedger(x){
       </tr>
     `;
   }).join("");
+
+  // Net Total केवल savings + interest credit - saving debit है।
+  // Loan लिया/चुकाया/interest paid इसमें शामिल नहीं है।
+  const total = getLedgerNetTotal(x);
 
   return ledgerRows + `
     <tr style="
