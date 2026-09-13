@@ -4133,33 +4133,83 @@ function printMemberLedger(){
       <meta charset="utf-8">
       <title>Family Saving Group Ledger</title>
       <style>
+        *{box-sizing:border-box;}
         body{
           font-family:Arial,"Noto Sans Devanagari",sans-serif;
-          padding:20px;
+          padding:10px;
           color:#16233b;
+          margin:0;
         }
-        h3{margin-top:10px;}
+        h2{
+          font-size:16px;
+          margin:0 0 8px;
+          color:#0b3d82;
+        }
+        h3{margin-top:8px;}
         .panel{
           border:1px solid #d5deea;
-          border-radius:10px;
-          padding:14px;
-          margin-bottom:15px;
+          border-radius:8px;
+          padding:10px;
+          margin-bottom:10px;
         }
         .table{width:100%;overflow:visible;}
         table{width:100%;border-collapse:collapse;}
-        th,td{padding:8px;border:1px solid #ddd;text-align:left;}
+        th,td{padding:6px;border:1px solid #ddd;text-align:left;font-size:11px;}
         th{background:#f5f7fb;}
         .green{color:#20864b;}
         .red{color:#c73535;}
         select{border:1px solid #ddd;padding:6px;}
+
+        /* ===== Professional Ledger Print Header ===== */
+        .ledger-brand-header{
+          text-align:center !important;
+          padding:6px 8px 7px !important;
+          margin:0 0 10px !important;
+          background:#f7fbff !important;
+          border:1px solid #dbe7f3 !important;
+          border-radius:8px !important;
+        }
+        .ledger-brand-logo{
+          width:64px !important;
+          height:64px !important;
+          max-width:64px !important;
+          max-height:64px !important;
+          min-width:0 !important;
+          min-height:0 !important;
+          object-fit:contain !important;
+          display:block !important;
+          margin:0 auto 3px !important;
+        }
+        .ledger-brand-title{
+          font-size:17px !important;
+          font-weight:700 !important;
+          line-height:1.15 !important;
+          color:#0b3d82 !important;
+        }
+        .ledger-brand-subtitle{
+          margin-top:2px !important;
+          font-size:9px !important;
+          line-height:1.2 !important;
+          color:#334155 !important;
+        }
+
+        @page{
+          size:A4 portrait;
+          margin:10mm;
+        }
         @media print{
-          body{margin:10mm;}
+          body{margin:0;}
           select{border:0;appearance:none;}
+          .ledger-brand-logo{
+            width:64px !important;
+            height:64px !important;
+            max-width:64px !important;
+            max-height:64px !important;
+          }
         }
       </style>
     </head>
     <body>
-      <h2>Family Saving Group — Member Ledger</h2>
       ${content}
       <script>
         window.onload=function(){window.print();};
