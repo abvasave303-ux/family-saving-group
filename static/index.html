@@ -5680,7 +5680,17 @@ function buildPassbookLedger(x, showTotal = false){
       date: r.date || "",
       order: 1,
       detail: "Loan लिया गया",
-      amount: -Math.abs(Number(r.original || r.principal || 0)),
+      amount: 0,
+      displayAmount: Math.abs(Number(
+        r.original ??
+        r.loan_amount ??
+        r.principal ??
+        r.amount ??
+        0
+      )),
+      displayType: "withdrawal",
+      affectsBalance: false,
+      excluded: true,
       className: "red"
     });
   });
@@ -5776,12 +5786,22 @@ function buildMemberTransactionLedger(x){
   // Loan entry केवल विवरण में दिखाई जाएगी।
   // इसका savings balance / Net Total पर कोई असर नहीं होगा।
   (x.loans || []).forEach(r => {
+    // Loan की पूरी ली गई राशि ledger में दिखाएँ।
+    // लेकिन balance / Net Total में इसे शामिल न करें।
+    const loanAmount = Math.abs(Number(
+      r.original ??
+      r.loan_amount ??
+      r.principal ??
+      r.amount ??
+      0
+    ));
+
     rows.push({
       date: r.date || "",
       order: 1,
       detail: "Loan लिया गया",
       amount: 0,
-      displayAmount: Math.abs(Number(r.original || r.principal || 0)),
+      displayAmount: loanAmount,
       displayType: "deposit",
       affectsBalance: false,
       excluded: true
@@ -5836,7 +5856,7 @@ function buildMemberTransactionLedger(x){
         detail: "Loan Repayment",
         amount: 0,
         displayAmount: principal,
-        displayType: "deposit",
+        displayType: "withdrawal",
         affectsBalance: false,
         excluded: true
       });
@@ -5850,7 +5870,7 @@ function buildMemberTransactionLedger(x){
         detail: "Loan Interest Paid",
         amount: 0,
         displayAmount: interest,
-        displayType: "deposit",
+        displayType: "withdrawal",
         affectsBalance: false,
         excluded: true
       });
@@ -5865,7 +5885,7 @@ function buildMemberTransactionLedger(x){
         detail: "Loan Repayment",
         amount: 0,
         displayAmount: totalAmount,
-        displayType: "deposit",
+        displayType: "withdrawal",
         affectsBalance: false,
         excluded: true
       });
@@ -5916,10 +5936,10 @@ function buildMemberTransactionLedger(x){
         <td>${r.date}</td>
         <td>${r.detail}</td>
         <td class="green">
-          ${isExcluded ? (r.displayType === "deposit" ? money(displayAmount) : "—") : (isDeposit ? money(amount) : "—")}
+          ${isExcluded && r.displayType === "deposit" ? money(displayAmount) : (!isExcluded && isDeposit ? money(amount) : "—")}
         </td>
         <td class="red">
-          ${isExcluded ? (r.displayType === "withdrawal" ? money(displayAmount) : "—") : (!isDeposit ? money(amount) : "—")}
+          ${isExcluded && r.displayType === "withdrawal" ? money(displayAmount) : (!isExcluded && !isDeposit ? money(amount) : "—")}
         </td>
         <td class="${balanceClass}">
           ${money(r.balance)}
