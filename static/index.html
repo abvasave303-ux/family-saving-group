@@ -3673,61 +3673,32 @@ if(ledgerYearSelect){
         </div>
 
 
-        <!-- MEMBER INFORMATION -->
-
-        <div class="cards" style="margin-top:15px">
-
-          <div class="card">
-
-            <div class="label">
-              सदस्य
+        <!-- MEMBER NAME -->
+        <div class="member-name-card" style="
+            margin-top:15px;
+            padding:18px 15px;
+            text-align:center;
+            background:#f7fbff;
+            border:1px solid #dbe7f3;
+            border-radius:12px;
+        ">
+        
+            <div style="
+                font-size:13px;
+                color:#64748b;
+                margin-bottom:5px;
+            ">
+                सदस्य
             </div>
-
-            <div class="value">
-              ${family?.name || "—"}
+        
+            <div style="
+                font-size:24px;
+                font-weight:700;
+                color:#083b78;
+            ">
+                ${family?.name || "—"}
             </div>
-
-          </div>
-
-
-          <div class="card">
-
-            <div class="label">
-              मोबाइल
-            </div>
-
-            <div class="value">
-              ${family?.mobile || "—"}
-            </div>
-
-          </div>
-
-
-          <div class="card">
-
-            <div class="label">
-              मेरी कुल बचत
-            </div>
-
-            <div class="value green">
-              ${money(finalSaving)}
-            </div>
-
-          </div>
-
-
-          <div class="card">
-
-            <div class="label">
-              मेरा लोन बाकी
-            </div>
-
-            <div class="value red">
-              ${money(loan)}
-            </div>
-
-          </div>
-
+        
         </div>
 
 
