@@ -5781,6 +5781,8 @@ function buildMemberTransactionLedger(x){
       order: 1,
       detail: "Loan लिया गया",
       amount: 0,
+      displayAmount: Math.abs(Number(r.original || r.principal || 0)),
+      displayType: "deposit",
       affectsBalance: false,
       excluded: true
     });
@@ -5914,10 +5916,10 @@ function buildMemberTransactionLedger(x){
         <td>${r.date}</td>
         <td>${r.detail}</td>
         <td class="green">
-          ${isExcluded ? "—" : (isDeposit ? money(amount) : "—")}
+          ${isExcluded ? (r.displayType === "deposit" ? money(displayAmount) : "—") : (isDeposit ? money(amount) : "—")}
         </td>
         <td class="red">
-          ${isExcluded ? "—" : (!isDeposit ? money(amount) : "—")}
+          ${isExcluded ? (r.displayType === "withdrawal" ? money(displayAmount) : "—") : (!isDeposit ? money(amount) : "—")}
         </td>
         <td class="${balanceClass}">
           ${money(r.balance)}
