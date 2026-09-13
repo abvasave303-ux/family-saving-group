@@ -3701,170 +3701,43 @@ if(ledgerYearSelect){
         
         </div>
 
+<!-- MEMBER TRANSACTION LEDGER -->
 
+<div class="panel" style="margin-top:15px;">
 
-        <!-- YEARLY FINANCIAL RECORD -->
-        
-        <div id="memberFinancialInfo" class="panel" style="margin-top:15px;display:none;">
-        
-          <h3>
-            📅 वित्तीय वर्ष का रिकॉर्ड
-          </h3>
-        
-          <div style="
-            margin:10px 0;
-            display:flex;
-            align-items:center;
-            gap:10px;
-            flex-wrap:wrap;
-          ">
-        
-            <label>
-              वित्तीय वर्ष चुनें:
-            </label>
-        
-            <select
-              id="memberYearSelect"
-              onchange="filterMemberYearlyRecord(this.value)"
-              style="
-                padding:4px 22px 4px 2px !important;
-                border:none !important;
-                border-radius:0 !important;
-                background:transparent !important;
-                box-shadow:none !important;
-                outline:none !important;
-                font-size:14px;
-                color:#17233c;
-                cursor:pointer;
-                appearance:auto;
-              "
-            >
-        
-              <option value="">
-                सभी वर्ष
-              </option>
-        
-              ${
-                [...new Set(
-                  (x.yearly_records || [])
-                    .map(r => r.financial_year)
-                )].map(year => `
-                  <option value="${year}">
-                    ${year}
-                  </option>
-                `).join("")
-              }
-        
-            </select>
-        
-          </div>
-        
-        
-          <div class="table">
-        
-            <table id="memberYearlyRecordTable">
-        
-              <tr>
-                <th>वित्तीय वर्ष</th>
-                <th>कुल बचत</th>
-                <th>ब्याज लाभ</th>
-                <th>निकासी</th>
-                <th>Net Saving</th>
-              </tr>
-        
-              ${
-                (x.yearly_records || []).map(r => `
-                  <tr>
-                    <td>${r.financial_year}</td>
-                    <td class="green">
-                      ${money(r.saving)}
-                    </td>
-                    <td class="green">
-                      ${money(r.interest)}
-                    </td>
-                    <td class="red">
-                      ${money(r.debit)}
-                    </td>
-                    <td class="green">
-                      ${money(r.net_saving)}
-                    </td>
-                  </tr>
-                `).join("")
-                ||
-                `
-                  <tr>
+    <h3>📒 Transaction Ledger</h3>
+
+    <div class="table" style="overflow-x:auto;">
+
+        <table id="memberTransactionLedger">
+
+            <thead>
+                <tr>
+                    <th>तारीख</th>
+                    <th>विवरण</th>
+                    <th>जमा</th>
+                    <th>निकासी</th>
+                    <th>शेष</th>
+                </tr>
+            </thead>
+
+            <tbody id="memberTransactionLedgerBody">
+                <tr>
                     <td colspan="5" class="empty">
-                      कोई वार्षिक रिकॉर्ड नहीं
+                        कोई Transaction उपलब्ध नहीं
                     </td>
-                  </tr>
-                `
-              }
-        
-            </table>
-        
-          </div>
-        
-        </div>
-        <!-- SELECTED YEAR DETAIL -->
+                </tr>
+            </tbody>
 
-        <div
-          id="memberYearlyDetailPanel"
-          class="panel"
-          style="margin-top:15px;display:none;"
-        >
-        
-          <h3>
-            📋 चयनित वित्तीय वर्ष का विवरण
-          </h3>
-        
-          <div class="table">
-        
-            <table>
-        
-              <tr>
-                <th>तारीख</th>
-                <th>विवरण</th>
-                <th>राशि</th>
-              </tr>
-        
-              <tbody id="memberYearlyDetailedLedger">
-              </tbody>
-        
-            </table>
-        
-          </div>
-        
-        </div>
-        <!-- MEMBER TRANSACTION HISTORY -->
+        </table>
 
-        <div id="memberLedger" class="panel" style="margin-top:15px;display:none;">
+    </div>
 
-          <h3>
-            बचत / भुगतान विवरण
-          </h3>
+</div>
 
-          <div class="table">
-
-            <table>
-
-              <tr>
-
-                <th>तारीख</th>
-
-                <th>विवरण</th>
-
-                <th>राशि</th>
-
-              </tr>
+<!-- END MEMBER TRANSACTION LEDGER -->
 
 
-              ${buildPassbookLedger(x, true)}
-
-            </table>
-
-          </div>
-
-        </div>
 
       </div>
 
