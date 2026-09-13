@@ -6587,7 +6587,16 @@ function printPassbook(){
         }
         
         @media print{
-            #memberLedgerSection .ledger-brand-logo{
+            body{
+                margin:0 !important;
+            }
+        
+            .ledger-brand-header{
+                text-align:center !important;
+                display:block !important;
+            }
+        
+            .ledger-brand-header .ledger-brand-logo{
                 width:90px !important;
                 height:90px !important;
                 max-width:90px !important;
@@ -6596,7 +6605,15 @@ function printPassbook(){
                 min-height:90px !important;
                 object-fit:contain !important;
                 display:block !important;
-                margin:8px auto !important;
+                margin:5px auto !important;
+            }
+        
+            .ledger-brand-title{
+                font-size:16px !important;
+            }
+        
+            .ledger-brand-subtitle{
+                font-size:10px !important;
             }
         }
       </style>
