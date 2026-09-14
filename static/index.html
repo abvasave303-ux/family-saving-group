@@ -1692,8 +1692,20 @@ header .title{
 
 /* Hover must NOT move or enlarge the cards; only the shadow changes. */
 #familyGroupDashboard .cards > .card:hover{
-  transform:none !important;
-  box-shadow:0 8px 22px rgba(22,35,59,0.14);
+  /* Fast, visible hover effect without changing the card's layout position. */
+  transform:translateY(-4px) scale(1.012) !important;
+  box-shadow:0 10px 24px rgba(22,35,59,0.16);
+  transition:transform 0.16s ease, box-shadow 0.16s ease;
+  z-index:3;
+}
+
+/* Keep the animation visually inside the dashboard area. */
+#familyGroupDashboard .cards{
+  overflow:visible;
+}
+#familyGroupDashboard .cards > .card{
+  overflow:hidden;
+  will-change:transform;
 }
 
 #familyGroupDashboard .cards > .card:hover .value,
