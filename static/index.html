@@ -1159,49 +1159,39 @@ header .title{
 }
 
 
-/* ===== DASHBOARD CARDS ===== */
+/* ===== MEMBER DASHBOARD CARDS ===== */
 
 .member-dashboard-cards{
     display:grid;
     grid-template-columns:repeat(2,1fr);
-    gap:16px;
+    gap:12px;
     margin-bottom:18px;
 }
 
 .member-dashboard-card{
-    min-height:145px;
-    padding:22px 24px;
+    min-height:125px;
+    padding:18px 16px;
     border-radius:16px;
-    background:#fff;
     border:1px solid #e4eaf2;
-    box-shadow:0 5px 18px rgba(22,35,59,.07);
+    box-shadow:0 5px 18px rgba(22,35,59,.06);
     position:relative;
     overflow:hidden;
-    transition:
-        transform .2s ease,
-        box-shadow .2s ease;
+    transition:transform .2s ease, box-shadow .2s ease;
 }
 
-.member-dashboard-card:hover{
-    transform:translateY(-2px);
-    box-shadow:0 8px 22px rgba(22,35,59,.10);
+/* ===== GREEN - कुल बचत ===== */
+
+.member-dashboard-card.green{
+    background:#eef9f2;
 }
 
-/* Top color line */
-
-.member-dashboard-card::before{
+.member-dashboard-card.green::before{
     content:"";
     position:absolute;
     left:0;
     top:0;
     width:100%;
     height:4px;
-    background:#1976d2;
-}
-
-/* Green Card */
-
-.member-dashboard-card.green::before{
     background:#20864b;
 }
 
@@ -1209,34 +1199,67 @@ header .title{
     color:#20864b;
 }
 
-/* Red Card */
+
+/* ===== RED - बाकी लोन ===== */
+
+.member-dashboard-card.red{
+    background:#fff0f0;
+}
 
 .member-dashboard-card.red::before{
-    background:#c73535;
+    content:"";
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:4px;
+    background:#e23b3b;
 }
 
 .member-dashboard-card.red .member-card-value{
-    color:#c73535;
+    color:#e23b3b;
 }
 
-/* Blue Card */
 
-.member-dashboard-card.blue::before{
-    background:#1976d2;
+/* ===== ORANGE - प्राप्त ब्याज ===== */
+
+.member-dashboard-card.orange{
+    background:#fff8ed;
 }
-
-.member-dashboard-card.blue .member-card-value{
-    color:#16233b;
-}
-
-/* Orange Card */
 
 .member-dashboard-card.orange::before{
-    background:#c66d14;
+    content:"";
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:4px;
+    background:#e58200;
 }
 
 .member-dashboard-card.orange .member-card-value{
-    color:#c66d14;
+    color:#d87500;
+}
+
+
+/* ===== BLUE / DARK - इस साल की बचत ===== */
+
+.member-dashboard-card.blue{
+    background:#f1f3f8;
+}
+
+.member-dashboard-card.blue::before{
+    content:"";
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:4px;
+    background:#17233c;
+}
+
+.member-dashboard-card.blue .member-card-value{
+    color:#17233c;
 }
 
 
@@ -1245,86 +1268,21 @@ header .title{
 .member-dashboard-card .member-card-label{
     font-size:14px;
     color:#68768b;
-    font-weight:700;
-    margin-bottom:12px;
+    font-weight:600;
+    margin-bottom:10px;
 }
 
 .member-dashboard-card .member-card-value{
-    font-size:34px;
+    font-size:25px;
     font-weight:800;
-    color:#16233b;
 }
 
 
-/* ===== ACTIVITY SECTION ===== */
+/* ===== HOVER ===== */
 
-.member-activity{
-    background:#fff;
-    border:1px solid #e4eaf2;
-    border-radius:16px;
-    box-shadow:0 5px 18px rgba(22,35,59,.07);
-    overflow:hidden;
-}
-
-.member-activity h3{
-    margin:0;
-    padding:16px 20px;
-    font-size:18px;
-    border-bottom:1px solid #edf0f4;
-}
-
-.member-activity-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:15px;
-    padding:15px 20px;
-    border-bottom:1px solid #edf0f4;
-}
-
-.member-activity-row:last-child{
-    border-bottom:0;
-}
-
-.member-activity-left{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    min-width:0;
-}
-
-.member-activity-icon{
-    width:42px;
-    height:42px;
-    border-radius:50%;
-    display:grid;
-    place-items:center;
-    background:#eef7ff;
-    flex-shrink:0;
-    font-size:20px;
-}
-
-.member-activity-title{
-    font-weight:700;
-    color:#16233b;
-}
-
-.member-activity-date{
-    font-size:12px;
-    color:#68768b;
-    margin-top:3px;
-}
-
-.member-activity-amount{
-    font-size:18px;
-    font-weight:800;
-    white-space:nowrap;
-}
-
-.member-activity-empty{
-    padding:24px;
-    color:#68768b;
-    text-align:center;
+.member-dashboard-card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 22px rgba(22,35,59,.09);
 }
 
 
@@ -1332,29 +1290,14 @@ header .title{
 
 @media(max-width:650px){
 
-    .member-welcome{
-        padding:18px;
-        align-items:flex-start;
-    }
-
-    .member-welcome h2{
-        font-size:23px;
-    }
-
-    .member-welcome-icon{
-        width:70px;
-        height:70px;
-        font-size:38px;
-    }
-
     .member-dashboard-cards{
         grid-template-columns:1fr 1fr;
         gap:10px;
     }
 
     .member-dashboard-card{
-        min-height:125px;
-        padding:17px 14px;
+        min-height:120px;
+        padding:16px 13px;
     }
 
     .member-dashboard-card .member-card-label{
@@ -1363,14 +1306,6 @@ header .title{
 
     .member-dashboard-card .member-card-value{
         font-size:24px;
-    }
-
-    .member-activity-row{
-        padding:13px 14px;
-    }
-
-    .member-activity-amount{
-        font-size:16px;
     }
 }
 /* ================= MEMBER DASHBOARD CARD ANIMATION ================= */
