@@ -4712,11 +4712,19 @@ function memberPrint(){
   printMemberPassbook();
 }
 
-function memberChangePinMenu(){
-  closeMemberSidebar();
-  openChangePin();
-}
+function memberChangePinMenu(button){
+    closeMemberSidebar();
 
+    document.querySelectorAll('.side button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    if(button){
+        button.classList.add('active');
+    }
+
+    openChangePin();
+}
 function memberFinancialInfo(){
   closeMemberSidebar();
   const target = $("memberFinancialInfo");
