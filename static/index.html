@@ -1331,7 +1331,97 @@ header .title{
     .member-activity-amount{font-size:16px}
 }
 
+
+/* ================= MEMBER RECENT ACTIVITY FIX ================= */
+
+.member-activity{
+  width:100%;
+  display:block;
+  background:#fff;
+  border:1px solid #e4eaf2;
+  border-radius:16px;
+  box-shadow:0 5px 18px rgba(22,35,59,.07);
+  overflow:hidden;
+  box-sizing:border-box;
+}
+
+.member-activity h3{
+  margin:0;
+  padding:16px 20px;
+  font-size:18px;
+  font-weight:700;
+  color:#16233b;
+  border-bottom:1px solid #edf0f4;
+}
+
+.member-activity-row{
+  width:100%;
+  box-sizing:border-box;
+  display:flex !important;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  padding:15px 20px;
+  border-bottom:1px solid #edf0f4;
+}
+
+.member-activity-row:last-child{
+  border-bottom:0;
+}
+
+.member-activity-left{
+  display:flex !important;
+  align-items:center;
+  gap:12px;
+  min-width:0;
+}
+
+.member-activity-icon{
+  width:42px;
+  height:42px;
+  min-width:42px;
+  border-radius:50%;
+  display:grid !important;
+  place-items:center;
+  background:#eef7ff;
+  font-size:20px;
+}
+
+.member-activity-title{
+  font-weight:700;
+  color:#16233b;
+}
+
+.member-activity-date{
+  font-size:12px;
+  color:#68768b;
+  margin-top:3px;
+}
+
+.member-activity-amount{
+  font-size:18px;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+.member-activity-empty{
+  padding:24px;
+  color:#68768b;
+  text-align:center;
+}
+
+@media(max-width:650px){
+  .member-activity-row{
+    padding:13px 14px;
+  }
+
+  .member-activity-amount{
+    font-size:16px;
+  }
+}
+
 /* ================= FAMILY GROUP DASHBOARD 2 COLUMN ================= */
+
 
 #familyGroupDashboard .cards{
   grid-template-columns:minmax(0,1fr) minmax(0,1fr);
