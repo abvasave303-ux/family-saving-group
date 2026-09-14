@@ -1090,338 +1090,208 @@ header .title{
 }
 
 /* ================= MEMBER DASHBOARD UI ================= */
-
 .member-dashboard{
-    max-width:1180px;
-    margin:0 auto;
+  max-width:1180px;
+  margin:0 auto;
 }
-
-/* ===== MEMBER WELCOME BOX ===== */
-
 .member-welcome{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:20px;
-    padding:24px 28px;
-    margin-bottom:18px;
-    border-radius:18px;
-    background:linear-gradient(135deg,#e7f3ff,#f4f9ff);
-    border:1px solid #d7e8fa;
-    box-shadow:0 5px 20px rgba(22,35,59,.07);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  padding:24px 28px;
+  margin-bottom:18px;
+  border-radius:18px;
+  background:linear-gradient(135deg,#e7f3ff,#f4f9ff);
+  border:1px solid #d7e8fa;
+  box-shadow:0 5px 20px rgba(22,35,59,.07);
 }
-
 .member-welcome h2{
-    margin:4px 0 4px;
-    color:#083b78;
-    font-size:30px;
+  margin:4px 0 4px;
+  color:#083b78;
+  font-size:30px;
+}
+.member-welcome h2{
     animation:memberNameLoop 20s ease both infinite;
 }
-
 .member-welcome .welcome-label{
-    color:#55708f;
-    font-size:15px;
-    font-weight:600;
+  color:#55708f;
+  font-size:15px;
+  font-weight:600;
 }
-
-.member-welcome .welcome-sub{
-    color:#1976d2;
-    font-size:14px;
-}
-
 @keyframes memberNameLoop{
-    0%{opacity:0;transform:translateY(20px)}
-    10%{opacity:1;transform:translateY(0)}
-    100%{opacity:1;transform:translateY(0)}
-}
+    0%{
+        opacity:0;
+        transform:translateY(20px);
+    }
 
+    10%{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+    100%{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+.member-welcome .welcome-sub{
+  color:#1976d2;
+  font-size:14px;
+}
 .member-welcome-icon{
-    width:100px;
-    height:100px;
-    border-radius:50%;
-    display:grid;
-    place-items:center;
-    background:#dceeff;
-    color:#1769c2;
-    font-size:58px;
-    flex-shrink:0;
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#dceeff;
+  color:#1769c2;
+  font-size:58px;
+  flex-shrink:0;
 }
-
-/* ===== MEMBER DASHBOARD CARDS ===== */
-
 .member-dashboard-cards{
-    display:grid;
-    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-    gap:12px;
-    margin-bottom:18px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:16px;
+  margin-bottom:18px;
 }
-
 .member-dashboard-card{
-    min-height:125px;
-    padding:22px 24px;
-    border-radius:16px;
-    box-sizing:border-box;
-    border:1px solid #e4eaf2;
-    box-shadow:0 5px 18px rgba(22,35,59,.07);
-    position:relative;
-    overflow:hidden;
-    transition:transform .25s ease,box-shadow .25s ease;
-    animation:memberDashboardCardIn .5s ease both;
+  min-height:145px;
+  padding:22px 24px;
+  border-radius:16px;
+  background:#fff;
+  border:1px solid #e4eaf2;
+  box-shadow:0 5px 18px rgba(22,35,59,.07);
+  position:relative;
+  overflow:hidden;
 }
-
-/* ===== SOFT CARD COLORS - SAME FEEL AS FAMILY GROUP DASHBOARD ===== */
-
-.member-dashboard-card.green{
-    background:#eefaf3;
-    border-top:4px solid #238b57;
-}
-
-.member-dashboard-card.red{
-    background:#fff1f1;
-    border-top:4px solid #d93636;
-}
-
-.member-dashboard-card.orange{
-    background:#fff8ed;
-    border-top:4px solid #d47712;
-}
-
-.member-dashboard-card.blue{
-    background:#f1f3f8;
-    border-top:4px solid #1f2d49;
-}
-
-/* Remove old full-width blue accent strip */
 .member-dashboard-card::before{
-    display:none;
-}
-
-/* ===== CARD TEXT ===== */
-
-.member-dashboard-card .member-card-label{
-    font-size:14px;
-    color:#68768b;
-    font-weight:600;
-    margin-bottom:12px;
-}
-
-.member-dashboard-card .member-card-value{
-    font-size:40px;
-    font-weight:800;
-    line-height:1.1;
-    transform-origin:left center;
-    transition:transform .25s ease;
-}
-
-.member-dashboard-card.green .member-card-value{color:#238b57}
-.member-dashboard-card.red .member-card-value{color:#d93636}
-.member-dashboard-card.orange .member-card-value{color:#d47712}
-.member-dashboard-card.blue .member-card-value{color:#1f2d49}
-
-/* ===== CARD ANIMATION ===== */
-
-.member-dashboard-card:nth-child(1){animation-delay:.05s}
-.member-dashboard-card:nth-child(2){animation-delay:.10s}
-.member-dashboard-card:nth-child(3){animation-delay:.15s}
-.member-dashboard-card:nth-child(4){animation-delay:.20s}
-
-.member-dashboard-card:hover{
-    transform:translateY(-4px);
-    box-shadow:0 12px 26px rgba(22,35,59,.14);
-}
-
-.member-dashboard-card:hover .member-card-value{
-    transform:scale(1.04);
-}
-
-@keyframes memberDashboardCardIn{
-    from{opacity:0;transform:translateY(12px)}
-    to{opacity:1;transform:translateY(0)}
-}
-
-/* ===== MEMBER RECENT ACTIVITY ===== */
-
-.member-activity{
-    background:#fff;
-    border:1px solid #e4eaf2;
-    border-radius:16px;
-    box-shadow:0 5px 18px rgba(22,35,59,.07);
-    overflow:hidden;
-}
-
-.member-activity h3{
-    margin:0;
-    padding:16px 20px;
-    font-size:18px;
-    border-bottom:1px solid #edf0f4;
-}
-
-.member-activity-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:15px;
-    padding:15px 20px;
-    border-bottom:1px solid #edf0f4;
-}
-
-.member-activity-row:last-child{border-bottom:0}
-
-.member-activity-left{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    min-width:0;
-}
-
-.member-activity-icon{
-    width:42px;
-    height:42px;
-    border-radius:50%;
-    display:grid;
-    place-items:center;
-    background:#eef7ff;
-    flex-shrink:0;
-    font-size:20px;
-}
-
-.member-activity-title{font-weight:700;color:#16233b}
-.member-activity-date{font-size:12px;color:#68768b;margin-top:3px}
-.member-activity-amount{font-size:18px;font-weight:800;white-space:nowrap}
-.member-activity-empty{padding:24px;color:#68768b;text-align:center}
-
-/* ===== MOBILE ===== */
-
-@media(max-width:650px){
-    .member-welcome{
-        padding:18px 14px;
-        align-items:flex-start;
-    }
-
-    .member-welcome h2{
-        font-size:23px;
-        line-height:1.25;
-    }
-
-    .member-welcome-icon{
-        width:70px;
-        height:70px;
-        font-size:38px;
-    }
-
-    .member-dashboard-cards{
-        grid-template-columns:1fr 1fr;
-        gap:10px;
-    }
-
-    .member-dashboard-card{
-        min-height:125px;
-        padding:17px 14px;
-    }
-
-    .member-dashboard-card .member-card-label{
-        font-size:12px;
-    }
-
-    .member-dashboard-card .member-card-value{
-        font-size:24px;
-    }
-
-    .member-activity-row{padding:13px 14px}
-    .member-activity-amount{font-size:16px}
-}
-
-
-/* ================= MEMBER RECENT ACTIVITY FIX ================= */
-
-.member-activity{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
   width:100%;
-  display:block;
+  height:4px;
+  background:#1976d2;
+}
+.member-dashboard-card.green::before{background:#20864b}
+.member-dashboard-card.red::before{background:#c73535}
+.member-dashboard-card.orange::before{background:#c66d14}
+.member-dashboard-card .member-card-label{
+  font-size:14px;
+  color:#68768b;
+  font-weight:700;
+  margin-bottom:12px;
+}
+.member-dashboard-card .member-card-value{
+  font-size:34px;
+  font-weight:800;
+  color:#16233b;
+}
+.member-dashboard-card.green .member-card-value{color:#20864b}
+.member-dashboard-card.red .member-card-value{color:#c73535}
+.member-dashboard-card.orange .member-card-value{color:#c66d14}
+.member-activity{
   background:#fff;
   border:1px solid #e4eaf2;
   border-radius:16px;
   box-shadow:0 5px 18px rgba(22,35,59,.07);
   overflow:hidden;
-  box-sizing:border-box;
 }
-
 .member-activity h3{
   margin:0;
   padding:16px 20px;
   font-size:18px;
-  font-weight:700;
-  color:#16233b;
   border-bottom:1px solid #edf0f4;
 }
-
 .member-activity-row{
-  width:100%;
-  box-sizing:border-box;
-  display:flex !important;
+  display:flex;
   align-items:center;
   justify-content:space-between;
   gap:15px;
   padding:15px 20px;
   border-bottom:1px solid #edf0f4;
 }
-
-.member-activity-row:last-child{
-  border-bottom:0;
-}
-
+.member-activity-row:last-child{border-bottom:0}
 .member-activity-left{
-  display:flex !important;
+  display:flex;
   align-items:center;
   gap:12px;
   min-width:0;
 }
-
 .member-activity-icon{
   width:42px;
   height:42px;
-  min-width:42px;
   border-radius:50%;
-  display:grid !important;
+  display:grid;
   place-items:center;
   background:#eef7ff;
+  flex-shrink:0;
   font-size:20px;
 }
-
-.member-activity-title{
-  font-weight:700;
-  color:#16233b;
-}
-
-.member-activity-date{
-  font-size:12px;
-  color:#68768b;
-  margin-top:3px;
-}
-
-.member-activity-amount{
-  font-size:18px;
-  font-weight:800;
-  white-space:nowrap;
-}
-
-.member-activity-empty{
-  padding:24px;
-  color:#68768b;
-  text-align:center;
-}
-
+.member-activity-title{font-weight:700;color:#16233b}
+.member-activity-date{font-size:12px;color:#68768b;margin-top:3px}
+.member-activity-amount{font-size:18px;font-weight:800;white-space:nowrap}
+.member-activity-empty{padding:24px;color:#68768b;text-align:center}
 @media(max-width:650px){
-  .member-activity-row{
-    padding:13px 14px;
-  }
+  .member-welcome{padding:18px;align-items:flex-start}
+  .member-welcome h2{font-size:23px}
+  .member-welcome-icon{width:70px;height:70px;font-size:38px}
+  .member-dashboard-cards{grid-template-columns:1fr 1fr;gap:10px}
+  .member-dashboard-card{min-height:125px;padding:17px 14px}
+  .member-dashboard-card .member-card-label{font-size:12px}
+  .member-dashboard-card .member-card-value{font-size:24px}
+  .member-activity-row{padding:13px 14px}
+  .member-activity-amount{font-size:16px}
+}
+/* ================= MEMBER DASHBOARD CARD ANIMATION ================= */
 
-  .member-activity-amount{
-    font-size:16px;
-  }
+.member-dashboard-card{
+  transition:transform 0.25s ease, box-shadow 0.25s ease;
+  animation:memberDashboardCardIn 0.5s ease both;
 }
 
-/* ================= FAMILY GROUP DASHBOARD 2 COLUMN ================= */
+.member-dashboard-card:nth-child(1){
+  animation-delay:0.05s;
+}
 
+.member-dashboard-card:nth-child(2){
+  animation-delay:0.10s;
+}
+
+.member-dashboard-card:nth-child(3){
+  animation-delay:0.15s;
+}
+
+.member-dashboard-card:nth-child(4){
+  animation-delay:0.20s;
+}
+
+.member-dashboard-card:hover{
+  transform:translateY(-14px) scale(1.03);
+  box-shadow:0 12px 26px rgba(22,35,59,0.18);
+}
+
+.member-dashboard-card .member-card-value{
+  transition:transform 0.25s ease;
+}
+
+.member-dashboard-card:hover .member-card-value{
+  transform:scale(1.08);
+}
+
+@keyframes memberDashboardCardIn{
+  from{
+    opacity:0;
+    transform:translateY(12px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+/* ================= FAMILY GROUP DASHBOARD 2 COLUMN ================= */
 
 #familyGroupDashboard .cards{
   grid-template-columns:minmax(0,1fr) minmax(0,1fr);
@@ -1612,10 +1482,13 @@ header .title{
     box-shadow:0 8px 22px rgba(22,35,59,0.14);
 }
 #familyGroupDashboard .cards{
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    padding-bottom: 0;
-    box-sizing:border-box;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+#familyGroupDashboard .cards{
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-bottom: 8px;
 }
 #familyGroupDashboard .cards > .card:hover .value{
     transform:scale(1.10);
@@ -1636,6 +1509,122 @@ header .title{
     transform:translateY(0);
   }
 }
+/* ================= FAMILY GROUP DETAIL CARDS ================= */
+
+#familyGroupDashboard .fgd-detail-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:12px;
+  margin-top:0;
+  padding-left:8px;
+  padding-right:8px;
+  box-sizing:border-box;
+}
+
+#familyGroupDashboard .fgd-detail-card{
+  min-width:0;
+  border:1px solid #e4eaf2;
+  border-radius:16px;
+  padding:20px 22px;
+  box-sizing:border-box;
+  background:#fff;
+  box-shadow:0 5px 18px rgba(22,35,59,.07);
+}
+
+#familyGroupDashboard .fgd-detail-card.status-card{
+  background:#f5fbf7;
+  border-top:4px solid #238b57;
+}
+
+#familyGroupDashboard .fgd-detail-card.financial-card{
+  background:#f5f7fc;
+  border-top:4px solid #263957;
+}
+
+#familyGroupDashboard .fgd-detail-title{
+  font-size:20px;
+  font-weight:800;
+  color:#16233b;
+  padding-bottom:13px;
+  margin-bottom:2px;
+  border-bottom:1px solid rgba(22,35,59,.08);
+}
+
+#familyGroupDashboard .fgd-detail-list{
+  display:flex;
+  flex-direction:column;
+}
+
+#familyGroupDashboard .fgd-detail-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  padding:11px 0;
+  border-bottom:1px solid rgba(22,35,59,.07);
+  color:#53647d;
+  font-size:14px;
+}
+
+#familyGroupDashboard .fgd-detail-row:last-child{
+  border-bottom:0;
+}
+
+#familyGroupDashboard .fgd-detail-row b{
+  color:#16233b;
+  font-size:15px;
+  white-space:nowrap;
+}
+
+#familyGroupDashboard .status-card .fgd-detail-row b:nth-last-child(1){
+  color:#238b57;
+}
+
+#familyGroupDashboard .fgd-motivation{
+  margin:14px 8px 0;
+  padding:15px 18px;
+  border-radius:14px;
+  text-align:center;
+  background:linear-gradient(135deg,#f3f9ff,#fbfdff);
+  border:1px solid #e1ebf6;
+  color:#315b85;
+  font-size:14px;
+  font-weight:700;
+  box-shadow:0 4px 14px rgba(22,35,59,.05);
+}
+
+#familyGroupDashboard .fgd-motivation span{
+  display:block;
+  margin-top:5px;
+  font-size:12px;
+  font-weight:600;
+  color:#6a7d95;
+}
+
+@media(max-width:650px){
+  #familyGroupDashboard .fgd-detail-grid{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+
+  #familyGroupDashboard .fgd-detail-card{
+    padding:17px 16px;
+  }
+
+  #familyGroupDashboard .fgd-detail-title{
+    font-size:18px;
+  }
+
+  #familyGroupDashboard .fgd-detail-row{
+    font-size:13px;
+    padding:10px 0;
+  }
+
+  #familyGroupDashboard .fgd-detail-row b{
+    font-size:14px;
+  }
+}
+
 /* ================= FAMILY GROUP WELCOME ================= */
 
 #familyGroupDashboard .family-welcome{
@@ -4382,7 +4371,7 @@ function renderMemberDashboard(){
           <div class="member-card-label">🏦 मेरा बाकी लोन</div>
           <div class="member-card-value">${money(loanTotal)}</div>
         </div>
-        <div class="member-dashboard-card blue">
+        <div class="member-dashboard-card">
           <div class="member-card-label">📅 इस साल की बचत</div>
           <div class="member-card-value">${money(yearlySavings)}</div>
         </div>
@@ -4393,7 +4382,7 @@ function renderMemberDashboard(){
       </div>
 
       <div class="member-activity">
-        <h3>🕒 हाल की बचत गतीविधी</h3>
+        <h3>🕒 हाल की गतिविधि</h3>
         ${activities.slice(0,5).map(r => `
           <div class="member-activity-row">
             <div class="member-activity-left">
@@ -4488,42 +4477,66 @@ async function openFamilyGroupDashboard(button){
 
         </div>
 
-        <div class="fgd-lower-grid">
-          <div class="fgd-info-card">
-            <div class="fgd-info-head">
-              <span>👥</span>
-              <h3>समूह की स्थिति</h3>
-            </div>
-            <div class="fgd-info-list">
-              <div class="fgd-info-row"><span>👨‍👩‍👧‍👦 कुल परिवार</span><strong>23</strong></div>
-              <div class="fgd-info-row"><span>🎯 मासिक बचत लक्ष्य</span><strong>₹46,000</strong></div>
-              <div class="fgd-info-row"><span>🏦 कुल Loan बाकी</span><strong id="fgdOverviewLoan">₹0</strong></div>
-              <div class="fgd-info-row"><span>💳 उपलब्ध राशि</span><strong id="fgdOverviewAvailable">₹0</strong></div>
+        <!-- ================= GROUP DETAILS ================= -->
+        <div class="fgd-detail-grid">
+
+          <div class="fgd-detail-card status-card">
+            <div class="fgd-detail-title">👨‍👩‍👧‍👦 समूह की स्थिति</div>
+
+            <div class="fgd-detail-list">
+              <div class="fgd-detail-row">
+                <span>कुल परिवार</span>
+                <b>23</b>
+              </div>
+
+              <div class="fgd-detail-row">
+                <span>मासिक बचत लक्ष्य</span>
+                <b>₹46,000</b>
+              </div>
+
+              <div class="fgd-detail-row">
+                <span>कुल Loan बाकी</span>
+                <b id="fgdStatusLoan">₹0</b>
+              </div>
+
+              <div class="fgd-detail-row">
+                <span>उपलब्ध राशि</span>
+                <b id="fgdStatusAvailable">₹0</b>
+              </div>
             </div>
           </div>
 
-          <div class="fgd-right-stack">
-            <div class="fgd-info-card fgd-finance-card">
-              <div class="fgd-info-head">
-                <span>📊</span>
-                <h3>समूह का वित्तीय सारांश</h3>
-              </div>
-              <div class="fgd-summary-grid">
-                <div><span>कुल बचत</span><strong class="green-text" id="fgdSummarySavings">₹0</strong></div>
-                <div><span>प्राप्त ब्याज</span><strong class="orange-text" id="fgdSummaryInterest">₹0</strong></div>
-                <div><span>Loan बाकी</span><strong class="red-text" id="fgdSummaryLoan">₹0</strong></div>
-                <div><span>उपलब्ध राशि</span><strong id="fgdSummaryAvailable">₹0</strong></div>
-              </div>
-            </div>
+          <div class="fgd-detail-card financial-card">
+            <div class="fgd-detail-title">📊 समूह का वित्तीय सारांश</div>
 
-            <div class="fgd-quote-card">
-              <div class="fgd-quote-icon">🌱</div>
-              <div>
-                <div class="fgd-quote-title">छोटी-छोटी बचत, बड़ा और सुरक्षित भविष्य</div>
-                <div class="fgd-quote-sub">एक परिवार • एक बचत • उज्ज्वल भविष्य</div>
+            <div class="fgd-detail-list">
+              <div class="fgd-detail-row">
+                <span>कुल बचत</span>
+                <b id="fgdSummarySavings">₹0</b>
+              </div>
+
+              <div class="fgd-detail-row">
+                <span>प्राप्त ब्याज</span>
+                <b id="fgdSummaryInterest">₹0</b>
+              </div>
+
+              <div class="fgd-detail-row">
+                <span>Loan बाकी</span>
+                <b id="fgdSummaryLoan">₹0</b>
+              </div>
+
+              <div class="fgd-detail-row">
+                <span>उपलब्ध राशि</span>
+                <b id="fgdSummaryAvailable">₹0</b>
               </div>
             </div>
           </div>
+
+        </div>
+
+        <div class="fgd-motivation">
+          🌱 छोटी-छोटी बचत, बड़ा और सुरक्षित भविष्य
+          <span>एक परिवार • एक बचत • उज्ज्वल भविष्य</span>
         </div>
 
     `;
@@ -4566,12 +4579,24 @@ async function openFamilyGroupDashboard(button){
     $("fgdAvailable").textContent =
       money(x.group_available);
 
-    $("fgdOverviewLoan").textContent = money(x.group_loan);
-    $("fgdOverviewAvailable").textContent = money(x.group_available);
-    $("fgdSummarySavings").textContent = money(x.group_savings);
-    $("fgdSummaryInterest").textContent = money(x.group_interest);
-    $("fgdSummaryLoan").textContent = money(x.group_loan);
-    $("fgdSummaryAvailable").textContent = money(x.group_available);
+    // नीचे के detail cards भी उसी live data से भरें
+    $("fgdStatusLoan").textContent =
+      money(x.group_loan);
+
+    $("fgdStatusAvailable").textContent =
+      money(x.group_available);
+
+    $("fgdSummarySavings").textContent =
+      money(x.group_savings);
+
+    $("fgdSummaryInterest").textContent =
+      money(x.group_interest);
+
+    $("fgdSummaryLoan").textContent =
+      money(x.group_loan);
+
+    $("fgdSummaryAvailable").textContent =
+      money(x.group_available);
 
   }catch(e){
 
@@ -6791,167 +6816,7 @@ function printPassbook(){
                 font-size:10px !important;
             }
         }
-      
-/* ================= FAMILY GROUP DASHBOARD - LOWER INFORMATION ================= */
-#familyGroupDashboard .fgd-lower-grid{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-  gap:12px;
-  width:100%;
-  margin:14px 0 0;
-  box-sizing:border-box;
-}
-#familyGroupDashboard .fgd-info-card{
-  background:#fff;
-  border:1px solid #e4eaf2;
-  border-radius:16px;
-  box-shadow:0 5px 18px rgba(22,35,59,.07);
-  overflow:hidden;
-}
-#familyGroupDashboard .fgd-info-head{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:15px 18px;
-  border-bottom:1px solid #edf0f4;
-  background:linear-gradient(135deg,#f5faff,#ffffff);
-}
-#familyGroupDashboard .fgd-info-head span{font-size:22px}
-#familyGroupDashboard .fgd-info-head h3{
-  margin:0;
-  color:#16233b;
-  font-size:18px;
-}
-#familyGroupDashboard .fgd-info-list{padding:2px 18px}
-#familyGroupDashboard .fgd-info-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px;
-  padding:13px 0;
-  border-bottom:1px solid #edf0f4;
-  color:#4f6077;
-  font-size:14px;
-}
-#familyGroupDashboard .fgd-info-row:last-child{border-bottom:0}
-#familyGroupDashboard .fgd-info-row strong{
-  color:#16233b;
-  font-size:17px;
-  white-space:nowrap;
-}
-#familyGroupDashboard .fgd-right-stack{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  min-width:0;
-}
-#familyGroupDashboard .fgd-summary-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:0;
-}
-#familyGroupDashboard .fgd-summary-grid > div{
-  padding:15px 18px;
-  border-bottom:1px solid #edf0f4;
-}
-#familyGroupDashboard .fgd-summary-grid > div:nth-child(odd){border-right:1px solid #edf0f4}
-#familyGroupDashboard .fgd-summary-grid > div:nth-child(3),
-#familyGroupDashboard .fgd-summary-grid > div:nth-child(4){border-bottom:0}
-#familyGroupDashboard .fgd-summary-grid span{
-  display:block;
-  color:#68768b;
-  font-size:13px;
-  margin-bottom:5px;
-}
-#familyGroupDashboard .fgd-summary-grid strong{
-  color:#16233b;
-  font-size:20px;
-  font-weight:800;
-}
-#familyGroupDashboard .green-text{color:#20864b !important}
-#familyGroupDashboard .red-text{color:#c73535 !important}
-#familyGroupDashboard .orange-text{color:#c66d14 !important}
-#familyGroupDashboard .fgd-quote-card{
-  min-height:82px;
-  display:flex;
-  align-items:center;
-  gap:14px;
-  padding:16px 20px;
-  box-sizing:border-box;
-  border-radius:16px;
-  background:linear-gradient(135deg,#eef8ff,#f7f8ff);
-  border:1px solid #dce9f8;
-  box-shadow:0 5px 18px rgba(22,35,59,.05);
-}
-#familyGroupDashboard .fgd-quote-icon{font-size:38px;flex-shrink:0}
-#familyGroupDashboard .fgd-quote-title{
-  color:#173f73;
-  font-size:17px;
-  font-weight:800;
-}
-#familyGroupDashboard .fgd-quote-sub{
-  color:#68768b;
-  font-size:12px;
-  margin-top:5px;
-}
-@media(max-width:650px){
-  #familyGroupDashboard .fgd-lower-grid{grid-template-columns:1fr;gap:10px;margin-top:12px}
-  #familyGroupDashboard .fgd-info-head{padding:13px 15px}
-  #familyGroupDashboard .fgd-info-row{padding:11px 0;font-size:13px}
-  #familyGroupDashboard .fgd-summary-grid strong{font-size:17px}
-  #familyGroupDashboard .fgd-quote-title{font-size:15px}
-}
-
-/* ================= FAMILY GROUP DASHBOARD - EXACT EDGE ALIGNMENT ================= */
-/* Welcome box and the 4 cards must start/end at exactly the same x-position. */
-#familyGroupDashboard{
-  width:100%;
-  max-width:none;
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-
-#familyGroupDashboard .family-welcome{
-  display:block;
-  width:100% !important;
-  max-width:none !important;
-  margin-left:0 !important;
-  margin-right:0 !important;
-  box-sizing:border-box;
-}
-
-#familyGroupDashboard .cards{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-  gap:12px;
-  width:100% !important;
-  max-width:none !important;
-  margin-left:0 !important;
-  margin-right:0 !important;
-  padding-left:0 !important;
-  padding-right:0 !important;
-  box-sizing:border-box;
-}
-
-#familyGroupDashboard .cards > .card{
-  width:100%;
-  max-width:none;
-  margin-left:0;
-  margin-right:0;
-  box-sizing:border-box;
-}
-
-@media(max-width:650px){
-  #familyGroupDashboard .cards{
-    grid-template-columns:1fr 1fr;
-    width:100% !important;
-    padding-left:0 !important;
-    padding-right:0 !important;
-    gap:10px;
-  }
-}
-</style>
+      </style>
 
     </head>
 
