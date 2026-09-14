@@ -1296,6 +1296,28 @@ header .title{
 #familyGroupDashboard .cards{
   grid-template-columns:minmax(0,1fr) minmax(0,1fr);
   gap:12px;
+  width:100%;
+  box-sizing:border-box;
+}
+
+/* ALIGN DASHBOARD CARDS TO THE WELCOME CARD EDGES */
+#familyGroupDashboard .cards,
+#familyGroupDashboard .panel .cards{
+  width:100%;
+  max-width:none;
+  margin-left:0;
+  margin-right:0;
+  box-sizing:border-box;
+}
+
+#familyGroupDashboard .family-welcome + .cards{
+  width:100%;
+}
+
+@media(max-width:650px){
+  #familyGroupDashboard .cards{
+    grid-template-columns:1fr;
+  }
 }
 
 #familyGroupDashboard .card{
@@ -1509,122 +1531,6 @@ header .title{
     transform:translateY(0);
   }
 }
-/* ================= FAMILY GROUP DETAIL CARDS ================= */
-
-#familyGroupDashboard .fgd-detail-grid{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-  gap:12px;
-  margin-top:0;
-  padding-left:8px;
-  padding-right:8px;
-  box-sizing:border-box;
-}
-
-#familyGroupDashboard .fgd-detail-card{
-  min-width:0;
-  border:1px solid #e4eaf2;
-  border-radius:16px;
-  padding:20px 22px;
-  box-sizing:border-box;
-  background:#fff;
-  box-shadow:0 5px 18px rgba(22,35,59,.07);
-}
-
-#familyGroupDashboard .fgd-detail-card.status-card{
-  background:#f5fbf7;
-  border-top:4px solid #238b57;
-}
-
-#familyGroupDashboard .fgd-detail-card.financial-card{
-  background:#f5f7fc;
-  border-top:4px solid #263957;
-}
-
-#familyGroupDashboard .fgd-detail-title{
-  font-size:20px;
-  font-weight:800;
-  color:#16233b;
-  padding-bottom:13px;
-  margin-bottom:2px;
-  border-bottom:1px solid rgba(22,35,59,.08);
-}
-
-#familyGroupDashboard .fgd-detail-list{
-  display:flex;
-  flex-direction:column;
-}
-
-#familyGroupDashboard .fgd-detail-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px;
-  padding:11px 0;
-  border-bottom:1px solid rgba(22,35,59,.07);
-  color:#53647d;
-  font-size:14px;
-}
-
-#familyGroupDashboard .fgd-detail-row:last-child{
-  border-bottom:0;
-}
-
-#familyGroupDashboard .fgd-detail-row b{
-  color:#16233b;
-  font-size:15px;
-  white-space:nowrap;
-}
-
-#familyGroupDashboard .status-card .fgd-detail-row b:nth-last-child(1){
-  color:#238b57;
-}
-
-#familyGroupDashboard .fgd-motivation{
-  margin:14px 8px 0;
-  padding:15px 18px;
-  border-radius:14px;
-  text-align:center;
-  background:linear-gradient(135deg,#f3f9ff,#fbfdff);
-  border:1px solid #e1ebf6;
-  color:#315b85;
-  font-size:14px;
-  font-weight:700;
-  box-shadow:0 4px 14px rgba(22,35,59,.05);
-}
-
-#familyGroupDashboard .fgd-motivation span{
-  display:block;
-  margin-top:5px;
-  font-size:12px;
-  font-weight:600;
-  color:#6a7d95;
-}
-
-@media(max-width:650px){
-  #familyGroupDashboard .fgd-detail-grid{
-    grid-template-columns:1fr;
-    gap:10px;
-  }
-
-  #familyGroupDashboard .fgd-detail-card{
-    padding:17px 16px;
-  }
-
-  #familyGroupDashboard .fgd-detail-title{
-    font-size:18px;
-  }
-
-  #familyGroupDashboard .fgd-detail-row{
-    font-size:13px;
-    padding:10px 0;
-  }
-
-  #familyGroupDashboard .fgd-detail-row b{
-    font-size:14px;
-  }
-}
-
 /* ================= FAMILY GROUP WELCOME ================= */
 
 #familyGroupDashboard .family-welcome{
@@ -1677,154 +1583,6 @@ header .title{
 #familyGroupDashboard .card::before{
     display:none;
 }
-/* ================= PROFESSIONAL CHANGE PIN UI ================= */
-#changePin{
-  max-width:900px;
-  margin:0 auto;
-}
-
-#changePin .change-pin-panel{
-  background:linear-gradient(135deg,#ffffff,#f7fbff);
-  border:1px solid #dfe9f5;
-  border-radius:18px;
-  box-shadow:0 8px 28px rgba(22,35,59,.08);
-  overflow:hidden;
-}
-
-#changePin .change-pin-header{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:18px 22px;
-  background:linear-gradient(135deg,#eef7ff,#f8fbff);
-  border-bottom:1px solid #e3edf7;
-}
-
-#changePin .change-pin-header-icon{
-  width:42px;
-  height:42px;
-  border-radius:12px;
-  display:grid;
-  place-items:center;
-  background:#dceeff;
-  font-size:22px;
-  flex-shrink:0;
-}
-
-#changePin .change-pin-header h3{
-  padding:0;
-  border:0;
-  font-size:18px;
-  color:#16233b;
-}
-
-#changePin .change-pin-subtitle{
-  margin:2px 0 0;
-  font-size:12px;
-  color:#68768b;
-}
-
-#changePin .change-pin-body{
-  padding:22px;
-}
-
-#changePin .change-pin-field{
-  margin-bottom:16px;
-}
-
-#changePin .change-pin-field label{
-  display:block;
-  margin-bottom:7px;
-  font-size:13px;
-  font-weight:700;
-  color:#4e6178;
-}
-
-#changePin .change-pin-input-wrap{
-  position:relative;
-}
-
-#changePin .change-pin-input-wrap input{
-  width:100%;
-  box-sizing:border-box;
-  padding:12px 48px 12px 14px;
-  border:1px solid #ccd8e6;
-  border-radius:10px;
-  background:#fff;
-  color:#16233b;
-  font-size:14px;
-  outline:none;
-  transition:border-color .2s ease,box-shadow .2s ease;
-}
-
-#changePin .change-pin-input-wrap input:focus{
-  border-color:#1976d2;
-  box-shadow:0 0 0 3px rgba(25,118,210,.10);
-}
-
-#changePin .pin-toggle{
-  position:absolute;
-  top:50%;
-  right:8px;
-  transform:translateY(-50%);
-  width:34px;
-  height:34px;
-  padding:0;
-  border:0;
-  border-radius:8px;
-  background:#eef4ff;
-  color:#135ba5;
-  cursor:pointer;
-  font-size:16px;
-}
-
-#changePin .pin-toggle:hover{
-  background:#dceaff;
-}
-
-#changePin .change-pin-note{
-  margin:2px 0 18px;
-  padding:10px 12px;
-  border-radius:9px;
-  background:#f3f8fd;
-  color:#60748a;
-  font-size:12px;
-}
-
-#changePin .change-pin-actions{
-  display:flex;
-  justify-content:flex-start;
-}
-
-#changePin .change-pin-submit{
-  min-width:150px;
-  padding:11px 18px;
-  border-radius:9px;
-  box-shadow:0 4px 12px rgba(25,118,210,.16);
-  transition:transform .2s ease,box-shadow .2s ease,opacity .2s ease;
-}
-
-#changePin .change-pin-submit:hover{
-  transform:translateY(-1px);
-  box-shadow:0 6px 16px rgba(25,118,210,.22);
-  opacity:1;
-}
-
-@media(max-width:650px){
-  #changePin{
-    max-width:none;
-  }
-  #changePin .change-pin-header{
-    padding:16px;
-  }
-  #changePin .change-pin-body{
-    padding:16px;
-  }
-  #changePin .change-pin-submit{
-    width:100%;
-  }
-}
-
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
@@ -2888,7 +2646,7 @@ onMessage(messaging, (payload) => {
 
   <div class="panel">
 
-
+    <h3>📋 Member Ledger</h3>
   <div class="ledger-brand-header">
   <img src="/static/logo.png"
        alt="Family Saving Group"
@@ -3114,93 +2872,47 @@ onMessage(messaging, (payload) => {
 
 </section>
 
-<!-- ================= CHANGE PIN ================= -->
+<!-- CHANGE PIN -->
 <section id="changePin" class="hidden">
 
-  <div class="change-pin-panel">
+  <div class="panel">
 
-    <div class="change-pin-header">
-      <div class="change-pin-header-icon">🔐</div>
-      <div>
-        <h3>Change PIN</h3>
-        <div class="change-pin-subtitle">अपना Member Login PIN सुरक्षित रूप से बदलें</div>
-      </div>
-    </div>
+    <h3>🔐 Change PIN</h3>
 
-    <div class="change-pin-body">
+    <div class="body">
 
-      <div class="change-pin-field">
-        <label for="currentPin">Current PIN</label>
-        <div class="change-pin-input-wrap">
-          <input
-            type="password"
-            id="currentPin"
-            maxlength="20"
-            placeholder="Current PIN"
-            autocomplete="current-password">
-          <button
-            type="button"
-            class="pin-toggle"
-            onclick="togglePinVisibility('currentPin', this)"
-            title="Show / Hide PIN"
-            aria-label="Show or hide Current PIN">
-            👁️
-          </button>
-        </div>
+      <div class="field">
+        <label>Current PIN</label>
+        <input
+          type="password"
+          id="currentPin"
+          maxlength="20"
+          placeholder="Current PIN">
       </div>
 
-      <div class="change-pin-field">
-        <label for="newPin">New PIN</label>
-        <div class="change-pin-input-wrap">
-          <input
-            type="password"
-            id="newPin"
-            maxlength="20"
-            placeholder="New PIN"
-            autocomplete="new-password">
-          <button
-            type="button"
-            class="pin-toggle"
-            onclick="togglePinVisibility('newPin', this)"
-            title="Show / Hide PIN"
-            aria-label="Show or hide New PIN">
-            👁️
-          </button>
-        </div>
+      <div class="field">
+        <label>New PIN</label>
+        <input
+          type="password"
+          id="newPin"
+          maxlength="20"
+          placeholder="New PIN">
       </div>
 
-      <div class="change-pin-field">
-        <label for="confirmPin">Confirm New PIN</label>
-        <div class="change-pin-input-wrap">
-          <input
-            type="password"
-            id="confirmPin"
-            maxlength="20"
-            placeholder="Confirm New PIN"
-            autocomplete="new-password">
-          <button
-            type="button"
-            class="pin-toggle"
-            onclick="togglePinVisibility('confirmPin', this)"
-            title="Show / Hide PIN"
-            aria-label="Show or hide Confirm New PIN">
-            👁️
-          </button>
-        </div>
+      <div class="field">
+        <label>Confirm New PIN</label>
+        <input
+          type="password"
+          id="confirmPin"
+          maxlength="20"
+          placeholder="Confirm New PIN">
       </div>
 
-      <div class="change-pin-note">
-        🔒 PIN कम से कम 4 अंकों का होना चाहिए। PIN बदलने के बाद आपको दोबारा Login करना होगा।
-      </div>
-
-      <div class="change-pin-actions">
-        <button
-          type="button"
-          class="btn change-pin-submit"
-          onclick="changeMemberPin()">
-          🔐 Change PIN
-        </button>
-      </div>
+      <button
+        class="btn"
+        onclick="changeMemberPin()">
+        🔐 Change PIN
+      </button>
 
     </div>
 
@@ -3483,22 +3195,6 @@ async function initMember(user){
   await updateNotificationCount();
   await setupFCM(user.family_id);
 }
-function togglePinVisibility(id, button){
-
-  const input = $(id);
-  if(!input) return;
-
-  if(input.type === "password"){
-    input.type = "text";
-    button.textContent = "🙈";
-    button.title = "Hide PIN";
-  }else{
-    input.type = "password";
-    button.textContent = "👁️";
-    button.title = "Show PIN";
-  }
-}
-
 function openChangePin(){
 
   document.querySelectorAll("main section")
@@ -3859,9 +3555,12 @@ function getLedgerNetTotal(x){
 
     let total = 0;
 
-    // केवल बचत खाते की entries Net Total में आएँगी।
-    // Loan लिया गया, Loan Repayment और Loan Interest
-    // savings balance का हिस्सा नहीं हैं।
+    // Loan
+    (x.loans || []).forEach(r => {
+        total -= Math.abs(
+            Number(r.original || r.principal || 0)
+        );
+    });
 
     // Savings
     (x.savings || []).forEach(r => {
@@ -3878,9 +3577,13 @@ function getLedgerNetTotal(x){
         total -= Number(r.amount || 0);
     });
 
+    // Loan Payment
+    (x.payments || []).forEach(r => {
+        total += Number(r.amount || 0);
+    });
+
     return total;
 }
-
 async function loadMemberPassbook(fid){
     window.scrollTo({
         top: 0,
@@ -3992,67 +3695,304 @@ if(ledgerYearSelect){
         </div>
 
 
-        <!-- MEMBER NAME -->
-        <div class="member-name-card" style="
-            margin-top:15px;
-            padding:18px 15px;
-            text-align:center;
-            background:#f7fbff;
-            border:1px solid #dbe7f3;
-            border-radius:12px;
-        ">
-        
-            <div style="
-                font-size:13px;
-                color:#64748b;
-                margin-bottom:5px;
-            ">
-                सदस्य
+        <!-- MEMBER INFORMATION -->
+
+        <div class="cards" style="margin-top:15px">
+
+          <div class="card">
+
+            <div class="label">
+              सदस्य
             </div>
-        
-            <div style="
-                font-size:24px;
-                font-weight:700;
-                color:#083b78;
-            ">
-                ${family?.name || "—"}
+
+            <div class="value">
+              ${family?.name || "—"}
             </div>
-        
+
+          </div>
+
+
+          <div class="card">
+
+            <div class="label">
+              मोबाइल
+            </div>
+
+            <div class="value">
+              ${family?.mobile || "—"}
+            </div>
+
+          </div>
+
+
+          <div class="card">
+
+            <div class="label">
+              मेरी कुल बचत
+            </div>
+
+            <div class="value green">
+              ${money(finalSaving)}
+            </div>
+
+          </div>
+
+
+          <div class="card">
+
+            <div class="label">
+              मेरा लोन बाकी
+            </div>
+
+            <div class="value red">
+              ${money(loan)}
+            </div>
+
+          </div>
+
         </div>
 
-<!-- MEMBER TRANSACTION LEDGER -->
 
-<div class="panel" style="margin-top:15px;">
+        <!-- GROUP SUMMARY -->
 
-    <h3>📒 Transaction Ledger</h3>
+        <div class="panel" style="margin-top:15px">
 
-    <div class="table" style="overflow-x:auto;">
+          <h3>
+            🏦 Family Saving Group की कुल स्थिति
+          </h3>
 
-        <table id="memberTransactionLedger">
+          <div class="cards">
 
-            <thead>
-                <tr>
-                    <th>तारीख</th>
-                    <th>विवरण</th>
-                    <th>जमा</th>
-                    <th>निकासी</th>
-                    <th>शेष</th>
-                </tr>
-            </thead>
+            <div class="card">
 
-            <tbody id="memberTransactionLedgerBody">
-                ${buildMemberTransactionLedger(x)}
-            </tbody>
+              <div class="label">
+                👨‍👩‍👧‍👦 कुल सदस्य
+              </div>
 
-        </table>
+              <div class="value">
+                23
+              </div>
 
-    </div>
-
-</div>
-
-<!-- END MEMBER TRANSACTION LEDGER -->
+            </div>
 
 
+            <div class="card">
+
+              <div class="label">
+                💰 समूह की कुल बचत
+              </div>
+
+              <div class="value green">
+                ${money(groupSavings)}
+              </div>
+
+            </div>
+
+
+            <div class="card">
+
+              <div class="label">
+                🏦 कुल Loan बाकी
+              </div>
+
+              <div class="value red">
+                ${money(groupLoan)}
+              </div>
+
+            </div>
+
+
+            <div class="card">
+
+              <div class="label">
+                💵 प्राप्त ब्याज
+              </div>
+
+              <div class="value">
+                ${money(groupInterest)}
+              </div>
+
+            </div>
+
+
+            <div class="card">
+
+              <div class="label">
+                💳 उपलब्ध राशि
+              </div>
+
+              <div class="value">
+                ${money(groupAvailable)}
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- YEARLY FINANCIAL RECORD -->
+        
+        <div id="memberFinancialInfo" class="panel" style="margin-top:15px;display:none;">
+        
+          <h3>
+            📅 वित्तीय वर्ष का रिकॉर्ड
+          </h3>
+        
+          <div style="
+            margin:10px 0;
+            display:flex;
+            align-items:center;
+            gap:10px;
+            flex-wrap:wrap;
+          ">
+        
+            <label>
+              वित्तीय वर्ष चुनें:
+            </label>
+        
+            <select
+              id="memberYearSelect"
+              onchange="filterMemberYearlyRecord(this.value)"
+              style="
+                padding:4px 22px 4px 2px !important;
+                border:none !important;
+                border-radius:0 !important;
+                background:transparent !important;
+                box-shadow:none !important;
+                outline:none !important;
+                font-size:14px;
+                color:#17233c;
+                cursor:pointer;
+                appearance:auto;
+              "
+            >
+        
+              <option value="">
+                सभी वर्ष
+              </option>
+        
+              ${
+                [...new Set(
+                  (x.yearly_records || [])
+                    .map(r => r.financial_year)
+                )].map(year => `
+                  <option value="${year}">
+                    ${year}
+                  </option>
+                `).join("")
+              }
+        
+            </select>
+        
+          </div>
+        
+        
+          <div class="table">
+        
+            <table id="memberYearlyRecordTable">
+        
+              <tr>
+                <th>वित्तीय वर्ष</th>
+                <th>कुल बचत</th>
+                <th>ब्याज लाभ</th>
+                <th>निकासी</th>
+                <th>Net Saving</th>
+              </tr>
+        
+              ${
+                (x.yearly_records || []).map(r => `
+                  <tr>
+                    <td>${r.financial_year}</td>
+                    <td class="green">
+                      ${money(r.saving)}
+                    </td>
+                    <td class="green">
+                      ${money(r.interest)}
+                    </td>
+                    <td class="red">
+                      ${money(r.debit)}
+                    </td>
+                    <td class="green">
+                      ${money(r.net_saving)}
+                    </td>
+                  </tr>
+                `).join("")
+                ||
+                `
+                  <tr>
+                    <td colspan="5" class="empty">
+                      कोई वार्षिक रिकॉर्ड नहीं
+                    </td>
+                  </tr>
+                `
+              }
+        
+            </table>
+        
+          </div>
+        
+        </div>
+        <!-- SELECTED YEAR DETAIL -->
+
+        <div
+          id="memberYearlyDetailPanel"
+          class="panel"
+          style="margin-top:15px;display:none;"
+        >
+        
+          <h3>
+            📋 चयनित वित्तीय वर्ष का विवरण
+          </h3>
+        
+          <div class="table">
+        
+            <table>
+        
+              <tr>
+                <th>तारीख</th>
+                <th>विवरण</th>
+                <th>राशि</th>
+              </tr>
+        
+              <tbody id="memberYearlyDetailedLedger">
+              </tbody>
+        
+            </table>
+        
+          </div>
+        
+        </div>
+        <!-- MEMBER TRANSACTION HISTORY -->
+
+        <div id="memberLedger" class="panel" style="margin-top:15px;display:none;">
+
+          <h3>
+            बचत / भुगतान विवरण
+          </h3>
+
+          <div class="table">
+
+            <table>
+
+              <tr>
+
+                <th>तारीख</th>
+
+                <th>विवरण</th>
+
+                <th>राशि</th>
+
+              </tr>
+
+
+              ${buildPassbookLedger(x, true)}
+
+            </table>
+
+          </div>
+
+        </div>
 
       </div>
 
@@ -4687,68 +4627,6 @@ async function openFamilyGroupDashboard(button){
 
         </div>
 
-        <!-- ================= GROUP DETAILS ================= -->
-        <div class="fgd-detail-grid">
-
-          <div class="fgd-detail-card status-card">
-            <div class="fgd-detail-title">👨‍👩‍👧‍👦 समूह की स्थिति</div>
-
-            <div class="fgd-detail-list">
-              <div class="fgd-detail-row">
-                <span>कुल परिवार</span>
-                <b>23</b>
-              </div>
-
-              <div class="fgd-detail-row">
-                <span>मासिक बचत लक्ष्य</span>
-                <b>₹46,000</b>
-              </div>
-
-              <div class="fgd-detail-row">
-                <span>कुल Loan बाकी</span>
-                <b id="fgdStatusLoan">₹0</b>
-              </div>
-
-              <div class="fgd-detail-row">
-                <span>उपलब्ध राशि</span>
-                <b id="fgdStatusAvailable">₹0</b>
-              </div>
-            </div>
-          </div>
-
-          <div class="fgd-detail-card financial-card">
-            <div class="fgd-detail-title">📊 समूह का वित्तीय सारांश</div>
-
-            <div class="fgd-detail-list">
-              <div class="fgd-detail-row">
-                <span>कुल बचत</span>
-                <b id="fgdSummarySavings">₹0</b>
-              </div>
-
-              <div class="fgd-detail-row">
-                <span>प्राप्त ब्याज</span>
-                <b id="fgdSummaryInterest">₹0</b>
-              </div>
-
-              <div class="fgd-detail-row">
-                <span>Loan बाकी</span>
-                <b id="fgdSummaryLoan">₹0</b>
-              </div>
-
-              <div class="fgd-detail-row">
-                <span>उपलब्ध राशि</span>
-                <b id="fgdSummaryAvailable">₹0</b>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="fgd-motivation">
-          🌱 छोटी-छोटी बचत, बड़ा और सुरक्षित भविष्य
-          <span>एक परिवार • एक बचत • उज्ज्वल भविष्य</span>
-        </div>
-
     `;
 
     document.querySelector(".content").appendChild(section);
@@ -4787,25 +4665,6 @@ async function openFamilyGroupDashboard(button){
       money(x.group_interest);
 
     $("fgdAvailable").textContent =
-      money(x.group_available);
-
-    // नीचे के detail cards भी उसी live data से भरें
-    $("fgdStatusLoan").textContent =
-      money(x.group_loan);
-
-    $("fgdStatusAvailable").textContent =
-      money(x.group_available);
-
-    $("fgdSummarySavings").textContent =
-      money(x.group_savings);
-
-    $("fgdSummaryInterest").textContent =
-      money(x.group_interest);
-
-    $("fgdSummaryLoan").textContent =
-      money(x.group_loan);
-
-    $("fgdSummaryAvailable").textContent =
       money(x.group_available);
 
   }catch(e){
@@ -6087,17 +5946,7 @@ function buildPassbookLedger(x, showTotal = false){
       date: r.date || "",
       order: 1,
       detail: "Loan लिया गया",
-      amount: 0,
-      displayAmount: Math.abs(Number(
-        r.original ??
-        r.loan_amount ??
-        r.principal ??
-        r.amount ??
-        0
-      )),
-      displayType: "withdrawal",
-      affectsBalance: false,
-      excluded: true,
+      amount: -Math.abs(Number(r.original || r.principal || 0)),
       className: "red"
     });
   });
@@ -6185,193 +6034,6 @@ if (showTotal) {
 }
 
 return ledgerRows;
-}
-
-function buildMemberTransactionLedger(x){
-  const rows = [];
-
-  // Loan entry केवल विवरण में दिखाई जाएगी।
-  // इसका savings balance / Net Total पर कोई असर नहीं होगा।
-  (x.loans || []).forEach(r => {
-    // Loan की पूरी ली गई राशि ledger में दिखाएँ।
-    // लेकिन balance / Net Total में इसे शामिल न करें।
-    const loanAmount = Math.abs(Number(
-      r.original ??
-      r.loan_amount ??
-      r.principal ??
-      r.amount ??
-      0
-    ));
-
-    rows.push({
-      date: r.date || "",
-      order: 1,
-      detail: "Loan लिया गया",
-      amount: 0,
-      displayAmount: loanAmount,
-      displayType: "withdrawal",
-      affectsBalance: false,
-      excluded: true
-    });
-  });
-
-  // Monthly Savings = savings balance में जमा
-  (x.savings || []).forEach(r => {
-    rows.push({
-      date: r.date || "",
-      order: 2,
-      detail: `मासिक बचत (${r.month || ""})`,
-      amount: Math.abs(Number(r.amount || 0)),
-      affectsBalance: true
-    });
-  });
-
-  // Interest Credit = savings balance में जमा
-  (x.interest_credits || []).forEach(r => {
-    rows.push({
-      date: r.date || "",
-      order: 3,
-      detail: "ब्याज लाभ",
-      amount: Math.abs(Number(r.amount || 0)),
-      affectsBalance: true
-    });
-  });
-
-  // Saving Debit = savings balance से निकासी
-  (x.saving_debits || []).forEach(r => {
-    rows.push({
-      date: r.date || "",
-      order: 4,
-      detail: `Debit / निकासी${r.reason ? " (" + r.reason + ")" : ""}`,
-      amount: -Math.abs(Number(r.amount || 0)),
-      affectsBalance: true
-    });
-  });
-
-  // Loan repayment और उसका interest केवल transaction list में रहेंगे।
-  // दोनों savings balance / Net Total में शामिल नहीं होंगे।
-  (x.payments || []).forEach(r => {
-    const principal = Math.abs(Number(r.principal || 0));
-    const interest = Math.abs(Number(r.interest || 0));
-    const totalAmount = Math.abs(Number(r.amount || 0));
-
-    // Principal repayment अलग entry
-    if(principal > 0){
-      rows.push({
-        date: r.date || "",
-        order: 5,
-        detail: "Loan Repayment",
-        amount: 0,
-        displayAmount: principal,
-        displayType: "withdrawal",
-        affectsBalance: false,
-        excluded: true
-      });
-    }
-
-    // Loan interest paid अलग entry
-    if(interest > 0){
-      rows.push({
-        date: r.date || "",
-        order: 6,
-        detail: "Loan Interest Paid",
-        amount: 0,
-        displayAmount: interest,
-        displayType: "withdrawal",
-        affectsBalance: false,
-        excluded: true
-      });
-    }
-
-    // पुराने/अलग payment data में principal/interest fields न हों
-    // तो पूरी payment राशि सिर्फ विवरण में दिखाएँ।
-    if(principal === 0 && interest === 0 && totalAmount > 0){
-      rows.push({
-        date: r.date || "",
-        order: 5,
-        detail: "Loan Repayment",
-        amount: 0,
-        displayAmount: totalAmount,
-        displayType: "withdrawal",
-        affectsBalance: false,
-        excluded: true
-      });
-    }
-  });
-
-  if(!rows.length){
-    return `
-      <tr>
-        <td colspan="5" class="empty">
-          कोई Transaction उपलब्ध नहीं
-        </td>
-      </tr>
-    `;
-  }
-
-  // पहले पुराने से नए क्रम में balance निकालें।
-  rows.sort((a,b) => {
-    const dateCompare = String(a.date).localeCompare(String(b.date));
-    return dateCompare !== 0 ? dateCompare : a.order - b.order;
-  });
-
-  let balance = 0;
-
-  rows.forEach(r => {
-    if(r.affectsBalance){
-      balance += r.amount;
-    }
-    // Loan entries में balance वही रहेगा।
-    r.balance = balance;
-  });
-
-  // Passbook में नया transaction ऊपर दिखे
-  rows.reverse();
-
-  const ledgerRows = rows.map(r => {
-    const isExcluded = r.excluded === true;
-    const isDeposit = r.amount >= 0;
-    const amount = Math.abs(r.amount);
-    const displayAmount =
-      r.displayAmount !== undefined
-        ? r.displayAmount
-        : amount;
-    const balanceClass = r.balance < 0 ? "red" : "green";
-
-    return `
-      <tr>
-        <td>${r.date}</td>
-        <td>${r.detail}</td>
-        <td class="green">
-          ${isExcluded && r.displayType === "deposit" ? money(displayAmount) : (!isExcluded && isDeposit ? money(amount) : "—")}
-        </td>
-        <td class="red">
-          ${isExcluded && r.displayType === "withdrawal" ? money(displayAmount) : (!isExcluded && !isDeposit ? money(amount) : "—")}
-        </td>
-        <td class="${balanceClass}">
-          ${money(r.balance)}
-        </td>
-      </tr>
-    `;
-  }).join("");
-
-  // Net Total केवल savings + interest credit - saving debit है।
-  // Loan लिया/चुकाया/interest paid इसमें शामिल नहीं है।
-  const total = getLedgerNetTotal(x);
-
-  return ledgerRows + `
-    <tr style="
-      font-weight:bold;
-      border-top:2px solid #1976d2;
-    ">
-      <td colspan="4" style="text-align:right;">
-        Net Total
-      </td>
-      <td class="${total < 0 ? "red" : "green"}">
-        ${money(total)}
-      </td>
-    </tr>
-  `;
 }
 
 function filterYearlyRecord(selectedYear){
