@@ -7736,3 +7736,25 @@ window.addEventListener("load", function(){
 </script>
 </body>
 </html>
+
+<!-- ================= FAMILY GROUP CARD HOVER BOUNDARY FIX ================= -->
+<style>
+/* Keep the existing animation exactly as it is.
+   Give the cards room to scale/raise without being clipped by the grid. */
+#familyGroupDashboard .cards{
+  overflow:visible !important;
+}
+
+#familyGroupDashboard{
+  overflow:visible !important;
+}
+
+#familyGroupDashboard .card{
+  position:relative;
+  z-index:1;
+}
+
+#familyGroupDashboard .card:hover{
+  z-index:5;
+}
+</style>
