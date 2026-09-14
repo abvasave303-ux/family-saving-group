@@ -1677,6 +1677,154 @@ header .title{
 #familyGroupDashboard .card::before{
     display:none;
 }
+/* ================= PROFESSIONAL CHANGE PIN UI ================= */
+#changePin{
+  max-width:900px;
+  margin:0 auto;
+}
+
+#changePin .change-pin-panel{
+  background:linear-gradient(135deg,#ffffff,#f7fbff);
+  border:1px solid #dfe9f5;
+  border-radius:18px;
+  box-shadow:0 8px 28px rgba(22,35,59,.08);
+  overflow:hidden;
+}
+
+#changePin .change-pin-header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:18px 22px;
+  background:linear-gradient(135deg,#eef7ff,#f8fbff);
+  border-bottom:1px solid #e3edf7;
+}
+
+#changePin .change-pin-header-icon{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:#dceeff;
+  font-size:22px;
+  flex-shrink:0;
+}
+
+#changePin .change-pin-header h3{
+  padding:0;
+  border:0;
+  font-size:18px;
+  color:#16233b;
+}
+
+#changePin .change-pin-subtitle{
+  margin:2px 0 0;
+  font-size:12px;
+  color:#68768b;
+}
+
+#changePin .change-pin-body{
+  padding:22px;
+}
+
+#changePin .change-pin-field{
+  margin-bottom:16px;
+}
+
+#changePin .change-pin-field label{
+  display:block;
+  margin-bottom:7px;
+  font-size:13px;
+  font-weight:700;
+  color:#4e6178;
+}
+
+#changePin .change-pin-input-wrap{
+  position:relative;
+}
+
+#changePin .change-pin-input-wrap input{
+  width:100%;
+  box-sizing:border-box;
+  padding:12px 48px 12px 14px;
+  border:1px solid #ccd8e6;
+  border-radius:10px;
+  background:#fff;
+  color:#16233b;
+  font-size:14px;
+  outline:none;
+  transition:border-color .2s ease,box-shadow .2s ease;
+}
+
+#changePin .change-pin-input-wrap input:focus{
+  border-color:#1976d2;
+  box-shadow:0 0 0 3px rgba(25,118,210,.10);
+}
+
+#changePin .pin-toggle{
+  position:absolute;
+  top:50%;
+  right:8px;
+  transform:translateY(-50%);
+  width:34px;
+  height:34px;
+  padding:0;
+  border:0;
+  border-radius:8px;
+  background:#eef4ff;
+  color:#135ba5;
+  cursor:pointer;
+  font-size:16px;
+}
+
+#changePin .pin-toggle:hover{
+  background:#dceaff;
+}
+
+#changePin .change-pin-note{
+  margin:2px 0 18px;
+  padding:10px 12px;
+  border-radius:9px;
+  background:#f3f8fd;
+  color:#60748a;
+  font-size:12px;
+}
+
+#changePin .change-pin-actions{
+  display:flex;
+  justify-content:flex-start;
+}
+
+#changePin .change-pin-submit{
+  min-width:150px;
+  padding:11px 18px;
+  border-radius:9px;
+  box-shadow:0 4px 12px rgba(25,118,210,.16);
+  transition:transform .2s ease,box-shadow .2s ease,opacity .2s ease;
+}
+
+#changePin .change-pin-submit:hover{
+  transform:translateY(-1px);
+  box-shadow:0 6px 16px rgba(25,118,210,.22);
+  opacity:1;
+}
+
+@media(max-width:650px){
+  #changePin{
+    max-width:none;
+  }
+  #changePin .change-pin-header{
+    padding:16px;
+  }
+  #changePin .change-pin-body{
+    padding:16px;
+  }
+  #changePin .change-pin-submit{
+    width:100%;
+  }
+}
+
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
@@ -2966,47 +3114,93 @@ onMessage(messaging, (payload) => {
 
 </section>
 
-<!-- CHANGE PIN -->
+<!-- ================= CHANGE PIN ================= -->
 <section id="changePin" class="hidden">
 
-  <div class="panel">
+  <div class="change-pin-panel">
 
-    <h3>🔐 Change PIN</h3>
+    <div class="change-pin-header">
+      <div class="change-pin-header-icon">🔐</div>
+      <div>
+        <h3>Change PIN</h3>
+        <div class="change-pin-subtitle">अपना Member Login PIN सुरक्षित रूप से बदलें</div>
+      </div>
+    </div>
 
-    <div class="body">
+    <div class="change-pin-body">
 
-      <div class="field">
-        <label>Current PIN</label>
-        <input
-          type="password"
-          id="currentPin"
-          maxlength="20"
-          placeholder="Current PIN">
+      <div class="change-pin-field">
+        <label for="currentPin">Current PIN</label>
+        <div class="change-pin-input-wrap">
+          <input
+            type="password"
+            id="currentPin"
+            maxlength="20"
+            placeholder="Current PIN"
+            autocomplete="current-password">
+          <button
+            type="button"
+            class="pin-toggle"
+            onclick="togglePinVisibility('currentPin', this)"
+            title="Show / Hide PIN"
+            aria-label="Show or hide Current PIN">
+            👁️
+          </button>
+        </div>
       </div>
 
-      <div class="field">
-        <label>New PIN</label>
-        <input
-          type="password"
-          id="newPin"
-          maxlength="20"
-          placeholder="New PIN">
+      <div class="change-pin-field">
+        <label for="newPin">New PIN</label>
+        <div class="change-pin-input-wrap">
+          <input
+            type="password"
+            id="newPin"
+            maxlength="20"
+            placeholder="New PIN"
+            autocomplete="new-password">
+          <button
+            type="button"
+            class="pin-toggle"
+            onclick="togglePinVisibility('newPin', this)"
+            title="Show / Hide PIN"
+            aria-label="Show or hide New PIN">
+            👁️
+          </button>
+        </div>
       </div>
 
-      <div class="field">
-        <label>Confirm New PIN</label>
-        <input
-          type="password"
-          id="confirmPin"
-          maxlength="20"
-          placeholder="Confirm New PIN">
+      <div class="change-pin-field">
+        <label for="confirmPin">Confirm New PIN</label>
+        <div class="change-pin-input-wrap">
+          <input
+            type="password"
+            id="confirmPin"
+            maxlength="20"
+            placeholder="Confirm New PIN"
+            autocomplete="new-password">
+          <button
+            type="button"
+            class="pin-toggle"
+            onclick="togglePinVisibility('confirmPin', this)"
+            title="Show / Hide PIN"
+            aria-label="Show or hide Confirm New PIN">
+            👁️
+          </button>
+        </div>
       </div>
 
-      <button
-        class="btn"
-        onclick="changeMemberPin()">
-        🔐 Change PIN
-      </button>
+      <div class="change-pin-note">
+        🔒 PIN कम से कम 4 अंकों का होना चाहिए। PIN बदलने के बाद आपको दोबारा Login करना होगा।
+      </div>
+
+      <div class="change-pin-actions">
+        <button
+          type="button"
+          class="btn change-pin-submit"
+          onclick="changeMemberPin()">
+          🔐 Change PIN
+        </button>
+      </div>
 
     </div>
 
@@ -3289,6 +3483,22 @@ async function initMember(user){
   await updateNotificationCount();
   await setupFCM(user.family_id);
 }
+function togglePinVisibility(id, button){
+
+  const input = $(id);
+  if(!input) return;
+
+  if(input.type === "password"){
+    input.type = "text";
+    button.textContent = "🙈";
+    button.title = "Hide PIN";
+  }else{
+    input.type = "password";
+    button.textContent = "👁️";
+    button.title = "Show PIN";
+  }
+}
+
 function openChangePin(){
 
   document.querySelectorAll("main section")
