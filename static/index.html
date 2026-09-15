@@ -1315,25 +1315,34 @@ header .title{
   font-size:12px;
 }
 
+.member-management-table table{
+  border-collapse:separate;
+  border-spacing:0;
+}
+
 .member-management-table th{
-  background:#f5f8fc;
+  background:linear-gradient(180deg,#f7faff,#eef4fb);
   color:#53647a;
   font-size:11px;
   font-weight:800;
-  padding:11px 10px;
+  padding:12px 10px;
+  border-bottom:1px solid #dce7f2;
 }
 
 .member-management-table td{
-  padding:11px 10px;
+  padding:12px 10px;
   vertical-align:middle;
+  border-bottom:1px solid #edf1f6;
 }
 
 .member-management-table tbody tr{
-  transition:background .18s ease,transform .18s ease;
+  position:relative;
+  transition:background .18s ease,transform .18s ease,box-shadow .18s ease;
 }
 
 .member-management-table tbody tr:hover{
-  background:#f8fbff;
+  background:linear-gradient(90deg,#f4f9ff,#ffffff);
+  box-shadow:inset 3px 0 0 #1976d2;
 }
 
 .member-management-table tbody tr:hover td:first-child{
