@@ -1184,6 +1184,103 @@ header .title{
   }
 }
 
+
+/* ================= PREMIUM ADMIN DASHBOARD V1 ================= */
+/* Admin-only polish: no member UI / logic changes */
+#dashboard{
+  position:relative;
+}
+
+#dashboard .cards{
+  gap:14px;
+}
+
+#dashboard .cards .card{
+  position:relative;
+  min-height:112px;
+  padding:18px 18px 16px;
+  border:1px solid rgba(211,224,240,.9);
+  border-radius:16px;
+  background:linear-gradient(145deg,#ffffff 0%,#f8fbff 100%);
+  box-shadow:0 8px 24px rgba(23,54,93,.08), inset 0 1px 0 rgba(255,255,255,.95);
+  overflow:hidden;
+}
+
+#dashboard .cards .card::after{
+  content:"";
+  position:absolute;
+  width:90px;
+  height:90px;
+  right:-32px;
+  bottom:-38px;
+  border-radius:50%;
+  background:rgba(25,118,210,.055);
+  pointer-events:none;
+}
+
+#dashboard .cards .card:hover{
+  transform:translateY(-5px) scale(1.015);
+  box-shadow:0 14px 30px rgba(23,54,93,.13), inset 0 1px 0 rgba(255,255,255,.95);
+}
+
+#dashboard .card .label{
+  position:relative;
+  z-index:1;
+  font-size:12px;
+  color:#62748c;
+  font-weight:700;
+}
+
+#dashboard .card .value{
+  position:relative;
+  z-index:1;
+  margin-top:9px;
+  font-size:27px;
+  letter-spacing:.3px;
+}
+
+#dashboard .grid{
+  gap:14px;
+  margin-top:16px;
+}
+
+#dashboard .grid .panel{
+  border:1px solid rgba(211,224,240,.9);
+  border-radius:16px;
+  background:rgba(255,255,255,.92);
+  box-shadow:0 8px 24px rgba(23,54,93,.075);
+}
+
+#dashboard .grid .panel:hover{
+  transform:translateY(-3px);
+  box-shadow:0 13px 28px rgba(23,54,93,.11);
+}
+
+#dashboard .grid .panel h3{
+  padding:15px 18px;
+  background:linear-gradient(90deg,#f5f9ff,#ffffff);
+  font-size:16px;
+}
+
+#dashboard .grid .panel .body{
+  padding:16px 18px 18px;
+}
+
+#dashboard .notice{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+}
+
+@media(max-width:900px){
+  #dashboard .cards{
+    grid-template-columns:repeat(2,1fr);
+  }
+  #dashboard .grid{
+    grid-template-columns:1fr;
+  }
+}
+
+/* ================= END PREMIUM ADMIN DASHBOARD V1 ================= */
+
 /* ================= MEMBER DASHBOARD UI ================= */
 .member-dashboard{
   max-width:1180px;
