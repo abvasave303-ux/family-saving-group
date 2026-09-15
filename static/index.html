@@ -21,79 +21,173 @@ body{
   color:#16233b;
 }
 
+/* ================= PREMIUM ADMIN SIDEBAR ================= */
 .side{
   position:fixed;
   left:0;
   top:0;
   bottom:0;
-  width:230px;
-  background:#083b78;
+  width:270px;
+  background:
+    radial-gradient(circle at 50% -10%, rgba(38,130,255,.28), transparent 34%),
+    linear-gradient(180deg,#071d3d 0%,#062b5f 48%,#041c3e 100%);
   color:#fff;
-  padding:18px 12px;
+  padding:14px 12px 12px;
   overflow-y:auto;
+  overflow-x:hidden;
+  border-right:1px solid rgba(86,164,255,.25);
+  box-shadow:8px 0 30px rgba(2,20,45,.22);
+  z-index:1000;
 }
 
-.brand{
+.side::-webkit-scrollbar{width:5px}
+.side::-webkit-scrollbar-thumb{
+  background:rgba(255,255,255,.18);
+  border-radius:10px;
+}
+
+.side .brand{
+  position:relative;
   text-align:center;
-  font-size:20px;
-  font-weight:800;
-  padding:10px;
+  font-size:21px;
+  font-weight:900;
+  padding:12px 8px 15px;
+  margin-bottom:8px;
+  border-bottom:1px solid rgba(255,255,255,.12);
 }
 
-.brand img{
-  width:90px;
-  height:90px;
+.side .brand:after{
+  content:"ADMIN PANEL";
+  display:block;
+  width:max-content;
+  margin:8px auto 0;
+  padding:4px 10px;
+  border:1px solid rgba(94,176,255,.32);
+  border-radius:999px;
+  background:rgba(25,118,210,.16);
+  color:#9ed1ff;
+  font-size:9px;
+  letter-spacing:1.4px;
+  font-weight:800;
+}
+
+.side .brand img{
+  width:82px;
+  height:82px;
   object-fit:contain;
   display:block;
   margin:0 auto 8px;
   background:#fff;
   border-radius:50%;
-  padding:5px;
+  padding:4px;
+  box-shadow:0 0 0 3px rgba(255,255,255,.10),0 8px 22px rgba(0,0,0,.28);
 }
 
-.brand small{
+.side .brand small{
   display:block;
   font-size:11px;
   font-weight:400;
+  color:#b9d5f4;
   margin-top:5px;
 }
 
-.nav button{
+.side .nav{
+  padding:5px 2px 12px;
+}
+
+.side .nav .nav-section-title{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin:15px 8px 6px;
+  color:#79b9f4;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+}
+
+.side .nav .nav-section-title:after{
+  content:"";
+  height:1px;
+  flex:1;
+  background:rgba(121,185,244,.18);
+}
+
+.side .nav button{
+  position:relative;
   width:100%;
-  padding:11px;
+  min-height:44px;
+  padding:10px 12px;
   margin:3px 0;
-  border:0;
-  border-radius:8px;
+  border:1px solid transparent;
+  border-radius:11px;
   background:transparent;
-  color:#fff;
+  color:#e9f4ff;
   text-align:left;
-  font-size:14px;
+  font-size:13px;
+  font-weight:600;
   cursor:pointer;
-}
-/* ================= SIDEBAR MENU EFFECT ================= */
-
-.nav button{
-  transition:
-    background 0.2s ease,
-    transform 0.2s ease,
-    padding-left 0.2s ease;
+  transition:background .22s ease,transform .22s ease,box-shadow .22s ease,border-color .22s ease,padding-left .22s ease;
 }
 
-.nav button:hover{
+.side .nav button:hover{
   transform:translateX(3px);
-  padding-left:14px;
-  background:#1976d2;
+  padding-left:15px;
+  background:linear-gradient(90deg,rgba(25,118,210,.42),rgba(25,118,210,.14));
+  border-color:rgba(91,176,255,.22);
+  box-shadow:0 5px 16px rgba(0,0,0,.14);
 }
 
-.nav button.active{
-  box-shadow:0 4px 12px rgba(0,0,0,0.12);
+.side .nav button.active{
+  background:linear-gradient(90deg,#147ce5 0%,#0b62be 100%);
+  border-color:#69b8ff;
+  box-shadow:0 7px 20px rgba(0,118,255,.28),inset 0 1px 0 rgba(255,255,255,.16);
+  font-weight:800;
 }
-.nav button:hover,
-.nav button.active{
-  background:#1976d2;
+
+.side .nav button.active:before{
+  content:"";
+  position:absolute;
+  left:-1px;
+  top:8px;
+  bottom:8px;
+  width:3px;
+  border-radius:0 4px 4px 0;
+  background:#fff;
 }
+
+.side .nav button:last-child{
+  margin-top:18px;
+  color:#ffb4b4;
+  background:rgba(220,53,69,.10);
+  border-color:rgba(255,94,105,.18);
+}
+
+.side .nav button:last-child:hover{
+  background:rgba(220,53,69,.22);
+  border-color:rgba(255,110,120,.35);
+}
+
+.side .admin-sidebar-footer{
+  margin:8px 5px 2px;
+  padding:11px 8px;
+  text-align:center;
+  border-top:1px solid rgba(255,255,255,.10);
+  color:#8fb6dc;
+  font-size:9px;
+  line-height:1.5;
+}
+
+.side .admin-sidebar-footer strong{
+  display:block;
+  color:#dceeff;
+  font-size:10px;
+  margin-bottom:2px;
+}
+
 .main{
-  margin-left:230px;
+  margin-left:270px;
   min-height:100vh;
   background:linear-gradient(
     120deg,
@@ -105,6 +199,7 @@ body{
   background-size:300% 300%;
   animation:postLoginGradient 18s ease-in-out infinite;
 }
+
 
 
 header{
@@ -515,11 +610,11 @@ th{
   }
 
   .side{
-    width:200px;
+    width:220px;
   }
 
   .main{
-    margin-left:200px;
+    margin-left:220px;
   }
 }
 
@@ -2129,56 +2224,72 @@ onMessage(messaging, (payload) => {
       onerror="this.style.display='none'"
     >
 
-    👨‍👩‍👧‍👦 Family Saving Group
+    👑 Admin Panel
 
-    <small>
-      एक परिवार • एक बचत • उज्ज्वल भविष्य
-    </small>
+    <small>Family Saving Group</small>
 
   </div>
 
   <div class="nav">
 
+    <div class="nav-section-title">MAIN</div>
     <button onclick="show('dashboard',this)" class="active">
-      🏠 Dashboard
+      🏠&nbsp; Dashboard
     </button>
 
+    <div class="nav-section-title">MEMBER MANAGEMENT</div>
     <button onclick="show('families',this)">
-      👨‍👩‍👧‍👦 परिवार
+      👨‍👩‍👧‍👦&nbsp; परिवार
     </button>
 
     <button onclick="show('members',this)">
-      👤 Member Management
+      👤&nbsp; Member Management
     </button>
 
+    <button onclick="show('changePin',this)">
+      🔐&nbsp; Change PIN
+    </button>
+
+    <button onclick="show('members',this)">
+      🚪&nbsp; Force Logout
+    </button>
+
+    <div class="nav-section-title">TRANSACTIONS</div>
     <button onclick="show('saving',this)">
-      💰 मासिक बचत
+      💰&nbsp; मासिक बचत
     </button>
 
     <button onclick="show('loans',this)">
-      💳 लोन
+      💳&nbsp; लोन
     </button>
 
     <button onclick="show('repay',this)">
-      💵 किस्त / भुगतान
+      💵&nbsp; किस्त / भुगतान
     </button>
 
     <button onclick="show('interest',this)">
-      📈 ब्याज वितरण
+      📈&nbsp; ब्याज वितरण
     </button>
 
     <button onclick="show('passbook',this)">
-      📒 पासबुक
+      📒&nbsp; पासबुक
     </button>
 
+    <div class="nav-section-title">REPORTS</div>
     <button onclick="show('reports',this)">
-      📄 रिपोर्ट्स
+      📄&nbsp; रिपोर्ट्स
     </button>
 
+    <div class="nav-section-title">SYSTEM</div>
     <button onclick="logout()">
-      🚪 Logout
+      🚪&nbsp; Logout
     </button>
 
+  </div>
+
+  <div class="admin-sidebar-footer">
+    <strong>Secure • Manage • Grow Together</strong>
+    Admin Panel • Family Saving Group
   </div>
 
 </aside>
