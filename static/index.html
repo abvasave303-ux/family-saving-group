@@ -2539,6 +2539,125 @@ header .title{
   padding-right:0 !important;
   box-sizing:border-box;
 }
+
+/* ================= DASHBOARD 3 PANELS - POLISH ================= */
+
+#dashboard .grid{
+  gap:14px;
+  align-items:stretch;
+}
+
+#dashboard .grid .panel{
+  border:1px solid #dfe7f1;
+  border-radius:15px;
+  background:rgba(255,255,255,.97);
+  box-shadow:0 5px 18px rgba(24,55,91,.07);
+  overflow:hidden;
+}
+
+#dashboard .grid .panel h3{
+  position:relative;
+  min-height:48px;
+  display:flex;
+  align-items:center;
+  box-sizing:border-box;
+  padding:13px 16px 13px 20px;
+  font-size:17px;
+  font-weight:800;
+  color:#16233b;
+  background:linear-gradient(180deg,#ffffff,#f8fbff);
+}
+
+#dashboard .grid .panel h3::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:15px;
+  width:4px;
+  height:20px;
+  border-radius:0 4px 4px 0;
+  background:#1976d2;
+}
+
+#dashboard .grid .panel .body{
+  padding:15px 16px;
+}
+
+#dashboard #sum{
+  min-height:132px;
+}
+
+#dashboard #sum .line{
+  padding:10px 4px;
+  border-bottom:1px solid #edf1f6;
+}
+
+#dashboard #sum .line:last-child{
+  border-bottom:0;
+}
+
+#dashboard .notice{
+  margin:0 0 12px;
+  padding:12px 13px;
+  border:1px solid #d7e6f7;
+  border-radius:10px;
+  background:linear-gradient(135deg,#f3f8ff,#f9fcff);
+  color:#465d78;
+  line-height:1.55;
+}
+
+#dashboard .notice b{
+  color:#0878d1;
+  font-size:15px;
+}
+
+#dashboard .bar{
+  height:10px;
+  margin-top:3px;
+  border-radius:20px;
+  background:#dce6f0;
+}
+
+#dashboard #progtext{
+  margin-top:10px;
+}
+
+#dashboard .grid .panel:nth-child(3) .line{
+  padding:11px 4px;
+}
+
+#dashboard .grid .panel:nth-child(3) .line:last-child{
+  border-bottom:0;
+}
+
+#dashboard .grid .panel:nth-child(3) .line b{
+  padding:5px 9px;
+  border:1px solid #d7e4f2;
+  border-radius:7px;
+  background:#f7faff;
+  color:#16233b;
+}
+
+@media(max-width:900px){
+  #dashboard .grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  #dashboard .grid .panel:nth-child(2){
+    grid-column:1/-1;
+  }
+}
+
+@media(max-width:650px){
+  #dashboard .grid{
+    grid-template-columns:1fr;
+  }
+
+  #dashboard .grid .panel:nth-child(2){
+    grid-column:auto;
+  }
+}
+
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
