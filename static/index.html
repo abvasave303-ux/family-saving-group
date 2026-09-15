@@ -2658,6 +2658,65 @@ header .title{
   }
 }
 
+
+/* ================= DASHBOARD FOOTER / EMPTY AREA POLISH ================= */
+
+#dashboard{
+  min-height:calc(100vh - 70px);
+  padding-bottom:28px;
+}
+
+#dashboard .dashboard-footer{
+  margin:18px auto 0;
+  width:100%;
+  max-width:720px;
+  box-sizing:border-box;
+  padding:10px 16px;
+  text-align:center;
+  color:#6c7c94;
+  font-size:12px;
+  letter-spacing:.15px;
+}
+
+#dashboard .dashboard-footer::before{
+  content:"";
+  display:inline-block;
+  width:42px;
+  height:1px;
+  margin:0 10px 4px 0;
+  background:#dbe4ef;
+}
+
+#dashboard .dashboard-footer::after{
+  content:"";
+  display:inline-block;
+  width:42px;
+  height:1px;
+  margin:0 0 4px 10px;
+  background:#dbe4ef;
+}
+
+#dashboard .dashboard-footer strong{
+  color:#48627f;
+  font-weight:700;
+}
+
+@media(max-width:650px){
+  #dashboard{
+    padding-bottom:20px;
+  }
+
+  #dashboard .dashboard-footer{
+    margin-top:14px;
+    font-size:11px;
+  }
+
+  #dashboard .dashboard-footer::before,
+  #dashboard .dashboard-footer::after{
+    width:22px;
+  }
+}
+
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
@@ -3252,6 +3311,10 @@ onMessage(messaging, (payload) => {
 
   </div>
 
+
+<div class="dashboard-footer">
+  <strong>Family Saving Group</strong> • Online-ready • 2026-27
+</div>
 </section>
 
 
