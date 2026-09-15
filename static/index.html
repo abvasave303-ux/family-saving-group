@@ -2716,7 +2716,147 @@ header .title{
     width:22px;
   }
 }
+/* ================= DASHBOARD DETAIL CARDS PREMIUM ================= */
 
+#familyGroupDashboard .fgd-detail-grid{
+  display:grid;
+  grid-template-columns:1.05fr 1.4fr 0.85fr;
+  gap:14px;
+  width:100%;
+  margin-top:14px;
+  padding:0 !important;
+  box-sizing:border-box;
+}
+
+#familyGroupDashboard .fgd-detail-card{
+  position:relative;
+  min-width:0;
+  padding:0;
+  overflow:hidden;
+
+  background:rgba(255,255,255,.96);
+  border:1px solid #dfe7f2;
+  border-radius:16px;
+
+  box-shadow:0 6px 18px rgba(22,35,59,.08);
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+/* Top blue line */
+#familyGroupDashboard .fgd-detail-card::before{
+  content:"";
+  position:absolute;
+  top:16px;
+  left:0;
+  width:4px;
+  height:18px;
+  border-radius:0 5px 5px 0;
+  background:#1976d2;
+}
+
+#familyGroupDashboard .fgd-detail-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 25px rgba(22,35,59,.13);
+}
+
+/* Title */
+#familyGroupDashboard .fgd-detail-title{
+  min-height:52px;
+  display:flex;
+  align-items:center;
+
+  padding:0 18px 0 22px;
+  box-sizing:border-box;
+
+  font-size:18px;
+  font-weight:800;
+  color:#16233b;
+
+  border-bottom:1px solid #e3e9f1;
+}
+
+/* Rows */
+#familyGroupDashboard .fgd-detail-list{
+  padding:6px 14px 8px;
+}
+
+#familyGroupDashboard .fgd-detail-row{
+  min-height:48px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+
+  padding:8px 8px;
+
+  box-sizing:border-box;
+
+  color:#52627a;
+  font-size:14px;
+
+  border-bottom:1px solid #edf1f6;
+}
+
+#familyGroupDashboard .fgd-detail-row:last-child{
+  border-bottom:none;
+}
+
+#familyGroupDashboard .fgd-detail-row b{
+  padding:6px 10px;
+
+  border:1px solid #d7e4f3;
+  border-radius:8px;
+
+  background:#f5f9ff;
+
+  color:#16233b;
+  font-size:14px;
+  white-space:nowrap;
+}
+
+/* Status card */
+#familyGroupDashboard .status-card{
+  background:linear-gradient(180deg,#ffffff,#f8fcfa);
+}
+
+/* Financial card */
+#familyGroupDashboard .financial-card{
+  background:linear-gradient(180deg,#ffffff,#f7faff);
+}
+
+/* Mobile */
+@media(max-width:900px){
+
+  #familyGroupDashboard .fgd-detail-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  #familyGroupDashboard .fgd-detail-card:last-child{
+    grid-column:1 / -1;
+  }
+
+}
+
+@media(max-width:600px){
+
+  #familyGroupDashboard .fgd-detail-grid{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+
+  #familyGroupDashboard .fgd-detail-card:last-child{
+    grid-column:auto;
+  }
+
+  #familyGroupDashboard .fgd-detail-title{
+    font-size:17px;
+  }
+
+}
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
