@@ -3023,7 +3023,7 @@ onMessage(messaging, (payload) => {
       <div class="admin-welcome-badge">
         🛡️ सुरक्षित प्रबंधन
         <span>•</span>
-        <span id="adminFamilyCount">23 परिवार</span>
+        <span id="adminFamilyCount">24 परिवार</span>
         <span>•</span>
         <span>एक लक्ष्य</span>
       </div>
@@ -3046,7 +3046,7 @@ onMessage(messaging, (payload) => {
 
     <div class="card">
       <div class="label">कुल सदस्य</div>
-      <div class="value blue" id="cf">23</div>
+      <div class="value blue" id="cf">24</div>
     </div>
 
     <div class="card">
@@ -8585,4 +8585,131 @@ window.addEventListener("load", function(){
 #familyGroupDashboard .card:hover{
   z-index:5;
 }
+
+/* ================= DASHBOARD SUMMARY CARDS - FINAL POLISH ================= */
+#dashboard > .cards{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:12px;
+  margin-top:6px;
+}
+
+#dashboard > .cards > .card{
+  position:relative;
+  min-width:0;
+  height:86px;
+  padding:13px 15px;
+  border-radius:14px;
+  border:1px solid #e3e9f2;
+  background:rgba(255,255,255,.96);
+  box-shadow:0 4px 14px rgba(22,35,59,.07);
+  overflow:hidden;
+}
+
+#dashboard > .cards > .card::before{
+  height:4px;
+}
+
+#dashboard > .cards > .card:nth-child(1)::after{
+  content:"";
+  position:absolute;
+  width:54px;
+  height:54px;
+  right:-18px;
+  bottom:-22px;
+  border-radius:50%;
+  background:rgba(25,118,210,.07);
+}
+#dashboard > .cards > .card:nth-child(2)::after{
+  content:"";
+  position:absolute;
+  width:54px;
+  height:54px;
+  right:-18px;
+  bottom:-22px;
+  border-radius:50%;
+  background:rgba(32,134,75,.07);
+}
+#dashboard > .cards > .card:nth-child(3)::after{
+  content:"";
+  position:absolute;
+  width:54px;
+  height:54px;
+  right:-18px;
+  bottom:-22px;
+  border-radius:50%;
+  background:rgba(199,53,53,.07);
+}
+#dashboard > .cards > .card:nth-child(4)::after{
+  content:"";
+  position:absolute;
+  width:54px;
+  height:54px;
+  right:-18px;
+  bottom:-22px;
+  border-radius:50%;
+  background:rgba(198,109,20,.07);
+}
+#dashboard > .cards > .card:nth-child(5)::after{
+  content:"";
+  position:absolute;
+  width:54px;
+  height:54px;
+  right:-18px;
+  bottom:-22px;
+  border-radius:50%;
+  background:rgba(22,35,59,.06);
+}
+
+#dashboard > .cards > .card .label{
+  position:relative;
+  z-index:1;
+  font-size:12px;
+  line-height:16px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+#dashboard > .cards > .card .value{
+  position:relative;
+  z-index:1;
+  margin-top:5px;
+  font-size:25px;
+  line-height:30px;
+  font-weight:800;
+}
+
+#dashboard > .cards > .card:nth-child(1) .value{color:#1976d2;}
+#dashboard > .cards > .card:nth-child(2) .value{color:#20864b;}
+#dashboard > .cards > .card:nth-child(3) .value{color:#c73535;}
+#dashboard > .cards > .card:nth-child(4) .value{color:#c66d14;}
+#dashboard > .cards > .card:nth-child(5) .value{color:#16233b;}
+
+#dashboard > .cards > .card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 8px 20px rgba(22,35,59,.12);
+}
+
+@media(max-width:1000px){
+  #dashboard > .cards{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+}
+
+@media(max-width:650px){
+  #dashboard > .cards{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+  }
+  #dashboard > .cards > .card{
+    height:82px;
+    padding:12px;
+  }
+  #dashboard > .cards > .card .value{
+    font-size:21px;
+    line-height:27px;
+  }
+}
+
 </style>
