@@ -2025,6 +2025,142 @@ header .title{
   box-sizing:border-box;
 }
 
+
+/* ================= ADMIN PREMIUM WELCOME BANNER V1 ================= */
+#dashboard .admin-welcome{
+  position:relative;
+  min-height:150px;
+  margin:0 0 16px;
+  padding:24px 30px;
+  border-radius:18px;
+  overflow:hidden;
+  color:#fff;
+  background:
+    radial-gradient(circle at 82% 45%,rgba(255,190,80,.30),transparent 18%),
+    radial-gradient(circle at 70% 85%,rgba(37,125,255,.25),transparent 32%),
+    linear-gradient(105deg,#061b3b 0%,#0a2d60 52%,#123f78 100%);
+  border:1px solid rgba(117,173,232,.35);
+  box-shadow:0 12px 30px rgba(6,35,72,.20),inset 0 1px 0 rgba(255,255,255,.12);
+}
+#dashboard .admin-welcome::before{
+  content:"";
+  position:absolute;
+  left:-8%;
+  bottom:-72px;
+  width:70%;
+  height:150px;
+  border-radius:50%;
+  background:rgba(255,255,255,.045);
+  transform:rotate(-5deg);
+}
+#dashboard .admin-welcome::after{
+  content:"";
+  position:absolute;
+  right:-60px;
+  top:-80px;
+  width:250px;
+  height:250px;
+  border-radius:50%;
+  border:1px solid rgba(255,207,92,.22);
+  box-shadow:0 0 0 28px rgba(255,207,92,.035),0 0 0 58px rgba(255,207,92,.025);
+}
+#dashboard .admin-welcome-content{
+  position:relative;
+  z-index:3;
+  max-width:62%;
+}
+#dashboard .admin-welcome-kicker{
+  margin:0 0 5px;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.7px;
+  color:#b9d7f7;
+}
+#dashboard .admin-welcome h2{
+  margin:0;
+  font-size:29px;
+  line-height:1.15;
+  font-weight:900;
+  letter-spacing:.2px;
+  color:#fff;
+}
+#dashboard .admin-welcome h2 span{color:#ffd35a}
+#dashboard .admin-welcome p{
+  margin:9px 0 0;
+  font-size:13px;
+  color:#e0ecfa;
+}
+#dashboard .admin-welcome-tag{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  margin-top:13px;
+  padding:6px 11px;
+  border:1px solid rgba(255,211,90,.34);
+  border-radius:999px;
+  background:rgba(255,255,255,.07);
+  color:#ffd76b;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.5px;
+}
+#dashboard .admin-welcome-visual{
+  position:absolute;
+  right:20px;
+  bottom:0;
+  z-index:2;
+  width:34%;
+  height:100%;
+  pointer-events:none;
+}
+#dashboard .admin-welcome-sun{
+  position:absolute;
+  right:72px;
+  top:25px;
+  width:76px;
+  height:76px;
+  border-radius:50%;
+  background:radial-gradient(circle,#ffd86b 0%,#f8a948 52%,rgba(248,169,72,0) 70%);
+  opacity:.88;
+}
+#dashboard .admin-welcome-hill{
+  position:absolute;
+  left:0;
+  right:-30px;
+  bottom:-24px;
+  height:90px;
+  background:#061d3e;
+  clip-path:polygon(0 75%,18% 43%,30% 58%,47% 25%,61% 54%,74% 34%,88% 60%,100% 40%,100% 100%,0 100%);
+}
+#dashboard .admin-welcome-family{
+  position:absolute;
+  right:52px;
+  bottom:30px;
+  width:115px;
+  height:78px;
+}
+#dashboard .admin-welcome-family span{
+  position:absolute;
+  display:block;
+  border-radius:50% 50% 42% 42%;
+  background:#07182f;
+}
+#dashboard .admin-welcome-family .adult1{width:18px;height:43px;right:55px;bottom:0}
+#dashboard .admin-welcome-family .adult1::before{content:"";position:absolute;width:17px;height:17px;border-radius:50%;background:#07182f;top:-13px;left:1px}
+#dashboard .admin-welcome-family .adult2{width:14px;height:35px;right:29px;bottom:0}
+#dashboard .admin-welcome-family .adult2::before{content:"";position:absolute;width:14px;height:14px;border-radius:50%;background:#07182f;top:-11px;left:0}
+#dashboard .admin-welcome-family .child1{width:10px;height:25px;right:77px;bottom:0}
+#dashboard .admin-welcome-family .child1::before{content:"";position:absolute;width:10px;height:10px;border-radius:50%;background:#07182f;top:-8px;left:0}
+#dashboard .admin-welcome-family .child2{width:9px;height:22px;right:10px;bottom:0}
+#dashboard .admin-welcome-family .child2::before{content:"";position:absolute;width:9px;height:9px;border-radius:50%;background:#07182f;top:-7px;left:0}
+@media(max-width:650px){
+  #dashboard .admin-welcome{min-height:142px;padding:20px 18px}
+  #dashboard .admin-welcome-content{max-width:100%}
+  #dashboard .admin-welcome h2{font-size:23px}
+  #dashboard .admin-welcome p{font-size:11px}
+  #dashboard .admin-welcome-visual{opacity:.35;width:55%;right:-10px}
+}
+
 /* ================= ADMIN DASHBOARD PREMIUM V2 ================= */
 #dashboard{
   position:relative;
@@ -2655,6 +2791,26 @@ onMessage(messaging, (payload) => {
 <!-- ================= DASHBOARD ================= -->
 
 <section id="dashboard">
+
+
+  <div class="admin-welcome">
+    <div class="admin-welcome-content">
+      <div class="admin-welcome-kicker">👑 ADMIN CONTROL CENTER</div>
+      <h2>Welcome Back, <span>Admin</span></h2>
+      <p>Manage Today&nbsp; • &nbsp;Build a Stronger Tomorrow</p>
+      <div class="admin-welcome-tag">🔐 सुरक्षित प्रबंधन &nbsp;•&nbsp; 23 परिवार &nbsp;•&nbsp; एक लक्ष्य</div>
+    </div>
+    <div class="admin-welcome-visual" aria-hidden="true">
+      <div class="admin-welcome-sun"></div>
+      <div class="admin-welcome-hill"></div>
+      <div class="admin-welcome-family">
+        <span class="adult1"></span>
+        <span class="adult2"></span>
+        <span class="child1"></span>
+        <span class="child2"></span>
+      </div>
+    </div>
+  </div>
 
   <div class="cards">
 
