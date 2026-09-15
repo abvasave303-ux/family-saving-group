@@ -3345,6 +3345,17 @@ header .title{
 #families .actions button:active{
     transform:translateY(0);
 }
+/* ===== PREMIUM FAMILY TABLE ROW HOVER ===== */
+
+#families table tbody tr{
+    transition:all .18s ease;
+}
+
+#families table tbody tr:hover{
+    background:#f7fbff;
+    transform:translateX(2px);
+    box-shadow:0 3px 10px rgba(30,90,150,.06);
+}
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
