@@ -2011,19 +2011,171 @@ header .title{
 
 /* ================= FAMILY GROUP WELCOME ================= */
 
-#familyGroupDashboard .family-welcome{
-    width:100%;
-    box-sizing:border-box;
-    margin-bottom:14px;
-    padding:22px 28px;
-    border-radius:16px;
-    border:1px solid #d8e7f5;
-    background:linear-gradient(135deg,#eef8ff,#f8fcff);
-    box-shadow:0 4px 15px rgba(22,35,59,0.08);
-    text-align:center;
-    overflow:hidden;
+/* ===== ADMIN DASHBOARD PREMIUM WELCOME BANNER ===== */
+
+#familyGroupDashboard .family-welcome {
+    position: relative;
+    overflow: hidden;
+
+    min-height: 168px;
+    padding: 28px 32px;
+
+    border-radius: 18px;
+    border: 1px solid rgba(76, 150, 230, 0.45);
+
+    background:
+        radial-gradient(circle at 88% 20%,
+            rgba(255, 196, 70, 0.18) 0,
+            rgba(255, 196, 70, 0.06) 80px,
+            transparent 145px),
+        linear-gradient(110deg,
+            #062654 0%,
+            #0a346b 52%,
+            #174b88 100%);
+
+    color: #fff;
+
+    box-shadow:
+        0 12px 30px rgba(5, 35, 75, 0.20);
+
+    isolation: isolate;
 }
 
+
+/* Decorative curved glow */
+#familyGroupDashboard .family-welcome::before {
+    content: "";
+    position: absolute;
+
+    width: 520px;
+    height: 180px;
+
+    left: -70px;
+    bottom: -115px;
+
+    border-radius: 50%;
+
+    background: rgba(55, 125, 205, 0.22);
+
+    z-index: -1;
+}
+
+
+/* Right side glow */
+#familyGroupDashboard .family-welcome::after {
+    content: "";
+
+    position: absolute;
+
+    width: 190px;
+    height: 190px;
+
+    right: 35px;
+    top: -70px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(circle,
+            rgba(255, 193, 78, 0.95) 0,
+            rgba(255, 193, 78, 0.65) 16%,
+            rgba(255, 193, 78, 0.16) 34%,
+            transparent 68%);
+
+    opacity: .9;
+
+    z-index: -1;
+}
+
+
+/* Small top label */
+#familyGroupDashboard .family-welcome .welcome-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+
+    color: #d9eaff;
+
+    margin-bottom: 8px;
+}
+
+
+/* Main heading */
+#familyGroupDashboard .family-welcome h2 {
+    margin: 0;
+
+    font-size: 32px;
+    line-height: 1.15;
+    font-weight: 800;
+
+    color: #ffffff;
+
+    letter-spacing: .3px;
+}
+
+
+/* Highlight Admin / name */
+#familyGroupDashboard .family-welcome h2 span {
+    color: #ffc83d;
+}
+
+
+/* Subtitle */
+#familyGroupDashboard .family-welcome p {
+    margin: 8px 0 14px;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    color: #d9e7f8;
+}
+
+
+/* Premium small badge */
+#familyGroupDashboard .family-welcome .welcome-badge {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 7px 13px;
+
+    border-radius: 20px;
+
+    background: rgba(255,255,255,.08);
+
+    border: 1px solid rgba(255,205,80,.45);
+
+    color: #ffd45a;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    backdrop-filter: blur(5px);
+}
+
+
+/* ===== MOBILE ===== */
+
+@media (max-width: 650px) {
+
+    #familyGroupDashboard .family-welcome {
+        min-height: 145px;
+        padding: 22px 20px;
+        border-radius: 15px;
+    }
+
+    #familyGroupDashboard .family-welcome h2 {
+        font-size: 23px;
+    }
+
+    #familyGroupDashboard .family-welcome p {
+        font-size: 12px;
+    }
+
+    #familyGroupDashboard .family-welcome::after {
+        right: -35px;
+        opacity: .65;
+    }
+}
 #familyGroupDashboard .family-welcome h2{
     margin:0;
     color:#24478f;
