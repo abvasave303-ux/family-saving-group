@@ -2024,6 +2024,163 @@ header .title{
   padding-right:0 !important;
   box-sizing:border-box;
 }
+
+/* ================= ADMIN DASHBOARD PREMIUM V2 ================= */
+#dashboard{
+  position:relative;
+  padding-bottom:28px;
+}
+#dashboard::before{
+  content:"ADMIN CONTROL CENTER";
+  display:block;
+  margin:0 0 14px 2px;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:2px;
+  color:#52708f;
+}
+#dashboard .cards{
+  gap:14px;
+  margin-bottom:16px;
+}
+#dashboard .cards .card{
+  position:relative;
+  min-height:92px;
+  padding:17px 18px;
+  overflow:hidden;
+  border:1px solid rgba(111,145,180,.22);
+  border-radius:16px;
+  background:linear-gradient(145deg,#ffffff 0%,#f7faff 100%);
+  box-shadow:0 8px 24px rgba(30,62,95,.09), inset 0 1px 0 rgba(255,255,255,.9);
+  transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+#dashboard .cards .card::after{
+  content:"";
+  position:absolute;
+  width:78px;
+  height:78px;
+  right:-26px;
+  bottom:-28px;
+  border-radius:50%;
+  background:rgba(25,118,210,.055);
+}
+#dashboard .cards .card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 14px 30px rgba(30,62,95,.14);
+  border-color:rgba(25,118,210,.28);
+}
+#dashboard .cards .label{
+  position:relative;
+  z-index:1;
+  font-size:12px;
+  color:#5c7188;
+}
+#dashboard .cards .value{
+  position:relative;
+  z-index:1;
+  font-size:27px;
+  margin-top:7px;
+}
+#dashboard .grid{
+  gap:14px;
+  margin-top:0;
+}
+#dashboard .grid .panel{
+  border-radius:16px;
+  border:1px solid rgba(111,145,180,.22);
+  box-shadow:0 8px 24px rgba(30,62,95,.08);
+  background:rgba(255,255,255,.96);
+}
+#dashboard .grid .panel:hover{
+  transform:translateY(-3px);
+  box-shadow:0 14px 30px rgba(30,62,95,.12);
+}
+#dashboard .panel h3{
+  padding:15px 18px 15px 22px;
+  font-size:16px;
+  background:linear-gradient(90deg,#f5f9ff,#ffffff);
+}
+#dashboard .body{
+  padding:16px 18px 18px;
+}
+#dashboard .admin-bottom-grid{
+  display:grid;
+  grid-template-columns:1.2fr 1fr 1fr 1fr;
+  gap:14px;
+  margin-top:16px;
+}
+#dashboard .admin-mini{
+  position:relative;
+  min-height:118px;
+  padding:17px 18px;
+  border-radius:16px;
+  border:1px solid rgba(111,145,180,.2);
+  background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(244,248,254,.92));
+  box-shadow:0 7px 22px rgba(30,62,95,.07);
+  overflow:hidden;
+}
+#dashboard .admin-mini::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  width:4px;
+  height:100%;
+  background:#1976d2;
+}
+#dashboard .admin-mini .mini-title{
+  font-size:12px;
+  font-weight:800;
+  color:#61758b;
+  margin-bottom:9px;
+}
+#dashboard .admin-mini .mini-value{
+  font-size:20px;
+  font-weight:800;
+  color:#16233b;
+}
+#dashboard .admin-mini .mini-note{
+  margin-top:7px;
+  font-size:11px;
+  line-height:1.45;
+  color:#7a899a;
+}
+#dashboard .admin-mini .mini-badge{
+  display:inline-block;
+  margin-top:8px;
+  padding:4px 8px;
+  border-radius:999px;
+  background:#edf5ff;
+  color:#1769c2;
+  border:1px solid #d9e9fb;
+  font-size:10px;
+  font-weight:800;
+}
+#dashboard .admin-footer-strip{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:16px;
+  padding:12px 16px;
+  border-radius:14px;
+  border:1px solid #dce8f5;
+  background:linear-gradient(90deg,#eef6ff,#f9fbff);
+  color:#557089;
+  font-size:11px;
+}
+#dashboard .admin-footer-strip b{color:#1769c2}
+@media(max-width:1000px){
+  #dashboard .admin-bottom-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:650px){
+  #dashboard::before{margin-top:2px}
+  #dashboard .cards .card{min-height:84px;padding:14px}
+  #dashboard .cards .value{font-size:23px}
+  #dashboard .admin-bottom-grid{grid-template-columns:1fr}
+  #dashboard .admin-footer-strip{align-items:flex-start;flex-direction:column}
+}
+
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
@@ -2589,6 +2746,41 @@ onMessage(messaging, (payload) => {
     </div>
 
   </div>
+
+    <!-- ================= ADMIN PREMIUM OVERVIEW ================= -->
+    <div class="admin-bottom-grid">
+
+      <div class="admin-mini">
+        <div class="mini-title">📊 आज का नियंत्रण सारांश</div>
+        <div class="mini-value">Group Financial Overview</div>
+        <div class="mini-note">बचत, Loan, ब्याज और उपलब्ध राशि का एक नज़र में नियंत्रण।</div>
+        <span class="mini-badge">ADMIN VIEW</span>
+      </div>
+
+      <div class="admin-mini">
+        <div class="mini-title">🎯 मासिक लक्ष्य</div>
+        <div class="mini-value">₹46,000</div>
+        <div class="mini-note">23 सदस्य × ₹2,000 सामान्य मासिक लक्ष्य</div>
+      </div>
+
+      <div class="admin-mini">
+        <div class="mini-title">🏦 Loan नियम</div>
+        <div class="mini-value">2% / माह</div>
+        <div class="mini-note">Loan interest की निर्धारित दर</div>
+      </div>
+
+      <div class="admin-mini">
+        <div class="mini-title">💰 ब्याज वितरण</div>
+        <div class="mini-value">बचत अनुपात</div>
+        <div class="mini-note">सदस्यों की बचत के अनुपात में वितरण</div>
+      </div>
+
+    </div>
+
+    <div class="admin-footer-strip">
+      <span>🔐 <b>Admin Control Center</b> • सुरक्षित समूह प्रबंधन</span>
+      <span>Family Saving Group • 2026–27</span>
+    </div>
 
 </section>
 
