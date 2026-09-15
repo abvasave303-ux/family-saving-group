@@ -1675,6 +1675,177 @@ header .title{
     transform:translateY(0);
   }
 }
+/* ================= ADMIN DASHBOARD WELCOME BANNER ================= */
+
+#dashboard .admin-dashboard-welcome{
+  position:relative;
+  overflow:hidden;
+  min-height:168px;
+  margin-bottom:14px;
+  padding:28px 32px;
+  border-radius:18px;
+  border:1px solid rgba(76,150,230,.45);
+  background:
+    radial-gradient(circle at 88% 20%, rgba(255,196,70,.18) 0, rgba(255,196,70,.06) 80px, transparent 145px),
+    linear-gradient(110deg,#062654 0%,#0a346b 52%,#174b88 100%);
+  color:#fff;
+  box-shadow:0 12px 30px rgba(5,35,75,.20);
+  box-sizing:border-box;
+  isolation:isolate;
+}
+
+#dashboard .admin-dashboard-welcome::before{
+  content:"";
+  position:absolute;
+  width:520px;
+  height:180px;
+  left:-70px;
+  bottom:-115px;
+  border-radius:50%;
+  background:rgba(55,125,205,.22);
+  z-index:-1;
+}
+
+#dashboard .admin-welcome-content{
+  position:relative;
+  z-index:3;
+}
+
+#dashboard .admin-welcome-label{
+  margin-bottom:8px;
+  color:#d9eaff;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:1.5px;
+}
+
+#dashboard .admin-dashboard-welcome h2{
+  margin:0;
+  color:#fff;
+  font-size:32px;
+  line-height:1.15;
+  font-weight:800;
+  letter-spacing:.3px;
+}
+
+#dashboard .admin-dashboard-welcome h2 span{
+  color:#ffc83d;
+}
+
+#dashboard .admin-dashboard-welcome p{
+  margin:8px 0 14px;
+  color:#d9e7f8;
+  font-size:13px;
+  font-weight:500;
+}
+
+#dashboard .admin-welcome-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  padding:7px 13px;
+  border-radius:20px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,205,80,.45);
+  color:#ffd45a;
+  font-size:11px;
+  font-weight:700;
+  backdrop-filter:blur(5px);
+}
+
+/* Right-side family illustration */
+#dashboard .admin-welcome-art{
+  position:absolute;
+  right:18px;
+  top:0;
+  width:330px;
+  height:100%;
+  pointer-events:none;
+}
+
+#dashboard .admin-sun{
+  position:absolute;
+  right:52px;
+  top:27px;
+  width:68px;
+  height:68px;
+  border-radius:50%;
+  background:radial-gradient(circle,#ffd477 0%,#f3ad3e 42%,rgba(255,190,70,.22) 68%,transparent 72%);
+  box-shadow:0 0 28px rgba(255,194,75,.55);
+}
+
+#dashboard .admin-family{
+  position:absolute;
+  right:55px;
+  bottom:25px;
+  width:180px;
+  height:90px;
+}
+
+#dashboard .admin-family .person{
+  position:absolute;
+  bottom:0;
+  display:block;
+  width:13px;
+  height:48px;
+  border-radius:9px 9px 3px 3px;
+  background:#071a35;
+}
+
+#dashboard .admin-family .person::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:-15px;
+  width:18px;
+  height:18px;
+  transform:translateX(-50%);
+  border-radius:50%;
+  background:#071a35;
+}
+
+#dashboard .admin-family .person-a{right:18px;height:54px}
+#dashboard .admin-family .person-b{right:65px;height:67px}
+#dashboard .admin-family .person-c{right:101px;height:50px}
+#dashboard .admin-family .person-d{right:137px;height:40px}
+
+#dashboard .admin-hill{
+  position:absolute;
+  right:-45px;
+  bottom:-65px;
+  width:430px;
+  height:145px;
+  border-radius:50% 50% 0 0;
+  background:rgba(4,24,51,.78);
+  transform:rotate(-4deg);
+}
+
+@media(max-width:650px){
+  #dashboard .admin-dashboard-welcome{
+    min-height:145px;
+    padding:22px 20px;
+    border-radius:15px;
+  }
+
+  #dashboard .admin-dashboard-welcome h2{
+    font-size:23px;
+  }
+
+  #dashboard .admin-dashboard-welcome p{
+    font-size:12px;
+  }
+
+  #dashboard .admin-welcome-badge{
+    font-size:10px;
+    gap:5px;
+  }
+
+  #dashboard .admin-welcome-art{
+    right:-90px;
+    opacity:.62;
+  }
+}
+
 /* ================= FAMILY GROUP DASHBOARD 2 COLUMN ================= */
 
 #familyGroupDashboard .cards{
@@ -2834,6 +3005,42 @@ onMessage(messaging, (payload) => {
 <!-- ================= DASHBOARD ================= -->
 
 <section id="dashboard">
+
+  <!-- ================= ADMIN WELCOME BANNER ================= -->
+  <div class="admin-dashboard-welcome">
+
+    <div class="admin-welcome-content">
+      <div class="admin-welcome-label">👑 ADMIN CONTROL CENTER</div>
+
+      <h2>
+        Welcome Back, <span>Admin</span>
+      </h2>
+
+      <p>
+        Manage Today&nbsp; • &nbsp;Build a Stronger Tomorrow
+      </p>
+
+      <div class="admin-welcome-badge">
+        🛡️ सुरक्षित प्रबंधन
+        <span>•</span>
+        <span id="adminFamilyCount">23 परिवार</span>
+        <span>•</span>
+        <span>एक लक्ष्य</span>
+      </div>
+    </div>
+
+    <div class="admin-welcome-art" aria-hidden="true">
+      <div class="admin-sun"></div>
+      <div class="admin-family">
+        <span class="person person-a"></span>
+        <span class="person person-b"></span>
+        <span class="person person-c"></span>
+        <span class="person person-d"></span>
+      </div>
+      <div class="admin-hill"></div>
+    </div>
+
+  </div>
 
   <div class="cards">
 
@@ -5710,6 +5917,11 @@ async function refresh(){
     const d = await api("/api/dashboard");
 
     $("cf").textContent = d.families ?? fam.length;
+
+    if($("adminFamilyCount")){
+      $("adminFamilyCount").textContent =
+        (d.families ?? fam.length) + " परिवार";
+    }
 
     $("cs").textContent = money(d.savings);
 
