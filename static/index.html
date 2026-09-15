@@ -1033,6 +1033,68 @@ header .title{
   animation:adminSectionIn .42s ease both;
 }
 
+/* Premium Member Management header — UI only */
+#members .admin-page-head{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  min-height:126px;
+  margin-bottom:16px;
+  padding:22px 24px;
+  overflow:hidden;
+  border:1px solid rgba(78,146,220,.25);
+  border-radius:18px;
+  background:
+    radial-gradient(circle at 90% 20%,rgba(80,170,255,.24),transparent 30%),
+    linear-gradient(135deg,#071d3d 0%,#0a3770 58%,#082753 100%);
+  box-shadow:0 12px 30px rgba(4,28,62,.16);
+}
+
+#members .admin-page-head:after{
+  content:"";
+  position:absolute;
+  width:170px;
+  height:170px;
+  right:-58px;
+  bottom:-95px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 0 0 24px rgba(255,255,255,.025),0 0 0 48px rgba(255,255,255,.018);
+}
+
+#members .admin-page-head > div{
+  position:relative;
+  z-index:2;
+}
+
+#members .admin-page-kicker{
+  color:#8fcbff;
+  font-size:9px;
+  letter-spacing:2.4px;
+  margin-bottom:7px;
+}
+
+#members .admin-page-head h2{
+  color:#fff;
+  font-size:25px;
+}
+
+#members .admin-page-head p{
+  color:#bfd8f2;
+  font-size:11px;
+}
+
+#members .admin-add-member{
+  position:relative;
+  z-index:3;
+  border:1px solid rgba(255,255,255,.22);
+  background:linear-gradient(135deg,#2388ee,#1769c2);
+  color:#fff;
+  box-shadow:0 9px 22px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.18);
+}
+
 .admin-page-head{
   display:flex;
   align-items:flex-end;
@@ -2533,6 +2595,14 @@ onMessage(messaging, (payload) => {
 
     <button onclick="show('members',this)">
       👤&nbsp; Member Management
+    </button>
+
+    <button onclick="show('changePin',this)">
+      🔐&nbsp; Change PIN
+    </button>
+
+    <button onclick="show('members',this)">
+      🚪&nbsp; Force Logout
     </button>
 
     <div class="nav-section-title">TRANSACTIONS</div>
