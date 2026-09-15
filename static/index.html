@@ -2857,6 +2857,310 @@ header .title{
   }
 
 }
+/* =========================================================
+   PREMIUM FAMILY / MEMBER LIST UI
+   UI ONLY — NO BUTTON / FUNCTION REMOVED
+   ========================================================= */
+
+#families{
+  padding-bottom:30px;
+}
+
+/* Top action area */
+#families .actions{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  margin-bottom:14px;
+}
+
+/* Add Member button */
+#families .actions .btn{
+  border:0;
+  border-radius:10px;
+  padding:10px 18px;
+
+  background:linear-gradient(
+    135deg,
+    #1976d2,
+    #0d5fba
+  );
+
+  color:#fff;
+  font-weight:700;
+  font-size:14px;
+
+  box-shadow:
+    0 5px 14px rgba(25,118,210,.22);
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease,
+    filter .2s ease;
+}
+
+#families .actions .btn:hover{
+  transform:translateY(-2px);
+  box-shadow:
+    0 8px 20px rgba(25,118,210,.30);
+  filter:brightness(1.05);
+}
+
+#families .actions .btn:active{
+  transform:translateY(0);
+}
+
+/* Main member list panel */
+#families .panel{
+  overflow:hidden;
+
+  border:1px solid #dbe5f1;
+  border-radius:16px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #f9fbff 100%
+    );
+
+  box-shadow:
+    0 8px 25px rgba(24,52,88,.08);
+}
+
+/* Member list heading */
+#families .panel h3{
+  position:relative;
+
+  margin:0;
+  padding:17px 20px;
+
+  font-size:18px;
+  font-weight:800;
+
+  color:#16233b;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff,
+      #f4f8fd
+    );
+
+  border-bottom:1px solid #e2eaf3;
+}
+
+/* Blue line beside heading */
+#families .panel h3::before{
+  content:"";
+
+  display:inline-block;
+
+  width:4px;
+  height:21px;
+
+  margin-right:10px;
+
+  vertical-align:-4px;
+
+  border-radius:5px;
+
+  background:linear-gradient(
+    180deg,
+    #1976d2,
+    #42a5f5
+  );
+}
+
+/* Table area */
+#families .table{
+  overflow-x:auto;
+  padding:0;
+}
+
+/* Main table */
+#families table{
+  width:100%;
+  min-width:760px;
+
+  border-collapse:separate;
+  border-spacing:0;
+}
+
+/* Table header */
+#families table thead th{
+  padding:13px 12px;
+
+  background:#f4f7fb;
+
+  color:#52627a;
+
+  font-size:12px;
+  font-weight:800;
+
+  text-transform:none;
+
+  border-bottom:1px solid #dce5ef;
+
+  white-space:nowrap;
+}
+
+/* Table body */
+#families table tbody td{
+  padding:13px 12px;
+
+  background:#fff;
+
+  color:#27364d;
+
+  font-size:13px;
+
+  border-bottom:1px solid #edf1f6;
+
+  vertical-align:middle;
+}
+
+/* Row hover */
+#families table tbody tr{
+  transition:
+    background .18s ease,
+    transform .18s ease;
+}
+
+#families table tbody tr:hover td{
+  background:#f7fbff;
+}
+
+/* Member name */
+#families table tbody td:nth-child(2){
+  font-weight:700;
+  color:#18345c;
+}
+
+/* Mobile number */
+#families table tbody td:nth-child(3){
+  color:#52627a;
+  font-variant-numeric:tabular-nums;
+}
+
+/* Saving amount */
+#families table tbody td:nth-child(4){
+  color:#198754;
+  font-weight:700;
+}
+
+/* Loan amount */
+#families table tbody td:nth-child(5){
+  color:#d33b3b;
+  font-weight:600;
+}
+
+/* Action column */
+#families table th:last-child,
+#families table td:last-child{
+  text-align:center;
+  white-space:nowrap;
+}
+
+/* ALL existing action buttons stay */
+#families table td:last-child .btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  min-height:34px;
+
+  padding:7px 11px;
+
+  margin:2px;
+
+  border-radius:8px;
+
+  font-size:12px;
+  font-weight:700;
+
+  border:1px solid transparent;
+
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    filter .18s ease;
+}
+
+/* Edit / normal action */
+#families table td:last-child .btn:not([style*="d32f"]){
+  background:#eef5ff;
+  color:#1264bd;
+  border-color:#d5e5f8;
+}
+
+/* Hover on action */
+#families table td:last-child .btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 4px 10px rgba(30,60,100,.12);
+}
+
+/* Delete button — stays RED */
+#families table td:last-child .btn[style*="d32f"],
+#families table td:last-child .btn[style*="c73535"]{
+  background:#fff0f0;
+  color:#c62828;
+  border-color:#f3cccc;
+}
+
+/* If Delete button uses direct red background */
+#families table td:last-child button{
+  cursor:pointer;
+}
+
+/* Table bottom corners */
+#families table tbody tr:last-child td:first-child{
+  border-bottom-left-radius:12px;
+}
+
+#families table tbody tr:last-child td:last-child{
+  border-bottom-right-radius:12px;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media(max-width:700px){
+
+  #families{
+    padding:0 8px 25px;
+  }
+
+  #families .actions{
+    justify-content:flex-end;
+    margin-bottom:10px;
+  }
+
+  #families .actions .btn{
+    padding:9px 14px;
+    font-size:13px;
+  }
+
+  #families .panel{
+    border-radius:13px;
+  }
+
+  #families .panel h3{
+    padding:14px 15px;
+    font-size:16px;
+  }
+
+  #families .table{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  #families table{
+    min-width:760px;
+  }
+
+}
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
