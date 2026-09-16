@@ -3394,6 +3394,142 @@ header .title{
     transform: translateX(5px);
     font-weight: 700;
 }
+
+/* ================= MONTHLY SAVING ENTRY - POLISH V1 ================= */
+/* UI-only: scoped to #saving so Dashboard / Family / FCM styles remain untouched */
+
+#saving > .panel:first-child{
+  border:1px solid #d9e6f4;
+  border-radius:16px;
+  box-shadow:0 7px 22px rgba(22,35,59,.08);
+  overflow:hidden;
+  animation:savingPanelIn .42s ease both;
+}
+
+#saving > .panel:first-child h3{
+  position:relative;
+  padding:15px 18px 15px 22px;
+  background:linear-gradient(90deg,#f3f8ff,#ffffff);
+  border-bottom:1px solid #e5edf6;
+  color:#16233b;
+  font-size:16px;
+  font-weight:800;
+}
+
+#saving > .panel:first-child h3::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:50%;
+  width:4px;
+  height:22px;
+  border-radius:0 4px 4px 0;
+  background:linear-gradient(180deg,#1976d2,#42a5f5);
+  transform:translateY(-50%);
+}
+
+#saving > .panel:first-child .body{
+  padding:18px;
+  background:linear-gradient(180deg,#ffffff,#fbfdff);
+}
+
+#saving > .panel:first-child .form{
+  gap:14px;
+}
+
+#saving > .panel:first-child .field{
+  position:relative;
+}
+
+#saving > .panel:first-child .field label{
+  margin-bottom:6px;
+  color:#52647b;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.15px;
+}
+
+#saving > .panel:first-child .field input,
+#saving > .panel:first-child .field select{
+  min-height:42px;
+  padding:10px 12px;
+  border:1px solid #cbd9e8;
+  border-radius:9px;
+  background:#fff;
+  color:#1d2b42;
+  outline:none;
+  transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease;
+}
+
+#saving > .panel:first-child .field input:hover,
+#saving > .panel:first-child .field select:hover{
+  border-color:#aebfd4;
+}
+
+#saving > .panel:first-child .field input:focus,
+#saving > .panel:first-child .field select:focus{
+  border-color:#1976d2;
+  box-shadow:0 0 0 3px rgba(25,118,210,.10);
+  transform:translateY(-1px);
+}
+
+#saving > .panel:first-child #sa{
+  font-weight:800;
+  color:#1769c2;
+  background:linear-gradient(180deg,#ffffff,#f7fbff);
+}
+
+#saving > .panel:first-child .full{
+  padding-top:2px;
+}
+
+#saving > .panel:first-child .full .btn{
+  min-height:42px;
+  padding:10px 18px;
+  border-radius:9px;
+  background:linear-gradient(135deg,#1976d2,#0d67bd);
+  box-shadow:0 6px 15px rgba(25,118,210,.20);
+  transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;
+}
+
+#saving > .panel:first-child .full .btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 9px 20px rgba(25,118,210,.25);
+  filter:brightness(1.03);
+}
+
+#saving > .panel:first-child .full .btn:active{
+  transform:translateY(0);
+}
+
+@keyframes savingPanelIn{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@media(max-width:650px){
+  #saving > .panel:first-child{
+    border-radius:14px;
+  }
+
+  #saving > .panel:first-child .body{
+    padding:14px;
+  }
+
+  #saving > .panel:first-child .form{
+    gap:11px;
+  }
+
+  #saving > .panel:first-child h3{
+    padding:13px 15px 13px 19px;
+    font-size:15px;
+  }
+
+  #saving > .panel:first-child .full .btn{
+    width:100%;
+  }
+}
+
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
