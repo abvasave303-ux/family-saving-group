@@ -1047,14 +1047,14 @@ def reset_member_notifications():
 
     c = conn()
 
-    c.execute(
+    result = c.execute(
         """
         DELETE FROM notifications
         RETURNING id
         """
     )
     
-    deleted = len(c.fetchall())
+    deleted = len(result.fetchall())
 
     c.commit()
     c.close()
