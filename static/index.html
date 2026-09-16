@@ -9644,3 +9644,68 @@ window.addEventListener("load", function(){
 }
 
 </style>
+
+<style id="passbook-financial-record-polish-v3">
+/* Passbook V3 — Financial Year Record UI polish only. No calculation/logic changes. */
+#ledgerYearlyRecordTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border: 1px solid #dce7f3;
+  border-radius: 10px;
+  background: #fff;
+}
+
+#ledgerYearlyRecordTable th {
+  background: #f4f8fc;
+  color: #26364d;
+  font-weight: 700;
+  padding: 11px 12px;
+  border-bottom: 1px solid #dce7f3;
+  white-space: nowrap;
+}
+
+#ledgerYearlyRecordTable td {
+  padding: 11px 12px;
+  border-bottom: 1px solid #edf2f7;
+  color: #26364d;
+  vertical-align: middle;
+}
+
+#ledgerYearlyRecordTable tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+#ledgerYearlyRecordTable tbody tr:hover {
+  background: #f8fbff;
+}
+
+#ledgerYearlyRecordTable th:last-child,
+#ledgerYearlyRecordTable td:last-child {
+  font-weight: 800;
+}
+
+#ledgerYearlyRecordTable td:last-child {
+  color: #16834b;
+}
+
+#ledgerYearSelect {
+  min-width: 100px;
+  font-weight: 600;
+  color: #26364d;
+  cursor: pointer;
+}
+
+@media (max-width: 650px) {
+  #ledgerYearlyRecordTable {
+    min-width: 620px;
+  }
+
+  #ledgerYearlyRecordTable th,
+  #ledgerYearlyRecordTable td {
+    padding: 9px 10px;
+    font-size: 13px;
+  }
+}
+</style>
