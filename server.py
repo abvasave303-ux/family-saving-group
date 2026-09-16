@@ -1033,7 +1033,35 @@ def member_list():
         }
         for r in rows
     ])
+# ==================================================
+# ADMIN - RESET MEMBER NOTIFICATIONS
+# ==================================================
 
+@app.post("/api/admin/notifications/reset")
+def reset_member_notifications():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    c.execute(
+        """
+        DELETE FROM notifications
+        """
+    )
+
+    deleted = c.rowcount
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True,
+        deleted=deleted
+    )
 # ==================================================
 # MEMBER NOTIFICATIONS
 # ==================================================
