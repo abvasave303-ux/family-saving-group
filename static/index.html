@@ -3556,74 +3556,6 @@ onMessage(messaging, (payload) => {
   }
 }
 </style>
-
-<style>
-/* ================= PASSBOOK COVER V2 ================= */
-.passbook-cover{
-  text-align:center;
-  padding:18px 12px 12px;
-  max-width:100%;
-  box-sizing:border-box;
-}
-
-.passbook-logo{
-  width:100px;
-  height:100px;
-  max-width:100px;
-  max-height:100px;
-  object-fit:contain;
-  display:block;
-  margin:0 auto 8px;
-}
-
-.passbook-title{
-  margin:0;
-  font-size:24px;
-  line-height:1.25;
-  font-weight:700;
-}
-
-.passbook-tagline{
-  margin-top:4px;
-  font-size:14px;
-  line-height:1.4;
-}
-
-.passbook-type{
-  display:inline-block;
-  margin-top:10px;
-  padding:5px 12px;
-  border:1px solid #d5deea;
-  border-radius:999px;
-  font-size:13px;
-  font-weight:700;
-  letter-spacing:.4px;
-}
-
-.passbook-year{
-  margin-top:8px;
-  padding-top:8px;
-  border-top:1px solid #e3e8ef;
-  font-size:15px;
-}
-
-@media(max-width:650px){
-  .passbook-cover{
-    padding:14px 8px 10px;
-  }
-  .passbook-logo{
-    width:78px;
-    height:78px;
-    max-width:78px;
-    max-height:78px;
-    margin-bottom:6px;
-  }
-  .passbook-title{font-size:21px;}
-  .passbook-tagline{font-size:12px;}
-  .passbook-type{font-size:12px; padding:4px 10px; margin-top:8px;}
-  .passbook-year{font-size:14px; margin-top:6px; padding-top:6px;}
-}
-</style>
 </head>
 
 <body>
@@ -3808,6 +3740,10 @@ onMessage(messaging, (payload) => {
     </button>
 
     <div class="nav-section-title">SYSTEM</div>
+    <button onclick="show('notificationManagement',this)">
+      🔔&nbsp; Notification Management
+    </button>
+
     <button onclick="logout()">
       🚪&nbsp; Logout
     </button>
@@ -4858,6 +4794,34 @@ onMessage(messaging, (payload) => {
       
     </div>
 
+  </div>
+
+</section>
+
+<!-- ================= NOTIFICATION MANAGEMENT ================= -->
+<section id="notificationManagement" class="hidden">
+
+  <div class="panel">
+    <h3>🔔 Notification Management</h3>
+
+    <div class="body">
+      <p style="margin-top:0;">
+        Members के notification bell में stored पुराने notifications को यहाँ से साफ किया जा सकता है।
+      </p>
+
+      <div style="padding:12px;border:1px solid #f0d6d6;border-radius:10px;background:#fff8f8;margin:12px 0;">
+        <strong>⚠️ ध्यान दें:</strong> यह केवल stored member notifications हटाएगा।
+        FCM tokens, Firebase settings और बाकी financial data पर कोई असर नहीं होगा।
+      </div>
+
+      <button
+        class="btn danger"
+        onclick="resetMemberNotifications()">
+        🧹 सभी Member Notifications Reset करें
+      </button>
+
+      <div id="notificationResetStatus" style="margin-top:12px;color:#68768b;font-size:12px;"></div>
+    </div>
   </div>
 
 </section>
@@ -8396,28 +8360,40 @@ async function passbook(){
 
       <div id="printPassbook">
 
-        <div class="passbook-cover">
+        <div style="
+          text-align:center;
+          padding:15px;
+          border-bottom:2px solid #1976d2;
+        ">
 
           <img
             src="/static/logo.png"
-            class="passbook-logo"
+            style="
+              width:85px;
+              height:85px;
+              object-fit:contain;
+            "
             onerror="this.style.display='none'"
           >
 
-          <h2 class="passbook-title">
+          <h2 style="
+            margin:0;
+            color:#083b78;
+          ">
             Family Saving Group
           </h2>
 
-          <div class="passbook-tagline">
+          <div style="margin-top:5px;">
             एक परिवार • एक बचत • उज्ज्वल भविष्य
           </div>
 
-          <div class="passbook-type">
+          <h3 style="margin:10px 0 0;">
             DIGITAL PASSBOOK
-          </div>
+          </h3>
 
-          <div class="passbook-year">
-            वित्तीय वर्ष: <b>2026–27</b>
+          <div>
+            वित्तीय वर्ष:
+            <b>2026–27</b>
           </div>
 
         </div>
@@ -9429,6 +9405,44 @@ else{
 }
 
 
+/* ================= ADMIN NOTIFICATION RESET ================= */
+
+async function resetMemberNotifications(){
+
+  const ok = confirm(
+    "क्या आप सभी members के पुराने notifications साफ करना चाहते हैं?\n\nयह action केवल notification bell के stored records हटाएगा। FCM tokens और financial data सुरक्षित रहेंगे।"
+  );
+
+  if(!ok) return;
+
+  const status = $("notificationResetStatus");
+  if(status){
+    status.textContent = "⏳ Notifications साफ किए जा रहे हैं...";
+  }
+
+  try{
+    const result = await api("/api/admin/notifications/reset", {
+      method: "POST"
+    });
+
+    if(status){
+      status.textContent =
+        "✅ " + (result.message || "Notifications सफलतापूर्वक reset हो गए।");
+    }
+
+    alert(result.message || "Notifications सफलतापूर्वक reset हो गए।");
+
+  }catch(e){
+
+    if(status){
+      status.textContent = "❌ " + e.message;
+    }
+
+    alert(e.message);
+  }
+}
+
+
 /* ================= AUTO LOGIN ================= */
 
 async function checkAutoLogin(){
@@ -9643,69 +9657,4 @@ window.addEventListener("load", function(){
   }
 }
 
-</style>
-
-<style id="passbook-financial-record-polish-v3">
-/* Passbook V3 — Financial Year Record UI polish only. No calculation/logic changes. */
-#ledgerYearlyRecordTable {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  overflow: hidden;
-  border: 1px solid #dce7f3;
-  border-radius: 10px;
-  background: #fff;
-}
-
-#ledgerYearlyRecordTable th {
-  background: #f4f8fc;
-  color: #26364d;
-  font-weight: 700;
-  padding: 11px 12px;
-  border-bottom: 1px solid #dce7f3;
-  white-space: nowrap;
-}
-
-#ledgerYearlyRecordTable td {
-  padding: 11px 12px;
-  border-bottom: 1px solid #edf2f7;
-  color: #26364d;
-  vertical-align: middle;
-}
-
-#ledgerYearlyRecordTable tbody tr:last-child td {
-  border-bottom: 0;
-}
-
-#ledgerYearlyRecordTable tbody tr:hover {
-  background: #f8fbff;
-}
-
-#ledgerYearlyRecordTable th:last-child,
-#ledgerYearlyRecordTable td:last-child {
-  font-weight: 800;
-}
-
-#ledgerYearlyRecordTable td:last-child {
-  color: #16834b;
-}
-
-#ledgerYearSelect {
-  min-width: 100px;
-  font-weight: 600;
-  color: #26364d;
-  cursor: pointer;
-}
-
-@media (max-width: 650px) {
-  #ledgerYearlyRecordTable {
-    min-width: 620px;
-  }
-
-  #ledgerYearlyRecordTable th,
-  #ledgerYearlyRecordTable td {
-    padding: 9px 10px;
-    font-size: 13px;
-  }
-}
 </style>
