@@ -3801,6 +3801,78 @@ header .title{
   }
 }
 
+
+/* ================= SAVINGS LEDGER SUMMARY - POLISH V1 ================= */
+/* UI-only presentation; scoped to the Savings Ledger panel */
+
+#saving > .panel:nth-of-type(3) .saving-ledger-summary{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  padding:12px 14px;
+  background:#fbfdff;
+  border-bottom:1px solid #e7edf4;
+}
+
+#saving > .panel:nth-of-type(3) .saving-summary-card{
+  min-height:62px;
+  padding:10px 13px;
+  border:1px solid #dce8f4;
+  border-radius:11px;
+  background:linear-gradient(135deg,#f7fbff,#ffffff);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:4px;
+}
+
+#saving > .panel:nth-of-type(3) .saving-summary-card.debit{
+  border-color:#f0dada;
+  background:linear-gradient(135deg,#fff9f9,#ffffff);
+}
+
+#saving > .panel:nth-of-type(3) .saving-summary-card.net{
+  border-color:#dce8e1;
+  background:linear-gradient(135deg,#f8fcf9,#ffffff);
+}
+
+#saving > .panel:nth-of-type(3) .saving-summary-label{
+  color:#637389;
+  font-size:10px;
+  font-weight:700;
+}
+
+#saving > .panel:nth-of-type(3) .saving-summary-card strong{
+  color:#1769c2;
+  font-size:17px;
+  line-height:1.1;
+}
+
+#saving > .panel:nth-of-type(3) .saving-summary-card.debit strong{
+  color:#c73535;
+}
+
+#saving > .panel:nth-of-type(3) .saving-summary-card.net strong{
+  color:#16864a;
+}
+
+@media(max-width:650px){
+  #saving > .panel:nth-of-type(3) .saving-ledger-summary{
+    grid-template-columns:1fr;
+    gap:8px;
+    padding:10px 12px;
+  }
+
+  #saving > .panel:nth-of-type(3) .saving-summary-card{
+    min-height:54px;
+    padding:9px 11px;
+  }
+
+  #saving > .panel:nth-of-type(3) .saving-summary-card strong{
+    font-size:16px;
+  }
+}
+
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
@@ -4434,6 +4506,21 @@ onMessage(messaging, (payload) => {
         </button>
     </div>
     
+    <div class="saving-ledger-summary" aria-label="बचत सारांश">
+      <div class="saving-summary-card">
+        <span class="saving-summary-label">कुल जमा बचत</span>
+        <strong id="savingSummaryCredit">₹0</strong>
+      </div>
+      <div class="saving-summary-card debit">
+        <span class="saving-summary-label">कुल Debit</span>
+        <strong id="savingSummaryDebit">₹0</strong>
+      </div>
+      <div class="saving-summary-card net">
+        <span class="saving-summary-label">Net Saving</span>
+        <strong id="savingSummaryNet">₹0</strong>
+      </div>
+    </div>
+
     <div class="table">
 
       <table>
@@ -7346,6 +7433,21 @@ async function refresh(){
       b.id - a.id
     );
 
+
+    const savingSummaryCredit = ledgerRows
+      .filter(x => x.kind !== "debit")
+      .reduce((sum, x) => sum + Number(x.amount || 0), 0);
+
+    const savingSummaryDebit = ledgerRows
+      .filter(x => x.kind === "debit")
+      .reduce((sum, x) => sum + Number(x.amount || 0), 0);
+
+    const savingSummaryNet =
+      savingSummaryCredit - savingSummaryDebit;
+
+    $("savingSummaryCredit").textContent = money(savingSummaryCredit);
+    $("savingSummaryDebit").textContent = money(savingSummaryDebit);
+    $("savingSummaryNet").textContent = money(savingSummaryNet);
 
     $("st").innerHTML =
       ledgerRows.map(x => `
