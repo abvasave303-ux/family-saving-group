@@ -2383,6 +2383,35 @@ header .title{
 }
 /* ================= MEMBER DASHBOARD FAMILY WELCOME CARD ================= */
 /* Same visual treatment as Family Group Dashboard. Animation/keyframes are preserved. */
+#dashboard .family-welcome {
+    position: relative;
+    overflow: hidden;
+
+    min-height: 168px;
+    padding: 28px 32px;
+
+    border-radius: 18px;
+    border: 1px solid rgba(76, 150, 230, 0.45);
+
+    background:
+        radial-gradient(circle at 88% 20%,
+            rgba(255, 196, 70, 0.18) 0,
+            rgba(255, 196, 70, 0.06) 80px,
+            transparent 145px),
+        linear-gradient(110deg,
+            #062654 0%,
+            #0a346b 52%,
+            #174b88 100%);
+
+    color: #fff;
+
+    box-shadow:
+        0 12px 30px rgba(5, 35, 75, 0.20);
+
+    isolation: isolate;
+    margin-bottom: 12px;
+}
+
 #dashboard .family-welcome::before {
     content: "";
     position: absolute;
