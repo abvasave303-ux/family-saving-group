@@ -3673,6 +3673,134 @@ header .title{
   }
 }
 
+
+/* ================= SAVINGS LEDGER - POLISH V1 ================= */
+/* UI-only: scoped to the third panel inside #saving */
+
+#saving > .panel:nth-of-type(3){
+  border:1px solid #dfe6ef;
+  border-radius:16px;
+  box-shadow:0 7px 22px rgba(22,35,59,.07);
+  overflow:hidden;
+}
+
+#saving > .panel:nth-of-type(3) h3{
+  position:relative;
+  padding:15px 18px 15px 22px;
+  background:linear-gradient(90deg,#f7fbff,#ffffff);
+  border-bottom:1px solid #e5edf6;
+  color:#16233b;
+  font-size:16px;
+  font-weight:800;
+}
+
+#saving > .panel:nth-of-type(3) h3::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:50%;
+  width:4px;
+  height:22px;
+  border-radius:0 4px 4px 0;
+  background:linear-gradient(180deg,#1976d2,#42a5f5);
+  transform:translateY(-50%);
+}
+
+#saving > .panel:nth-of-type(3) .table{
+  padding:0;
+  background:#fff;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+#saving > .panel:nth-of-type(3) table{
+  width:100%;
+  min-width:760px;
+  border-collapse:separate;
+  border-spacing:0;
+}
+
+#saving > .panel:nth-of-type(3) thead th{
+  position:sticky;
+  top:0;
+  z-index:1;
+  padding:11px 12px;
+  background:#f5f9fd;
+  border-bottom:1px solid #dfe8f2;
+  color:#43556d;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.2px;
+  white-space:nowrap;
+}
+
+#saving > .panel:nth-of-type(3) tbody td{
+  padding:11px 12px;
+  border-bottom:1px solid #edf1f5;
+  color:#27364c;
+  font-size:12px;
+  vertical-align:middle;
+  white-space:nowrap;
+  transition:background .18s ease;
+}
+
+#saving > .panel:nth-of-type(3) tbody tr:last-child td{
+  border-bottom:0;
+}
+
+#saving > .panel:nth-of-type(3) tbody tr:hover td{
+  background:#f8fbff;
+}
+
+#saving > .panel:nth-of-type(3) tbody td:nth-child(4){
+  font-weight:800;
+  letter-spacing:.2px;
+}
+
+#saving > .panel:nth-of-type(3) tbody td.green{
+  color:#159447;
+}
+
+#saving > .panel:nth-of-type(3) tbody td.red{
+  color:#c73535;
+}
+
+#saving > .panel:nth-of-type(3) tbody td:nth-child(5){
+  color:#66758a;
+}
+
+#saving > .panel:nth-of-type(3) tbody .btn.small{
+  min-height:32px;
+  padding:6px 10px;
+  border-radius:8px;
+  font-size:11px;
+}
+
+#saving > .panel:nth-of-type(3) tbody .debit-actions{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+@media(max-width:650px){
+  #saving > .panel:nth-of-type(3){
+    border-radius:14px;
+  }
+
+  #saving > .panel:nth-of-type(3) h3{
+    padding:13px 15px 13px 19px;
+    font-size:15px;
+  }
+
+  #saving > .panel:nth-of-type(3) thead th{
+    padding:10px;
+  }
+
+  #saving > .panel:nth-of-type(3) tbody td{
+    padding:10px;
+  }
+}
+
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
