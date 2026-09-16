@@ -4120,6 +4120,123 @@ header .title{
   }
 }
 
+
+/* ================= KISAT / PAYMENT ENTRY - POLISH V1 ================= */
+/* UI-only: scoped only to #repay first payment-entry panel */
+
+#repay > .panel:first-child{
+  border:1px solid #d9e6f4;
+  border-radius:16px;
+  box-shadow:0 7px 22px rgba(22,35,59,.08);
+  overflow:hidden;
+}
+
+#repay > .panel:first-child h3{
+  position:relative;
+  padding:15px 18px 15px 22px;
+  background:linear-gradient(90deg,#f3f8ff,#ffffff);
+  border-bottom:1px solid #e5edf6;
+  color:#16233b;
+  font-size:16px;
+  font-weight:800;
+}
+
+#repay > .panel:first-child h3::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:50%;
+  width:4px;
+  height:22px;
+  border-radius:0 4px 4px 0;
+  background:linear-gradient(180deg,#1976d2,#42a5f5);
+  transform:translateY(-50%);
+}
+
+#repay > .panel:first-child .body{
+  padding:15px 18px 16px;
+  background:linear-gradient(180deg,#ffffff,#fbfdff);
+}
+
+#repay > .panel:first-child .field label{
+  margin-bottom:6px;
+  color:#52647b;
+  font-size:11px;
+  font-weight:700;
+}
+
+#repay > .panel:first-child .field input,
+#repay > .panel:first-child .field select{
+  min-height:40px;
+  padding:9px 12px;
+  border:1px solid #cbd9e8;
+  border-radius:9px;
+  background:#fff;
+  color:#1d2b42;
+  outline:none;
+  transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease;
+}
+
+#repay > .panel:first-child .field input:hover,
+#repay > .panel:first-child .field select:hover{
+  border-color:#aebfd4;
+}
+
+#repay > .panel:first-child .field input:focus,
+#repay > .panel:first-child .field select:focus{
+  border-color:#1976d2;
+  box-shadow:0 0 0 3px rgba(25,118,210,.10);
+  transform:translateY(-1px);
+}
+
+#repay > .panel:first-child #ra{
+  font-weight:800;
+  color:#1769c2;
+  background:linear-gradient(180deg,#ffffff,#f7fbff);
+}
+
+#repay > .panel:first-child #rt{
+  font-weight:700;
+}
+
+#repay > .panel:first-child .full .btn{
+  min-height:40px;
+  padding:9px 17px;
+  border-radius:9px;
+  background:linear-gradient(135deg,#1976d2,#0d67bd);
+  box-shadow:0 6px 15px rgba(25,118,210,.20);
+  transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;
+}
+
+#repay > .panel:first-child .full .btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 9px 20px rgba(25,118,210,.25);
+  filter:brightness(1.03);
+}
+
+#repay > .panel:first-child .full .btn:active{
+  transform:translateY(0);
+}
+
+@media(max-width:650px){
+  #repay > .panel:first-child{
+    border-radius:14px;
+  }
+
+  #repay > .panel:first-child .body{
+    padding:13px 14px 14px;
+  }
+
+  #repay > .panel:first-child h3{
+    padding:13px 15px 13px 19px;
+    font-size:15px;
+  }
+
+  #repay > .panel:first-child .full .btn{
+    width:100%;
+  }
+}
+
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
