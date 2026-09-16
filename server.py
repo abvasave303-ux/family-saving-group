@@ -119,6 +119,11 @@ def init_db():
         FOREIGN KEY(family_id) REFERENCES families(id)
     );
 
+    CREATE TABLE IF NOT EXISTS app_settings(
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL
+    );
+
     CREATE TABLE IF NOT EXISTS payments(
         id SERIAL PRIMARY KEY,
         loan_id INTEGER NOT NULL,
@@ -192,6 +197,15 @@ def init_db():
                     today
                 )
             )
+
+    c.execute(
+        """
+        INSERT INTO app_settings (key, value)
+        VALUES (?, ?)
+        ON CONFLICT(key) DO NOTHING
+        """,
+        ("loan_interest_rate", "2")
+    )
 
     c.commit()
     c.close()
@@ -1047,14 +1061,13 @@ def reset_member_notifications():
 
     c = conn()
 
-    result = c.execute(
+    c.execute(
         """
         DELETE FROM notifications
-        RETURNING id
         """
     )
-    
-    deleted = len(result.fetchall())
+
+    deleted = c.rowcount
 
     c.commit()
     c.close()
@@ -1999,6 +2012,83 @@ def delete_saving(sid):
 
 
 # ==================================================
+# LOAN INTEREST RATE SETTINGS
+# ==================================================
+
+@app.get("/api/settings/loan-interest")
+def get_loan_interest_setting():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    row = c.execute(
+        """
+        SELECT value
+        FROM app_settings
+        WHERE key=?
+        """,
+        ("loan_interest_rate",)
+    ).fetchone()
+
+    if not row:
+        c.execute(
+            """
+            INSERT INTO app_settings (key, value)
+            VALUES (?, ?)
+            ON CONFLICT(key) DO NOTHING
+            """,
+            ("loan_interest_rate", "2")
+        )
+        c.commit()
+        rate = 2.0
+    else:
+        rate = float(row["value"])
+
+    c.close()
+
+    return jsonify(rate=rate)
+
+
+@app.put("/api/settings/loan-interest")
+def update_loan_interest_setting():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    d = request.json or {}
+
+    try:
+        rate = float(d.get("rate"))
+    except (TypeError, ValueError):
+        return jsonify(error="सही ब्याज दर डालें"), 400
+
+    if rate <= 0 or rate > 100:
+        return jsonify(error="ब्याज दर 0 से अधिक और 100% से कम या बराबर होनी चाहिए"), 400
+
+    c = conn()
+
+    c.execute(
+        """
+        INSERT INTO app_settings (key, value)
+        VALUES (?, ?)
+        ON CONFLICT(key) DO UPDATE SET value=EXCLUDED.value
+        """,
+        ("loan_interest_rate", str(rate))
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(ok=True, rate=rate)
+
+
+# ==================================================
 # LOANS - GET
 # ==================================================
 
@@ -2054,10 +2144,6 @@ def add_loan():
             d.get("amount", 0)
         )
 
-        rate = float(
-            d.get("rate", 2)
-        )
-
         months = int(
             d.get("months", 12)
         )
@@ -2081,6 +2167,17 @@ def add_loan():
         ), 400
 
     c = conn()
+
+    rate_row = c.execute(
+        """
+        SELECT value
+        FROM app_settings
+        WHERE key=?
+        """,
+        ("loan_interest_rate",)
+    ).fetchone()
+
+    rate = float(rate_row["value"]) if rate_row else 2.0
 
     family = c.execute(
         """
