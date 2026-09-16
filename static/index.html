@@ -3698,6 +3698,16 @@ onMessage(messaging, (payload) => {
   }
 }
 </style>
+
+<style>
+/* ===== FAMILY GROUP WELCOME SLOGAN VISIBILITY ===== */
+#familyGroupDashboard .family-welcome h2{
+  color:#ffffff !important;
+}
+#familyGroupDashboard .family-welcome h2 .fgd-slogan-highlight{
+  color:#ffd43b !important;
+}
+</style>
 </head>
 
 <body>
@@ -6544,12 +6554,8 @@ async function openFamilyGroupDashboard(button){
             </div>
             
             <h2>
-                एक परिवार • एक बचत • उज्ज्वल भविष्य
+                एक परिवार • <span class="fgd-slogan-highlight">एक बचत</span> • उज्ज्वल भविष्य
             </h2>
-            
-            <p>
-                समूह की बचत और वित्तीय स्थिति का संपूर्ण विवरण
-            </p>
         
             <div class="welcome-badge">
                 👨‍👩‍👧‍👦 <span id="fgdFamilyCount">23 परिवार</span>
