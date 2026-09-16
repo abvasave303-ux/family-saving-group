@@ -4506,21 +4506,6 @@ onMessage(messaging, (payload) => {
         </button>
     </div>
     
-    <div class="saving-ledger-summary" aria-label="बचत सारांश">
-      <div class="saving-summary-card">
-        <span class="saving-summary-label">कुल जमा बचत</span>
-        <strong id="savingSummaryCredit">₹0</strong>
-      </div>
-      <div class="saving-summary-card debit">
-        <span class="saving-summary-label">कुल Debit</span>
-        <strong id="savingSummaryDebit">₹0</strong>
-      </div>
-      <div class="saving-summary-card net">
-        <span class="saving-summary-label">Net Saving</span>
-        <strong id="savingSummaryNet">₹0</strong>
-      </div>
-    </div>
-
     <div class="table">
 
       <table>
@@ -4736,6 +4721,21 @@ onMessage(messaging, (payload) => {
   <div class="panel" style="margin-top:14px">
 
     <h3>बचत लेजर</h3>
+
+    <div class="saving-ledger-summary" aria-label="बचत सारांश">
+      <div class="saving-summary-card">
+        <span class="saving-summary-label">कुल जमा बचत</span>
+        <strong id="savingSummaryCredit">₹0</strong>
+      </div>
+      <div class="saving-summary-card debit">
+        <span class="saving-summary-label">कुल Debit</span>
+        <strong id="savingSummaryDebit">₹0</strong>
+      </div>
+      <div class="saving-summary-card net">
+        <span class="saving-summary-label">Net Saving</span>
+        <strong id="savingSummaryNet">₹0</strong>
+      </div>
+    </div>
 
     <div class="table">
 
@@ -7440,7 +7440,7 @@ async function refresh(){
 
     const savingSummaryDebit = ledgerRows
       .filter(x => x.kind === "debit")
-      .reduce((sum, x) => sum + Number(x.amount || 0), 0);
+      .reduce((sum, x) => sum + Math.abs(Number(x.amount || 0)), 0);
 
     const savingSummaryNet =
       savingSummaryCredit - savingSummaryDebit;
