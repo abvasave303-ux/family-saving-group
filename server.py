@@ -1050,10 +1050,11 @@ def reset_member_notifications():
     c.execute(
         """
         DELETE FROM notifications
+        RETURNING id
         """
     )
-
-    deleted = c.rowcount
+    
+    deleted = len(c.fetchall())
 
     c.commit()
     c.close()
