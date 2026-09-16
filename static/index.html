@@ -6287,15 +6287,29 @@ function renderMemberDashboard(){
   activities.sort((a,b) => String(b.date).localeCompare(String(a.date)));
 
   section.innerHTML = `
-    <div class="member-dashboard">
-      <div class="member-welcome">
-        <div>
-          <div class="welcome-label">Welcome,</div>
-          <h2>${user.name || "Member"}</h2>
-          <div class="welcome-sub">Member Dashboard</div>
-        </div>
-        <div class="member-welcome-icon">👤</div>
+    <div class="family-welcome">
+    
+      <div class="welcome-label">
+        🏠 FAMILY SAVING GROUP
       </div>
+    
+      <h2>
+        एक परिवार • एक बचत • उज्ज्वल भविष्य
+      </h2>
+    
+      <p>
+        समूह की बचत और वित्तीय स्थिति का संपूर्ण विवरण
+      </p>
+    
+      <div class="welcome-badge">
+        👨‍👩‍👧‍👦 <span>23 परिवार</span>
+        <span>•</span>
+        💰 समूहिक बचत
+        <span>•</span>
+        📊 वित्तीय प्रगति
+      </div>
+    
+    </div>
 
       <div class="member-dashboard-cards">
         <div class="member-dashboard-card green">
