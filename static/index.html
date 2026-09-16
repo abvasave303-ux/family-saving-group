@@ -4451,6 +4451,88 @@ header .title{
   #interest > .panel:first-child > .body > .form .full .btn{width:100%;}
 }
 
+
+/* ================= INTEREST HISTORY TABLE - POLISH V1 ================= */
+/* UI-only: scoped to the old interest distribution history table */
+
+#interest-distribution-history table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+}
+
+#interest-distribution-history thead th{
+  padding:11px 12px;
+  background:#f5f9fd;
+  border-bottom:1px solid #dfe8f2;
+  color:#43556d;
+  font-size:11px;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+#interest-distribution-history tbody td{
+  padding:12px;
+  border-bottom:1px solid #edf1f5;
+  color:#27364c;
+  font-size:12px;
+  vertical-align:middle;
+  white-space:nowrap;
+  transition:background .18s ease;
+}
+
+#interest-distribution-history tbody tr:last-child td{
+  border-bottom:0;
+}
+
+#interest-distribution-history tbody tr:hover td{
+  background:#f8fbff;
+}
+
+#interest-distribution-history tbody td:nth-child(1){
+  font-weight:700;
+  color:#52647b;
+}
+
+#interest-distribution-history tbody td:nth-child(2){
+  color:#344861;
+  font-weight:600;
+}
+
+#interest-distribution-history tbody td:nth-child(3){
+  color:#16864b;
+  font-weight:800;
+}
+
+#interest-distribution-history .btn.small{
+  min-height:32px;
+  padding:6px 11px;
+  border-radius:8px;
+  font-size:11px;
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+
+#interest-distribution-history .btn.small:hover{
+  transform:translateY(-1px);
+  box-shadow:0 5px 12px rgba(22,35,59,.10);
+}
+
+@media(max-width:650px){
+  #interest-distribution-history{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  #interest-distribution-history table{
+    min-width:560px;
+  }
+
+  #interest-distribution-history thead th,
+  #interest-distribution-history tbody td{
+    padding:10px;
+  }
+}
+
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
