@@ -4237,6 +4237,124 @@ header .title{
   }
 }
 
+
+/* ================= PAYMENT HISTORY TABLE - POLISH V1 ================= */
+/* UI-only: scoped only to #repay payment-history panel */
+
+#repay > .panel:nth-of-type(2){
+  border:1px solid #dfe6ef;
+  border-radius:16px;
+  box-shadow:0 7px 22px rgba(22,35,59,.07);
+  overflow:hidden;
+}
+
+#repay > .panel:nth-of-type(2) h3{
+  position:relative;
+  padding:15px 18px 15px 22px;
+  background:linear-gradient(90deg,#f7fbff,#ffffff);
+  border-bottom:1px solid #e5edf6;
+  color:#16233b;
+  font-size:16px;
+  font-weight:800;
+}
+
+#repay > .panel:nth-of-type(2) h3::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:50%;
+  width:4px;
+  height:22px;
+  border-radius:0 4px 4px 0;
+  background:linear-gradient(180deg,#1976d2,#42a5f5);
+  transform:translateY(-50%);
+}
+
+#repay > .panel:nth-of-type(2) .table{
+  padding:0;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+#repay > .panel:nth-of-type(2) table{
+  width:100%;
+  min-width:720px;
+  border-collapse:separate;
+  border-spacing:0;
+}
+
+#repay > .panel:nth-of-type(2) thead th{
+  padding:11px 12px;
+  background:#f5f9fd;
+  border-bottom:1px solid #dfe8f2;
+  color:#43556d;
+  font-size:11px;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+#repay > .panel:nth-of-type(2) tbody td{
+  padding:11px 12px;
+  border-bottom:1px solid #edf1f5;
+  color:#27364c;
+  font-size:12px;
+  vertical-align:middle;
+  white-space:nowrap;
+  transition:background .18s ease;
+}
+
+#repay > .panel:nth-of-type(2) tbody tr:last-child td{
+  border-bottom:0;
+}
+
+#repay > .panel:nth-of-type(2) tbody tr:hover td{
+  background:#f8fbff;
+}
+
+/* Payment / interest / principal emphasis */
+#repay > .panel:nth-of-type(2) tbody td:nth-child(3){
+  font-weight:800;
+}
+
+#repay > .panel:nth-of-type(2) tbody td:nth-child(4){
+  font-weight:700;
+}
+
+#repay > .panel:nth-of-type(2) tbody td:nth-child(5){
+  font-weight:800;
+  color:#1769c2;
+}
+
+#repay > .panel:nth-of-type(2) tbody .btn.danger{
+  min-height:32px;
+  padding:6px 11px;
+  border-radius:8px;
+  font-size:11px;
+  transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;
+}
+
+#repay > .panel:nth-of-type(2) tbody .btn.danger:hover{
+  transform:translateY(-1px);
+  box-shadow:0 5px 12px rgba(198,40,40,.18);
+  filter:brightness(1.03);
+}
+
+@media(max-width:650px){
+  #repay > .panel:nth-of-type(2){
+    border-radius:14px;
+  }
+
+  #repay > .panel:nth-of-type(2) h3{
+    padding:13px 15px 13px 19px;
+    font-size:15px;
+  }
+
+  #repay > .panel:nth-of-type(2) thead th,
+  #repay > .panel:nth-of-type(2) tbody td{
+    padding:10px;
+  }
+}
+
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
