@@ -3556,6 +3556,74 @@ onMessage(messaging, (payload) => {
   }
 }
 </style>
+
+<style>
+/* ================= PASSBOOK COVER V2 ================= */
+.passbook-cover{
+  text-align:center;
+  padding:18px 12px 12px;
+  max-width:100%;
+  box-sizing:border-box;
+}
+
+.passbook-logo{
+  width:100px;
+  height:100px;
+  max-width:100px;
+  max-height:100px;
+  object-fit:contain;
+  display:block;
+  margin:0 auto 8px;
+}
+
+.passbook-title{
+  margin:0;
+  font-size:24px;
+  line-height:1.25;
+  font-weight:700;
+}
+
+.passbook-tagline{
+  margin-top:4px;
+  font-size:14px;
+  line-height:1.4;
+}
+
+.passbook-type{
+  display:inline-block;
+  margin-top:10px;
+  padding:5px 12px;
+  border:1px solid #d5deea;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.4px;
+}
+
+.passbook-year{
+  margin-top:8px;
+  padding-top:8px;
+  border-top:1px solid #e3e8ef;
+  font-size:15px;
+}
+
+@media(max-width:650px){
+  .passbook-cover{
+    padding:14px 8px 10px;
+  }
+  .passbook-logo{
+    width:78px;
+    height:78px;
+    max-width:78px;
+    max-height:78px;
+    margin-bottom:6px;
+  }
+  .passbook-title{font-size:21px;}
+  .passbook-tagline{font-size:12px;}
+  .passbook-type{font-size:12px; padding:4px 10px; margin-top:8px;}
+  .passbook-year{font-size:14px; margin-top:6px; padding-top:6px;}
+}
+</style>
 </head>
 
 <body>
