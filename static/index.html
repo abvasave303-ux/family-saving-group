@@ -3530,6 +3530,149 @@ header .title{
   }
 }
 
+
+/* ================= MONTHLY SAVING DEBIT / WITHDRAWAL - POLISH V1 ================= */
+/* UI-only and fully scoped to the second panel inside #saving */
+
+#saving > .panel:nth-of-type(2){
+  border:1px solid #dfe6ef;
+  border-radius:16px;
+  box-shadow:0 7px 22px rgba(22,35,59,.075);
+  overflow:hidden;
+  animation:savingDebitPanelIn .42s ease both;
+}
+
+#saving > .panel:nth-of-type(2) h3{
+  position:relative;
+  padding:15px 18px 15px 22px;
+  background:linear-gradient(90deg,#fff8f8,#ffffff);
+  border-bottom:1px solid #eee4e4;
+  color:#16233b;
+  font-size:16px;
+  font-weight:800;
+}
+
+#saving > .panel:nth-of-type(2) h3::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:50%;
+  width:4px;
+  height:22px;
+  border-radius:0 4px 4px 0;
+  background:linear-gradient(180deg,#c73535,#e15b5b);
+  transform:translateY(-50%);
+}
+
+#saving > .panel:nth-of-type(2) .body{
+  padding:14px 18px 16px;
+  background:linear-gradient(180deg,#ffffff,#fffdfd);
+}
+
+#saving > .panel:nth-of-type(2) .notice{
+  margin-bottom:12px;
+  padding:10px 12px;
+  border:1px solid #dceaf7;
+  border-radius:9px;
+  background:linear-gradient(90deg,#eef7ff,#f7fbff);
+  color:#1769b5;
+  font-size:13px;
+  line-height:1.5;
+}
+
+#saving > .panel:nth-of-type(2) .form{
+  gap:10px 14px;
+}
+
+#saving > .panel:nth-of-type(2) .field label{
+  margin-bottom:6px;
+  color:#52647b;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.15px;
+}
+
+#saving > .panel:nth-of-type(2) .field input,
+#saving > .panel:nth-of-type(2) .field select{
+  min-height:40px;
+  padding:9px 12px;
+  border:1px solid #cbd9e8;
+  border-radius:9px;
+  background:#fff;
+  color:#1d2b42;
+  outline:none;
+  transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease;
+}
+
+#saving > .panel:nth-of-type(2) .field input:hover,
+#saving > .panel:nth-of-type(2) .field select:hover{
+  border-color:#aebfd4;
+}
+
+#saving > .panel:nth-of-type(2) .field input:focus,
+#saving > .panel:nth-of-type(2) .field select:focus{
+  border-color:#c73535;
+  box-shadow:0 0 0 3px rgba(199,53,53,.09);
+  transform:translateY(-1px);
+}
+
+#saving > .panel:nth-of-type(2) #da{
+  font-weight:800;
+  color:#c73535;
+  background:linear-gradient(180deg,#fff,#fff8f8);
+}
+
+#saving > .panel:nth-of-type(2) .full{
+  padding-top:1px;
+}
+
+#saving > .panel:nth-of-type(2) .full .btn.danger{
+  min-height:40px;
+  padding:9px 16px;
+  border-radius:9px;
+  background:linear-gradient(135deg,#c73535,#b72c2c);
+  box-shadow:0 6px 15px rgba(199,53,53,.18);
+  transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;
+}
+
+#saving > .panel:nth-of-type(2) .full .btn.danger:hover{
+  transform:translateY(-2px);
+  box-shadow:0 9px 20px rgba(199,53,53,.23);
+  filter:brightness(1.03);
+}
+
+#saving > .panel:nth-of-type(2) .full .btn.danger:active{
+  transform:translateY(0);
+}
+
+@keyframes savingDebitPanelIn{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@media(max-width:650px){
+  #saving > .panel:nth-of-type(2){
+    border-radius:14px;
+  }
+
+  #saving > .panel:nth-of-type(2) .body{
+    padding:12px 14px 14px;
+  }
+
+  #saving > .panel:nth-of-type(2) .form{
+    gap:9px;
+  }
+
+  #saving > .panel:nth-of-type(2) h3{
+    padding:13px 15px 13px 19px;
+    font-size:15px;
+  }
+
+  #saving > .panel:nth-of-type(2) .full .btn.danger{
+    width:100%;
+  }
+}
+
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
