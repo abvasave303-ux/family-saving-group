@@ -9796,3 +9796,127 @@ window.addEventListener("load", function(){
 }
 
 </style>
+
+
+/* =========================================================
+   FINAL MEMBER DASHBOARD WELCOME CARD
+   Same visual treatment as Family Group Dashboard.
+   Existing animation is intentionally preserved.
+   ========================================================= */
+#dashboard .family-welcome {
+    position: relative !important;
+    overflow: hidden !important;
+    min-height: 168px !important;
+    padding: 28px 32px !important;
+    margin-bottom: 14px !important;
+    border-radius: 18px !important;
+    border: 1px solid rgba(76, 150, 230, 0.45) !important;
+
+    background:
+        radial-gradient(circle at 88% 20%,
+            rgba(255, 196, 70, 0.18) 0,
+            rgba(255, 196, 70, 0.06) 80px,
+            transparent 145px),
+        linear-gradient(110deg,
+            #062654 0%,
+            #0a346b 52%,
+            #174b88 100%) !important;
+
+    color: #fff !important;
+    box-shadow: 0 12px 30px rgba(5, 35, 75, 0.20) !important;
+    isolation: isolate !important;
+}
+
+#dashboard .family-welcome::before {
+    content: "" !important;
+    position: absolute !important;
+    width: 520px !important;
+    height: 180px !important;
+    left: -70px !important;
+    bottom: -115px !important;
+    border-radius: 50% !important;
+    background: rgba(55, 125, 205, 0.22) !important;
+    z-index: -1 !important;
+}
+
+#dashboard .family-welcome::after {
+    content: "" !important;
+    position: absolute !important;
+    width: 190px !important;
+    height: 190px !important;
+    right: 35px !important;
+    top: -70px !important;
+    border-radius: 50% !important;
+    background:
+        radial-gradient(circle,
+            rgba(255, 193, 78, 0.95) 0,
+            rgba(255, 193, 78, 0.65) 16%,
+            rgba(255, 193, 78, 0.16) 34%,
+            transparent 68%) !important;
+    opacity: .9 !important;
+    z-index: -1 !important;
+}
+
+#dashboard .family-welcome .welcome-label {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1.5px !important;
+    color: #d9eaff !important;
+    margin-bottom: 8px !important;
+}
+
+#dashboard .family-welcome h2 {
+    margin: 0 !important;
+    font-size: 32px !important;
+    line-height: 1.15 !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    letter-spacing: .3px !important;
+
+    /* Existing member animation — DO NOT CHANGE */
+    animation: memberNameLoop 20s ease both infinite !important;
+}
+
+#dashboard .family-welcome p {
+    margin: 8px 0 14px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #d9e7f8 !important;
+}
+
+#dashboard .family-welcome .welcome-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 7px 13px !important;
+    border-radius: 20px !important;
+    background: rgba(255,255,255,.08) !important;
+    border: 1px solid rgba(255,205,80,.45) !important;
+    color: #ffd45a !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    backdrop-filter: blur(5px) !important;
+}
+
+@media (max-width: 650px) {
+    #dashboard .family-welcome {
+        min-height: 145px !important;
+        padding: 22px 20px !important;
+        margin-bottom: 12px !important;
+        border-radius: 15px !important;
+    }
+
+    #dashboard .family-welcome h2 {
+        font-size: 23px !important;
+        line-height: 1.25 !important;
+    }
+
+    #dashboard .family-welcome p {
+        font-size: 12px !important;
+    }
+
+    #dashboard .family-welcome::after {
+        right: -35px !important;
+        opacity: .65 !important;
+    }
+}
+
