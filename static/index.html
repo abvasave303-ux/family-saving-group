@@ -2844,7 +2844,7 @@ header .title{
 
 #familyGroupDashboard .fgd-detail-grid{
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-columns:1.05fr 1.4fr 0.85fr;
   gap:14px;
   width:100%;
   margin-top:14px;
@@ -3908,6 +3908,10 @@ onMessage(messaging, (payload) => {
       🔔&nbsp; Notification Management
     </button>
 
+    <button onclick="show('loanSettings',this)">
+      ⚙️&nbsp; Loan Settings
+    </button>
+
     <button onclick="logout()">
       🚪&nbsp; Logout
     </button>
@@ -4503,7 +4507,7 @@ onMessage(messaging, (payload) => {
           <tr>
             <th>सदस्य</th>
             <th>मूल लोन</th>
-            <th>2%</th>
+            <th>ब्याज दर</th>
             <th>बाकी</th>
             <th>स्थिति</th>
             <th>Action</th>
@@ -4986,6 +4990,42 @@ onMessage(messaging, (payload) => {
 
       <div id="notificationResetStatus" style="margin-top:12px;color:#68768b;font-size:12px;"></div>
     </div>
+  </div>
+
+</section>
+
+<!-- ================= LOAN SETTINGS ================= -->
+<section id="loanSettings" class="hidden">
+
+  <div class="panel">
+
+    <h3>⚙️ Loan Settings</h3>
+
+    <div class="body">
+
+      <div class="notice">
+        यहाँ से नए Loan की मासिक ब्याज दर बदली जा सकती है। पुरानी Loan entries की saved rate नहीं बदलेगी।
+      </div>
+
+      <div class="form">
+
+        <div class="field">
+          <label>वर्तमान Loan ब्याज दर (% प्रति माह)</label>
+          <input id="loanInterestRate" type="number" min="0.01" max="100" step="0.01" placeholder="2">
+        </div>
+
+        <div class="full">
+          <button class="btn" onclick="saveLoanInterestRate()">
+            💾 ब्याज दर Save करें
+          </button>
+        </div>
+
+      </div>
+
+      <div id="loanInterestRateStatus" style="margin-top:12px;color:#68768b;font-size:12px;"></div>
+
+    </div>
+
   </div>
 
 </section>
@@ -7012,6 +7052,17 @@ async function refresh(){
 
     $("ca").textContent = money(d.available);
 
+    const loanSetting = await api("/api/settings/loan-interest");
+    const loanRate = Number(loanSetting.rate || 2);
+
+    if($("loanInterestRate")){
+      $("loanInterestRate").value = loanRate;
+    }
+
+    if($("currentLoanRate")){
+      $("currentLoanRate").textContent = loanRate + "% प्रति माह";
+    }
+
 
     $("sum").innerHTML = `
 
@@ -7225,7 +7276,7 @@ async function refresh(){
             ${money(x.original)}
           </td>
 
-          <td>2%</td>
+          <td>${Number(x.rate || 0).toFixed(2).replace(/\.00$/, "")} %</td>
 
           <td>
             ${money(x.principal)}
@@ -9576,6 +9627,57 @@ else{
 
   }
 
+}
+
+
+/* ================= LOAN INTEREST SETTINGS ================= */
+
+async function saveLoanInterestRate(){
+
+  const input = $("loanInterestRate");
+  const status = $("loanInterestRateStatus");
+  const rate = Number(input?.value);
+
+  if(!rate || rate <= 0 || rate > 100){
+    alert("ब्याज दर 0 से अधिक और 100% से कम या बराबर रखें");
+    return;
+  }
+
+  if(!confirm("नए Loan की मासिक ब्याज दर " + rate + "% करना चाहते हैं?\n\nपुराने Loans की saved rate नहीं बदलेगी.")){
+    return;
+  }
+
+  if(status){
+    status.textContent = "⏳ ब्याज दर save की जा रही है...";
+  }
+
+  try{
+    const result = await api("/api/settings/loan-interest",{
+      method:"PUT",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({rate:rate})
+    });
+
+    if($("currentLoanRate")){
+      $("currentLoanRate").textContent = Number(result.rate) + "% प्रति माह";
+    }
+
+    if(status){
+      status.textContent = "✅ नई Loan ब्याज दर " + Number(result.rate) + "% प्रति माह save हो गई।";
+    }
+
+    alert("Loan ब्याज दर सफलतापूर्वक अपडेट हो गई।\n\nपुराने Loans की rate पर कोई असर नहीं पड़ेगा।");
+
+    await refresh();
+
+  }catch(e){
+
+    if(status){
+      status.textContent = "❌ " + e.message;
+    }
+
+    alert(e.message);
+  }
 }
 
 
