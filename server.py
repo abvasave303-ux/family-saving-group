@@ -169,7 +169,21 @@ def init_db():
         created_at TEXT NOT NULL,
         FOREIGN KEY(family_id) REFERENCES families(id)
     );
+
+    CREATE TABLE IF NOT EXISTS app_settings(
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL
+    );
     """)
+
+    c.execute(
+        """
+        INSERT INTO app_settings (key, value)
+        VALUES (?, ?)
+        ON CONFLICT (key) DO NOTHING
+        """,
+        ("loan_interest_rate", "2")
+    )
 
     n = c.execute(
         "SELECT COUNT(*) AS n FROM families"
@@ -637,6 +651,81 @@ def member_session_valid():
 # DASHBOARD
 
 # ==================================================
+
+
+# ==================================================
+# LOAN INTEREST SETTINGS
+# ==================================================
+
+@app.get("/api/settings/loan-interest")
+def get_loan_interest_setting():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    row = c.execute(
+        """
+        SELECT value
+        FROM app_settings
+        WHERE key=?
+        """,
+        ("loan_interest_rate",)
+    ).fetchone()
+
+    c.close()
+
+    rate = float(row["value"]) if row else 2.0
+
+    return jsonify(
+        rate=rate
+    )
+
+
+@app.put("/api/settings/loan-interest")
+def update_loan_interest_setting():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    data = request.json or {}
+
+    try:
+        rate = float(data.get("rate"))
+    except (TypeError, ValueError):
+        return jsonify(
+            error="ब्याज दर सही दें"
+        ), 400
+
+    if rate <= 0 or rate > 100:
+        return jsonify(
+            error="ब्याज दर 0 से अधिक और 100% से कम या बराबर रखें"
+        ), 400
+
+    c = conn()
+
+    c.execute(
+        """
+        INSERT INTO app_settings (key, value)
+        VALUES (?, ?)
+        ON CONFLICT (key) DO UPDATE
+        SET value=EXCLUDED.value
+        """,
+        ("loan_interest_rate", str(rate))
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True,
+        rate=rate
+    )
 
 
 @app.get("/api/dashboard")
@@ -2053,8 +2142,12 @@ def add_loan():
             d.get("amount", 0)
         )
 
-        rate = float(
-            d.get("rate", 2)
+        rate_value = d.get("rate")
+
+        rate = (
+            float(rate_value)
+            if rate_value is not None
+            else None
         )
 
         months = int(
@@ -2080,6 +2173,17 @@ def add_loan():
         ), 400
 
     c = conn()
+
+    if rate is None:
+        setting = c.execute(
+            """
+            SELECT value
+            FROM app_settings
+            WHERE key=?
+            """,
+            ("loan_interest_rate",)
+        ).fetchone()
+        rate = float(setting["value"]) if setting else 2.0
 
     family = c.execute(
         """
