@@ -1600,6 +1600,38 @@ header .title{
 .member-dashboard-card.green .member-card-value{color:#20864b}
 .member-dashboard-card.red .member-card-value{color:#c73535}
 .member-dashboard-card.orange .member-card-value{color:#c66d14}
+/* ===== MEMBER MONTHLY LOAN INTEREST STRIP ===== */
+.member-loan-interest-strip{
+  margin:0 0 18px;
+  padding:10px 16px;
+  min-height:42px;
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  border:1px solid #dbe4ef;
+  border-radius:10px;
+  background:#f7faff;
+  color:#16233b;
+  font-size:15px;
+  font-weight:700;
+  box-shadow:0 3px 10px rgba(22,35,59,.05);
+}
+.member-loan-interest-strip strong{
+  color:#c73535;
+  margin-left:6px;
+}
+@media(max-width:650px){
+  .member-loan-interest-strip{
+    margin:0 0 14px;
+    padding:9px 10px;
+    min-height:38px;
+    font-size:13px;
+    border-radius:8px;
+  }
+}
+
 .member-activity{
   background:#fff;
   border:1px solid #e4eaf2;
@@ -6523,6 +6555,12 @@ function renderMemberDashboard(){
   const memberSaving = savingsTotal + interestTotal - debitTotal;
   const loanTotal = loanRows.reduce((a,r) => a + Number(r.principal || 0), 0);
 
+  const monthlyLoanInterest = loanRows.reduce((a,r) => {
+    const principal = Number(r.principal || 0);
+    const rate = Number(r.rate ?? 2);
+    return a + (principal > 0 ? (principal * rate / 100) : 0);
+  }, 0);
+
   const now = new Date();
   const fyStart = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1;
   const fyEnd = String((fyStart + 1) % 100).padStart(2,"0");
@@ -6605,6 +6643,12 @@ function renderMemberDashboard(){
           <div class="member-card-value">${money(interestTotal)}</div>
         </div>
       </div>
+
+      ${loanTotal > 0 ? `
+        <div class="member-loan-interest-strip">
+          आपके Loan का मासिक ब्याज = <strong>${money(monthlyLoanInterest)}</strong>
+        </div>
+      ` : ""}
 
       <div class="member-activity">
         <h3>🕒 हाल की गतिविधि</h3>
