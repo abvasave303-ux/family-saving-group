@@ -633,6 +633,9 @@ th{
 }
 .side{
   display:block;
+  top:68px;
+  bottom:auto;
+  height:calc(100vh - 68px);
   transform:translateX(-100%);
   transition:transform .25s ease;
   will-change:transform;
@@ -1010,7 +1013,7 @@ header::after{
 .side.mobile-open{
   display:block;
   width:230px;
-  z-index:10;
+  z-index:1000;
   box-shadow:4px 0 18px rgba(0,0,0,.18);
 }
 /* ================= MEMBER HEADER MOBILE ================= */
@@ -1573,65 +1576,9 @@ header .title{
   font-weight:800;
   color:#16233b;
 }
-
-/* ===== MEMBER DASHBOARD CARDS - SAME SOFT COLORS AS FAMILY GROUP DASHBOARD ===== */
-.member-dashboard-card:nth-child(1){
-  background:#eefaf3;
-}
-.member-dashboard-card:nth-child(2){
-  background:#fff1f1;
-}
-.member-dashboard-card:nth-child(3){
-  background:#fff8ed;
-}
-.member-dashboard-card:nth-child(4){
-  background:#f1f3f8;
-}
-
-.member-dashboard-card:nth-child(1)::before{background:#238b57}
-.member-dashboard-card:nth-child(2)::before{background:#d93636}
-.member-dashboard-card:nth-child(3)::before{background:#d47712}
-.member-dashboard-card:nth-child(4)::before{background:#1f2d49}
-
-.member-dashboard-card:nth-child(1) .member-card-value{color:#238b57}
-.member-dashboard-card:nth-child(2) .member-card-value{color:#d93636}
-.member-dashboard-card:nth-child(3) .member-card-value{color:#d47712}
-.member-dashboard-card:nth-child(4) .member-card-value{color:#1f2d49}
 .member-dashboard-card.green .member-card-value{color:#20864b}
 .member-dashboard-card.red .member-card-value{color:#c73535}
 .member-dashboard-card.orange .member-card-value{color:#c66d14}
-/* ===== MEMBER MONTHLY LOAN INTEREST STRIP ===== */
-.member-loan-interest-strip{
-  margin:0 0 18px;
-  padding:10px 16px;
-  min-height:42px;
-  box-sizing:border-box;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  border:1px solid #dbe4ef;
-  border-radius:10px;
-  background:#f7faff;
-  color:#16233b;
-  font-size:15px;
-  font-weight:700;
-  box-shadow:0 3px 10px rgba(22,35,59,.05);
-}
-.member-loan-interest-strip strong{
-  color:#c73535;
-  margin-left:6px;
-}
-@media(max-width:650px){
-  .member-loan-interest-strip{
-    margin:0 0 14px;
-    padding:9px 10px;
-    min-height:38px;
-    font-size:13px;
-    border-radius:8px;
-  }
-}
-
 .member-activity{
   background:#fff;
   border:1px solid #e4eaf2;
@@ -3776,54 +3723,6 @@ onMessage(messaging, (payload) => {
   z-index:2;
 }
 </style>
-<style>
-/* ===== MOBILE HEADER LAYER FIX ===== */
-@media (max-width:650px){
-  header{
-    position:sticky !important;
-    top:0 !important;
-    z-index:1000 !important;
-  }
-}
-</style>
-
-<style>
-/* ===== FAMILY GROUP: SINGLE DETAIL CARD BALANCED WIDE ===== */
-#familyGroupDashboard .fgd-detail-grid{
-  grid-template-columns:minmax(0,1fr);
-  justify-content:stretch;
-}
-
-/* Desktop: 2 information items on left + 2 on right */
-@media(min-width:651px){
-  #familyGroupDashboard .fgd-detail-card.status-card{
-    width:100%;
-  }
-
-  #familyGroupDashboard .status-card .fgd-detail-list{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    column-gap:28px;
-    padding:6px 18px 10px;
-  }
-
-  #familyGroupDashboard .status-card .fgd-detail-row{
-    min-height:48px;
-  }
-}
-
-@media(max-width:650px){
-  #familyGroupDashboard .fgd-detail-grid{
-    grid-template-columns:1fr;
-    justify-content:stretch;
-  }
-
-  #familyGroupDashboard .status-card .fgd-detail-list{
-    display:block;
-  }
-}
-</style>
-
 </head>
 
 <body>
@@ -6555,12 +6454,6 @@ function renderMemberDashboard(){
   const memberSaving = savingsTotal + interestTotal - debitTotal;
   const loanTotal = loanRows.reduce((a,r) => a + Number(r.principal || 0), 0);
 
-  const monthlyLoanInterest = loanRows.reduce((a,r) => {
-    const principal = Number(r.principal || 0);
-    const rate = Number(r.rate ?? 2);
-    return a + (principal > 0 ? (principal * rate / 100) : 0);
-  }, 0);
-
   const now = new Date();
   const fyStart = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1;
   const fyEnd = String((fyStart + 1) % 100).padStart(2,"0");
@@ -6643,12 +6536,6 @@ function renderMemberDashboard(){
           <div class="member-card-value">${money(interestTotal)}</div>
         </div>
       </div>
-
-      ${loanTotal > 0 ? `
-        <div class="member-loan-interest-strip">
-          आपके Loan का मासिक ब्याज = <strong>${money(monthlyLoanInterest)}</strong>
-        </div>
-      ` : ""}
 
       <div class="member-activity">
         <h3>🕒 हाल की गतिविधि</h3>
@@ -6790,6 +6677,31 @@ async function openFamilyGroupDashboard(button){
             </div>
           </div>
 
+          <div class="fgd-detail-card financial-card">
+            <div class="fgd-detail-title">📊 समूह का वित्तीय सारांश</div>
+
+            <div class="fgd-detail-list">
+              <div class="fgd-detail-row">
+                <span>कुल बचत</span>
+                <b id="fgdSummarySavings">₹0</b>
+              </div>
+
+              <div class="fgd-detail-row">
+                <span>प्राप्त ब्याज</span>
+                <b id="fgdSummaryInterest">₹0</b>
+              </div>
+
+              <div class="fgd-detail-row">
+                <span>Loan बाकी</span>
+                <b id="fgdSummaryLoan">₹0</b>
+              </div>
+
+              <div class="fgd-detail-row">
+                <span>उपलब्ध राशि</span>
+                <b id="fgdSummaryAvailable">₹0</b>
+              </div>
+            </div>
+          </div>
 
         </div>
 
@@ -6843,6 +6755,18 @@ async function openFamilyGroupDashboard(button){
       money(x.group_loan);
 
     $("fgdStatusAvailable").textContent =
+      money(x.group_available);
+
+    $("fgdSummarySavings").textContent =
+      money(x.group_savings);
+
+    $("fgdSummaryInterest").textContent =
+      money(x.group_interest);
+
+    $("fgdSummaryLoan").textContent =
+      money(x.group_loan);
+
+    $("fgdSummaryAvailable").textContent =
       money(x.group_available);
 
   }catch(e){
