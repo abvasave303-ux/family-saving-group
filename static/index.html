@@ -3754,6 +3754,21 @@ onMessage(messaging, (payload) => {
   }
 }
 </style>
+
+<style>
+/* ===== FAMILY GROUP: SINGLE DETAIL CARD BALANCE ===== */
+#familyGroupDashboard .fgd-detail-grid{
+  grid-template-columns:minmax(0,520px);
+  justify-content:center;
+}
+@media(max-width:650px){
+  #familyGroupDashboard .fgd-detail-grid{
+    grid-template-columns:1fr;
+    justify-content:stretch;
+  }
+}
+</style>
+
 </head>
 
 <body>
