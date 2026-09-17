@@ -1,8645 +1,3090 @@
-<!doctype html>
-<html lang="hi">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Family Saving Group</title>
-
-<style>
-*{box-sizing:border-box}
-
-body{
-  margin:0;
-  font-family:Arial,"Noto Sans Devanagari",sans-serif;
-  background:
-  linear-gradient(120deg,rgba(232,245,255,.82),rgba(255,255,255,.84),rgba(244,238,255,.78),rgba(232,245,255,.82)),
-  url("/static/bagground.png");
-  
-  background-size:300% 300%, cover;
-  background-position:0% 50%, center;
-  animation:postLoginGradient 18s ease-in-out infinite;
-  color:#16233b;
-}
-
-/* ================= PREMIUM ADMIN SIDEBAR ================= */
-.side{
-  position:fixed;
-  left:0;
-  top:0;
-  bottom:0;
-  width:270px;
-  background:
-    radial-gradient(circle at 50% -10%, rgba(38,130,255,.28), transparent 34%),
-    linear-gradient(180deg,#071d3d 0%,#062b5f 48%,#041c3e 100%);
-  color:#fff;
-  padding:14px 12px 12px;
-  overflow-y:auto;
-  overflow-x:hidden;
-  border-right:1px solid rgba(86,164,255,.25);
-  box-shadow:8px 0 30px rgba(2,20,45,.22);
-  z-index:1000;
-}
-
-.side::-webkit-scrollbar{width:5px}
-.side::-webkit-scrollbar-thumb{
-  background:rgba(255,255,255,.18);
-  border-radius:10px;
-}
-
-.side .brand{
-  position:relative;
-  text-align:center;
-  font-size:21px;
-  font-weight:900;
-  padding:12px 8px 15px;
-  margin-bottom:8px;
-  border-bottom:1px solid rgba(255,255,255,.12);
-}
-
-.side .brand:after{
-  content:"ADMIN PANEL";
-  display:block;
-  width:max-content;
-  margin:8px auto 0;
-  padding:4px 10px;
-  border:1px solid rgba(94,176,255,.32);
-  border-radius:999px;
-  background:rgba(25,118,210,.16);
-  color:#9ed1ff;
-  font-size:9px;
-  letter-spacing:1.4px;
-  font-weight:800;
-}
-
-.side .brand img{
-  width:82px;
-  height:82px;
-  object-fit:contain;
-  display:block;
-  margin:0 auto 8px;
-  background:#fff;
-  border-radius:50%;
-  padding:4px;
-  box-shadow:0 0 0 3px rgba(255,255,255,.10),0 8px 22px rgba(0,0,0,.28);
-}
-
-.side .brand small{
-  display:block;
-  font-size:11px;
-  font-weight:400;
-  color:#b9d5f4;
-  margin-top:5px;
-}
-
-.side .nav{
-  padding:5px 2px 12px;
-}
-
-.side .nav .nav-section-title{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin:15px 8px 6px;
-  color:#79b9f4;
-  font-size:9px;
-  font-weight:900;
-  letter-spacing:1.5px;
-  text-transform:uppercase;
-}
-
-.side .nav .nav-section-title:after{
-  content:"";
-  height:1px;
-  flex:1;
-  background:rgba(121,185,244,.18);
-}
-
-.side .nav button{
-  position:relative;
-  width:100%;
-  min-height:44px;
-  padding:10px 12px;
-  margin:3px 0;
-  border:1px solid transparent;
-  border-radius:11px;
-  background:transparent;
-  color:#e9f4ff;
-  text-align:left;
-  font-size:13px;
-  font-weight:600;
-  cursor:pointer;
-  transition:background .22s ease,transform .22s ease,box-shadow .22s ease,border-color .22s ease,padding-left .22s ease;
-}
-
-.side .nav button:hover{
-  transform:translateX(3px);
-  padding-left:15px;
-  background:linear-gradient(90deg,rgba(25,118,210,.42),rgba(25,118,210,.14));
-  border-color:rgba(91,176,255,.22);
-  box-shadow:0 5px 16px rgba(0,0,0,.14);
-}
-
-.side .nav button.active{
-  background:linear-gradient(90deg,#147ce5 0%,#0b62be 100%);
-  border-color:#69b8ff;
-  box-shadow:0 7px 20px rgba(0,118,255,.28),inset 0 1px 0 rgba(255,255,255,.16);
-  font-weight:800;
-}
-
-.side .nav button.active:before{
-  content:"";
-  position:absolute;
-  left:-1px;
-  top:8px;
-  bottom:8px;
-  width:3px;
-  border-radius:0 4px 4px 0;
-  background:#fff;
-}
-
-.side .nav button:last-child{
-  margin-top:18px;
-  color:#ffb4b4;
-  background:rgba(220,53,69,.10);
-  border-color:rgba(255,94,105,.18);
-}
-
-.side .nav button:last-child:hover{
-  background:rgba(220,53,69,.22);
-  border-color:rgba(255,110,120,.35);
-}
-
-.side .admin-sidebar-footer{
-  margin:8px 5px 2px;
-  padding:11px 8px;
-  text-align:center;
-  border-top:1px solid rgba(255,255,255,.10);
-  color:#8fb6dc;
-  font-size:9px;
-  line-height:1.5;
-}
-
-.side .admin-sidebar-footer strong{
-  display:block;
-  color:#dceeff;
-  font-size:10px;
-  margin-bottom:2px;
-}
-
-.main{
-  margin-left:270px;
-  min-height:100vh;
-  background:linear-gradient(
-    120deg,
-    rgba(232,245,255,.72),
-    rgba(255,255,255,.86),
-    rgba(244,238,255,.72),
-    rgba(232,245,255,.72)
-  );
-  background-size:300% 300%;
-  animation:postLoginGradient 18s ease-in-out infinite;
-}
-
-
-
-header{
-  height:65px;
-  background:#fff;
-  border-bottom:1px solid #e5e9f2;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:0 24px;
-  position:sticky;
-  top:0;
-  z-index:2;
-}
-/* ================= HEADER EFFECT ================= */
-
-header{
-  box-shadow:0 2px 10px rgba(22,35,59,0.06);
-  transition:box-shadow 0.25s ease;
-}
-
-header:hover{
-  box-shadow:0 4px 16px rgba(22,35,59,0.10);
-}
-
-.title{
-  transition:transform 0.2s ease;
-}
-
-.title:hover{
-  transform:translateX(2px);
-}
-.title{
-  font-size:24px;
-  font-weight:800;
-  letter-spacing:.3px;
-  color:#16233b;
-  transition:transform .2s ease;
-}
-
-.content{
-  padding:20px;
-}
-
-.cards{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:12px;
-}
-
-.card,
-.panel{
-  background:#fff;
-  border:1px solid #e6eaf1;
-  border-radius:12px;
-  box-shadow:0 3px 15px #17365d0b;
-}
-
-.card{
-  padding:16px;
-}
-
-.label{
-  font-size:12px;
-  color:#68768b;
-}
-
-.value{
-  font-size:24px;
-  font-weight:800;
-  margin-top:6px;
-  letter-spacing:.2px;
-  transition:transform .2s ease;
-}
-
-.card:hover .value{
-  transform:scale(1.04);
-}
-
-.green{color:#20864b}
-.blue{color:#1769c2}
-.orange{color:#c66d14}
-.red{color:#c73535}
-
-/* Debit ledger: keep reason and actions from colliding */
-.debit-reason{
-  white-space:normal;
-  overflow-wrap:anywhere;
-  word-break:break-word;
-  max-width:180px;
-  line-height:1.35;
-  margin-bottom:6px;
-}
-.debit-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-  align-items:center;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1.5fr 1fr;
-  gap:14px;
-  margin-top:14px;
-}
-
-.panel{
-  overflow:hidden;
-}
-/* ================= DASHBOARD PANEL EFFECT ================= */
-
-#dashboard .panel{
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
-}
-
-#dashboard .panel:hover{
-  transform:translateY(-2px);
-  box-shadow:0 6px 18px rgba(22,35,59,0.08);
-}
-/* ================= DASHBOARD PANEL ROW EFFECT ================= */
-
-#dashboard .line{
-  transition:
-    background 0.2s ease,
-    padding-left 0.2s ease,
-    transform 0.2s ease;
-  border-radius:6px;
-}
-
-#dashboard .line:hover{
-  background:#f4f8fd;
-  padding-left:6px;
-  transform:translateX(3px);
-}
-.panel h3{
-  font-size:15px;
-  padding:14px 16px;
-  margin:0;
-  border-bottom:1px solid #edf0f4;
-}
-
-.body{
-  padding:15px;
-}
-
-.line{
-  display:flex;
-  justify-content:space-between;
-  padding:9px 0;
-  border-bottom:1px solid #edf0f4;
-}
-
-.table{
-  overflow:auto;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:13px;
-}
-
-th,
-td{
-  padding:10px;
-  border-bottom:1px solid #edf0f4;
-  text-align:left;
-  white-space:nowrap;
-}
-
-th{
-  background:#fafbfe;
-}
-
-.btn{
-  background:#1976d2;
-  color:white;
-  border:0;
-  padding:9px 13px;
-  border-radius:7px;
-  font-weight:700;
-  cursor:pointer;
-}
-
-.btn:hover{
-  opacity:.9;
-}
-
-.btn.secondary{
-  background:#eef4ff;
-  color:#135ba5;
-}
-
-.btn.danger{
-  background:#c73535;
-  color:#fff;
-}
-
-.btn.small{
-  padding:6px 9px;
-  font-size:12px;
-}
-
-.form{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-}
-
-.field label{
-  display:block;
-  font-size:12px;
-  margin-bottom:4px;
-  color:#5f6d80;
-}
-
-.field input,
-.field select{
-  width:100%;
-  padding:10px;
-  border:1px solid #cdd6e2;
-  border-radius:7px;
-}
-
-.full{
-  grid-column:1/-1;
-}
-
-.actions{
-  display:flex;
-  gap:7px;
-  justify-content:flex-end;
-  margin-bottom:12px;
-}
-
-.hidden{
-  display:none !important;
-}
-
-.notice{
-  padding:11px;
-  background:#eef7ff;
-  color:#145b9e;
-  border-radius:8px;
-  margin-bottom:12px;
-}
-
-.bar{
-  height:10px;
-  background:#dfe8f2;
-  border-radius:10px;
-  overflow:hidden;
-  box-shadow:inset 0 1px 2px rgba(22,35,59,0.08);
-}
-
-/* ================= PROGRESS BAR EFFECT ================= */
-
-.bar{
-  position:relative;
-  overflow:hidden;
-}
-
-.bar i{
-  display:block;
-  height:100%;
-  background:linear-gradient(90deg,#1976d2,#42a5f5);
-  border-radius:10px;
-  transition:width .8s ease;
-  position:relative;
-  overflow:hidden;
-}
-
-.bar i::after{
-  content:"";
-  position:absolute;
-  top:0;
-  left:-60px;
-  width:60px;
-  height:100%;
-  background:rgba(255,255,255,.35);
-  transform:skewX(-20deg);
-  animation:progressShine 2.5s infinite;
-}
-
-@keyframes pageBgGradient{
-  0%,100%{background-position:0% 50%,center}
-  50%{background-position:100% 50%,center}
-}
-
-@keyframes postLoginGradient{
-  0%,100%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-}
-
-@keyframes progressShine{
-  0%{
-    left:-60px;
-  }
-  60%,100%{
-    left:110%;
-  }
-}
-
-.footer{
-    text-align:center;
-    color:#778397;
-    font-size:11px;
-    padding:20px;
-    margin-top:20px;
-    width:100%;
-    box-sizing:border-box;
-}
-
- .login{
-   min-height:100vh;
-   display:grid;
-   place-items:center;
-   padding:20px;
-   background:transparent;
- }
-
-.loginbox{
-  width:min(420px,94vw);
-  background:linear-gradient(120deg,rgba(255,255,255,.98),rgba(190,225,255,.94),rgba(220,205,255,.94),rgba(255,255,255,.98),rgba(185,225,255,.94));
-  background-size:400% 400%;
-  padding:30px;
-  border-radius:18px;
-  box-shadow:0 15px 45px rgba(23,54,93,.16);
-  border:1px solid #e1eaf5;
-  animation:loginCardGradient 9s ease-in-out infinite;
-}
-
-@keyframes loginCardGradient{
-  0%,100%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-}
-
-.login-logo{
-  width:105px;
-  height:105px;
-  object-fit:contain;
-  display:block;
-  margin:0 auto 10px;
-}
-
-.loginbox h2{
-  text-align:center;
-  color:#083b78;
-  margin:8px 0;
-}
-
-.login-subtitle{
-  text-align:center;
-  color:#68768b;
-  font-size:13px;
-  margin-bottom:18px;
-}
-
-.loginbox input,
-.loginbox select{
-  width:100%;
-  padding:12px;
-  margin:8px 0;
-  border:1px solid #ccd6e2;
-  border-radius:8px;
-  outline:none;
-}
-
-.loginbox input:focus,
-.loginbox select:focus{
-  border-color:#1976d2;
-  box-shadow:0 0 0 3px #1976d21a;
-}
-
-.loginbox .btn{
-  width:100%;
-  margin-top:8px;
-}
-
-.login-tabs{
-  display:flex;
-  gap:8px;
-  margin:18px 0;
-}
-
-.login-tabs .btn{
-  margin:0;
-}
-
-.login-footer{
-  margin-top:18px;
-  font-size:11px;
-  color:#7a8798;
-  text-align:center;
-}
-
-@media(max-width:1000px){
-
-  .cards{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .grid{
-    grid-template-columns:1fr;
-  }
-
-  .side{
-    width:220px;
-  }
-
-  .main{
-    margin-left:220px;
-  }
-}
-
-@media(max-width:650px){
-.title{
-  font-size:18px;
-}
-.title.repay{
-  font-size:15px;
-  white-space:nowrap;
-}
-
-.title.interest{
-  font-size:17px;
-  white-space:nowrap;
-}
-.side{
-  display:block;
-  transform:translateX(-100%);
-  transition:transform .25s ease;
-  will-change:transform;
-  z-index:1000;
-  pointer-events:none;
-}
-
-.side.mobile-open{
-  transform:translateX(0);
-  pointer-events:auto;
-}
-body:has(.side.mobile-open){
-  overflow:hidden;
-}
-  .main{
-    margin-left:0;
-  }
-
-  .content{
-    padding:10px;
-  }
-
-  .cards{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .form{
-    grid-template-columns:1fr;
-  }
-
-  .full{
-    grid-column:auto;
-  }
-
-  header{
-    padding:0 12px;
-  }
-
-  header>div:last-child{
-    font-size:11px;
-  }
-
-  .loginbox{
-    padding:22px;
-  }
-/* ================= MEMBER HEADER COMPACT ================= */
-
-header{
-  gap:6px;
-}
-
-header .title{
-  flex:1;
-  min-width:0;
-  font-size:15px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-header>div:last-child{
-  gap:4px !important;
-  flex-shrink:0;
-}
-
-#notificationBell{
-  padding:7px 8px;
-  font-size:11px;
-  white-space:nowrap;
-}
-}
-/* ================= DASHBOARD CARD ANIMATION ================= */
-
-.cards .card{
-  border-radius:16px;
-  background:#ffffff;
-  box-shadow:0 4px 14px rgba(22,35,59,0.08);
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
-  animation:dashboardCardIn 0.5s ease both;
-}
-
-.cards .card:nth-child(1){animation-delay:0.05s}
-.cards .card:nth-child(2){animation-delay:0.10s}
-.cards .card:nth-child(3){animation-delay:0.15s}
-.cards .card:nth-child(4){animation-delay:0.20s}
-.cards .card:nth-child(5){animation-delay:0.25s}
-
-.cards .card:hover{
-  transform:translateY(-4px) scale(1.02);
-  box-shadow:0 8px 22px rgba(22,35,59,0.14);
-}
-#familyGroupDashboard .cards .card:nth-child(5):hover{
-    transform:translateY(-2px) scale(1.01);
-}
-#familyGroupDashboard .cards .card:nth-child(5) .value{
-    margin-left:10px;
-}
-@keyframes dashboardCardIn{
-  from{
-    opacity:0;
-  }
-  to{
-    opacity:1;
-  }
-}
-/* ================= DASHBOARD CARD ACCENT ================= */
-
-.cards .card{
-  position:relative;
-  overflow:hidden;
-}
-
-.cards .card::before{
-  content:"";
-  position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height:4px;
-  background:#1976d2;
-}
-
-.cards .card:nth-child(2)::before{
-  background:#20864b;
-}
-
-.cards .card:nth-child(3)::before{
-  background:#c73535;
-}
-
-.cards .card:nth-child(4)::before{
-  background:#c66d14;
-}
-
-.cards .card:nth-child(5)::before{
-  background:#16233b;
-}
-/* ================= DASHBOARD PANEL HEADER ================= */
-
-#dashboard .panel h3{
-  background:linear-gradient(
-    90deg,
-    #f4f8fd,
-    #ffffff
-  );
-  color:#16233b;
-  font-weight:800;
-  border-bottom:1px solid #e3eaf3;
-}
-/* ================= HEADER ACCENT LINE ================= */
-
-header{
-  position:sticky;
-  top:0;
-  z-index:2;
-}
-
-header::after{
-  content:"";
-  position:absolute;
-  left:0;
-  bottom:0;
-  width:100%;
-  height:2px;
-  background:linear-gradient(
-    90deg,
-    #1976d2,
-    #42a5f5,
-    #1976d2
-  );
-  opacity:.75;
-}
-/* ================= MONTHLY TARGET NOTICE ================= */
-
-#dashboard .notice{
-  border-radius:10px;
-  background:#f4f8fd;
-  border:1px solid #dce8f5;
-  padding:12px 14px;
-  color:#40546b;
-  line-height:1.6;
-}
-
-#dashboard .notice b{
-  color:#1976d2;
-  font-size:16px;
-}
-/* ================= DASHBOARD RULE VALUES ================= */
-
-#dashboard .line b{
-  background:#f4f8fd;
-  border:1px solid #dce8f5;
-  padding:5px 9px;
-  border-radius:7px;
-  font-size:13px;
-  display:inline-block;
-  transition:transform .2s ease, background .2s ease;
-}
-
-#dashboard .line:hover b{
-  transform:scale(1.04);
-  background:#eaf3fc;
-}
-/* ================= MONTHLY PROGRESS TEXT ================= */
-
-#dashboard #progtext{
-  margin:12px 0 0;
-  padding:7px 10px;
-  display:inline-block;
-  background:#f4f8fd;
-  border:1px solid #dce8f5;
-  border-radius:7px;
-  color:#1976d2;
-  font-size:13px;
-  font-weight:700;
-}
-/* ================= GROUP STATUS ================= */
-
-#dashboard #sum .line{
-  padding:11px 8px;
-  border-bottom:1px solid #edf0f4;
-}
-
-#dashboard #sum .line b{
-  font-weight:800;
-}
-/* ================= DASHBOARD SECTION HEADINGS ================= */
-
-#dashboard .panel h3{
-  position:relative;
-  padding-left:20px;
-}
-
-#dashboard .panel h3::before{
-  content:"";
-  position:absolute;
-  left:0;
-  top:50%;
-  width:4px;
-  height:18px;
-  border-radius:4px;
-  background:#1976d2;
-  transform:translateY(-50%);
-}
-/* ================= DASHBOARD CARD VALUE ================= */
-
-#dashboard .card .value{
-  letter-spacing:.2px;
-  transition:transform .2s ease;
-}
-
-#dashboard .card:hover .value{
-  transform:scale(1.03);
-}
-/* ================= DASHBOARD CARD LABEL ================= */
-
-#dashboard .card .label{
-  font-size:12px;
-  font-weight:600;
-  letter-spacing:.2px;
-  transition:color .2s ease;
-}
-
-#dashboard .card:hover .label{
-  color:#1976d2;
-}
-/* ================= DASHBOARD VALUE APPEAR ================= */
-
-#dashboard .card .value{
-  animation:valueAppear .6s ease both;
-}
-
-@keyframes valueAppear{
-  from{
-    opacity:0;
-  }
-  to{
-    opacity:1;
-  }
-}
-/* ================= DASHBOARD PANEL ENTRY ================= */
-
-#dashboard .grid .panel{
-  animation:panelAppear .55s ease both;
-}
-
-#dashboard .grid .panel:nth-child(1){
-  animation-delay:.15s;
-}
-
-#dashboard .grid .panel:nth-child(2){
-  animation-delay:.22s;
-}
-
-#dashboard .grid .panel:nth-child(3){
-  animation-delay:.29s;
-}
-
-@keyframes panelAppear{
-  from{
-    opacity:0;
-    transform:translateY(10px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
-/* ================= MONTHLY PROGRESS TEXT ================= */
-
-#dashboard #progtext{
-  display:inline-block;
-  margin:12px 0 0;
-  padding:6px 10px;
-  border-radius:7px;
-  background:#f4f8fd;
-  border:1px solid #dce8f5;
-  color:#1976d2;
-  font-size:12px;
-  font-weight:700;
-}
-/* ================= CARD ZOOM FIX ================= */
-
-#dashboard .card:hover .value{
-  transform:scale(1.05);
-}
-
-#dashboard .card .value{
-  transition:transform .2s ease;
-}
-/* ================= MOBILE DASHBOARD POLISH ================= */
-
-@media(max-width:650px){
-
-  #dashboard .cards{
-    gap:10px;
-  }
-
-  #dashboard .card{
-    padding:14px 12px;
-  }
-
-  #dashboard .card .value{
-    font-size:20px;
-  }
-
-  #dashboard .grid{
-    gap:10px;
-  }
-
-  #dashboard .panel{
-    border-radius:14px;
-  }
-  /* ================= MOBILE MENU BUTTON ================= */
-
-.mobile-menu-btn{
-  display:none;
-  border:0;
-  background:#1976d2;
-  color:#fff;
-  width:42px;
-  height:42px;
-  border-radius:10px;
-  font-size:24px;
-  cursor:pointer;
-  align-items:center;
-  justify-content:center;
-}
-
-.mobile-menu-btn{
-  display:flex;
-}
-.side.mobile-open{
-  display:block;
-  width:230px;
-  z-index:10;
-  box-shadow:4px 0 18px rgba(0,0,0,.18);
-}
-/* ================= MEMBER HEADER MOBILE ================= */
-
-#notificationBell{
-  padding:8px 10px;
-}
-
-header .title{
-  min-width:0;
-  font-size:17px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-}
-
-/* ================= PREMIUM MEMBER MANAGEMENT ================= */
-#members{
-  animation:adminSectionIn .42s ease both;
-}
-
-.admin-page-head{
-  display:flex;
-  align-items:flex-end;
-  justify-content:space-between;
-  gap:18px;
-  margin-bottom:16px;
-}
-
-.admin-page-kicker{
-  color:#2866a7;
-  font-size:10px;
-  font-weight:800;
-  letter-spacing:3px;
-  margin-bottom:5px;
-}
-
-.admin-page-head h2{
-  margin:0;
-  font-size:26px;
-  color:#16233b;
-  letter-spacing:.2px;
-}
-
-.admin-page-head p{
-  margin:5px 0 0;
-  color:#718096;
-  font-size:12px;
-}
-
-.admin-add-member{
-  min-width:130px;
-  padding:11px 16px;
-  border-radius:10px;
-  box-shadow:0 7px 18px rgba(25,118,210,.20);
-  transition:transform .2s ease,box-shadow .2s ease;
-}
-
-.admin-add-member:hover{
-  transform:translateY(-2px);
-  box-shadow:0 10px 24px rgba(25,118,210,.25);
-}
-
-.member-summary-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:12px;
-  margin-bottom:16px;
-}
-
-.member-summary-card{
-  position:relative;
-  overflow:hidden;
-  min-height:112px;
-  padding:15px 16px;
-  border:1px solid #dfe8f3;
-  border-radius:14px;
-  background:linear-gradient(145deg,#fff,#f7fbff);
-  box-shadow:0 5px 16px rgba(22,35,59,.07);
-  transition:transform .22s ease,box-shadow .22s ease;
-}
-
-.member-summary-card:hover{
-  transform:translateY(-3px);
-  box-shadow:0 9px 22px rgba(22,35,59,.11);
-}
-
-.member-summary-card:after{
-  content:"";
-  position:absolute;
-  right:-24px;
-  bottom:-28px;
-  width:82px;
-  height:82px;
-  border-radius:50%;
-  background:rgba(25,118,210,.06);
-}
-
-.member-summary-card:before{
-  content:"";
-  position:absolute;
-  left:0;
-  top:0;
-  bottom:0;
-  width:4px;
-  background:#1976d2;
-}
-.member-summary-card.green:before{background:#20864b}
-.member-summary-card.red:before{background:#c73535}
-.member-summary-card.orange:before{background:#c66d14}
-
-.member-summary-card span{
-  display:block;
-  color:#68768b;
-  font-size:11px;
-  font-weight:700;
-}
-
-.member-summary-card strong{
-  display:block;
-  margin-top:7px;
-  font-size:24px;
-  line-height:1.1;
-  color:#1769c2;
-}
-.member-summary-card.green strong{color:#20864b}
-.member-summary-card.red strong{color:#c73535}
-.member-summary-card.orange strong{color:#c66d14}
-
-.member-summary-card small{
-  display:block;
-  margin-top:5px;
-  color:#8a96a8;
-  font-size:10px;
-}
-
-.member-management-panel{
-  overflow:hidden;
-  border-radius:15px;
-  box-shadow:0 6px 20px rgba(22,35,59,.08);
-}
-
-.member-toolbar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:16px;
-  padding:15px 17px;
-  background:linear-gradient(90deg,#f5f9ff,#fff);
-  border-bottom:1px solid #e5edf6;
-}
-
-.member-toolbar-title{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.member-toolbar-icon{
-  display:grid;
-  place-items:center;
-  width:38px;
-  height:38px;
-  border-radius:11px;
-  background:#eaf3ff;
-  font-size:18px;
-}
-
-.member-toolbar-title strong{
-  display:block;
-  font-size:15px;
-}
-
-.member-toolbar-title small{
-  display:block;
-  margin-top:2px;
-  color:#8190a4;
-  font-size:10px;
-}
-
-.member-tools{
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
-
-.member-search{
-  display:flex;
-  align-items:center;
-  gap:7px;
-  width:245px;
-  padding:8px 11px;
-  border:1px solid #d6e1ee;
-  border-radius:9px;
-  background:#fff;
-  transition:border-color .2s ease,box-shadow .2s ease;
-}
-
-.member-search:focus-within{
-  border-color:#1976d2;
-  box-shadow:0 0 0 3px rgba(25,118,210,.10);
-}
-
-.member-search input{
-  width:100%;
-  border:0;
-  outline:0;
-  background:transparent;
-  font-size:12px;
-  color:#16233b;
-}
-
-.member-filter{
-  min-width:125px;
-  padding:9px 10px;
-  border:1px solid #d6e1ee;
-  border-radius:9px;
-  background:#fff;
-  color:#40546b;
-  outline:none;
-}
-
-.member-list-meta{
-  display:flex;
-  justify-content:space-between;
-  padding:10px 17px;
-  background:#fbfcfe;
-  color:#7a8798;
-  font-size:10px;
-  border-bottom:1px solid #edf1f5;
-}
-
-.member-list-meta span:first-child{
-  color:#1769c2;
-  font-weight:800;
-}
-
-.member-management-table table{
-  font-size:12px;
-}
-
-.member-management-table th{
-  background:#f5f8fc;
-  color:#53647a;
-  font-size:11px;
-  font-weight:800;
-  padding:11px 10px;
-}
-
-.member-management-table td{
-  padding:11px 10px;
-  vertical-align:middle;
-}
-
-.member-management-table tbody tr{
-  transition:background .18s ease,transform .18s ease;
-}
-
-.member-management-table tbody tr:hover{
-  background:#f8fbff;
-}
-
-.member-management-table tbody tr:hover td:first-child{
-  color:#1976d2;
-  font-weight:800;
-}
-
-.member-management-table td:nth-child(2) b{
-  color:#1b2a43;
-}
-
-.member-management-table .btn{
-  box-shadow:none;
-  transition:transform .18s ease,box-shadow .18s ease;
-}
-
-.member-management-table .btn:hover{
-  transform:translateY(-1px);
-  box-shadow:0 4px 10px rgba(22,35,59,.10);
-}
-
-@keyframes adminSectionIn{
-  from{opacity:0;transform:translateY(7px)}
-  to{opacity:1;transform:translateY(0)}
-}
-
-@media(max-width:1000px){
-  .member-summary-grid{grid-template-columns:repeat(2,1fr)}
-  .member-toolbar{align-items:flex-start;flex-direction:column}
-  .member-tools{width:100%}
-  .member-search{flex:1;width:auto}
-}
-
-@media(max-width:650px){
-  .admin-page-head{align-items:flex-start;flex-direction:column}
-  .admin-page-head h2{font-size:22px}
-  .admin-add-member{width:100%}
-  .member-summary-grid{grid-template-columns:1fr 1fr;gap:9px}
-  .member-summary-card{min-height:100px;padding:12px}
-  .member-summary-card strong{font-size:20px}
-  .member-tools{flex-direction:column;align-items:stretch}
-  .member-search,.member-filter{width:100%}
-  .member-list-meta{gap:8px;flex-direction:column}
-}
-
-/* ================= STARTUP LOADING SCREEN ================= */
-#startupLoader{
-  position:fixed;
-  inset:0;
-  z-index:99999;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:linear-gradient(135deg,#eef7ff,#ffffff);
-  transition:opacity .35s ease, visibility .35s ease;
-}
-#startupLoader.hide{
-  opacity:0;
-  visibility:hidden;
-  pointer-events:none;
-}
-.startup-box{
-  width:min(90%,360px);
-  text-align:center;
-  padding:28px 22px;
-}
-.startup-logo{
-  width:88px;
-  height:88px;
-  object-fit:contain;
-  background:#fff;
-  border-radius:50%;
-  padding:5px;
-  box-shadow:0 8px 25px rgba(8,59,120,.14);
-  animation:startupFloat 1.8s ease-in-out infinite;
-}
-.startup-title{
-  margin:16px 0 5px;
-  color:#083b78;
-  font-size:24px;
-  font-weight:800;
-}
-.startup-subtitle{
-  color:#68768b;
-  font-size:13px;
-}
-.startup-spinner{
-  width:34px;
-  height:34px;
-  margin:20px auto 10px;
-  border:3px solid #dbeaf8;
-  border-top-color:#1976d2;
-  border-radius:50%;
-  animation:startupSpin .8s linear infinite;
-}
-.startup-status{
-  color:#1976d2;
-  font-size:12px;
-  font-weight:600;
-}
-@keyframes startupSpin{
-  to{transform:rotate(360deg)}
-}
-@keyframes startupFloat{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-5px)}
-}
-@media(max-width:650px){
-  .startup-box{padding:24px 18px}
-  .startup-logo{width:76px;height:76px}
-  .startup-title{font-size:21px}
-}
-
-
-
-/* ================= MEMBER SIDEBAR ================= */
-
-#memberSidebar{
-  position:fixed;
-  left:0;
-  top:0;
-  bottom:0;
-  width:230px;
-  background:#083b78;
-  color:#fff;
-  padding:18px 12px;
-  overflow-y:auto;
-  z-index:1001;
-  box-shadow:4px 0 15px rgba(0,0,0,0.12);
-  box-sizing:border-box;
-}
-
-#memberSidebar .brand{
-  text-align:center;
-  font-size:20px;
-  font-weight:800;
-  padding:10px;
-}
-
-#memberSidebar .brand img{
-  width:90px;
-  height:90px;
-  object-fit:contain;
-  display:block;
-  margin:0 auto 8px;
-  background:#fff;
-  border-radius:50%;
-  padding:5px;
-}
-
-#memberSidebar .brand small{
-  display:block;
-  font-size:11px;
-  font-weight:400;
-  margin-top:5px;
-}
-
-#memberSidebar .nav{
-  margin-top:18px;
-}
-
-#memberSidebar .nav button{
-  width:100%;
-  padding:11px;
-  margin:4px 0;
-  border:0;
-  border-radius:8px;
-  background:transparent;
-  color:#fff;
-  text-align:left;
-  font-size:14px;
-  cursor:pointer;
-}
-
-#memberSidebar .nav button:hover,
-#memberSidebar .nav button.active{
-  background:#1976d2;
-}
-
-.member-main{
-  margin-left:230px !important;
-}
-
-@media(max-width:650px){
-  #memberSidebar{
-    width:230px;
-    transform:translateX(-100%);
-    transition:transform .25s ease;
-    pointer-events:none;
-  }
-
-  #memberSidebar.mobile-open{
-    transform:translateX(0);
-    pointer-events:auto;
-  }
-
-  .member-main{
-    margin-left:0 !important;
-  }
-}
-
-/* ================= MEMBER DASHBOARD UI ================= */
-.member-dashboard{
-  max-width:1180px;
-  margin:0 auto;
-}
-.member-welcome{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:20px;
-  padding:24px 28px;
-  margin-bottom:18px;
-  border-radius:18px;
-  background:linear-gradient(135deg,#e7f3ff,#f4f9ff);
-  border:1px solid #d7e8fa;
-  box-shadow:0 5px 20px rgba(22,35,59,.07);
-}
-.member-welcome h2{
-  margin:4px 0 4px;
-  color:#083b78;
-  font-size:30px;
-}
-.member-welcome h2{
-    animation:memberNameLoop 20s ease both infinite;
-}
-.member-welcome .welcome-label{
-  color:#55708f;
-  font-size:15px;
-  font-weight:600;
-}
-@keyframes memberNameLoop{
-    0%{
-        opacity:0;
-        transform:translateY(20px);
-    }
-
-    10%{
-        opacity:1;
-        transform:translateY(0);
-    }
-
-    100%{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
-.member-welcome .welcome-sub{
-  color:#1976d2;
-  font-size:14px;
-}
-.member-welcome-icon{
-  width:100px;
-  height:100px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  background:#dceeff;
-  color:#1769c2;
-  font-size:58px;
-  flex-shrink:0;
-}
-.member-dashboard-cards{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:16px;
-  margin-bottom:18px;
-}
-.member-dashboard-card{
-  min-height:145px;
-  padding:22px 24px;
-  border-radius:16px;
-  background:#fff;
-  border:1px solid #e4eaf2;
-  box-shadow:0 5px 18px rgba(22,35,59,.07);
-  position:relative;
-  overflow:hidden;
-}
-.member-dashboard-card::before{
-  content:"";
-  position:absolute;
-  left:0;
-  top:0;
-  width:100%;
-  height:4px;
-  background:#1976d2;
-}
-.member-dashboard-card.green::before{background:#20864b}
-.member-dashboard-card.red::before{background:#c73535}
-.member-dashboard-card.orange::before{background:#c66d14}
-.member-dashboard-card .member-card-label{
-  font-size:14px;
-  color:#68768b;
-  font-weight:700;
-  margin-bottom:12px;
-}
-.member-dashboard-card .member-card-value{
-  font-size:34px;
-  font-weight:800;
-  color:#16233b;
-}
-.member-dashboard-card.green .member-card-value{color:#20864b}
-.member-dashboard-card.red .member-card-value{color:#c73535}
-.member-dashboard-card.orange .member-card-value{color:#c66d14}
-.member-activity{
-  background:#fff;
-  border:1px solid #e4eaf2;
-  border-radius:16px;
-  box-shadow:0 5px 18px rgba(22,35,59,.07);
-  overflow:hidden;
-}
-.member-activity h3{
-  margin:0;
-  padding:16px 20px;
-  font-size:18px;
-  border-bottom:1px solid #edf0f4;
-}
-.member-activity-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px;
-  padding:15px 20px;
-  border-bottom:1px solid #edf0f4;
-}
-.member-activity-row:last-child{border-bottom:0}
-.member-activity-left{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  min-width:0;
-}
-.member-activity-icon{
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  background:#eef7ff;
-  flex-shrink:0;
-  font-size:20px;
-}
-.member-activity-title{font-weight:700;color:#16233b}
-.member-activity-date{font-size:12px;color:#68768b;margin-top:3px}
-.member-activity-amount{font-size:18px;font-weight:800;white-space:nowrap}
-.member-activity-empty{padding:24px;color:#68768b;text-align:center}
-@media(max-width:650px){
-  .member-welcome{padding:18px;align-items:flex-start}
-  .member-welcome h2{font-size:23px}
-  .member-welcome-icon{width:70px;height:70px;font-size:38px}
-  .member-dashboard-cards{grid-template-columns:1fr 1fr;gap:10px}
-  .member-dashboard-card{min-height:125px;padding:17px 14px}
-  .member-dashboard-card .member-card-label{font-size:12px}
-  .member-dashboard-card .member-card-value{font-size:24px}
-  .member-activity-row{padding:13px 14px}
-  .member-activity-amount{font-size:16px}
-}
-/* ================= MEMBER DASHBOARD CARD COLORS - MATCH FAMILY GROUP ================= */
-.member-dashboard-card:nth-child(1){
-  background:#eefaf3;
-  border-top:4px solid #238b57;
-}
-
-.member-dashboard-card:nth-child(2){
-  background:#fff1f1;
-  border-top:4px solid #d93636;
-}
-
-.member-dashboard-card:nth-child(3){
-  background:#fff8ed;
-  border-top:4px solid #d47712;
-}
-
-.member-dashboard-card:nth-child(4){
-  background:#f1f3f8;
-  border-top:4px solid #1f2d49;
-}
-
-.member-dashboard-card:nth-child(1) .member-card-value{
-  color:#238b57;
-}
-
-.member-dashboard-card:nth-child(2) .member-card-value{
-  color:#d93636;
-}
-
-.member-dashboard-card:nth-child(3) .member-card-value{
-  color:#d47712;
-}
-
-.member-dashboard-card:nth-child(4) .member-card-value{
-  color:#1f2d49;
-}
-
-/* Soft decorative circles, same visual language as Family Group cards */
-.member-dashboard-card:nth-child(1)::after,
-.member-dashboard-card:nth-child(2)::after,
-.member-dashboard-card:nth-child(3)::after,
-.member-dashboard-card:nth-child(4)::after{
-  content:"";
-  position:absolute;
-  width:54px;
-  height:54px;
-  right:-18px;
-  bottom:-22px;
-  border-radius:50%;
-  pointer-events:none;
-}
-
-.member-dashboard-card:nth-child(1)::after{background:rgba(35,139,87,.07)}
-.member-dashboard-card:nth-child(2)::after{background:rgba(217,54,54,.07)}
-.member-dashboard-card:nth-child(3)::after{background:rgba(212,119,18,.07)}
-.member-dashboard-card:nth-child(4)::after{background:rgba(31,45,73,.06)}
-
-/* ================= MEMBER DASHBOARD CARD ANIMATION ================= */
-
-.member-dashboard-card{
-  transition:transform 0.25s ease, box-shadow 0.25s ease;
-  animation:memberDashboardCardIn 0.5s ease both;
-}
-
-.member-dashboard-card:nth-child(1){
-  animation-delay:0.05s;
-}
-
-.member-dashboard-card:nth-child(2){
-  animation-delay:0.10s;
-}
-
-.member-dashboard-card:nth-child(3){
-  animation-delay:0.15s;
-}
-
-.member-dashboard-card:nth-child(4){
-  animation-delay:0.20s;
-}
-
-.member-dashboard-card:hover{
-  transform:translateY(-14px) scale(1.03);
-  box-shadow:0 12px 26px rgba(22,35,59,0.18);
-}
-
-.member-dashboard-card .member-card-value{
-  transition:transform 0.25s ease;
-}
-
-.member-dashboard-card:hover .member-card-value{
-  transform:scale(1.08);
-}
-
-@keyframes memberDashboardCardIn{
-  from{
-    opacity:0;
-    transform:translateY(12px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
-/* ================= ADMIN DASHBOARD WELCOME BANNER ================= */
-
-#dashboard .admin-dashboard-welcome{
-  position:relative;
-  overflow:hidden;
-  min-height:168px;
-  margin-bottom:14px;
-  padding:28px 32px;
-  border-radius:18px;
-  border:1px solid rgba(76,150,230,.45);
-  background:
-    radial-gradient(circle at 88% 20%, rgba(255,196,70,.18) 0, rgba(255,196,70,.06) 80px, transparent 145px),
-    linear-gradient(110deg,#062654 0%,#0a346b 52%,#174b88 100%);
-  color:#fff;
-  box-shadow:0 12px 30px rgba(5,35,75,.20);
-  box-sizing:border-box;
-  isolation:isolate;
-}
-
-#dashboard .admin-dashboard-welcome::before{
-  content:"";
-  position:absolute;
-  width:520px;
-  height:180px;
-  left:-70px;
-  bottom:-115px;
-  border-radius:50%;
-  background:rgba(55,125,205,.22);
-  z-index:-1;
-}
-
-#dashboard .admin-welcome-content{
-  position:relative;
-  z-index:3;
-}
-
-#dashboard .admin-welcome-label{
-  margin-bottom:8px;
-  color:#d9eaff;
-  font-size:12px;
-  font-weight:700;
-  letter-spacing:1.5px;
-}
-
-#dashboard .admin-dashboard-welcome h2{
-  margin:0;
-  color:#fff;
-  font-size:32px;
-  line-height:1.15;
-  font-weight:800;
-  letter-spacing:.3px;
-}
-
-#dashboard .admin-dashboard-welcome h2 span{
-  color:#ffc83d;
-}
-
-#dashboard .admin-dashboard-welcome p{
-  margin:8px 0 14px;
-  color:#d9e7f8;
-  font-size:13px;
-  font-weight:500;
-}
-
-#dashboard .admin-welcome-badge{
-  display:inline-flex;
-  align-items:center;
-  gap:9px;
-  padding:7px 13px;
-  border-radius:20px;
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,205,80,.45);
-  color:#ffd45a;
-  font-size:11px;
-  font-weight:700;
-  backdrop-filter:blur(5px);
-}
-
-/* Right-side family illustration */
-#dashboard .admin-welcome-art{
-  position:absolute;
-  right:18px;
-  top:0;
-  width:330px;
-  height:100%;
-  pointer-events:none;
-}
-
-#dashboard .admin-sun{
-  position:absolute;
-  right:52px;
-  top:27px;
-  width:68px;
-  height:68px;
-  border-radius:50%;
-  background:radial-gradient(circle,#ffd477 0%,#f3ad3e 42%,rgba(255,190,70,.22) 68%,transparent 72%);
-  box-shadow:0 0 28px rgba(255,194,75,.55);
-}
-
-#dashboard .admin-family{
-  position:absolute;
-  right:55px;
-  bottom:25px;
-  width:180px;
-  height:90px;
-}
-
-#dashboard .admin-family .person{
-  position:absolute;
-  bottom:0;
-  display:block;
-  width:13px;
-  height:48px;
-  border-radius:9px 9px 3px 3px;
-  background:#071a35;
-}
-
-#dashboard .admin-family .person::before{
-  content:"";
-  position:absolute;
-  left:50%;
-  top:-15px;
-  width:18px;
-  height:18px;
-  transform:translateX(-50%);
-  border-radius:50%;
-  background:#071a35;
-}
-
-#dashboard .admin-family .person-a{right:18px;height:54px}
-#dashboard .admin-family .person-b{right:65px;height:67px}
-#dashboard .admin-family .person-c{right:101px;height:50px}
-#dashboard .admin-family .person-d{right:137px;height:40px}
-
-#dashboard .admin-hill{
-  position:absolute;
-  right:-45px;
-  bottom:-65px;
-  width:430px;
-  height:145px;
-  border-radius:50% 50% 0 0;
-  background:rgba(4,24,51,.78);
-  transform:rotate(-4deg);
-}
-
-@media(max-width:650px){
-  #dashboard .admin-dashboard-welcome{
-    min-height:145px;
-    padding:22px 20px;
-    border-radius:15px;
-  }
-
-  #dashboard .admin-dashboard-welcome h2{
-    font-size:23px;
-  }
-
-  #dashboard .admin-dashboard-welcome p{
-    font-size:12px;
-  }
-
-  #dashboard .admin-welcome-badge{
-    font-size:10px;
-    gap:5px;
-  }
-
-  #dashboard .admin-welcome-art{
-    right:-90px;
-    opacity:.62;
-  }
-}
-
-/* ================= FAMILY GROUP DASHBOARD 2 COLUMN ================= */
-
-#familyGroupDashboard .cards{
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-  gap:12px;
-}
-
-#familyGroupDashboard .card{
-  min-width:0;
-  width:100%;
-  box-sizing:border-box;
-  min-height:120px;
-}
-/* FAMILY GROUP CARD - MEMBER DASHBOARD SIZE + SOFT COLORS */
-
-#familyGroupDashboard .card{
-  min-height:145px;
-  padding:22px 24px;
-  border-radius:16px;
-  box-sizing:border-box;
-  min-width:0;
-  width:100%;
-}
-
-/* Soft background matching value color */
-
-#familyGroupDashboard .card:nth-child(1){
-  background:#eefaf3;
-}
-
-#familyGroupDashboard .card:nth-child(2){
-  background:#fff1f1;
-}
-
-#familyGroupDashboard .card:nth-child(3){
-  background:#fff8ed;
-}
-
-#familyGroupDashboard .card:nth-child(4){
-  background:#f1f3f8;
-}
-
-
-/* Value size like Member Dashboard */
-
-#familyGroupDashboard .card .value{
-    font-size:40px;
-    font-weight:800;
-    transform-origin:left center;
-}
-/* Value color matching each card */
-
-#familyGroupDashboard .card:nth-child(1) .value{
-    color:#238b57;
-}
-
-#familyGroupDashboard .card:nth-child(2) .value{
-    color:#d93636;
-}
-
-#familyGroupDashboard .card:nth-child(3) .value{
-    color:#d47712;
-}
-
-#familyGroupDashboard .card:nth-child(4) .value{
-    color:#1f2d49;
-}
-/* Match card border with value color */
-  
-#familyGroupDashboard .card:nth-child(1){
-    border-top:4px solid #238b57 !important;
-}
-
-#familyGroupDashboard .card:nth-child(2){
-    border-top:4px solid #d93636 !important;
-}
-
-#familyGroupDashboard .card:nth-child(3){
-    border-top:4px solid #d47712 !important;
-}
-
-#familyGroupDashboard .card:nth-child(4){
-    border-top:4px solid #1f2d49 !important;
-}
-#familyGroupDashboard .card{
-    min-height:140px;
-    padding:17px 14px 35px;
-}
-
-#familyGroupDashboard .card:nth-child(5){
-  grid-column:1 / -1;
-}
-
-@media(max-width:650px){
-
-  #familyGroupDashboard .cards{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-      width:100%;
-      min-width:0;
-  }
-}
-  #familyGroupDashboard .card{
-      width:100%;
-      min-width:0;
-      max-width:100%;
-      min-height:125px;
-      padding:17px 14px;
-      box-sizing:border-box;
-  }
-  
-  #familyGroupDashboard .card:nth-child(5){
-      grid-column:1 / -1;
-  }
-  #familyGroupDashboard .card{
-      min-height:110px;
-      padding:13px 12px;
-  }
-  #familyGroupDashboard{
-      width:100%;
-      max-width:100%;
-      box-sizing:border-box;
-      overflow-x:hidden;
-      padding-left:10px;
-      padding-right:10px;
-  }
-  
-  #familyGroupDashboard .cards{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-      width:calc(100% - 20px);
-      min-width:0;
-  }
-  
-  #familyGroupDashboard .card{
-      width:100%;
-      min-width:0;
-      max-width:100%;
-      min-height:125px;
-      padding:17px 14px;
-      box-sizing:border-box;
-  }
-  
-  #familyGroupDashboard .card:nth-child(5){
-      grid-column:1 / -1;
-  }
-  
-  #familyGroupDashboard .cards{
-    width:100%;
-    max-width:100%;
-    box-sizing:border-box;
-    overflow:hidden;
-  }
-  #familyGroupDashboard .card .value{
-    font-size:20px;
-  }
-}
-/* ================= FAMILY GROUP DASHBOARD CARD ANIMATION ================= */
-
-#familyGroupDashboard .card{
-  transition:transform 0.25s ease, box-shadow 0.25s ease;
-  animation:familyGroupCardIn 0.5s ease both;
-}
-
-#familyGroupDashboard .card:nth-child(1){
-  animation-delay:0.05s;
-}
-
-#familyGroupDashboard .card:nth-child(2){
-  animation-delay:0.10s;
-}
-
-#familyGroupDashboard .card:nth-child(3){
-  animation-delay:0.15s;
-}
-
-#familyGroupDashboard .card:nth-child(4){
-  animation-delay:0.20s;
-}
-
-#familyGroupDashboard .card:nth-child(5){
-  animation-delay:0.25s;
-}
-
-#familyGroupDashboard .cards > .card:hover{
-    transform:scale(1.02);
-    box-shadow:0 8px 22px rgba(22,35,59,0.14);
-}
-#familyGroupDashboard .cards{
-    padding-left: 8px;
-    padding-right: 8px;
-}
-#familyGroupDashboard .cards{
-    padding-left: 8px;
-    padding-right: 8px;
-    padding-bottom: 8px;
-}
-#familyGroupDashboard .cards > .card:hover .value{
-    transform:scale(1.10);
-}
-
-#familyGroupDashboard .card:hover .value{
-  transform:scale(1.08);
-}
-
-@keyframes familyGroupCardIn{
-  from{
-    opacity:0;
-    transform:translateY(12px);
-  }
-
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
-/* ================= FAMILY GROUP DETAIL CARDS ================= */
-
-#familyGroupDashboard .fgd-detail-grid{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-  gap:12px;
-  margin-top:0;
-  padding-left:8px;
-  padding-right:8px;
-  box-sizing:border-box;
-}
-
-#familyGroupDashboard .fgd-detail-card{
-  min-width:0;
-  border:1px solid #e4eaf2;
-  border-radius:16px;
-  padding:20px 22px;
-  box-sizing:border-box;
-  background:#fff;
-  box-shadow:0 5px 18px rgba(22,35,59,.07);
-}
-
-#familyGroupDashboard .fgd-detail-card.status-card{
-  background:#f5fbf7;
-  border-top:4px solid #238b57;
-}
-
-#familyGroupDashboard .fgd-detail-card.financial-card{
-  background:#f5f7fc;
-  border-top:4px solid #263957;
-}
-
-#familyGroupDashboard .fgd-detail-title{
-  font-size:20px;
-  font-weight:800;
-  color:#16233b;
-  padding-bottom:13px;
-  margin-bottom:2px;
-  border-bottom:1px solid rgba(22,35,59,.08);
-}
-
-#familyGroupDashboard .fgd-detail-list{
-  display:flex;
-  flex-direction:column;
-}
-
-#familyGroupDashboard .fgd-detail-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px;
-  padding:11px 0;
-  border-bottom:1px solid rgba(22,35,59,.07);
-  color:#53647d;
-  font-size:14px;
-}
-
-#familyGroupDashboard .fgd-detail-row:last-child{
-  border-bottom:0;
-}
-
-#familyGroupDashboard .fgd-detail-row b{
-  color:#16233b;
-  font-size:15px;
-  white-space:nowrap;
-}
-
-#familyGroupDashboard .status-card .fgd-detail-row b:nth-last-child(1){
-  color:#238b57;
-}
-
-#familyGroupDashboard .fgd-motivation{
-  margin:14px 8px 0;
-  padding:15px 18px;
-  border-radius:14px;
-  text-align:center;
-  background:linear-gradient(135deg,#f3f9ff,#fbfdff);
-  border:1px solid #e1ebf6;
-  color:#315b85;
-  font-size:14px;
-  font-weight:700;
-  box-shadow:0 4px 14px rgba(22,35,59,.05);
-}
-
-#familyGroupDashboard .fgd-motivation span{
-  display:block;
-  margin-top:5px;
-  font-size:12px;
-  font-weight:600;
-  color:#6a7d95;
-}
-
-@media(max-width:650px){
-  #familyGroupDashboard .fgd-detail-grid{
-    grid-template-columns:1fr;
-    gap:10px;
-  }
-
-  #familyGroupDashboard .fgd-detail-card{
-    padding:17px 16px;
-  }
-
-  #familyGroupDashboard .fgd-detail-title{
-    font-size:18px;
-  }
-
-  #familyGroupDashboard .fgd-detail-row{
-    font-size:13px;
-    padding:10px 0;
-  }
-
-  #familyGroupDashboard .fgd-detail-row b{
-    font-size:14px;
-  }
-}
-
-/* ================= FAMILY GROUP WELCOME ================= */
-
-/* ===== ADMIN DASHBOARD PREMIUM WELCOME BANNER ===== */
-
-#familyGroupDashboard .family-welcome {
-    position: relative;
-    overflow: hidden;
-
-    min-height: 168px;
-    padding: 28px 32px;
-
-    border-radius: 18px;
-    border: 1px solid rgba(76, 150, 230, 0.45);
-
-    background:
-        radial-gradient(circle at 88% 20%,
-            rgba(255, 196, 70, 0.18) 0,
-            rgba(255, 196, 70, 0.06) 80px,
-            transparent 145px),
-        linear-gradient(110deg,
-            #062654 0%,
-            #0a346b 52%,
-            #174b88 100%);
-
-    color: #fff;
-
-    box-shadow:
-        0 12px 30px rgba(5, 35, 75, 0.20);
-
-    isolation: isolate;
-}
-
-
-/* Decorative curved glow */
-#familyGroupDashboard .family-welcome::before {
-    content: "";
-    position: absolute;
-
-    width: 520px;
-    height: 180px;
-
-    left: -70px;
-    bottom: -115px;
-
-    border-radius: 50%;
-
-    background: rgba(55, 125, 205, 0.22);
-
-    z-index: -1;
-}
-
-
-/* Right side glow */
-#familyGroupDashboard .family-welcome::after {
-    content: "";
-
-    position: absolute;
-
-    width: 190px;
-    height: 190px;
-
-    right: 35px;
-    top: -70px;
-
-    border-radius: 50%;
-
-    background:
-        radial-gradient(circle,
-            rgba(255, 193, 78, 0.95) 0,
-            rgba(255, 193, 78, 0.65) 16%,
-            rgba(255, 193, 78, 0.16) 34%,
-            transparent 68%);
-
-    opacity: .9;
-
-    z-index: -1;
-}
-
-
-/* Small top label */
-#familyGroupDashboard .family-welcome .welcome-label {
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-
-    color: #d9eaff;
-
-    margin-bottom: 8px;
-}
-
-
-/* Main heading */
-#familyGroupDashboard .family-welcome h2 {
-    margin: 0;
-
-    font-size: 32px;
-    line-height: 1.15;
-    font-weight: 800;
-
-    color: #ffffff;
-
-    letter-spacing: .3px;
-}
-
-
-/* Highlight Admin / name */
-#familyGroupDashboard .family-welcome h2 span {
-    color: #ffc83d;
-}
-
-
-/* Subtitle */
-#familyGroupDashboard .family-welcome p {
-    margin: 8px 0 14px;
-
-    font-size: 13px;
-    font-weight: 500;
-
-    color: #d9e7f8;
-}
-
-
-/* Premium small badge */
-#familyGroupDashboard .family-welcome .welcome-badge {
-    display: inline-flex;
-    align-items: center;
-
-    padding: 7px 13px;
-
-    border-radius: 20px;
-
-    background: rgba(255,255,255,.08);
-
-    border: 1px solid rgba(255,205,80,.45);
-
-    color: #ffd45a;
-
-    font-size: 11px;
-    font-weight: 700;
-
-    backdrop-filter: blur(5px);
-}
-
-
-/* ===== MOBILE ===== */
-
-@media (max-width: 650px) {
-
-    #familyGroupDashboard .family-welcome {
-        min-height: 145px;
-        padding: 22px 20px;
-        border-radius: 15px;
-    }
-
-    #familyGroupDashboard .family-welcome h2 {
-        font-size: 23px;
-    }
-
-    #familyGroupDashboard .family-welcome p {
-        font-size: 12px;
-    }
-
-    #familyGroupDashboard .family-welcome::after {
-        right: -35px;
-        opacity: .65;
-    }
-}
-#familyGroupDashboard .family-welcome h2{
-    margin:0;
-    color:#24478f;
-    font-size:32px;
-    font-weight:800;
-    letter-spacing:.5px;
-}
-#familyGroupDashboard .family-welcome h2{
-    animation:memberNameLoop 20s ease both infinite;
-}
-#familyGroupDashboard .family-welcome p{
-    margin:8px 0 0;
-    color:#42658c;
-    font-size:14px;
-    font-weight:600;
-}
-
-@media(max-width:650px){
-    #familyGroupDashboard .family-welcome{
-        padding:18px 14px;
-        margin-bottom:10px;
-    }
-
-    #familyGroupDashboard .family-welcome h2{
-        font-size:23px;
-        line-height:1.25;
-    }
-
-    #familyGroupDashboard .family-welcome p{
-        font-size:12px;
-    }
-}
-/* REMOVE OLD CARD ACCENT STRIPE */
-
-#familyGroupDashboard .card::before{
-    display:none;
-}
-/* ================= PROFESSIONAL CHANGE PIN UI ================= */
-#changePin{
-  max-width:900px;
-  margin:0 auto;
-}
-
-#changePin .change-pin-panel{
-  background:linear-gradient(135deg,#ffffff,#f7fbff);
-  border:1px solid #dfe9f5;
-  border-radius:18px;
-  box-shadow:0 8px 28px rgba(22,35,59,.08);
-  overflow:hidden;
-}
-
-#changePin .change-pin-header{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:18px 22px;
-  background:linear-gradient(135deg,#eef7ff,#f8fbff);
-  border-bottom:1px solid #e3edf7;
-}
-
-#changePin .change-pin-header-icon{
-  width:42px;
-  height:42px;
-  border-radius:12px;
-  display:grid;
-  place-items:center;
-  background:#dceeff;
-  font-size:22px;
-  flex-shrink:0;
-}
-
-#changePin .change-pin-header h3{
-  padding:0;
-  border:0;
-  font-size:18px;
-  color:#16233b;
-}
-
-#changePin .change-pin-subtitle{
-  margin:2px 0 0;
-  font-size:12px;
-  color:#68768b;
-}
-
-#changePin .change-pin-body{
-  padding:22px;
-}
-
-#changePin .change-pin-field{
-  margin-bottom:16px;
-}
-
-#changePin .change-pin-field label{
-  display:block;
-  margin-bottom:7px;
-  font-size:13px;
-  font-weight:700;
-  color:#4e6178;
-}
-
-#changePin .change-pin-input-wrap{
-  position:relative;
-}
-
-#changePin .change-pin-input-wrap input{
-  width:100%;
-  box-sizing:border-box;
-  padding:12px 48px 12px 14px;
-  border:1px solid #ccd8e6;
-  border-radius:10px;
-  background:#fff;
-  color:#16233b;
-  font-size:14px;
-  outline:none;
-  transition:border-color .2s ease,box-shadow .2s ease;
-}
-
-#changePin .change-pin-input-wrap input:focus{
-  border-color:#1976d2;
-  box-shadow:0 0 0 3px rgba(25,118,210,.10);
-}
-
-#changePin .pin-toggle{
-  position:absolute;
-  top:50%;
-  right:8px;
-  transform:translateY(-50%);
-  width:34px;
-  height:34px;
-  padding:0;
-  border:0;
-  border-radius:8px;
-  background:#eef4ff;
-  color:#135ba5;
-  cursor:pointer;
-  font-size:16px;
-}
-
-#changePin .pin-toggle:hover{
-  background:#dceaff;
-}
-
-#changePin .change-pin-note{
-  margin:2px 0 18px;
-  padding:10px 12px;
-  border-radius:9px;
-  background:#f3f8fd;
-  color:#60748a;
-  font-size:12px;
-}
-
-#changePin .change-pin-actions{
-  display:flex;
-  justify-content:flex-start;
-}
-
-#changePin .change-pin-submit{
-  min-width:150px;
-  padding:11px 18px;
-  border-radius:9px;
-  box-shadow:0 4px 12px rgba(25,118,210,.16);
-  transition:transform .2s ease,box-shadow .2s ease,opacity .2s ease;
-}
-
-#changePin .change-pin-submit:hover{
-  transform:translateY(-1px);
-  box-shadow:0 6px 16px rgba(25,118,210,.22);
-  opacity:1;
-}
-
-@media(max-width:650px){
-  #changePin{
-    max-width:none;
-  }
-  #changePin .change-pin-header{
-    padding:16px;
-  }
-  #changePin .change-pin-body{
-    padding:16px;
-  }
-  #changePin .change-pin-submit{
-    width:100%;
-  }
-}
-
-
-/* FINAL FAMILY DASHBOARD ALIGNMENT FIX */
-#familyGroupDashboard .cards{
-  padding-left:0 !important;
-  padding-right:0 !important;
-  box-sizing:border-box;
-}
-</style>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-  import {
-    getMessaging,
-    getToken,
-    onMessage
-} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-messaging.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyC0ISJyPPbn0I-uA49Dku95PFg4D5TVUnI",
-    authDomain: "family-saving-group.firebaseapp.com",
-    projectId: "family-saving-group",
-    storageBucket: "family-saving-group.firebasestorage.app",
-    messagingSenderId: "857357671416",
-    appId: "1:857357671416:web:de5586c374dec2d3be540d"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const messaging = getMessaging(app);
-
-onMessage(messaging, (payload) => {
-    const notification = payload.notification || {};
-    navigator.serviceWorker.ready.then((registration) => {
-        registration.showNotification(
-            notification.title || "Family Saving Group",
-            {
-                body: notification.body || ""
-            }
-        );
-    });
-});
-
-  window.setupFCM = async function(familyId) {
-    try {
-      const permission = await Notification.requestPermission();
-
-      if (permission !== "granted") {
-        console.log("Notification permission not granted");
-        return;
-      }
-
-      const token = await getToken(messaging, {
-        vapidKey: "BOBvT5SQIyTQPPXlf2OuOEGN-x2eecqUQlyC5tE9wYmlIsyLb4OR1fbRuAWO-QXO8eXPf6EvJQ9Ym_nNofZYK5Y"
-      });
-
-      if (!token) {
-        console.log("FCM token नहीं मिला");
-        return;
-      }
-
-      await api("/api/fcm-token", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          token: token
-        })
-      });
-
-      console.log("FCM token saved successfully");
-
-    } catch (e) {
-      console.error("FCM setup error:", e);
-    }
-  }
-</script>
-<style>
-/* Ledger Financial Year Dropdown */
-#ledgerYearSelect {
-    background: linear-gradient(135deg, #eef7ff, #f3edff);
-    border: 1.5px solid #8bbcff;
-    color: #172554;
-    font-weight: 600;
-    border-radius: 10px;
-    padding: 9px 34px 9px 12px;
-    min-width: 105px;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(60, 120, 200, 0.12);
-    transition: all 0.2s ease;
-}
-
-#ledgerYearSelect:hover {
-    border-color: #4f8fe8;
-    box-shadow: 0 3px 9px rgba(60, 120, 200, 0.20);
-}
-
-#ledgerYearSelect:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-}
-#ledgerYearSelect {
-    background: #eef6ff !important;
-    border: 2px solid #7bb5f5 !important;
-    color: #173b70 !important;
-    font-weight: 600 !important;
-    border-radius: 10px !important;
-    padding: 9px 34px 9px 12px !important;
-    min-width: 110px !important;
-    cursor: pointer !important;
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.18) !important;
-}
-
-#ledgerYearSelect:hover {
-    background: #e4f0ff !important;
-    border-color: #4f8fe8 !important;
-}
-
-#ledgerYearSelect:focus {
-    outline: none !important;
-    border-color: #3b82f6 !important;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18) !important;
-}
-/* ===== Ledger Brand Header ===== */
-
-.ledger-brand-header{
-  text-align:center;
-  padding:16px 10px 14px;
-  margin:12px 0 15px;
-  background:#f7fbff;
-  border:1px solid #dbe7f3;
-  border-radius:10px;
-}
-
-.ledger-brand-logo{
-  width:78px;
-  height:78px;
-  object-fit:contain;
-  display:block;
-  margin:0 auto 5px;
-}
-
-.ledger-brand-title{
-  font-size:24px;
-  font-weight:700;
-  color:#0b3d82;
-  line-height:1.2;
-}
-
-.ledger-brand-subtitle{
-  margin-top:3px;
-  font-size:14px;
-  color:#334155;
-}
-
-@media(max-width:650px){
-  .ledger-brand-logo{
-    width:68px;
-    height:68px;
-  }
-
-  .ledger-brand-title{
-    font-size:21px;
-  }
-
-  .ledger-brand-subtitle{
-    font-size:13px;
-  }
-}
-</style>
-</head>
-
-<body>
-<!-- ================= STARTUP LOADER ================= -->
-<div id="startupLoader" aria-label="Family Saving Group loading">
-  <div class="startup-box">
-    <img
-      src="/static/logo.png"
-      class="startup-logo"
-      alt="Family Saving Group"
-      onerror="this.style.display='none'"
-    >
-    <div class="startup-title">Family Saving Group</div>
-    <div class="startup-subtitle">आपका सदस्य • आपकी बचत • आपका भविष्य</div>
-    <div class="startup-spinner"></div>
-    <div class="startup-status">सिस्टम तैयार हो रहा है…</div>
-  </div>
-</div>
-
-
-<!-- ================= LOGIN ================= -->
-
-<div id="login" class="login">
-
-  <div class="loginbox">
-
-    <img
-      src="/static/logo.png"
-      class="login-logo"
-      alt="Family Saving Group Logo"
-      onerror="this.style.display='none'"
-    >
-
-    <h2>Family Saving Group</h2>
-
-    <div class="login-subtitle">
-      सुरक्षित सदस्य लॉगिन
-    </div>
-
-    <div class="login-tabs">
-
-      <button
-        id="adminTab"
-        class="btn"
-        onclick="loginType('admin')">
-        👑 Admin
-      </button>
-
-      <button
-        id="memberTab"
-        class="btn secondary"
-        onclick="loginType('member')">
-        👤 Member
-      </button>
-
-    </div>
-
-    <!-- ADMIN LOGIN -->
-
-    <div id="adminLogin">
-
-      <label style="font-size:13px;">
-        Admin PIN
-      </label>
-
-      <input
-        id="pin"
-        type="password"
-        placeholder="Admin PIN"
-        autocomplete="current-password"
-      >
-
-      <button
-        class="btn"
-        onclick="login()">
-        🔐 Admin Login
-      </button>
-
-    </div>
-
-
-    <!-- MEMBER LOGIN -->
-
-    <div id="memberLogin" class="hidden">
-
-      <label style="font-size:13px;">
-        👤 अपना सदस्य चुनें
-      </label>
-
-      <select id="memberFamily">
-        <option value="">सदस्य चुनें...</option>
-      </select>
-
-      <label style="font-size:13px;">
-        Member PIN
-      </label>
-
-      <input
-        id="memberPin"
-        type="password"
-        placeholder="Member PIN"
-        autocomplete="current-password"
-      >
-
-      <button
-        class="btn"
-        onclick="memberLogin()">
-        👤 Member Login
-      </button>
-
-    </div>
-
-    <div class="login-footer">
-      Family Saving Group • 2026–27
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- ================= APP ================= -->
-
-<div id="app" class="hidden">
-
-<aside class="side">
-
-  <div class="brand">
-
-    <img
-      src="/static/logo.png"
-      alt="Logo"
-      onerror="this.style.display='none'"
-    >
-
-    👑 Admin Panel
-
-    <small>Family Saving Group</small>
-
-  </div>
-
-  <div class="nav">
-
-    <div class="nav-section-title">MAIN</div>
-    <button onclick="show('dashboard',this)" class="active">
-      🏠&nbsp; Dashboard
-    </button>
-
-    <div class="nav-section-title">MEMBER MANAGEMENT</div>
-    <button onclick="show('families',this)">
-      👨‍👩‍👧‍👦&nbsp; परिवार
-    </button>
-
-    <button onclick="show('members',this)">
-      👤&nbsp; Member Management
-    </button>
-
-    <div class="nav-section-title">TRANSACTIONS</div>
-    <button onclick="show('saving',this)">
-      💰&nbsp; मासिक बचत
-    </button>
-
-    <button onclick="show('loans',this)">
-      💳&nbsp; लोन
-    </button>
-
-    <button onclick="show('repay',this)">
-      💵&nbsp; किस्त / भुगतान
-    </button>
-
-    <button onclick="show('interest',this)">
-      📈&nbsp; ब्याज वितरण
-    </button>
-
-    <button onclick="show('passbook',this)">
-      📒&nbsp; पासबुक
-    </button>
-
-    <div class="nav-section-title">REPORTS</div>
-    <button onclick="show('reports',this)">
-      📄&nbsp; रिपोर्ट्स
-    </button>
-
-    <div class="nav-section-title">SYSTEM</div>
-    <button onclick="logout()">
-      🚪&nbsp; Logout
-    </button>
-
-  </div>
-
-  <div class="admin-sidebar-footer">
-    <strong>Secure • Manage • Grow Together</strong>
-    Admin Panel • Family Saving Group
-  </div>
-
-</aside>
-
-
-
-<!-- ================= MEMBER SIDEBAR ================= -->
-<div id="memberSidebar" style="display:none;">
-
-  <div class="brand">
-    <img
-      src="/static/logo.png"
-      alt="Logo"
-      onerror="this.style.display='none'"
-    >
-    Family Saving Group
-    <small>
-      एक परिवार • एक बचत • उज्ज्वल भविष्य
-    </small>
-  </div>
-
-  <div class="nav">
-
-    <button onclick="memberDashboard(this)" class="active">
-      🏠 Dashboard
-    </button>
-
-    <button onclick="openFamilyGroupDashboard(this)">
-      🏢 Family Group Dashboard
-    </button>
-
-    <button onclick="memberGoTo('passbook', this)">
-      📒 My Passbook
-    </button>
-
-    <button onclick="memberLedger(this)">
-      📋 Ledger
-    </button>
-
-    <button onclick="memberChangePinMenu(this)">
-      🔐 Change PIN
-    </button>
-
-    <button onclick="logout()">
-      🚪 Logout
-    </button>
-
-  </div>
-</div>
-
-<main class="main">
-<header>
-
-  <button
-    id="menuBtn"
-    class="mobile-menu-btn"
-    onclick="toggleSidebar()"
-    title="Menu">
-    ☰
-  </button>
-
-  <div class="title" id="title">
-    Dashboard
-  </div>
-
-  <div style="display:flex;align-items:center;gap:12px;">
-
-    <span id="userInfo">
-      👤 Admin &nbsp; | &nbsp; 2026-27
-    </span>
-
-    <!-- 🔔 MEMBER NOTIFICATION BELL -->
-    <button
-      id="notificationBell"
-      class="btn secondary"
-      style="display:none;position:relative;"
-      onclick="openNotifications()"
-      title="Notifications">
-
-      🔔
-
-      <span
-        id="notificationCount"
-        style="
-          position:absolute;
-          top:-6px;
-          right:-6px;
-          min-width:20px;
-          height:20px;
-          padding:0 5px;
-          border-radius:50%;
-          background:#d32f2f;
-          color:white;
-          font-size:11px;
-          display:none;
-          align-items:center;
-          justify-content:center;
-        ">
-        0
-      </span>
-
-    </button>
-</div>
-
-</header>
-<div class="content">
-
-
-<!-- ================= DASHBOARD ================= -->
-
-<section id="dashboard">
-
-  <!-- ================= ADMIN WELCOME BANNER ================= -->
-  <div class="admin-dashboard-welcome">
-
-    <div class="admin-welcome-content">
-      <div class="admin-welcome-label">👑 ADMIN CONTROL CENTER</div>
-
-      <h2>
-        Welcome Back, <span>Admin</span>
-      </h2>
-
-      <p>
-        Manage Today&nbsp; • &nbsp;Build a Stronger Tomorrow
-      </p>
-
-      <div class="admin-welcome-badge">
-        🛡️ सुरक्षित प्रबंधन
-        <span>•</span>
-        <span id="adminFamilyCount">23 परिवार</span>
-        <span>•</span>
-        <span>एक लक्ष्य</span>
-      </div>
-    </div>
-
-    <div class="admin-welcome-art" aria-hidden="true">
-      <div class="admin-sun"></div>
-      <div class="admin-family">
-        <span class="person person-a"></span>
-        <span class="person person-b"></span>
-        <span class="person person-c"></span>
-        <span class="person person-d"></span>
-      </div>
-      <div class="admin-hill"></div>
-    </div>
-
-  </div>
-
-  <div class="cards">
-
-    <div class="card">
-      <div class="label">कुल सदस्य</div>
-      <div class="value blue" id="cf">23</div>
-    </div>
-
-    <div class="card">
-      <div class="label">कुल बचत</div>
-      <div class="value green" id="cs">₹0</div>
-    </div>
-
-    <div class="card">
-      <div class="label">कुल लोन बाकी</div>
-      <div class="value red" id="cl">₹0</div>
-    </div>
-
-    <div class="card">
-      <div class="label">प्राप्त ब्याज</div>
-      <div class="value orange" id="ci">₹0</div>
-    </div>
-
-    <div class="card">
-      <div class="label">उपलब्ध राशि</div>
-      <div class="value" id="ca">₹0</div>
-    </div>
-
-  </div>
-
-
-  <div class="grid">
-
-    <div class="panel">
-
-      <h3>समूह की स्थिति</h3>
-
-      <div class="body" id="sum"></div>
-
-    </div>
-
-
-    <div class="panel">
-
-      <h3>मासिक बचत लक्ष्य</h3>
-
-      <div class="body">
-
-        <div class="notice">
-          23 सदस्य × ₹2,000 =
-          <b>₹46,000</b>
-          सामान्य मासिक लक्ष्य।
-        </div>
-
-        <div class="bar">
-          <i style="width:0%" id="prog"></i>
-        </div>
-
-        <p id="progtext"></p>
-
-      </div>
-
-    </div>
-
-
-    <div class="panel">
-
-      <h3>नियम</h3>
-
-      <div class="body">
-
-        <div class="line">
-          <span>मासिक लक्ष्य</span>
-          <b>₹2,000</b>
-        </div>
-
-        <div class="line">
-          <span>Loan Interest</span>
-          <b>2% / माह</b>
-        </div>
-
-        <div class="line">
-          <span>ब्याज वितरण</span>
-          <b>बचत अनुपात</b>
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- ================= FAMILIES ================= -->
-
-<section id="families" class="hidden">
-
-  <div class="actions">
-
-    <button class="btn" onclick="addFamily()">
-      + सदस्य जोड़ें
-    </button>
-
-  </div>
-
-  <div class="panel">
-
-    <h3>सदस्य सूची</h3>
-
-    <div class="table">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>#</th>
-            <th>सदस्य</th>
-            <th>मोबाइल</th>
-            <th>कुल बचत</th>
-            <th>लोन बाकी</th>
-            <th>Action</th>
-          </tr>
-
-        </thead>
-
-        <tbody id="ft"></tbody>
-
-      </table>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- ================= MEMBER MANAGEMENT ================= -->
-
-<section id="members" class="hidden">
-
-  <div class="admin-page-head">
-    <div>
-      <div class="admin-page-kicker">ADMIN CONTROL CENTER</div>
-      <h2>👥 Member Management</h2>
-      <p>सदस्यों की जानकारी, बचत और access को एक ही जगह से manage करें।</p>
-    </div>
-
-    <button class="btn admin-add-member" onclick="addFamily()">
-      ＋ नया सदस्य
-    </button>
-  </div>
-
-  <div class="member-summary-grid">
-    <div class="member-summary-card blue">
-      <span>👥 Registered Members</span>
-      <strong id="mmTotal">0</strong>
-      <small>कुल पंजीकृत सदस्य</small>
-    </div>
-
-    <div class="member-summary-card green">
-      <span>💰 Total Savings</span>
-      <strong id="mmSavings">₹0</strong>
-      <small>समूह की कुल बचत</small>
-    </div>
-
-    <div class="member-summary-card red">
-      <span>🏦 Loan Outstanding</span>
-      <strong id="mmLoans">₹0</strong>
-      <small>वर्तमान लोन बाकी</small>
-    </div>
-
-    <div class="member-summary-card orange">
-      <span>💳 Members with Loan</span>
-      <strong id="mmLoanMembers">0</strong>
-      <small>जिन सदस्यों पर लोन बाकी है</small>
-    </div>
-  </div>
-
-  <div class="panel member-management-panel">
-    <div class="member-toolbar">
-      <div class="member-toolbar-title">
-        <span class="member-toolbar-icon">👤</span>
-        <div>
-          <strong>सदस्य सूची</strong>
-          <small>Search, filter और member actions</small>
-        </div>
-      </div>
-
-      <div class="member-tools">
-        <div class="member-search">
-          <span>🔍</span>
-          <input id="memberSearch" type="search" placeholder="नाम या मोबाइल खोजें..." oninput="filterAdminMembers()">
-        </div>
-
-        <select id="memberLoanFilter" onchange="filterAdminMembers()" class="member-filter">
-          <option value="all">सभी सदस्य</option>
-          <option value="loan">Loan वाले</option>
-          <option value="no-loan">Loan नहीं</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="member-list-meta">
-      <span id="memberResultCount">0 सदस्य</span>
-      <span>🔐 PIN सुरक्षित रूप से hidden है</span>
-    </div>
-
-    <div class="table member-management-table">
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Member</th>
-            <th>Mobile</th>
-            <th>Login PIN</th>
-            <th>कुल बचत</th>
-            <th>लोन बाकी</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="mt"></tbody>
-      </table>
-    </div>
-  </div>
-
-</section>
-
-
-<!-- ================= SAVING ================= -->
-
-<section id="saving" class="hidden">
-
-  <div class="panel">
-
-    <h3>मासिक बचत एंट्री</h3>
-
-    <div class="body">
-
-      <div class="form">
-
-        <div class="field">
-          <label>सदस्य</label>
-          <select id="sf"></select>
-        </div>
-
-        <div class="field">
-          <label>महीना</label>
-          <select id="sm"></select>
-        </div>
-
-        <div class="field">
-          <label>बचत राशि ₹</label>
-          <input id="sa" type="number" value="2000">
-        </div>
-
-        <div class="field">
-          <label>तारीख</label>
-          <input id="sd" type="date">
-        </div>
-
-        <div class="full">
-
-          <button class="btn" onclick="saveSaving()">
-            बचत जमा करें
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <div class="panel" style="margin-top:14px">
-
-    <h3>💸 बचत से Debit / निकासी</h3>
-
-    <div class="body">
-
-      <div class="notice">
-        Debit आपकी उपलब्ध बचत से अधिक नहीं हो सकता।
-      </div>
-
-      <div class="form">
-
-        <div class="field">
-          <label>सदस्य</label>
-          <select id="df"></select>
-        </div>
-
-        <div class="field">
-          <label>Debit राशि ₹</label>
-          <input id="da" type="number" min="0.01" step="0.01" placeholder="राशि">
-        </div>
-
-        <div class="field">
-          <label>तारीख</label>
-          <input id="ddate" type="date">
-        </div>
-
-        <div class="field">
-          <label>कारण (वैकल्पिक)</label>
-          <input id="dre" type="text" placeholder="जैसे जरूरत के लिए">
-        </div>
-
-        <div class="full">
-          <button class="btn danger" onclick="saveDebit()">
-            💸 Debit दर्ज करें
-          </button>
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <div class="panel" style="margin-top:14px">
-
-    <h3>बचत लेजर</h3>
-
-    <div class="table">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>तारीख</th>
-            <th>महीना</th>
-            <th>सदस्य</th>
-            <th>राशि</th>
-            <th>विवरण</th>
-            <th>Action</th>
-          </tr>
-
-        </thead>
-
-        <tbody id="st"></tbody>
-
-      </table>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- ================= LOANS ================= -->
-
-<section id="loans" class="hidden">
-
-  <div class="panel">
-
-    <h3>नया लोन</h3>
-
-    <div class="body">
-
-      <div class="notice">
-        लोन ब्याज दर <b>2% प्रति माह</b> है।
-      </div>
-
-      <div class="form">
-
-        <div class="field">
-          <label>सदस्य</label>
-          <select id="lf"></select>
-        </div>
-
-        <div class="field">
-          <label>लोन राशि ₹</label>
-          <input id="la" type="number">
-        </div>
-
-        <div class="field">
-          <label>अवधि माह</label>
-          <input id="lm" type="number" value="12">
-        </div>
-
-        <div class="field">
-          <label>तारीख</label>
-          <input id="ld" type="date">
-        </div>
-
-        <div class="full">
-
-          <button class="btn" onclick="giveLoan()">
-            लोन दर्ज करें
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <div class="panel" style="margin-top:14px">
-
-    <h3>लोन खाते</h3>
-
-    <div class="table">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>सदस्य</th>
-            <th>मूल लोन</th>
-            <th>2%</th>
-            <th>बाकी</th>
-            <th>स्थिति</th>
-            <th>Action</th>
-          </tr>
-
-        </thead>
-
-        <tbody id="lt"></tbody>
-
-      </table>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- ================= REPAY ================= -->
-
-<section id="repay" class="hidden">
-
-  <div class="panel">
-
-    <h3>💵 ब्याज / 💰 Loan Repayment</h3>
-
-    <div class="body">
-
-      <div class="form">
-
-        <div class="field">
-          <label>Active Loan</label>
-          <select id="rl"></select>
-        </div>
-
-
-        <div class="field">
-          <label>भुगतान का प्रकार</label>
-
-          <select id="rt">
-
-            <option value="interest">
-              💵 सिर्फ ब्याज
-            </option>
-
-            <option value="repayment">
-              💰 Loan Repayment
-            </option>
-
-          </select>
-
-        </div>
-
-
-        <div class="field">
-          <label>राशि ₹</label>
-
-          <input
-            id="ra"
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="राशि डालें"
-          >
-
-        </div>
-
-
-        <div class="field">
-          <label>तारीख</label>
-
-          <input
-            id="rd"
-            type="date"
-          >
-
-        </div>
-
-
-        <div class="full">
-
-          <button
-            class="btn"
-            onclick="repay()"
-          >
-            💾 भुगतान दर्ज करें
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <div
-    class="panel"
-    style="margin-top:14px"
-  >
-
-    <h3>📋 भुगतान इतिहास</h3>
-
-    <div class="table">
-
-      <table>
-
-        <thead>
-
-          <tr>
-
-            <th>तारीख</th>
-
-            <th>सदस्य</th>
-
-            <th>भुगतान</th>
-
-            <th>ब्याज</th>
-
-            <th>मूलधन</th>
-
-            <th>Action</th>
-
-          </tr>
-
-        </thead>
-
-
-        <tbody id="pt">
-
-        </tbody>
-
-      </table>
-
-    </div>
-
-  </div>
-
-</section>
-
-<!-- ================= INTEREST ================= -->
-
-<section id="interest" class="hidden">
-
-  <div class="panel">
-
-    <h3>बचत अनुपात से ब्याज वितरण</h3>
-
-    <div class="body">
-
-      <div class="form">
-
-        <div class="field">
-          <label>कुल वितरण योग्य ब्याज ₹</label>
-          <input id="di" type="number">
-        </div>
-
-        <div class="field">
-          <label>तारीख</label>
-          <input id="dd" type="date">
-        </div>
-
-        <div class="full">
-
-          <button class="btn" onclick="dist()">
-            गणना करें
-          </button>
-
-        </div>
-
-      </div>
-
-      <div id="dr" style="margin-top:15px"></div>
-
-      <div class="panel" style="margin-top:15px">
-
-        <h3>↩️ ब्याज वितरण वापस करें</h3>
-
-        <div class="body">
-
-          <button class="btn secondary" onclick="loadInterestDistributions()">
-            पुराने वितरण देखें
-          </button>
-
-          <div id="interestDistributionHistory" style="margin-top:15px"></div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- ================= PASSBOOK ================= -->
-
-<section id="passbook" class="hidden">
-
-  <div class="panel">
-
-    <h3>Digital Passbook</h3>
-
-    <div class="body">
-
-      <div class="field">
-
-        <label>सदस्य</label>
-
-        <select
-          id="pf"
-          onchange="passbook()">
-        </select>
-
-      </div>
-
-      <div id="pr" style="margin-top:14px"></div>
-
-    </div>
-
-  </div>
-
-</section>
-<!-- ================= MEMBER LEDGER ================= -->
-
-<section id="memberLedgerSection" class="hidden">
-
-  <div class="panel">
-
-
-  <div class="ledger-brand-header">
-  <img src="/static/logo.png"
-       alt="Family Saving Group"
-       class="ledger-brand-logo">
-
-  <div class="ledger-brand-title">
-    Family Saving Group
-  </div>
-
-  <div class="ledger-brand-subtitle">
-    एक परिवार • एक बचत • उज्ज्वल भविष्य
-  </div>
-</div>
-
-    <div id="ledgerMemberNameCard" style="
-      margin:12px 0 15px;
-      padding:12px 16px;
-      border-left:4px solid #1976d2;
-      border-radius:8px;
-      background:#f7fbff;
-    ">
-      <div style="font-size:12px;opacity:.75;">सदस्य</div>
-      <div id="ledgerMemberName"
-           style="font-size:20px;font-weight:700;margin-top:2px;">
-        —
-      </div>
-    </div>
-
-    <div class="body">
-
-      <!-- Financial Year Record -->
-      <div class="panel" style="margin-top:0;">
-
-        <h3>📅 वित्तीय वर्ष का रिकॉर्ड</h3>
-
-        <div style="
-          margin:10px 0;
-          display:flex;
-          align-items:center;
-          gap:10px;
-          flex-wrap:wrap;
-        ">
-
-          <label>
-            वित्तीय वर्ष चुनें:
-          </label>
-
-          <select
-            id="ledgerYearSelect"
-            onchange="filterLedgerYearlyRecord(this.value)"
-            style="
-              padding:8px 12px;
-              border:1px solid #d5deea;
-              border-radius:8px;
-              background:#fff;
-            "
-          >
-
-            <option value="">
-              सभी वर्ष
-            </option>
-
-          </select>
-
-        </div>
-
-        <div class="table">
-
-          <table id="ledgerYearlyRecordTable">
-
-            <tr>
-              <th>वित्तीय वर्ष</th>
-              <th>कुल बचत</th>
-              <th>ब्याज लाभ</th>
-              <th>निकासी</th>
-              <th>Net Saving</th>
-            </tr>
-
-            <tbody id="ledgerYearlyRecords">
-            </tbody>
-
-          </table>
-
-        </div>
-
-      </div>
-
-
-      <!-- Selected Financial Year Details -->
-      <div class="panel" style="margin-top:15px;">
-
-        <h3>
-          📋 चयनित वित्तीय वर्ष का विवरण
-        </h3>
-
-        <div class="table">
-
-          <table>
-
-            <tr>
-              <th>तारीख</th>
-              <th>विवरण</th>
-              <th>राशि</th>
-            </tr>
-
-            <tbody id="ledgerYearlyDetailed">
-            </tbody>
-
-          </table>
-
-        </div>
-
-      </div>
-
-
-      <!-- Savings / Payment Details -->
-      <div class="panel" style="margin-top:15px;">
-
-        <h3>
-          बचत / भुगतान विवरण
-        </h3>
-
-        <div class="table">
-
-          <table>
-
-            <tr>
-              <th>तारीख</th>
-              <th>विवरण</th>
-              <th>राशि</th>
-            </tr>
-
-            <tbody id="ledgerTransactions">
-            </tbody>
-
-          </table>
-
-        </div>
-
-      </div>
-
-
-      <!-- Signature -->
-      <div style="
-        margin-top:25px;
-        display:flex;
-        justify-content:space-between;
-        font-size:12px;
-      ">
-
-        <div>
-          सदस्य हस्ताक्षर
-        </div>
-
-        <div>
-          Admin हस्ताक्षर
-        </div>
-
-      </div>
-
-
-      <!-- Print -->
-      <div style="
-        margin-top:15px;
-        text-align:right;
-      ">
-
-        <button
-          class="btn"
-          onclick="printMemberLedger()">
-          🖨️ Print Ledger
-        </button>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- ================= REPORTS ================= -->
-
-<section id="reports" class="hidden">
-
-  <div class="panel">
-
-    <h3>रिपोर्ट्स</h3>
-
-    <div class="body">
-
-      <p>
-        डेटा JSON format में export किया जा सकता है।
-      </p>
-
-      <button
-        class="btn secondary"
-        onclick="exportData('families')">
-        सदस्य
-      </button>
-
-      <button
-        class="btn secondary"
-        onclick="exportData('savings')">
-        बचत
-      </button>
-
-      <button
-        class="btn secondary"
-        onclick="exportData('loans')">
-        लोन
-      </button>
-<button
-  class="btn secondary"
-  onclick="exportData('payments')">
-  भुगतान
-</button>
-      
-    </div>
-
-  </div>
-
-</section>
-
-<!-- ================= CHANGE PIN ================= -->
-<section id="changePin" class="hidden">
-
-  <div class="change-pin-panel">
-
-    <div class="change-pin-header">
-      <div class="change-pin-header-icon">🔐</div>
-      <div>
-        <h3>Change PIN</h3>
-        <div class="change-pin-subtitle">अपना Member Login PIN सुरक्षित रूप से बदलें</div>
-      </div>
-    </div>
-
-    <div class="change-pin-body">
-
-      <div class="change-pin-field">
-        <label for="currentPin">Current PIN</label>
-        <div class="change-pin-input-wrap">
-          <input
-            type="password"
-            id="currentPin"
-            maxlength="20"
-            placeholder="Current PIN"
-            autocomplete="current-password">
-          <button
-            type="button"
-            class="pin-toggle"
-            onclick="togglePinVisibility('currentPin', this)"
-            title="Show / Hide PIN"
-            aria-label="Show or hide Current PIN">
-            👁️
-          </button>
-        </div>
-      </div>
-
-      <div class="change-pin-field">
-        <label for="newPin">New PIN</label>
-        <div class="change-pin-input-wrap">
-          <input
-            type="password"
-            id="newPin"
-            maxlength="20"
-            placeholder="New PIN"
-            autocomplete="new-password">
-          <button
-            type="button"
-            class="pin-toggle"
-            onclick="togglePinVisibility('newPin', this)"
-            title="Show / Hide PIN"
-            aria-label="Show or hide New PIN">
-            👁️
-          </button>
-        </div>
-      </div>
-
-      <div class="change-pin-field">
-        <label for="confirmPin">Confirm New PIN</label>
-        <div class="change-pin-input-wrap">
-          <input
-            type="password"
-            id="confirmPin"
-            maxlength="20"
-            placeholder="Confirm New PIN"
-            autocomplete="new-password">
-          <button
-            type="button"
-            class="pin-toggle"
-            onclick="togglePinVisibility('confirmPin', this)"
-            title="Show / Hide PIN"
-            aria-label="Show or hide Confirm New PIN">
-            👁️
-          </button>
-        </div>
-      </div>
-
-      <div class="change-pin-note">
-        🔒 PIN कम से कम 4 अंकों का होना चाहिए। PIN बदलने के बाद आपको दोबारा Login करना होगा।
-      </div>
-
-      <div class="change-pin-actions">
-        <button
-          type="button"
-          class="btn change-pin-submit"
-          onclick="changeMemberPin()">
-          🔐 Change PIN
-        </button>
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-</div>
-
-
-<div class="footer">
-  Family Saving Group • Online-ready
-</div>
-
-
-</main>
-
-</div>
-
-
-<script>
-
-
-
-
-/* ================= BASIC ================= */
-
-const M = [
-  "अप्रैल",
-  "मई",
-  "जून",
-  "जुलाई",
-  "अगस्त",
-  "सितंबर",
-  "अक्टूबर",
-  "नवंबर",
-  "दिसंबर",
-  "जनवरी",
-  "फरवरी",
-  "मार्च"
-];
-
-const $ = id => document.getElementById(id);
-
-const money = n =>
-  "₹" + Number(n || 0).toLocaleString("en-IN");
-
-let fam = [];
-
-let currentLoginType = "admin";
-
-
-/* ================= API ================= */
-
-async function api(url, options = {}){
-
-  const response = await fetch(url, options);
-
-  let data;
-
-  try{
-    data = await response.json();
-  }catch{
-    throw new Error("Server से सही response नहीं मिला");
-  }
-
-  if(!response.ok){
-    throw new Error(data.error || "Server Error");
-  }
-
-  return data;
-}
-
-
-/* ================= LOGIN TYPE ================= */
-
-function loginType(type){
-
-  currentLoginType = type;
-
-  if(type === "admin"){
-
-    $("adminLogin").classList.remove("hidden");
-    $("memberLogin").classList.add("hidden");
-
-    $("adminTab").classList.remove("secondary");
-    $("memberTab").classList.add("secondary");
-
-  }else{
-
-    $("adminLogin").classList.add("hidden");
-    $("memberLogin").classList.remove("hidden");
-
-    $("adminTab").classList.add("secondary");
-    $("memberTab").classList.remove("secondary");
-
-    loadMemberList();
-
-  }
-}
-
-
-/* ================= MEMBER LIST ================= */
-async function loadMemberList(){
-
-    try{
-
-        const list = await api("/api/member-list");
-
-        $("memberFamily").innerHTML =
-            '<option value="">सदस्य चुनें...</option>' +
-            list.map(f =>
-                `<option value="${f.id}">${f.name}</option>`
-            ).join("");
-
-    }catch(e){
-
-        alert("Member list load नहीं हो सकी: " + e.message);
-
-    }
-}
-
-
-/* ================= ADMIN LOGIN ================= */
-
-async function login(){
-
-  const pin = $("pin").value.trim();
-
-  if(!pin){
-    alert("Admin PIN डालें");
-    return;
-  }
-
-  try{
-
-    const user = await api("/api/login",{
-
-      method:"POST",
-
-      headers:{
-        "Content-Type":"application/json"
-      },
-
-      body:JSON.stringify({
-
-        type:"admin",
-
-        pin:pin
-
-      })
-
-    });
-
-    if(!user || !user.ok){
-      throw new Error("Admin login failed");
-    }
-
-    $("login").classList.add("hidden");
-    $("app").classList.remove("hidden");
-
-    await init();
-
-  }catch(e){
-
-    alert(e.message);
-
-  }
-
-}
-
-
-/* ================= MEMBER LOGIN ================= */
-
-async function memberLogin(){
-
-  const familyId = $("memberFamily").value;
-  const pin = $("memberPin").value.trim();
-
-  if(!familyId){
-
-    alert("अपना सदस्य चुनें");
-    return;
-
-  }
-
-  if(!pin){
-
-    alert("PIN डालें");
-    return;
-
-  }
-
-  try{
-
-    const user = await api("/api/login",{
-
-      method:"POST",
-
-      headers:{
-        "Content-Type":"application/json"
-      },
-
-      body:JSON.stringify({
-
-        type:"member",
-
-        family_id:Number(familyId),
-
-        pin:pin
-
-      })
-
-    });
-
-    $("login").classList.add("hidden");
-    $("app").classList.remove("hidden");
-
-    await initMember(user);
-
-  }catch(e){
-
-    alert(e.message);
-
-  }
-}
-
-
-/* ================= MEMBER INIT ================= */
-
-async function initMember(user){
-
-  currentLoginType = "member";
-
-  document.querySelector(".side").style.display = "none";
-
-  const memberSidebar = $("memberSidebar");
-  if(memberSidebar){
-    memberSidebar.style.display = "block";
-    memberSidebar.classList.remove("mobile-open");
-  }
-
-  const main = document.querySelector(".main");
-  if(main){
-    main.classList.add("member-main");
-  }
-
-  $("title").textContent =
-    "📒 " + user.name + " - Passbook";
-
-  $("userInfo").textContent =
-    "👤 " + user.name;
-
-  $("notificationBell").style.display =
-    "inline-flex";
-
-  $("notificationCount").style.display =
-    "none";
-
-  document.querySelectorAll("main section")
-    .forEach(x => x.classList.add("hidden"));
-
-  $("passbook").classList.remove("hidden");
-
-  const memberPassbook = $("passbook");
-  if(memberPassbook){
-    const heading = memberPassbook.querySelector("h3");
-    const memberField = memberPassbook.querySelector(".field");
-    if(heading) heading.style.display = "none";
-    if(memberField) memberField.style.display = "none";
-  }
-
-  window.currentMemberUser = user;
-
-  await loadMemberPassbook(user.family_id);
-
-  memberDashboard();
-
-  await updateNotificationCount();
-  await setupFCM(user.family_id);
-}
-function togglePinVisibility(id, button){
-
-  const input = $(id);
-  if(!input) return;
-
-  if(input.type === "password"){
-    input.type = "text";
-    button.textContent = "🙈";
-    button.title = "Hide PIN";
-  }else{
-    input.type = "password";
-    button.textContent = "👁️";
-    button.title = "Show PIN";
-  }
-}
-
-function openChangePin(button){
-
-  document.querySelectorAll("main section")
-    .forEach(x => x.classList.add("hidden"));
-
-  $("changePin").classList.remove("hidden");
-
-  /* सिर्फ Change PIN button active रहे */
-  document.querySelectorAll("#memberSidebar .nav button")
-    .forEach(x => x.classList.remove("active"));
-
-  if(button){
-    button.classList.add("active");
-  }
-
-  $("title").textContent =
-    "🔐 Change PIN";
-
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
-}
-async function changeMemberPin(){
-
-    const currentPin = $("currentPin").value.trim();
-    const newPin = $("newPin").value.trim();
-    const confirmPin = $("confirmPin").value.trim();
-
-    if(!currentPin){
-        alert("Current PIN डालें");
-        return;
-    }
-
-    if(!newPin){
-        alert("New PIN डालें");
-        return;
-    }
-
-    if(newPin !== confirmPin){
-        alert("New PIN और Confirm PIN अलग हैं");
-        return;
-    }
-
-    if(newPin.length < 4){
-        alert("PIN कम से कम 4 अंक का होना चाहिए");
-        return;
-    }
-
-    try{
-
-        const r = await fetch("/api/member/change-pin", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                current_pin: currentPin,
-                new_pin: newPin,
-                confirm_pin: confirmPin
-            })
-        });
-
-        const data = await r.json();
-
-        if(!r.ok){
-            throw new Error(
-                data.error || "PIN change failed"
-            );
-        }
-
-        alert(
-            data.message ||
-            "PIN successfully changed"
-        );
-
-        $("currentPin").value = "";
-        $("newPin").value = "";
-        $("confirmPin").value = "";
-
-        alert("PIN बदल गया है। अब नए PIN से दोबारा Login करें।");
-        await logout();
-
-    }catch(error){
-
-        alert(error.message);
-
-    }
-}
-/* ================= MEMBER LEDGER ================= */
-
-/* ================= MEMBER LEDGER ================= */
-
-function filterLedgerYearlyRecord(selectedYear){
-
-  const data =
-    window.currentMemberPassbookData;
-
-  const tableBody =
-    document.getElementById(
-      "ledgerYearlyRecords"
-    );
-
-  if(!tableBody || !data) return;
-
-
-  const records =
-    data.yearly_records || [];
-
-
-  tableBody.innerHTML =
-    records.map(r => `
-
-      <tr
-        data-financial-year="${r.financial_year}"
-      >
-
-        <td>
-          ${r.financial_year}
-        </td>
-
-        <td class="green">
-          ${money(r.saving)}
-        </td>
-
-        <td class="green">
-          ${money(r.interest)}
-        </td>
-
-        <td class="red">
-          ${money(r.debit)}
-        </td>
-
-        <td class="green">
-          ${money(r.net_saving)}
-        </td>
-
-      </tr>
-
-    `).join("");
-
-
-  const rows =
-    tableBody.querySelectorAll("tr");
-
-
-  rows.forEach(row => {
-
-    const year =
-      row.dataset.financialYear;
-
-    if(
-      !selectedYear ||
-      year === selectedYear
-    ){
-
-      row.style.display = "";
-
-    }else{
-
-      row.style.display = "none";
-
-    }
-
-  });
-
-
-  const detailBody =
-    document.getElementById(
-      "ledgerYearlyDetailed"
-    );
-
-  if(!detailBody) return;
-
-
-  if(!selectedYear){
-
-    detailBody.innerHTML = "";
-
-    return;
-
-  }
-
-
-  detailBody.innerHTML =
-    buildMemberYearlyLedger(
-      data,
-      selectedYear
-    );
-
-}
-
-/* ================= MEMBER PASSBOOK ================= */
-function filterMemberYearlyRecord(selectedYear){
-
-  const rows =
-    document.querySelectorAll(
-      "#memberYearlyRecordTable tr"
-    );
-
-  rows.forEach((row, index) => {
-
-    if(index === 0) return;
-
-    const yearCell =
-      row.querySelector("td");
-
-    if(!yearCell) return;
-
-    const year =
-      yearCell.textContent.trim();
-
-    if(
-      !selectedYear ||
-      year === selectedYear
-    ){
-      row.style.display = "";
-    }
-    else{
-      row.style.display = "none";
-    }
-
-  });
-
-
-  const detailPanel =
-    document.getElementById(
-      "memberYearlyDetailPanel"
-    );
-
-  const detailLedger =
-    document.getElementById(
-      "memberYearlyDetailedLedger"
-    );
-
-
-  const data =
-    window.currentMemberPassbookData;
-
-
-  if(
-    detailPanel &&
-    detailLedger
-  ){
-
-    if(!selectedYear){
-
-      detailPanel.style.display = "none";
-
-    }
-    else{
-
-      detailPanel.style.display = "";
-
-      if(data){
-
-        detailLedger.innerHTML =
-          buildMemberYearlyLedger(
-            data,
-            selectedYear
-          );
-
-      }
-
-    }
-
-  }
-
-}
-function buildMemberYearlyLedger(x, selectedYear){
-
-  const rows = [];
-
-  const getFY = (date) => {
-
-    const dt = String(date || "");
-    const year = Number(dt.slice(0,4));
-    const month = Number(dt.slice(5,7));
-
-    if(!year || !month) return "";
-
-    const startYear =
-      month >= 4 ? year : year - 1;
-
-    return `${startYear}-${String(startYear + 1).slice(-2)}`;
-  };
-
-
-  (x.savings || []).forEach(r => {
-
-    if(
-      selectedYear &&
-      getFY(r.date) !== selectedYear
-    ) return;
-
-    rows.push({
-      date: r.date || "",
-      detail: `मासिक बचत (${r.month || ""})`,
-      amount: Math.abs(Number(r.amount || 0)),
-      className: "green"
-    });
-
-  });
-
-
-  (x.interest_credits || []).forEach(r => {
-
-    if(
-      selectedYear &&
-      getFY(r.date) !== selectedYear
-    ) return;
-
-    rows.push({
-      date: r.date || "",
-      detail: "ब्याज लाभ",
-      amount: Math.abs(Number(r.amount || 0)),
-      className: "green"
-    });
-
-  });
-
-
-  (x.saving_debits || []).forEach(r => {
-
-    if(
-      selectedYear &&
-      getFY(r.date) !== selectedYear
-    ) return;
-
-    rows.push({
-      date: r.date || "",
-      detail:
-        `Debit / निकासी${
-          r.reason
-            ? " (" + r.reason + ")"
-            : ""
-        }`,
-      amount: -Math.abs(Number(r.amount || 0)),
-      className: "red"
-    });
-
-  });
-
-
-  rows.sort((a,b) =>
-    String(b.date).localeCompare(
-      String(a.date)
+from flask import Flask, request, jsonify, send_from_directory, session
+import os
+import datetime
+import secrets
+import firebase_admin
+from firebase_admin import credentials, messaging
+import psycopg2
+from psycopg2.extras import RealDictCursor
+
+
+BASE = os.path.dirname(os.path.abspath(__file__))
+
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+
+app = Flask(__name__, static_folder="static")
+@app.get("/firebase-messaging-sw.js")
+def firebase_messaging_sw():
+    return send_from_directory(
+        BASE,
+        "firebase-messaging-sw.js"
     )
-  );
+app.secret_key = os.environ.get(
+    "SECRET_KEY",
+    "change-this-secret-in-production"
+)
+# FIREBASE ADMIN
+firebase_cred = credentials.Certificate(
+    "/etc/secrets/firebase-service-account.json"
+)
+
+if not firebase_admin._apps:
+    firebase_admin.initialize_app(firebase_cred)
+
+# ==================================================
+# DATABASE CONNECTION
+# ==================================================
+
+class DBConnection:
+
+    def __init__(self):
+        self.connection = psycopg2.connect(
+            DATABASE_URL,
+            cursor_factory=RealDictCursor
+        )
+
+    def execute(self, sql, params=None):
+        # पुराने SQLite ? placeholders को PostgreSQL %s में बदलें
+        sql = sql.replace("?", "%s")
+
+        cursor = self.connection.cursor()
+        cursor.execute(sql, params or ())
+        return cursor
+
+    def executescript(self, sql):
+        # PostgreSQL में एक-एक statement चलाएँ
+        statements = [
+            x.strip()
+            for x in sql.split(";")
+            if x.strip()
+        ]
+
+        for statement in statements:
+            self.connection.cursor().execute(statement)
+
+    def commit(self):
+        self.connection.commit()
+
+    def close(self):
+        self.connection.close()
 
 
-return rows.length
-  ? rows.map(r => `
-      <tr>
-        <td>${r.date}</td>
-        <td>${r.detail}</td>
-        <td class="${r.className}">
-          ${money(r.amount)}
-        </td>
-      </tr>
-    `).join("")
-  : `
-      <tr>
-        <td colspan="3" class="empty">
-          इस वित्तीय वर्ष में कोई एंट्री नहीं
-        </td>
-      </tr>
-    `;
-}
-function getLedgerNetTotal(x){
+def conn():
+    return DBConnection()
 
-    let total = 0;
 
-    // केवल बचत खाते की entries Net Total में आएँगी।
-    // Loan लिया गया, Loan Repayment और Loan Interest
-    // savings balance का हिस्सा नहीं हैं।
+# ==================================================
+# DATABASE INITIALIZATION
+# ==================================================
 
-    // Savings
-    (x.savings || []).forEach(r => {
-        total += Number(r.amount || 0);
-    });
+def init_db():
+    c = conn()
 
-    // Interest Credit
-    (x.interest_credits || []).forEach(r => {
-        total += Number(r.amount || 0);
-    });
-
-    // Saving Debit / निकासी
-    (x.saving_debits || []).forEach(r => {
-        total -= Number(r.amount || 0);
-    });
-
-    return total;
-}
-
-async function loadMemberPassbook(fid){
-    window.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: "instant"
-    });
-  try{
-
-    const x =
-      await api("/api/family/" + fid + "/passbook");
-    window.currentMemberPassbookData = x;
-    const ledgerYearSelect =
-  document.getElementById("ledgerYearSelect");
-
-if(ledgerYearSelect){
-
-  const years = [
-    ...new Set(
-      (x.yearly_records || [])
-        .map(r => r.financial_year)
-        .filter(Boolean)
-    )
-  ];
-
-  ledgerYearSelect.innerHTML =
-    `<option value="">सभी वर्ष</option>` +
-    years.map(year => `
-      <option value="${year}">
-        ${year}
-      </option>
-    `).join("");
-
-}
-
-    const family = x.family;
-
-    const ledgerMemberName = document.getElementById("ledgerMemberName");
-    if(ledgerMemberName){
-      ledgerMemberName.textContent = family?.name || "—";
-    }
-
-    const savings = (x.savings || []).reduce(
-      (a,r) => a + Number(r.amount || 0),
-      0
+    c.executescript("""
+    CREATE TABLE IF NOT EXISTS families(
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        mobile TEXT DEFAULT '',
+        pin TEXT DEFAULT '1234',
+        created_at TEXT NOT NULL
     );
-    const interestTotal = (x.interest_credits || []).reduce(
-      (a,r) => a + Number(r.amount || 0),
-      0
+
+    CREATE TABLE IF NOT EXISTS savings(
+        id SERIAL PRIMARY KEY,
+        family_id INTEGER NOT NULL,
+        month TEXT NOT NULL,
+        amount REAL NOT NULL,
+        date TEXT NOT NULL,
+        FOREIGN KEY(family_id) REFERENCES families(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS saving_debits(
+        id SERIAL PRIMARY KEY,
+        family_id INTEGER NOT NULL,
+        amount REAL NOT NULL,
+        date TEXT NOT NULL,
+        reason TEXT DEFAULT '',
+        FOREIGN KEY(family_id) REFERENCES families(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS loans(
+        id SERIAL PRIMARY KEY,
+        family_id INTEGER NOT NULL,
+        original REAL NOT NULL,
+        principal REAL NOT NULL,
+        rate REAL DEFAULT 2,
+        months INTEGER DEFAULT 12,
+        date TEXT NOT NULL,
+        FOREIGN KEY(family_id) REFERENCES families(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS app_settings(
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS payments(
+        id SERIAL PRIMARY KEY,
+        loan_id INTEGER NOT NULL,
+        family_id INTEGER NOT NULL,
+        amount REAL NOT NULL,
+        interest REAL NOT NULL,
+        principal REAL NOT NULL,
+        date TEXT NOT NULL,
+        FOREIGN KEY(loan_id) REFERENCES loans(id),
+        FOREIGN KEY(family_id) REFERENCES families(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS interest_distributions(
+        id SERIAL PRIMARY KEY,
+        total_interest REAL NOT NULL,
+        date TEXT NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS interest_credits(
+        id SERIAL PRIMARY KEY,
+        family_id INTEGER NOT NULL,
+        amount REAL NOT NULL,
+        date TEXT NOT NULL,
+        distribution_id INTEGER,
+        FOREIGN KEY(family_id) REFERENCES families(id),
+        FOREIGN KEY(distribution_id) REFERENCES interest_distributions(id)
+    );
+    CREATE TABLE IF NOT EXISTS notifications(
+        id SERIAL PRIMARY KEY,
+        family_id INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        message TEXT NOT NULL,
+        is_read BOOLEAN DEFAULT FALSE,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY(family_id) REFERENCES families(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS fcm_tokens(
+        id SERIAL PRIMARY KEY,
+        family_id INTEGER NOT NULL UNIQUE,
+        token TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY(family_id) REFERENCES families(id)
     );
     
-    const overallSaving = savings + interestTotal;
-    const debitTotal =
-      (x.saving_debits || []).reduce(
-        (a,r) =>
-          a + Number(r.amount || 0),
-        0
-      );
-
-    const finalSaving =
-      overallSaving - debitTotal;
-    const loan = (x.loans || []).reduce(
-      (a,r) => a + Number(r.principal || 0),
-      0
+    CREATE TABLE IF NOT EXISTS active_member_sessions(
+        family_id INTEGER PRIMARY KEY,
+        session_token TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY(family_id) REFERENCES families(id)
     );
+    """)
 
-    const groupSavings =
-      Number(x.group_savings || 0);
+    n = c.execute(
+        "SELECT COUNT(*) AS n FROM families"
+    ).fetchone()["n"]
 
-    const groupLoan =
-      Number(x.group_loan || 0);
+    if n == 0:
+        today = datetime.date.today().isoformat()
 
-    const groupInterest =
-      Number(x.group_interest || 0);
+        for i in range(1, 24):
+            c.execute(
+                """
+                INSERT INTO families
+                (name, mobile, pin, created_at)
+                VALUES (?, ?, ?, ?)
+                """,
+                (
+                    f"परिवार {i}",
+                    "",
+                    "1234",
+                    today
+                )
+            )
 
-    const groupAvailable =
-      Number(x.group_available || 0);
+    c.execute(
+        """
+        INSERT INTO app_settings (key, value)
+        VALUES (?, ?)
+        ON CONFLICT(key) DO NOTHING
+        """,
+        ("loan_interest_rate", "2")
+    )
 
-    $("pr").innerHTML = `
+    c.commit()
+    c.close()
+# ==================================================
+# HOME PAGE
+# ==================================================
 
-      <div id="memberPrintPassbook">
-
-        <div style="
-          text-align:center;
-          padding:15px;
-          border-bottom:2px solid #1976d2;
-        ">
-
-          <img
-            src="/static/logo.png"
-            style="width:85px;height:85px;object-fit:contain"
-            onerror="this.style.display='none'"
-          >
-
-          <h2 style="margin:0;color:#083b78;">
-            Family Saving Group
-          </h2>
-
-          <div>
-            एक परिवार • एक बचत • उज्ज्वल भविष्य
-          </div>
-
-          <h3>DIGITAL PASSBOOK</h3>
-
-          <div>
-            वित्तीय वर्ष:
-            <b>2026–27</b>
-          </div>
-
-        </div>
+@app.route("/")
+def index():
+    return send_from_directory("static", "index.html")
 
 
-        <!-- MEMBER NAME -->
-        <div class="member-name-card" style="
-            margin-top:15px;
-            padding:18px 15px;
-            text-align:center;
-            background:#f7fbff;
-            border:1px solid #dbe7f3;
-            border-radius:12px;
-        ">
-        
-            <div style="
-                font-size:13px;
-                color:#64748b;
-                margin-bottom:5px;
-            ">
-                सदस्य
-            </div>
-        
-            <div style="
-                font-size:24px;
-                font-weight:700;
-                color:#083b78;
-            ">
-                ${family?.name || "—"}
-            </div>
-        
-        </div>
+# ==================================================
+# LOGIN
+# ==================================================
 
-<!-- MEMBER TRANSACTION LEDGER -->
+@app.post("/api/login")
+def login():
 
-<div class="panel" style="margin-top:15px;">
+    data = request.json or {}
 
-    <h3>📒 Transaction Ledger</h3>
+    login_type = data.get("type", "admin")
+    pin = str(data.get("pin", ""))
 
-    <div class="table" style="overflow-x:auto;">
+    # -----------------------------
+    # ADMIN LOGIN
+    # -----------------------------
 
-        <table id="memberTransactionLedger">
+    if login_type == "admin":
 
-            <thead>
-                <tr>
-                    <th>तारीख</th>
-                    <th>विवरण</th>
-                    <th>जमा</th>
-                    <th>निकासी</th>
-                    <th>शेष</th>
-                </tr>
-            </thead>
+        admin_pin = os.environ.get(
+            "ADMIN_PIN",
+            "1234"
+        )
 
-            <tbody id="memberTransactionLedgerBody">
-                ${buildMemberTransactionLedger(x)}
-            </tbody>
+        if pin != admin_pin:
+            return jsonify(
+                error="गलत Admin PIN"
+            ), 401
 
-        </table>
+        session.clear()
 
-    </div>
+        session["admin"] = True
+        session["family_id"] = None
 
-</div>
+        return jsonify(
+            ok=True,
+            role="admin"
+        )
 
-<!-- END MEMBER TRANSACTION LEDGER -->
+    # -----------------------------
+    # MEMBER LOGIN
+    # -----------------------------
+
+    if login_type == "member":
+
+        try:
+            family_id = int(
+                data.get("family_id")
+            )
+        except (TypeError, ValueError):
+            return jsonify(
+                error="Member चुनें"
+            ), 400
+
+        c = conn()
+
+        family = c.execute(
+            """
+            SELECT *
+            FROM families
+            WHERE id=? AND pin=?
+            """,
+            (
+                family_id,
+                pin
+            )
+        ).fetchone()
+
+        c.close()
+
+        if not family:
+            return jsonify(
+                error="गलत Member या PIN"
+            ), 401
+
+        c = conn()
+
+        active_session = c.execute(
+            """
+            SELECT session_token
+            FROM active_member_sessions
+            WHERE family_id=?
+            """,
+            (family_id,)
+        ).fetchone()
+
+        c.close()
+
+        if active_session:
+            return jsonify(
+                error="यह परिवार पहले से किसी दूसरे device पर login है।"
+            ), 409
+
+        session_token = secrets.token_urlsafe(32)
+
+        c = conn()
+
+        c.execute(
+            """
+            INSERT INTO active_member_sessions
+            (family_id, session_token, created_at)
+            VALUES (?, ?, ?)
+            """,
+            (
+                family_id,
+                session_token,
+                datetime.datetime.now().isoformat()
+            )
+        )
+
+        c.commit()
+        c.close()
+
+        session.clear()
+        session["session_token"] = session_token
+        session["admin"] = False
+        session["family_id"] = family_id
+
+        return jsonify(
+            ok=True,
+            role="member",
+            family_id=family_id,
+            name=family["name"]
+        )
+
+    return jsonify(
+        error="Invalid login type"
+    ), 400
+# ==================================================
+# MEMBER CHANGE PIN
+# ==================================================
+
+@app.post("/api/member/change-pin")
+def change_member_pin():
+
+    family_id = session.get("family_id")
+
+    if not family_id:
+        return jsonify(
+            error="Member login required"
+        ), 401
+
+    data = request.json or {}
+
+    current_pin = str(
+        data.get("current_pin", "")
+    )
+
+    new_pin = str(
+        data.get("new_pin", "")
+    )
+
+    confirm_pin = str(
+        data.get("confirm_pin", "")
+    )
+
+    if not current_pin:
+        return jsonify(
+            error="Current PIN डालें"
+        ), 400
+
+    if not new_pin:
+        return jsonify(
+            error="New PIN डालें"
+        ), 400
+
+    if new_pin != confirm_pin:
+        return jsonify(
+            error="New PIN और Confirm PIN अलग हैं"
+        ), 400
+
+    if len(new_pin) < 4:
+        return jsonify(
+            error="PIN कम से कम 4 अंक का होना चाहिए"
+        ), 400
+
+    c = conn()
+
+    family = c.execute(
+        """
+        SELECT pin
+        FROM families
+        WHERE id=?
+        """,
+        (family_id,)
+    ).fetchone()
+
+    if not family:
+        c.close()
+        return jsonify(
+            error="Member नहीं मिला"
+        ), 404
+
+    if str(family["pin"]) != current_pin:
+        c.close()
+        return jsonify(
+            error="Current PIN गलत है"
+        ), 401
+
+    c.execute(
+        """
+        UPDATE families
+        SET pin=?
+        WHERE id=?
+        """,
+        (
+            new_pin,
+            family_id
+        )
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True,
+        message="PIN successfully changed"
+    )
+# ==================================================
+# ADMIN FORCE LOGOUT MEMBER
+# ==================================================
+
+@app.post("/api/admin/force-logout/<int:fid>")
+def admin_force_logout(fid):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    family = c.execute(
+        """
+        SELECT id, name
+        FROM families
+        WHERE id=?
+        """,
+        (fid,)
+    ).fetchone()
+
+    if not family:
+        c.close()
+
+        return jsonify(
+            error="परिवार नहीं मिला"
+        ), 404
+
+    c.execute(
+        """
+        DELETE FROM active_member_sessions
+        WHERE family_id=?
+        """,
+        (fid,)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True,
+        message=f"{family['name']} का active login सफलतापूर्वक Force Logout हो गया।"
+    )
+# ==================================================
+# LOGOUT
+# ==================================================
+
+@app.post("/api/logout")
+def logout():
+
+    family_id = session.get("family_id")
+    session_token = session.get("session_token")
+
+    if family_id and session_token:
+
+        c = conn()
+
+        c.execute(
+            """
+            DELETE FROM active_member_sessions
+            WHERE family_id=? AND session_token=?
+            """,
+            (
+                family_id,
+                session_token
+            )
+        )
+
+        c.commit()
+        c.close()
+
+    session.clear()
+
+    return jsonify(
+        ok=True
+    )
 
 
+# ==================================================
+# CURRENT USER
+# ==================================================
 
-      </div>
+@app.get("/api/me")
+def me():
+
+    family_id = session.get("family_id")
+
+    name = None
+
+    if family_id:
+
+        c = conn()
+
+        family = c.execute(
+            """
+            SELECT name
+            FROM families
+            WHERE id=?
+            """,
+            (family_id,)
+        ).fetchone()
+
+        c.close()
+
+        if family:
+            name = family["name"]
+
+    return jsonify(
+        admin=bool(
+            session.get("admin")
+        ),
+        family_id=family_id,
+        name=name
+    )
 
 
-      <div
-        class="actions"
-        style="
-          margin-top:15px;
-          display:flex;
-          gap:10px;
-          justify-content:flex-end;
-        "
-      >
+# ==================================================
 
-        <button
-          class="btn"
-          onclick="printMemberPassbook()"
-        >
-          🖨️ Print / PDF
-        </button>
+# SECURITY
 
+# ==================================================
 
-        <button
-          class="btn"
-          onclick="logout()"
-          style="background:#d32f2f;"
-        >
-          🚪 Logout
-        </button>
+@app.before_request
+def protect_api():
 
-      </div>
-
-    `;
-
-  }catch(e){
-
-    alert(e.message);
-
-  }
-
-}
-async function updateNotificationCount(){
-
-  try{
-
-    const list =
-      await api("/api/notifications");
-
-    const bell =
-      $("notificationBell");
-
-    const count =
-      $("notificationCount");
-
-    if(!bell || !count) return;
-
-    const unread =
-      (list || []).filter(
-        n => !n.is_read
-      ).length;
-
-    if(unread > 0){
-
-      count.textContent =
-        unread > 99 ? "99+" : unread;
-
-      count.style.display =
-        "flex";
-
-    }else{
-
-      count.style.display =
-        "none";
-
+    # ये API बिना login के भी चलेंगी
+    public = {
+        "/api/login",
+        "/api/me",
+        "/api/member-list"
     }
 
-  }catch(e){
+    # Public API को security check से बाहर रखें
+    if request.path in public:
+        return None
 
-    console.error(
-      "Notification count error:",
-      e
-    );
+    # बाकी सभी API के लिए login जरूरी है
+    if request.path.startswith("/api/"):
 
-  }
+        # Admin session
+        if session.get("admin"):
+            return None
 
-}
-async function openNotifications(){
-
-  try{
-
-    const list = await api("/api/notifications");
-
-    if(!list || list.length === 0){
-
-      alert("🔔 अभी कोई notification नहीं है।");
-
-      return;
-    }
-
-    let message = "🔔 Notifications\n\n";
-
-    list.forEach((n, index) => {
-
-      message +=
-        (index + 1) + ". " +
-        n.title + "\n" +
-        n.message + "\n" +
-        "📅 " + n.created_at + "\n\n";
-
-    });
-
-    alert(message);
-
-    // सभी notifications को Read mark करें
-    await api("/api/notifications/read", {
-      method: "POST"
-    });
-
-    // Unread count तुरंत update करें
-    await updateNotificationCount();
-
-  }catch(e){
-
-    alert(
-      "Notification load नहीं हो सकी: " +
-      e.message
-    );
-
-  }
-
-}
-/* ================= MEMBER LEDGER PRINT ================= */
-
-function printMemberLedger(){
-
-  const section = $("memberLedgerSection");
-
-  if(!section){
-    alert("Ledger तैयार नहीं है");
-    return;
-  }
-
-  const clone = section.cloneNode(true);
-
-  clone.querySelectorAll("button").forEach(btn => btn.remove());
-  clone.querySelectorAll(".hidden").forEach(el => el.classList.remove("hidden"));
-
-  const content = clone.innerHTML;
-  const w = window.open("", "_blank");
-
-  if(!w){
-    alert("Print window नहीं खुली। Browser में popup allow करें।");
-    return;
-  }
-
-  w.document.write(`
-    <!doctype html>
-    <html lang="hi">
-    <head>
-      <meta charset="utf-8">
-      <title>Family Saving Group Ledger</title>
-      <style>
-        *{box-sizing:border-box;}
-        body{
-          font-family:Arial,"Noto Sans Devanagari",sans-serif;
-          padding:10px;
-          color:#16233b;
-          margin:0;
-        }
-        h2{
-          font-size:16px;
-          margin:0 0 8px;
-          color:#0b3d82;
-        }
-        h3{margin-top:8px;}
-        .panel{
-          border:1px solid #d5deea;
-          border-radius:8px;
-          padding:10px;
-          margin-bottom:10px;
-        }
-        .table{width:100%;overflow:visible;}
-        table{width:100%;border-collapse:collapse;}
-        th,td{padding:6px;border:1px solid #ddd;text-align:left;font-size:11px;}
-        th{background:#f5f7fb;}
-        .green{color:#20864b;}
-        .red{color:#c73535;}
-        select{border:1px solid #ddd;padding:6px;}
-
-        /* ===== Professional Ledger Print Header ===== */
-        .ledger-brand-header{
-          text-align:center !important;
-          padding:6px 8px 7px !important;
-          margin:0 0 10px !important;
-          background:#f7fbff !important;
-          border:1px solid #dbe7f3 !important;
-          border-radius:8px !important;
-        }
-        .ledger-brand-logo{
-          width:64px !important;
-          height:64px !important;
-          max-width:64px !important;
-          max-height:64px !important;
-          min-width:0 !important;
-          min-height:0 !important;
-          object-fit:contain !important;
-          display:block !important;
-          margin:0 auto 3px !important;
-        }
-        .ledger-brand-title{
-          font-size:17px !important;
-          font-weight:700 !important;
-          line-height:1.15 !important;
-          color:#0b3d82 !important;
-        }
-        .ledger-brand-subtitle{
-          margin-top:2px !important;
-          font-size:9px !important;
-          line-height:1.2 !important;
-          color:#334155 !important;
-        }
-
-        @page{
-          size:A4 portrait;
-          margin:10mm;
-        }
-        @media print{
-          body{margin:0;}
-          select{border:0;appearance:none;}
-          .ledger-brand-logo{
-            width:64px !important;
-            height:64px !important;
-            max-width:64px !important;
-            max-height:64px !important;
-          }
-        }
-      </style>
-    </head>
-    <body>
-      ${content}
-      <script>
-        window.onload=function(){window.print();};
-      <\/script>
-    </body>
-    </html>
-  `);
-
-  w.document.close();
-}
-
-/* ================= MEMBER PRINT ================= */
-
-function printMemberPassbook(){
-
-  const box = $("memberPrintPassbook");
-
-  if(!box){
-
-    alert("Passbook तैयार नहीं है");
-    return;
-
-  }
-
-  const content = box.innerHTML;
-
-  const w = window.open("", "_blank");
-
-  if(!w){
-
-    alert(
-      "Print window नहीं खुली। Browser में popup allow करें।"
-    );
-
-    return;
-
-  }
-
-  w.document.write(`
-
-    <!doctype html>
-
-    <html lang="hi">
-
-    <head>
-
-      <meta charset="utf-8">
-
-      <title>S
-        Family Saving Group Passbook
-      </title>
-
-      <style>
-
-        body{
-          font-family:Arial,
-          "Noto Sans Devanagari",
-          sans-serif;
-          padding:25px;
-          color:#16233b;
-        }
-
-        table{
-          width:100%;
-          border-collapse:collapse;
-        }
-
-        th,td{
-          padding:9px;
-          border:1px solid #ddd;
-          text-align:left;
-        }
-
-        th{
-          background:#f5f7fb;
-        }
-
-        .card{
-          border:1px solid #ddd;
-          padding:12px;
-          margin:5px;
-          display:inline-block;
-          width:45%;
-          vertical-align:top;
-        }
-
-        .label{
-          font-size:12px;
-          color:#666;
-        }
-
-        .value{
-          font-size:18px;
-          font-weight:bold;
-          margin-top:5px;
-        }
-
-        .green{
-          color:#20864b;
-        }
-
-        .red{
-          color:#c73535;
-        }
-
-        @media print{
-          body{
-            margin:12mm;
-          }
-        }
-      .no-print{
-        position:fixed;
-        top:50px;
-        right:15px;
-        padding:9px 14px;
-        border:0;
-        border-radius:7px;
-        background:#c73535;
-        color:#fff;
-        font-weight:700;
-        cursor:pointer;
-      }
-      
-      @media print{
-        .no-print{
-          display:none !important;
-        }
-      
-        body{
-          margin:12mm;
-        }
-      }
-      
-      </style>
-
-    </head>
-
-    <body>
-      <button class="no-print" onclick="window.close(); setTimeout(function(){ history.back(); }, 100);">✕ Close</button>
-
-      ${content}
-
-      <script>
-        window.onload = function(){
-          window.print();
-        };
-      <\/script>
-</body>
-
-    </html>
-
-  `);
-
-  w.document.close();
-
-}
-
-
-/* ================= LOGOUT ================= */
-
-async function logout(){
-
-  try{
-
-    await api("/api/logout",{
-      method:"POST"
-    });
-
-  }catch(e){}
-
-  location.reload();
-
-}
-function toggleSidebar(){
-
-  const sidebar =
-    currentLoginType === "member"
-      ? document.querySelector("#memberSidebar")
-      : document.querySelector(".side");
-
-  if(!sidebar) return;
-
-  if(window.innerWidth <= 650){
-    sidebar.classList.toggle("mobile-open");
-  }
-}
-document.addEventListener("click", function(e){
-  if(window.innerWidth <= 650){
-
-    const sidebar =
-      currentLoginType === "member"
-        ? document.querySelector("#memberSidebar")
-        : document.querySelector(".side");
-
-    const menuBtn = document.querySelector("#menuBtn");
-
-    if(
-      sidebar &&
-      sidebar.classList.contains("mobile-open") &&
-      !sidebar.contains(e.target) &&
-      menuBtn &&
-      !menuBtn.contains(e.target)
-    ){
-      sidebar.classList.remove("mobile-open");
-    }
-
-  }
-});
-
-/* ================= MEMBER SIDEBAR ACTIONS ================= */
-
-function renderMemberDashboard(){
-
-  const section = $("dashboard");
-  const user = window.currentMemberUser;
-  const x = window.currentMemberPassbookData;
-
-  if(!section || !user || !x) return;
-
-  const savingsRows = x.savings || [];
-  const interestRows = x.interest_credits || [];
-  const debitRows = x.saving_debits || [];
-  const loanRows = x.loans || [];
-
-  const savingsTotal = savingsRows.reduce((a,r) => a + Number(r.amount || 0), 0);
-  const interestTotal = interestRows.reduce((a,r) => a + Number(r.amount || 0), 0);
-  const debitTotal = debitRows.reduce((a,r) => a + Number(r.amount || 0), 0);
-  const memberSaving = savingsTotal + interestTotal - debitTotal;
-  const loanTotal = loanRows.reduce((a,r) => a + Number(r.principal || 0), 0);
-
-  const now = new Date();
-  const fyStart = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1;
-  const fyEnd = String((fyStart + 1) % 100).padStart(2,"0");
-  const currentFY = fyStart + "-" + fyEnd;
-  const getFYLocal = (date) => {
-    if(!date) return "";
-    const d = new Date(date);
-    if(Number.isNaN(d.getTime())) return "";
-    const y = d.getMonth() >= 3 ? d.getFullYear() : d.getFullYear() - 1;
-    return y + "-" + String((y + 1) % 100).padStart(2,"0");
-  };
-  const yearlySavings = savingsRows
-    .filter(r => getFYLocal(r.date) === currentFY)
-    .reduce((a,r) => a + Number(r.amount || 0), 0);
-
-  const activities = [];
-  savingsRows.forEach(r => activities.push({
-    date:r.date || "",
-    title:"महीने की बचत जमा",
-    amount:Number(r.amount || 0),
-    icon:"💰",
-    cls:"green"
-  }));
-  interestRows.forEach(r => activities.push({
-    date:r.date || "",
-    title:"ब्याज प्राप्त",
-    amount:Number(r.amount || 0),
-    icon:"📈",
-    cls:"orange"
-  }));
-  debitRows.forEach(r => activities.push({
-    date:r.date || "",
-    title:"बचत निकासी",
-    amount:-Math.abs(Number(r.amount || 0)),
-    icon:"↘️",
-    cls:"red"
-  }));
-  activities.sort((a,b) => String(b.date).localeCompare(String(a.date)));
-
-  section.innerHTML = `
-    <div class="member-dashboard">
-      <div class="member-welcome">
-        <div>
-          <div class="welcome-label">Welcome,</div>
-          <h2>${user.name || "Member"}</h2>
-          <div class="welcome-sub">Member Dashboard</div>
-        </div>
-        <div class="member-welcome-icon">👤</div>
-      </div>
-
-      <div class="member-dashboard-cards">
-        <div class="member-dashboard-card green">
-          <div class="member-card-label">💰 मेरी कुल बचत</div>
-          <div class="member-card-value">${money(memberSaving)}</div>
-        </div>
-        <div class="member-dashboard-card red">
-          <div class="member-card-label">🏦 मेरा बाकी लोन</div>
-          <div class="member-card-value">${money(loanTotal)}</div>
-        </div>
-        <div class="member-dashboard-card">
-          <div class="member-card-label">📅 इस साल की बचत</div>
-          <div class="member-card-value">${money(yearlySavings)}</div>
-        </div>
-        <div class="member-dashboard-card orange">
-          <div class="member-card-label">📈 मुझे प्राप्त ब्याज</div>
-          <div class="member-card-value">${money(interestTotal)}</div>
-        </div>
-      </div>
-
-      <div class="member-activity">
-        <h3>🕒 हाल की गतिविधि</h3>
-        ${activities.slice(0,5).map(r => `
-          <div class="member-activity-row">
-            <div class="member-activity-left">
-              <div class="member-activity-icon">${r.icon}</div>
-              <div>
-                <div class="member-activity-title">${r.title}</div>
-                <div class="member-activity-date">${r.date || "—"}</div>
-              </div>
-            </div>
-            <div class="member-activity-amount ${r.cls}">${money(r.amount)}</div>
-          </div>
-        `).join("") || `<div class="member-activity-empty">अभी कोई गतिविधि नहीं है।</div>`}
-      </div>
-    </div>
-  `;
-}
-
-function memberDashboard(button){
-  closeMemberSidebar();
-
-  document.querySelectorAll("main section")
-    .forEach(x => x.classList.add("hidden"));
-
-  const section = $("dashboard");
-  if(!section) return;
-
-  section.classList.remove("hidden");
-
-  if(currentLoginType === "member"){
-    renderMemberDashboard();
-  }
-
-  document.querySelectorAll("#memberSidebar .nav button")
-    .forEach(x => x.classList.remove("active"));
-
-  if(button){
-    button.classList.add("active");
-  }else{
-    const dashboardButton = document.querySelector('#memberSidebar .nav button[onclick*="memberDashboard"]');
-    if(dashboardButton) dashboardButton.classList.add("active");
-  }
-
-  $("title").textContent = "🏠 Dashboard";
-
-  window.scrollTo({top:0, behavior:"smooth"});
-}
-
-async function openFamilyGroupDashboard(button){
-
-  closeMemberSidebar();
-
-  document.querySelectorAll("main section")
-    .forEach(x => x.classList.add("hidden"));
-
-  let section = $("familyGroupDashboard");
-
-  if(!section){
-
-    section = document.createElement("section");
-    section.id = "familyGroupDashboard";
-
-    section.innerHTML = `
-      
-        <div class="family-welcome">
-        
-            <div class="welcome-label">
-                👑 ADMIN CONTROL CENTER
-            </div>
-        
-            <h2>
-                Welcome Back, <span>Admin</span>
-            </h2>
-        
-            <p>
-                Manage Today&nbsp; • &nbsp;Build a Stronger Tomorrow
-            </p>
-        
-            <div class="welcome-badge">
-                🛡️ सुरक्षित प्रबंधन
-                <span>•</span>
-                <span id="fgdFamilyCount">23 परिवार</span>
-                <span>•</span>
-                <span>एक लक्ष्य</span>
-            </div>
-        
-        </div>
-        
-        
-        <div class="cards">
-
-
-          <div class="card">
-            <div class="label">💰 समूह की कुल बचत</div>
-            <div class="value green" id="fgdSavings">₹0</div>
-          </div>
-
-          <div class="card">
-            <div class="label">🏦 कुल Loan बाकी</div>
-            <div class="value red" id="fgdLoans">₹0</div>
-          </div>
-
-          <div class="card">
-            <div class="label">💵 प्राप्त ब्याज</div>
-            <div class="value orange" id="fgdInterest">₹0</div>
-          </div>
-
-          <div class="card">
-            <div class="label">💳 उपलब्ध राशि</div>
-            <div class="value" id="fgdAvailable">₹0</div>
-          </div>
-
-        </div>
-
-        <!-- ================= GROUP DETAILS ================= -->
-        <div class="fgd-detail-grid">
-
-          <div class="fgd-detail-card status-card">
-            <div class="fgd-detail-title">👨‍👩‍👧‍👦 समूह की स्थिति</div>
-
-            <div class="fgd-detail-list">
-              <div class="fgd-detail-row">
-                <span>कुल परिवार</span>
-                <b>23</b>
-              </div>
-
-              <div class="fgd-detail-row">
-                <span>मासिक बचत लक्ष्य</span>
-                <b>₹46,000</b>
-              </div>
-
-              <div class="fgd-detail-row">
-                <span>कुल Loan बाकी</span>
-                <b id="fgdStatusLoan">₹0</b>
-              </div>
-
-              <div class="fgd-detail-row">
-                <span>उपलब्ध राशि</span>
-                <b id="fgdStatusAvailable">₹0</b>
-              </div>
-            </div>
-          </div>
-
-          <div class="fgd-detail-card financial-card">
-            <div class="fgd-detail-title">📊 समूह का वित्तीय सारांश</div>
-
-            <div class="fgd-detail-list">
-              <div class="fgd-detail-row">
-                <span>कुल बचत</span>
-                <b id="fgdSummarySavings">₹0</b>
-              </div>
-
-              <div class="fgd-detail-row">
-                <span>प्राप्त ब्याज</span>
-                <b id="fgdSummaryInterest">₹0</b>
-              </div>
-
-              <div class="fgd-detail-row">
-                <span>Loan बाकी</span>
-                <b id="fgdSummaryLoan">₹0</b>
-              </div>
-
-              <div class="fgd-detail-row">
-                <span>उपलब्ध राशि</span>
-                <b id="fgdSummaryAvailable">₹0</b>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="fgd-motivation">
-          🌱 छोटी-छोटी बचत, बड़ा और सुरक्षित भविष्य
-          <span>एक परिवार • एक बचत • उज्ज्वल भविष्य</span>
-        </div>
-
-    `;
-
-    document.querySelector(".content").appendChild(section);
-  }
-
-  section.classList.remove("hidden");
-
-  document.querySelectorAll("#memberSidebar .nav button")
-    .forEach(x => x.classList.remove("active"));
-
-  if(button){
-    button.classList.add("active");
-  }
-
-  $("title").textContent = "🏢 Family Group Dashboard";
-
-  try{
-
-    const user = await api("/api/me");
-
-    if(!user || !user.family_id){
-      throw new Error("Member session नहीं मिली");
-    }
-
-    const x = await api(
-      "/api/family/" + user.family_id + "/passbook"
-    );
-
-    $("fgdSavings").textContent =
-      money(x.group_savings);
-
-    $("fgdLoans").textContent =
-      money(x.group_loan);
-
-    $("fgdInterest").textContent =
-      money(x.group_interest);
-
-    $("fgdAvailable").textContent =
-      money(x.group_available);
-
-    // नीचे के detail cards भी उसी live data से भरें
-    $("fgdStatusLoan").textContent =
-      money(x.group_loan);
-
-    $("fgdStatusAvailable").textContent =
-      money(x.group_available);
-
-    $("fgdSummarySavings").textContent =
-      money(x.group_savings);
-
-    $("fgdSummaryInterest").textContent =
-      money(x.group_interest);
-
-    $("fgdSummaryLoan").textContent =
-      money(x.group_loan);
-
-    $("fgdSummaryAvailable").textContent =
-      money(x.group_available);
-
-  }catch(e){
-
-    console.error(e);
-
-    alert(
-      "Family Group Dashboard data load नहीं हो सका: " +
-      e.message
-    );
-  }
-
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
-}
-function closeMemberSidebar(){
-  const sidebar = $("memberSidebar");
-  if(sidebar && window.innerWidth <= 650){
-    sidebar.classList.remove("mobile-open");
-  }
-}
-
-function memberGoTo(id, button){
-  closeMemberSidebar();
-
-  document.querySelectorAll("main section")
-    .forEach(x => x.classList.add("hidden"));
-
-  const section = $(id);
-  if(!section) return;
-
-  section.classList.remove("hidden");
-
-  document.querySelectorAll("#memberSidebar .nav button")
-    .forEach(x => x.classList.remove("active"));
-
-  if(button){
-    button.classList.add("active");
-  }
-
-  if(id === "passbook"){
-    $("title").textContent = "📒 My Passbook";
-  }
-}
-
-function memberNotifications(){
-  closeMemberSidebar();
-  openNotifications();
-}
-
-function memberPrint(){
-  closeMemberSidebar();
-  printMemberPassbook();
-}
-
-function memberChangePinMenu(button){
-  closeMemberSidebar();
-  openChangePin(button);
-}
-
-function memberFinancialInfo(){
-  closeMemberSidebar();
-  const target = $("memberFinancialInfo");
-  if(target){
-    target.style.display = "";
-    target.scrollIntoView({behavior:"smooth", block:"start"});
-  }
-}
-function memberLedger(button){
-
-  closeMemberSidebar();
-
-  document.querySelectorAll("#memberSidebar .nav button")
-    .forEach(x => x.classList.remove("active"));
-
-  if(button){
-    button.classList.add("active");
-  }
-
-  // पहले सभी member sections hide करो
-  document.querySelectorAll("main section")
-    .forEach(x => x.classList.add("hidden"));
-
-  // अब सिर्फ नया Ledger खोलो
-  const target = $("memberLedgerSection");
-
-  if(target){
-
-    target.classList.remove("hidden");
-
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "smooth"
-    });
-
-  }
-
-  // Ledger data + Net Total दिखाएँ
-  const data = window.currentMemberPassbookData;
-
-  if(data){
-
-    // वित्तीय वर्ष की रिकॉर्ड table भरें
-    filterLedgerYearlyRecord("");
-
-    // सभी transactions + नीचे Net Total
-    const transactionBody =
-      document.getElementById("ledgerTransactions");
-
-    if(transactionBody){
-      transactionBody.innerHTML =
-        buildPassbookLedger(data, true);
-    }
-
-  }
-
-  $("title").textContent = "📋 Ledger";
-}
-
-/* ================= NAVIGATION ================= */
-
-function show(id, button){
-
-  document.querySelectorAll("main section")
-    .forEach(x => x.classList.add("hidden"));
-
-  const section = $(id);
-
-  if(!section) return;
-
-  section.classList.remove("hidden");
-
-  document.querySelectorAll(".nav button")
-    .forEach(x => x.classList.remove("active"));
-
-  if(button){
-    button.classList.add("active");
-  }
-
-  if(id === "dashboard"){
-
-    $("title").textContent = "Dashboard";
-
-  }else{
-
-    const heading = section.querySelector("h3");
-
-    $("title").textContent =
-      heading ? heading.textContent : id;
-
-  }
-  $("title").className = "title " + id;
-  if(window.innerWidth <= 650 && currentLoginType !== "member"){
-  document.querySelector(".side")?.classList.remove("mobile-open");
-}
-
-}
-
-
-/* ================= INIT ================= */
-
-async function init(){
-
-  const today =
-    new Date().toISOString().slice(0,10);
-
-  ["sd","ddate","ld","rd","dd"].forEach(id => {
-
-    if($(id)){
-      $(id).value = today;
-    }
-
-  });
-
-  $("sm").innerHTML =
-    M.map(x =>
-      `<option value="${x}">${x}</option>`
-    ).join("");
-
-  await refresh();
-
-}
-
-
-/* ================= PREMIUM MEMBER MANAGEMENT RENDER ================= */
-let adminMemberSearch = "";
-let adminMemberLoanFilter = "all";
-
-function filterAdminMembers(){
-  adminMemberSearch = ($("memberSearch")?.value || "").trim().toLowerCase();
-  adminMemberLoanFilter = $("memberLoanFilter")?.value || "all";
-  renderAdminMembers();
-}
-
-function renderAdminMembers(){
-  const rows = Array.isArray(fam) ? fam : [];
-  const search = adminMemberSearch;
-  const filter = adminMemberLoanFilter;
-
-  const filtered = rows.filter(f => {
-    const name = String(f.name || "").toLowerCase();
-    const mobile = String(f.mobile || "").toLowerCase();
-    const loan = Number(f.loan || 0);
-    const matchesSearch = !search || name.includes(search) || mobile.includes(search);
-    const matchesLoan =
-      filter === "all" ||
-      (filter === "loan" && loan > 0) ||
-      (filter === "no-loan" && loan <= 0);
-    return matchesSearch && matchesLoan;
-  });
-
-  if($("mmTotal")){
-    $("mmTotal").textContent = rows.length;
-    $("mmSavings").textContent = money(rows.reduce((a,f) => a + Number(f.savings || 0), 0));
-    $("mmLoans").textContent = money(rows.reduce((a,f) => a + Number(f.loan || 0), 0));
-    $("mmLoanMembers").textContent = rows.filter(f => Number(f.loan || 0) > 0).length;
-  }
-
-  if($("memberResultCount")){
-    $("memberResultCount").textContent = `${filtered.length} सदस्य दिख रहे हैं`;
-  }
-
-  if(!$("mt")) return;
-
-  $("mt").innerHTML = filtered.map((f,i) => `
-    <tr>
-      <td>${i+1}</td>
-      <td><b>${f.name}</b></td>
-      <td>${f.mobile || "—"}</td>
-      <td>••••</td>
-      <td class="green">${money(f.savings)}</td>
-      <td class="red">${money(f.loan)}</td>
-      <td>
-        <button class="btn secondary small" onclick="editMember(${f.id})">✏️ Edit</button>
-        <button class="btn secondary small" onclick="resetMemberPin(${f.id})">🔄 Reset PIN</button>
-        <button class="btn secondary small" onclick="forceLogoutMember(${f.id})">🔒 Force Logout</button>
-      </td>
-    </tr>
-  `).join("") || `
-    <tr><td colspan="7" class="empty">कोई Member नहीं मिला</td></tr>
-  `;
-}
-
-
-/* ================= REFRESH ================= */
-
-let savingDebits = [];
-
-async function refresh(){
-
-  try{
-
-    fam = await api("/api/families");
-
-    ["sf","df","lf","pf"].forEach(id => {
-
-      if(!$(id)) return;
-
-      $(id).innerHTML =
-        fam.map(f =>
-          `<option value="${f.id}">
-            ${f.name}
-          </option>`
-        ).join("");
-
-    });
-
-
-    const d = await api("/api/dashboard");
-
-    $("cf").textContent = d.families ?? fam.length;
-
-    if($("adminFamilyCount")){
-      $("adminFamilyCount").textContent =
-        (d.families ?? fam.length) + " परिवार";
-    }
-
-    $("cs").textContent = money(d.savings);
-
-    $("cl").textContent = money(d.loans);
-
-    $("ci").textContent = money(d.interest);
-
-    $("ca").textContent = money(d.available);
-
-
-    $("sum").innerHTML = `
-
-      <div class="line">
-        <span>कुल सदस्य</span>
-        <b>${d.families ?? fam.length}</b>
-      </div>
-
-      <div class="line">
-        <span>कुल बचत</span>
-        <b>${money(d.savings)}</b>
-      </div>
-
-      <div class="line">
-        <span>Active Loan</span>
-        <b>${Number(d.loans || 0) > 0 ? "हाँ" : "नहीं"}</b>
-      </div>
-
-    `;
-
-
-    const savings =
-      await api("/api/savings");
-
-    savingDebits =
-      await api("/api/saving-debits");
-
-
-    const currentMonthIndex =
-      new Date().getMonth() - 3;
-
-    const safeIndex =
-      currentMonthIndex < 0
-      ? 0
-      : currentMonthIndex;
-
-
-    const currentMonth = M[safeIndex];
-
-
-    const monthTotal =
-      savings
-      .filter(x => x.month === currentMonth)
-      .reduce(
-        (a,x) => a + Number(x.amount || 0),
-        0
-      );
-
-
-    $("prog").style.width =
-      Math.min(
-        100,
-        monthTotal / 46000 * 100
-      ) + "%";
-
-
-    $("progtext").textContent =
-      "मासिक प्रगति: " +
-      money(monthTotal);
-
-
-    $("ft").innerHTML =
-      fam.map((f,i) => `
-
-        <tr>
-
-          <td>${i+1}</td>
-
-          <td>${f.name}</td>
-
-          <td>${f.mobile || "—"}</td>
-
-          <td>
-            ${money(f.savings)}
-          </td>
-
-          <td>
-            ${money(f.loan)}
-          </td>
-
-          <td>
-
-            <button
-              class="btn secondary small"
-              onclick="editFamily(${f.id})">
-              ✏️ Edit
-            </button>
-
-            <button
-              class="btn danger small"
-              onclick="deleteFamily(${f.id})">
-              🗑️ Delete
-            </button>
-
-          </td>
-
-        </tr>
-
-      `).join("")
-      ||
-      `<tr>
-        <td colspan="6" class="empty">
-          कोई सदस्य नहीं
-        </td>
-      </tr>`;
-
-
-    renderAdminMembers();
-
-
-    const ledgerRows = [
-      ...savings.map(x => ({
-        kind: "saving",
-        id: Number(x.id),
-        date: x.date,
-        month: x.month,
-        family: x.family,
-        amount: Number(x.amount || 0)
-      })),
-      ...savingDebits.map(x => ({
-        kind: "debit",
-        id: Number(x.id),
-        date: x.date,
-        month: "Debit",
-        family: x.family,
-        amount: -Number(x.amount || 0),
-        reason: x.reason || ""
-      }))
-    ].sort((a,b) =>
-      String(b.date).localeCompare(String(a.date)) ||
-      b.id - a.id
-    );
-
-
-    $("st").innerHTML =
-      ledgerRows.map(x => `
-
-        <tr>
-
-          <td>${x.date}</td>
-
-          <td>${x.kind === "debit" ? "Debit / निकासी" : x.month}</td>
-
-          <td>${x.family}</td>
-
-          <td class="${x.kind === "debit" ? "red" : "green"}">
-            ${money(x.amount)}
-          </td>
-
-          <td>
-            ${x.kind === "debit" ? (x.reason || "—") : "—"}
-          </td>
-
-          <td>
-            ${
-              x.kind === "debit"
-              ? `
-                <div class="debit-actions">
-                  <button
-                    class="btn secondary small"
-                    onclick="editSavingDebit(${x.id})">
-                    ✏️ Edit
-                  </button>
-
-                  <button
-                    class="btn danger small"
-                    onclick="deleteSavingDebit(${x.id})">
-                    🗑️ Delete
-                  </button>
-                </div>
-              `
-              : `
-                <button
-                  class="btn secondary small"
-                  onclick="editSaving(${x.id})">
-                  ✏️ Edit
-                </button>
-
-                <button
-                  class="btn danger small"
-                  onclick="deleteSaving(${x.id})">
-                  🗑️ Delete
-                </button>
-              `
-            }
-          </td>
-
-        </tr>
-
-      `).join("")
-      ||
-      `<tr>
-        <td colspan="6" class="empty">
-          कोई एंट्री नहीं
-        </td>
-      </tr>`;
-
-
-    const loans =
-      await api("/api/loans");
-
-
-    $("lt").innerHTML =
-      loans.map(x => `
-
-        <tr>
-
-          <td>${x.family}</td>
-
-          <td>
-            ${money(x.original)}
-          </td>
-
-          <td>2%</td>
-
-          <td>
-            ${money(x.principal)}
-          </td>
-
-          <td>
-            ${Number(x.principal || 0) > 0
-              ? "Active"
-              : "Closed"}
-          </td>
-
-          <td>
-
-            <button
-              class="btn secondary small"
-              onclick="editLoan(${x.id})">
-              ✏️ Edit
-            </button>
-
-            <button
-              class="btn danger small"
-              onclick="deleteLoan(${x.id})">
-              🗑️ Delete
-            </button>
-
-          </td>
-
-        </tr>
-
-      `).join("")
-      ||
-      `<tr>
-        <td colspan="6" class="empty">
-          कोई लोन नहीं
-        </td>
-      </tr>`;
-
-
-    $("rl").innerHTML =
-      loans
-      .filter(x => Number(x.principal || 0) > 0)
-      .map(x =>
-        `<option value="${x.id}">
-          ${x.family} — ${money(x.principal)}
-        </option>`
-      )
-      .join("")
-      ||
-      `<option value="">
-        कोई Active Loan नहीं
-      </option>`;
-
-
-    const payments =
-      await api("/api/payments");
-
-
-    $("pt").innerHTML =
-      payments.map(x => `
-
-        <tr>
-
-          <td>${x.date}</td>
-
-          <td>${x.family}</td>
-
-          <td>
-            ${money(x.amount)}
-          </td>
-
-          <td>
-            ${money(x.interest)}
-          </td>
-
-          <td>
-            ${money(x.principal)}
-          </td>
-
-          <td>
-            <button
-              class="btn danger"
-              onclick="deletePayment(${x.id})"
-            >
-              🗑️ Delete
-            </button>
-          </td>
-
-        </tr>
-
-      `).join("")
-      ||
-      `<tr>
-        <td colspan="6" class="empty">
-          कोई भुगतान नहीं
-        </td>
-      </tr>`;
-
-  }catch(e){
-
-    console.error(e);
-
-    alert("Data load करने में समस्या: " + e.message);
-
-  }
-
-}
-  async function deletePayment(id){
-
-    if(!confirm(
-      "क्या आप यह भुगतान रिकॉर्ड delete करना चाहते हैं? Loan balance वापस adjust होगा।"
-    )){
-      return;
-    }
-
-    try{
-
-      await api(
-        "/api/payments/" + id,
+        # Member session
+        if session.get("family_id"):
+
+            if not member_session_valid():
+
+                session.clear()
+
+                return jsonify(
+                    error="Session expired. Please login again."
+                ), 401
+
+            return None
+
+        # कोई valid login नहीं
+        return jsonify(
+            error="Login required"
+        ), 401
+
+    return None
+
+# ==================================================
+# ADMIN REQUIRED
+# ==================================================
+
+def admin_required():
+
+    if not session.get("admin"):
+
+        return jsonify(
+            error="Admin access required"
+        ), 403
+
+    return None
+# ==================================================
+
+# MEMBER SESSION VALIDATION
+
+# ==================================================
+
+def member_session_valid():
+
+    family_id = session.get("family_id")
+    session_token = session.get("session_token")
+
+    if not family_id or not session_token:
+        return False
+
+    c = conn()
+
+    row = c.execute(
+        """
+        SELECT session_token
+        FROM active_member_sessions
+        WHERE family_id=?
+        """,
+        (family_id,)
+    ).fetchone()
+
+    c.close()
+
+    return bool(
+        row and
+        row["session_token"] == session_token
+    )
+
+
+# ==================================================
+
+# DASHBOARD
+
+# ==================================================
+
+
+@app.get("/api/dashboard")
+def dashboard():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    families = c.execute(
+        """
+        SELECT *
+        FROM families
+        ORDER BY id
+        """
+    ).fetchall()
+
+    savings = c.execute(
+        """
+        SELECT
+            (
+                SELECT COALESCE(SUM(amount), 0)
+                FROM savings
+            )
+            -
+            (
+                SELECT COALESCE(SUM(amount), 0)
+                FROM saving_debits
+            )
+            +
+            (
+                SELECT COALESCE(SUM(amount), 0)
+                FROM interest_credits
+            ) x
+        """
+    ).fetchone()["x"]
+
+    loans = c.execute(
+        """
+        SELECT COALESCE(SUM(principal), 0) x
+        FROM loans
+        """
+    ).fetchone()["x"]
+
+    interest = c.execute(
+        """
+        SELECT
+            COALESCE((SELECT SUM(interest) FROM payments), 0)
+            -
+            COALESCE((SELECT SUM(total_interest) FROM interest_distributions), 0)
+        x
+        """
+    ).fetchone()["x"]
+
+    c.close()
+
+    return jsonify({
+        "families": len(families),
+        "savings": savings,
+        "loans": loans,
+        "interest": interest,
+        "available": savings + interest - loans,
+        "family_data": [
+            dict(x)
+            for x in families
+        ]
+    })
+
+
+# ==================================================
+# FAMILIES - GET
+# ==================================================
+
+@app.get("/api/families")
+def get_families():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    fs = c.execute(
+        """
+        SELECT *
+        FROM families
+        ORDER BY id
+        """
+    ).fetchall()
+
+    out = []
+
+    for f in fs:
+
+        s = c.execute(
+            """
+            SELECT
+                (
+                    SELECT COALESCE(SUM(amount), 0)
+                    FROM savings
+                    WHERE family_id=?
+                )
+                -
+                (
+                    SELECT COALESCE(SUM(amount), 0)
+                    FROM saving_debits
+                    WHERE family_id=?
+                ) x
+            """,
+            (f["id"], f["id"])
+        ).fetchone()["x"]
+
+        l = c.execute(
+            """
+            SELECT COALESCE(SUM(principal), 0) x
+            FROM loans
+            WHERE family_id=?
+            """,
+            (f["id"],)
+        ).fetchone()["x"]
+
+        out.append({
+            **dict(f),
+            "savings": s,
+            "loan": l
+        })
+
+    c.close()
+
+    return jsonify(out)
+
+
+# ==================================================
+# ADD FAMILY
+# ==================================================
+
+@app.post("/api/families")
+def add_family():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    d = request.json or {}
+
+    name = (
+        d.get("name") or ""
+    ).strip()
+
+    mobile = (
+        d.get("mobile") or ""
+    ).strip()
+
+    pin = str(
+        d.get("pin") or "1234"
+    ).strip()
+
+    if not name:
+        return jsonify(
+            error="नाम जरूरी है"
+        ), 400
+
+    if len(pin) < 4:
+        return jsonify(
+            error="PIN कम से कम 4 अंक का होना चाहिए"
+        ), 400
+
+    c = conn()
+
+    cur = c.execute(
+        """
+        INSERT INTO families
+        (name, mobile, pin, created_at)
+        VALUES (?, ?, ?, ?)
+        """,
+        (
+            name,
+            mobile,
+            pin,
+            datetime.date.today().isoformat()
+        )
+    )
+
+    c.commit()
+
+    family_id = cur.lastrowid
+
+    c.close()
+
+    return jsonify(
+        ok=True,
+        id=family_id
+    )
+
+
+# ==================================================
+# UPDATE FAMILY
+# ==================================================
+
+@app.put("/api/families/<int:fid>")
+def update_family(fid):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    d = request.json or {}
+
+    name = (
+        d.get("name") or ""
+    ).strip()
+
+    mobile = (
+        d.get("mobile") or ""
+    ).strip()
+
+    pin = str(
+        d.get("pin") or ""
+    ).strip()
+
+    if not name:
+        return jsonify(
+            error="नाम जरूरी है"
+        ), 400
+
+    c = conn()
+
+    family = c.execute(
+        """
+        SELECT id, pin
+        FROM families
+        WHERE id=?
+        """,
+        (fid,)
+    ).fetchone()
+
+    if not family:
+
+        c.close()
+
+        return jsonify(
+            error="परिवार नहीं मिला"
+        ), 404
+
+    # PIN blank ho to existing PIN ko preserve karo.
+    if not pin:
+        pin = str(family["pin"] or "").strip()
+
+    if not pin:
+        c.close()
+        return jsonify(
+            error="PIN जरूरी है"
+        ), 400
+
+    if len(pin) < 4:
+        c.close()
+        return jsonify(
+            error="PIN कम से कम 4 अंक का होना चाहिए"
+        ), 400
+
+    c.execute(
+        """
+        UPDATE families
+        SET name=?, mobile=?, pin=?
+        WHERE id=?
+        """,
+        (
+            name,
+            mobile,
+            pin,
+            fid
+        )
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True
+    )
+
+
+# ==================================================
+# DELETE FAMILY
+# ==================================================
+
+@app.delete("/api/families/<int:fid>")
+def delete_family(fid):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    family = c.execute(
+        """
+        SELECT id
+        FROM families
+        WHERE id=?
+        """,
+        (fid,)
+    ).fetchone()
+
+    if not family:
+
+        c.close()
+
+        return jsonify(
+            error="परिवार नहीं मिला"
+        ), 404
+
+    # पहले जुड़े हुए records हटाएँ
+
+    c.execute(
+        "DELETE FROM payments WHERE family_id=?",
+        (fid,)
+    )
+
+    c.execute(
+        "DELETE FROM savings WHERE family_id=?",
+        (fid,)
+    )
+
+    c.execute(
+        "DELETE FROM saving_debits WHERE family_id=?",
+        (fid,)
+    )
+
+    c.execute(
+        "DELETE FROM loans WHERE family_id=?",
+        (fid,)
+    )
+
+    c.execute(
+        "DELETE FROM active_member_sessions WHERE family_id=?",
+        (fid,)
+    )
+
+    c.execute(
+        "DELETE FROM notifications WHERE family_id=?",
+        (fid,)
+    )
+
+    c.execute(
+        "DELETE FROM fcm_tokens WHERE family_id=?",
+        (fid,)
+    )
+
+    # आखिर में family हटाएँ
+
+    c.execute(
+        "DELETE FROM families WHERE id=?",
+        (fid,)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True
+    )
+
+# ==================================================
+# MEMBER LIST FOR LOGIN
+# ==================================================
+
+@app.get("/api/member-list")
+def member_list():
+
+    c = conn()
+
+    rows = c.execute(
+        """
+        SELECT id, name
+        FROM families
+        ORDER BY id
+        """
+    ).fetchall()
+
+    c.close()
+
+    return jsonify([
         {
-          method:"DELETE"
+            "id": r["id"],
+            "name": r["name"]
         }
-      );
+        for r in rows
+    ])
+# ==================================================
+# ADMIN - RESET MEMBER NOTIFICATIONS
+# ==================================================
 
-      alert("भुगतान रिकॉर्ड delete हो गया और Loan balance वापस adjust हो गया।");
+@app.post("/api/admin/notifications/reset")
+def reset_member_notifications():
 
-      await refresh();
+    error = admin_required()
 
-    }catch(e){
+    if error:
+        return error
 
-      alert(e.message);
+    c = conn()
 
-    }
-
-  }
-
-
-  async function repay(){
-
-  try{
-
-    const loanId =
-      Number($("rl").value);
-
-    const paymentType =
-      $("rt").value;
-
-    const amount =
-      Number($("ra").value);
-
-    if(!loanId){
-
-      alert("Active Loan चुनें");
-      return;
-
-    }
-
-    if(!paymentType){
-
-      alert("भुगतान का प्रकार चुनें");
-      return;
-
-    }
-
-    if(!amount || amount <= 0){
-
-      alert("सही राशि डालें");
-      return;
-
-    }
-
-    const x =
-      await api("/api/payments",{
-
-        method:"POST",
-
-        headers:{
-          "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-          loan_id:loanId,
-
-          type:paymentType,
-
-          amount:amount,
-
-          date:$("rd").value
-
-        })
-
-      });
-
-
-    if(paymentType === "interest"){
-
-      alert(
-        "💵 ब्याज जमा हो गया।\n\n" +
-        "ब्याज: " +
-        money(x.interest) +
-        "\n" +
-        "Loan बाकी: " +
-        money(x.remaining)
-      );
-
-    }else{
-
-      alert(
-        "💰 Loan Repayment दर्ज हो गया।\n\n" +
-        "मूलधन: " +
-        money(x.principal) +
-        "\n" +
-        "Loan बाकी: " +
-        money(x.remaining)
-      );
-
-    }
-
-
-    $("ra").value = "";
-
-    await refresh();
-
-  }catch(e){
-
-    alert(e.message);
-
-  }
-
-}
-
-
-/* ================= SAVING ================= */
-
-async function saveSaving(){
-
-  try{
-
-    const amount =
-      Number($("sa").value);
-
-    if(!amount || amount <= 0){
-
-      alert("सही बचत राशि डालें");
-      return;
-
-    }
-
-    await api("/api/savings",{
-
-      method:"POST",
-
-      headers:{
-        "Content-Type":"application/json"
-      },
-
-      body:JSON.stringify({
-
-        family_id:Number($("sf").value),
-
-        month:$("sm").value,
-
-        amount:amount,
-
-        date:$("sd").value
-
-      })
-
-    });
-
-    alert("बचत दर्ज हो गई");
-
-    await refresh();
-
-  }catch(e){
-
-    alert(e.message);
-
-  }
-
-}
-
-
-/* ================= SAVING DEBIT ================= */
-
-async function saveDebit(){
-
-  try{
-
-    const amount =
-      Number($("da").value);
-
-    if(!amount || amount <= 0){
-      alert("सही Debit राशि डालें");
-      return;
-    }
-
-    await api("/api/saving-debits",{
-
-      method:"POST",
-
-      headers:{
-        "Content-Type":"application/json"
-      },
-
-      body:JSON.stringify({
-
-        family_id:Number($("df").value),
-
-        amount:amount,
-
-        date:$("ddate").value,
-
-        reason:$("dre").value.trim()
-
-      })
-
-    });
-
-    alert("💸 Debit दर्ज हो गया");
-
-    $("da").value = "";
-    $("dre").value = "";
-
-    await refresh();
-
-  }catch(e){
-
-    alert(e.message);
-
-  }
-
-}
-
-
-/* ================= EDIT SAVING DEBIT ================= */
-
-async function editSavingDebit(id){
-
-  try{
-
-    const row =
-      savingDebits.find(x => Number(x.id) === Number(id));
-
-    if(!row){
-      alert("डेबिट एंट्री नहीं मिली");
-      return;
-    }
-
-    const amount =
-      prompt("नई Debit राशि:", row.amount);
-
-    if(amount === null){
-      return;
-    }
-
-    const value =
-      Number(amount);
-
-    if(!value || value <= 0){
-      alert("सही Debit राशि डालें");
-      return;
-    }
-
-    const date =
-      prompt("तारीख (YYYY-MM-DD):", row.date || "");
-
-    if(date === null){
-      return;
-    }
-
-    const reason =
-      prompt("कारण:", row.reason || "");
-
-    if(reason === null){
-      return;
-    }
-
-    await api("/api/saving-debits/" + id,{
-
-      method:"PUT",
-
-      headers:{
-        "Content-Type":"application/json"
-      },
-
-      body:JSON.stringify({
-
-        family_id:Number(row.family_id),
-
-        amount:value,
-
-        date:date,
-
-        reason:reason
-
-      })
-
-    });
-
-    alert("✏️ Debit अपडेट हो गया");
-
-    await refresh();
-
-  }catch(e){
-
-    alert(e.message);
-
-  }
-
-}
-
-
-async function deleteSavingDebit(id){
-
-  if(!confirm("क्या यह Debit entry delete करनी है?")){
-    return;
-  }
-
-  try{
-
-    await api("/api/saving-debits/" + id,{
-
-      method:"DELETE"
-
-    });
-
-    alert("🗑️ Debit delete हो गया");
-
-    await refresh();
-
-  }catch(e){
-
-    alert(e.message);
-
-  }
-
-}
-
-
-/* ================= EDIT SAVING ================= */
-
-async function editSaving(id){
-
-  try{
-
-    const list =
-      await api("/api/savings");
-
-    const row =
-      list.find(x => Number(x.id) === Number(id));
-
-    if(!row){
-
-      alert("बचत एंट्री नहीं मिली");
-      return;
-
-    }
-
-    let amount =
-      prompt(
-        "बचत राशि बदलें",
-        row.amount
-      );
-
-    if(amount === null) return;
-
-    amount = Number(amount);
-
-    if(!amount || amount <= 0){
-
-      alert("सही राशि डालें");
-      return;
-
-    }
-
-    const date =
-      prompt(
-        "तारीख बदलें",
-        row.date
-      );
-
-    if(date === null) return;
-
-
-    await api("/api/savings/" + id,{
-
-      method:"PUT",
-
-      headers:{
-        "Content-Type":"application/json"
-      },
-
-      body:JSON.stringify({
-
-        family_id:row.family_id,
-
-        month:row.month,
-
-        amount:amount,
-
-        date:date
-
-      })
-
-    });
-
-    alert("बचत एंट्री अपडेट हो गई");
-
-    await refresh();
-
-  }catch(e){
-
-    alert(e.message);
-
-  }
-
-}
-
-
-/* ================= DELETE SAVING ================= */
-
-async function deleteSaving(id){
-
-  if(!confirm(
-    "क्या आप यह बचत एंट्री delete करना चाहते हैं?"
-  )){
-    return;
-  }
-
-  try{
-
-    await api("/api/savings/" + id,{
-      method:"DELETE"
-    });
-
-    alert("बचत एंट्री delete हो गई");
-
-    await refresh();
-
-  }catch(e){
-
-    alert(e.message);
-
-  }
-
-}
-
-
-/* ================= LOAN ================= */
-
-async function giveLoan(){
-
-  try{
-
-    const amount =
-      Number($("la").value);
-
-    const months =
-      Number($("lm").value);
-
-    if(!amount || amount <= 0){
-
-      alert("सही लोन राशि डालें");
-      return;
-
-    }
-
-    if(!months || months <= 0){
-
-      alert("सही अवधि डालें");
-      return;
-
-    }
-
-    await api("/api/loans",{
-
-      method:"POST",
-
-      headers:{
-        "Content-Type":"application/json"
-      },
-
-      body:JSON.stringify({
-
-        family_id:Number($("lf").value),
-
-        amount:amount,
-
-        months:months,
-
-        date:$("ld").value
-
-      })
-
-    });
-
-    alert("लोन दर्ज हो गया");
-
-    await refresh();
-
-  }catch(e){
-
-    alert(e.message);
-
-  }
-
-}
-
-
-
-/* ================= INTEREST ================= */
-
-async function dist(){
-
-  try{
-
-    const totalInterest =
-      Number($("di").value);
-
-    if(!totalInterest || totalInterest <= 0){
-
-      alert("सही ब्याज राशि डालें");
-      return;
-
-    }
-
-    const x =
-      await api("/api/interest-distribution",{
-
-        method:"POST",
-
-        headers:{
-          "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-          total_interest:totalInterest,
-
-          date:$("dd").value
-
-        })
-
-      });
-
-
-    $("dr").innerHTML = `
-
-      <div class="notice">
-
-        कुल बचत
-        ${money(x.total_savings)}
-        के आधार पर वितरण
-
-      </div>
-
-      <div class="table">
-
-        <table>
-
-          <tr>
-            <th>सदस्य</th>
-            <th>बचत</th>
-            <th>हिस्सा</th>
-            <th>ब्याज</th>
-          </tr>
-
-          ${(x.result || []).map(r => `
-
-            <tr>
-
-              <td>${r.name}</td>
-
-              <td>
-                ${money(r.savings)}
-              </td>
-
-              <td>
-                ${(Number(r.share || 0) * 100).toFixed(2)}%
-              </td>
-
-              <td class="green">
-                ${money(r.interest)}
-              </td>
-
-            </tr>
-
-          `).join("")}
-
-        </table>
-
-      </div>
-
-    `;
-
-  }catch(e){
-
-    alert(e.message);
-
-  }
-
-}
-
-
-async function loadInterestDistributions(){
-
-  try{
-
-    const x = await api("/api/interest-distributions");
-    const box = $("interestDistributionHistory");
-
-    if(!box) return;
-
-    const rows = x.distributions || [];
-
-    if(!rows.length){
-      box.innerHTML = '<div class="notice">अभी कोई ब्याज वितरण रिकॉर्ड नहीं है।</div>';
-      return;
-    }
-
-    box.innerHTML = `
-      <div class="table">
-        <table>
-          <tr>
-            <th>ID</th>
-            <th>तारीख</th>
-            <th>ब्याज</th>
-            <th>Action</th>
-          </tr>
-          ${rows.map(r => `
-            <tr>
-              <td>${r.id}</td>
-              <td>${r.date || "—"}</td>
-              <td class="green">${money(r.total_interest)}</td>
-              <td>
-                <button class="btn secondary" onclick="reverseInterestDistribution(${Number(r.id)})">
-                  ↩️ Reverse
-                </button>
-              </td>
-            </tr>
-          `).join("")}
-        </table>
-      </div>
-    `;
-
-  }catch(e){
-    alert(e.message);
-  }
-}
-
-async function reverseInterestDistribution(id){
-
-  if(!confirm(
-    "क्या आप इस ब्याज वितरण को Reverse करना चाहते हैं?\n\nइससे इस distribution के interest credits हट जाएंगे।"
-  )){
-    return;
-  }
-
-  try{
-
-    const x = await api(
-      "/api/interest-distribution/" + id + "/reverse",
-      { method:"POST" }
-    );
-
-    alert(
-      "ब्याज वितरण Reverse हो गया।\n\nब्याज: " +
-      money(x.total_interest)
-    );
-
-    await loadInterestDistributions();
-    await refresh();
-
-  }catch(e){
-    alert(e.message);
-  }
-}
-
-
-/* ================= PASSBOOK ================= */
-
-function buildPassbookLedger(x, showTotal = false){
-  const rows = [];
-
-  (x.loans || []).forEach(r => {
-    rows.push({
-      date: r.date || "",
-      order: 1,
-      detail: "Loan लिया गया",
-      amount: 0,
-      displayAmount: Math.abs(Number(
-        r.original ??
-        r.loan_amount ??
-        r.principal ??
-        r.amount ??
-        0
-      )),
-      displayType: "withdrawal",
-      affectsBalance: false,
-      excluded: true,
-      className: "red"
-    });
-  });
-
-  (x.savings || []).forEach(r => {
-    rows.push({
-      date: r.date || "",
-      order: 2,
-      detail: `मासिक बचत (${r.month || ""})`,
-      amount: Math.abs(Number(r.amount || 0)),
-      className: "green"
-    });
-  });
-    (x.interest_credits || []).forEach(r => {
-    rows.push({
-      date: r.date || "",
-      order: 3,
-      detail: "ब्याज लाभ",
-      amount: Math.abs(Number(r.amount || 0)),
-      className: "green"
-    });
-  });
-
-  (x.saving_debits || []).forEach(r => {
-    rows.push({
-      date: r.date || "",
-      order: 4,
-      detail: `Debit / निकासी${r.reason ? " (" + r.reason + ")" : ""}`,
-      amount: -Math.abs(Number(r.amount || 0)),
-      className: "red"
-    });
-  });
-
-  (x.payments || []).forEach(r => {
-    rows.push({
-      date: r.date || "",
-      order: 5,
-      detail: "Loan Payment",
-      amount: Math.abs(Number(r.amount || 0)),
-      className: "green"
-    });
-  });
-
-  rows.sort((a,b) => {
-    const dateCompare = String(b.date).localeCompare(String(a.date));
-    return dateCompare !== 0 ? dateCompare : a.order - b.order;
-  });
-
-const ledgerRows = rows.map(r =>
-  `
-  <tr>
-    <td>${r.date}</td>
-    <td>${r.detail}</td>
-    <td class="${r.className}">
-      ${money(r.amount)}
-    </td>
-  </tr>
-  `
-).join("");
-
-if (!ledgerRows) {
-  return `
-    <tr>
-      <td colspan="3" class="empty">
-        इस वित्तीय वर्ष में कोई एंट्री नहीं
-      </td>
-    </tr>
-  `;
-}
-
-if (showTotal) {
-  return ledgerRows + `
-    <tr style="
-      font-weight:bold;
-      border-top:2px solid #1976d2;
-    ">
-      <td colspan="2" style="text-align:right;">
-        Net Total
-      </td>
-      <td class="green">
-        ${money(getLedgerNetTotal(x))}
-      </td>
-    </tr>
-  `;
-}
-
-return ledgerRows;
-}
-
-function buildMemberTransactionLedger(x){
-  const rows = [];
-
-  // Loan entry केवल विवरण में दिखाई जाएगी।
-  // इसका savings balance / Net Total पर कोई असर नहीं होगा।
-  (x.loans || []).forEach(r => {
-    // Loan की पूरी ली गई राशि ledger में दिखाएँ।
-    // लेकिन balance / Net Total में इसे शामिल न करें।
-    const loanAmount = Math.abs(Number(
-      r.original ??
-      r.loan_amount ??
-      r.principal ??
-      r.amount ??
-      0
-    ));
-
-    rows.push({
-      date: r.date || "",
-      order: 1,
-      detail: "Loan लिया गया",
-      amount: 0,
-      displayAmount: loanAmount,
-      displayType: "withdrawal",
-      affectsBalance: false,
-      excluded: true
-    });
-  });
-
-  // Monthly Savings = savings balance में जमा
-  (x.savings || []).forEach(r => {
-    rows.push({
-      date: r.date || "",
-      order: 2,
-      detail: `मासिक बचत (${r.month || ""})`,
-      amount: Math.abs(Number(r.amount || 0)),
-      affectsBalance: true
-    });
-  });
-
-  // Interest Credit = savings balance में जमा
-  (x.interest_credits || []).forEach(r => {
-    rows.push({
-      date: r.date || "",
-      order: 3,
-      detail: "ब्याज लाभ",
-      amount: Math.abs(Number(r.amount || 0)),
-      affectsBalance: true
-    });
-  });
-
-  // Saving Debit = savings balance से निकासी
-  (x.saving_debits || []).forEach(r => {
-    rows.push({
-      date: r.date || "",
-      order: 4,
-      detail: `Debit / निकासी${r.reason ? " (" + r.reason + ")" : ""}`,
-      amount: -Math.abs(Number(r.amount || 0)),
-      affectsBalance: true
-    });
-  });
-
-  // Loan repayment और उसका interest केवल transaction list में रहेंगे।
-  // दोनों savings balance / Net Total में शामिल नहीं होंगे।
-  (x.payments || []).forEach(r => {
-    const principal = Math.abs(Number(r.principal || 0));
-    const interest = Math.abs(Number(r.interest || 0));
-    const totalAmount = Math.abs(Number(r.amount || 0));
-
-    // Principal repayment अलग entry
-    if(principal > 0){
-      rows.push({
-        date: r.date || "",
-        order: 5,
-        detail: "Loan Repayment",
-        amount: 0,
-        displayAmount: principal,
-        displayType: "withdrawal",
-        affectsBalance: false,
-        excluded: true
-      });
-    }
-
-    // Loan interest paid अलग entry
-    if(interest > 0){
-      rows.push({
-        date: r.date || "",
-        order: 6,
-        detail: "Loan Interest Paid",
-        amount: 0,
-        displayAmount: interest,
-        displayType: "withdrawal",
-        affectsBalance: false,
-        excluded: true
-      });
-    }
-
-    // पुराने/अलग payment data में principal/interest fields न हों
-    // तो पूरी payment राशि सिर्फ विवरण में दिखाएँ।
-    if(principal === 0 && interest === 0 && totalAmount > 0){
-      rows.push({
-        date: r.date || "",
-        order: 5,
-        detail: "Loan Repayment",
-        amount: 0,
-        displayAmount: totalAmount,
-        displayType: "withdrawal",
-        affectsBalance: false,
-        excluded: true
-      });
-    }
-  });
-
-  if(!rows.length){
-    return `
-      <tr>
-        <td colspan="5" class="empty">
-          कोई Transaction उपलब्ध नहीं
-        </td>
-      </tr>
-    `;
-  }
-
-  // पहले पुराने से नए क्रम में balance निकालें।
-  rows.sort((a,b) => {
-    const dateCompare = String(a.date).localeCompare(String(b.date));
-    return dateCompare !== 0 ? dateCompare : a.order - b.order;
-  });
-
-  let balance = 0;
-
-  rows.forEach(r => {
-    if(r.affectsBalance){
-      balance += r.amount;
-    }
-    // Loan entries में balance वही रहेगा।
-    r.balance = balance;
-  });
-
-  // Passbook में नया transaction ऊपर दिखे
-  rows.reverse();
-
-  const ledgerRows = rows.map(r => {
-    const isExcluded = r.excluded === true;
-    const isDeposit = r.amount >= 0;
-    const amount = Math.abs(r.amount);
-    const displayAmount =
-      r.displayAmount !== undefined
-        ? r.displayAmount
-        : amount;
-    const balanceClass = r.balance < 0 ? "red" : "green";
-
-    return `
-      <tr>
-        <td>${r.date}</td>
-        <td>${r.detail}</td>
-        <td class="green">
-          ${isExcluded && r.displayType === "deposit" ? money(displayAmount) : (!isExcluded && isDeposit ? money(amount) : "—")}
-        </td>
-        <td class="red">
-          ${isExcluded && r.displayType === "withdrawal" ? money(displayAmount) : (!isExcluded && !isDeposit ? money(amount) : "—")}
-        </td>
-        <td class="${balanceClass}">
-          ${money(r.balance)}
-        </td>
-      </tr>
-    `;
-  }).join("");
-
-  // Net Total केवल savings + interest credit - saving debit है।
-  // Loan लिया/चुकाया/interest paid इसमें शामिल नहीं है।
-  const total = getLedgerNetTotal(x);
-
-  return ledgerRows + `
-    <tr style="
-      font-weight:bold;
-      border-top:2px solid #1976d2;
-    ">
-      <td colspan="4" style="text-align:right;">
-        Net Total
-      </td>
-      <td class="${total < 0 ? "red" : "green"}">
-        ${money(total)}
-      </td>
-    </tr>
-  `;
-}
-
-function filterYearlyRecord(selectedYear){
-
-  const rows =
-    document.querySelectorAll(
-      "#yearlyRecordTable tr"
-    );
-
-  rows.forEach((row, index) => {
-
-    if(index === 0) return;
-
-    const yearCell =
-      row.querySelector("td");
-
-    if(!yearCell) return;
-
-    const year =
-      yearCell.textContent.trim();
-
-    if(
-      !selectedYear ||
-      year === selectedYear
-    ){
-      row.style.display = "";
-    }
-    else{
-      row.style.display = "none";
-    }
-
-  });
-
-
-  const data =
-    window.currentPassbookData;
-
-  const ledger =
-  document.getElementById(
-    "yearlyDetailedLedger"
-  );
-
-const ledgerPanel =
-  ledger?.closest(".panel");
-
-if(ledgerPanel){
-
-  if(!selectedYear){
-
-    ledgerPanel.style.display = "none";
-
-  }
-  else{
-
-    ledgerPanel.style.display = "";
-
-    if(data){
-
-      ledger.innerHTML =
-        buildYearlyLedger(
-          data,
-          selectedYear
-        );
-
-    }
-
-  }
-
-}
-}
-function buildYearlyLedger(x, selectedYear){
-
-  const rows = [];
-
-  const getFY = (date) => {
-
-    const dt = String(date || "");
-    const year = Number(dt.slice(0,4));
-    const month = Number(dt.slice(5,7));
-
-    if(!year || !month) return "";
-
-    const startYear =
-      month >= 4 ? year : year - 1;
-
-    return `${startYear}-${String(startYear + 1).slice(-2)}`;
-  };
-
-
-  (x.savings || []).forEach(r => {
-
-    if(
-      selectedYear &&
-      getFY(r.date) !== selectedYear
-    ) return;
-
-    rows.push({
-      date: r.date || "",
-      detail: `मासिक बचत (${r.month || ""})`,
-      amount: Math.abs(Number(r.amount || 0)),
-      className: "green"
-    });
-
-  });
-
-
-  (x.interest_credits || []).forEach(r => {
-
-    if(
-      selectedYear &&
-      getFY(r.date) !== selectedYear
-    ) return;
-
-    rows.push({
-      date: r.date || "",
-      detail: "ब्याज लाभ",
-      amount: Math.abs(Number(r.amount || 0)),
-      className: "green"
-    });
-
-  });
-
-
-  (x.saving_debits || []).forEach(r => {
-
-    if(
-      selectedYear &&
-      getFY(r.date) !== selectedYear
-    ) return;
-
-    rows.push({
-      date: r.date || "",
-      detail:
-        `Debit / निकासी${
-          r.reason
-            ? " (" + r.reason + ")"
-            : ""
-        }`,
-      amount: -Math.abs(Number(r.amount || 0)),
-      className: "red"
-    });
-
-  });
-
-
-  rows.sort((a,b) =>
-    String(b.date).localeCompare(
-      String(a.date)
+    c.execute(
+        """
+        DELETE FROM notifications
+        """
     )
-  );
 
+    deleted = c.rowcount
 
-  return rows.map(r => `
-    <tr>
-      <td>${r.date}</td>
-      <td>${r.detail}</td>
-      <td class="${r.className}">
-        ${money(r.amount)}
-      </td>
-    </tr>
-  `).join("")
-  ||
-  `
-    <tr>
-      <td colspan="3" class="empty">
-        इस वित्तीय वर्ष में कोई एंट्री नहीं
-      </td>
-    </tr>
-  `;
-}
-async function passbook(){
+    c.commit()
+    c.close()
 
-  const familyId =
-    $("pf").value;
+    return jsonify(
+        ok=True,
+        deleted=deleted
+    )
+# ==================================================
+# MEMBER NOTIFICATIONS
+# ==================================================
 
-  if(!familyId) return;
+@app.get("/api/notifications")
+def get_notifications():
 
-  try{
+    # सिर्फ Member अपनी notifications देख सकता है
+    if session.get("admin"):
+        return jsonify(
+            error="Member access required"
+        ), 403
 
-    const x =
-      await api(
-        "/api/family/" +
-        familyId +
-        "/passbook"
-      );
-    window.currentPassbookData = x;
+    family_id = session.get("family_id")
 
-    const family =
-      fam.find(
-        f =>
-          String(f.id) ===
-          String(familyId)
-      );
+    if not family_id:
+        return jsonify(
+            error="Login required"
+        ), 401
 
+    c = conn()
 
-    const savingsTotal =
-      (x.savings || []).reduce(
-        (a,r) =>
-          a + Number(r.amount || 0),
-        0
-      );
+    rows = c.execute(
+        """
+        SELECT *
+        FROM notifications
+        WHERE family_id=?
+        ORDER BY id DESC
+        """,
+        (family_id,)
+    ).fetchall()
+
+    c.close()
+
+    return jsonify([
+        dict(x)
+        for x in rows
+    ])
+@app.post("/api/notifications/read")
+def mark_notifications_read():
+
+    if session.get("admin"):
+        return jsonify(
+            error="Member access required"
+        ), 403
+
+    family_id = session.get("family_id")
+
+    if not family_id:
+        return jsonify(
+            error="Login required"
+        ), 401
+
+    c = conn()
+
+    c.execute(
+        """
+        UPDATE notifications
+        SET is_read=TRUE
+        WHERE family_id=?
+        """,
+        (family_id,)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(ok=True)
+@app.post("/api/fcm-token")
+def save_fcm_token():
+
+    if session.get("admin"):
+        return jsonify(
+            error="Member access required"
+        ), 403
+
+    family_id = session.get("family_id")
+
+    if not family_id:
+        return jsonify(
+            error="Login required"
+        ), 401
+
+    data = request.get_json() or {}
+    token = data.get("token")
+
+    if not token:
+        return jsonify(
+            error="FCM token required"
+        ), 400
+
+    c = conn()
+
+    now = datetime.datetime.now().isoformat()
+
+    c.execute(
+        """
+        INSERT INTO fcm_tokens
+        (family_id, token, updated_at)
+        VALUES (?, ?, ?)
+        ON CONFLICT (family_id)
+        DO UPDATE SET
+            token = EXCLUDED.token,
+            updated_at = EXCLUDED.updated_at
+        """,
+        (family_id, token, now)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(ok=True)
+# ==================================================
+# MEMBER PASSBOOK
+# ==================================================
+
+@app.get("/api/family/<int:fid>/passbook")
+def passbook(fid):
+
+    # ADMIN can see anyone
+    if session.get("admin"):
+        allowed = True
+
+    # MEMBER can ONLY see own data
+    elif session.get("family_id") == fid:
+        allowed = True
+
+    else:
+        return jsonify(
+            error="आपको इस परिवार का data देखने की अनुमति नहीं है"
+        ), 403
+
+    c = conn()
+
+    group_savings = c.execute(
+        """
+        SELECT
+          COALESCE((SELECT SUM(amount) FROM savings),0)
+          -
+          COALESCE((SELECT SUM(amount) FROM saving_debits),0)
+          +
+          COALESCE((SELECT SUM(amount) FROM interest_credits),0)
+        x
+        """
+    ).fetchone()["x"]
+
+    group_loan = c.execute(
+        "SELECT COALESCE(SUM(principal),0) x FROM loans"
+    ).fetchone()["x"]
+
+    group_interest = c.execute(
+        """
+        SELECT
+          COALESCE((SELECT SUM(interest) FROM payments),0)
+          -
+          COALESCE((SELECT SUM(total_interest) FROM interest_distributions),0)
+        x
+        """
+    ).fetchone()["x"]
+
+    group_available = (
+        group_savings
+        + group_interest
+        - group_loan
+    )
+
+    f = c.execute(
+        """
+        SELECT *
+        FROM families
+        WHERE id=?
+        """,
+        (fid,)
+    ).fetchone()
+
+    if not f:
+        c.close()
+
+        return jsonify(
+            error="परिवार नहीं मिला"
+        ), 404
+
+    s = c.execute(
+        """
+        SELECT *
+        FROM savings
+        WHERE family_id=?
+        ORDER BY id DESC
+        """,
+        (fid,)
+    ).fetchall()
+
+    p = c.execute(
+        """
+        SELECT *
+        FROM payments
+        WHERE family_id=?
+        ORDER BY id DESC
+        """,
+        (fid,)
+    ).fetchall()
+
+    l = c.execute(
+        """
+        SELECT *
+        FROM loans
+        WHERE family_id=?
+        ORDER BY id DESC
+        """,
+        (fid,)
+    ).fetchall()
+
+    d = c.execute(
+        """
+        SELECT *
+        FROM saving_debits
+        WHERE family_id=?
+        ORDER BY id DESC
+        """,
+        (fid,)
+    ).fetchall()
+# ==============================
+# INTEREST CREDITS
+# ==============================
+    ic = c.execute(
+        """
+        SELECT *
+        FROM interest_credits
+        WHERE family_id=?
+        ORDER BY id DESC
+        """,
+        (fid,)
+    ).fetchall()
+# ==============================
+# FINANCIAL YEAR RECORDS
+# APRIL TO MARCH
+# ==============================
+
+    yearly_records = {}
     
-    const interestTotal =
-      (x.interest_credits || []).reduce(
-        (a,r) =>
-          a + Number(r.amount || 0),
-        0
-      );
+    for r in s:
+        amount = float(r["amount"] or 0)
+        dt = str(r["date"])
     
-    const overallSaving =
-      savingsTotal + interestTotal;
+        year = int(dt[:4])
+        month = int(dt[5:7])
     
-    const debitTotal =
-      (x.saving_debits || []).reduce(
-        (a,r) =>
-          a + Number(r.amount || 0),
-        0
-      );
+        fy_start = year if month >= 4 else year - 1
+        fy_name = f"{fy_start}-{str(fy_start + 1)[-2:]}"
     
-    const finalSaving =
-      overallSaving - debitTotal;
-    
-    const loanTotal =
-      (x.loans || []).reduce(
-        (a,r) =>
-          a + Number(r.principal || 0),
-        0
-      );
-    
-    $("pr").innerHTML = `
-
-      <div id="printPassbook">
-
-        <div style="
-          text-align:center;
-          padding:15px;
-          border-bottom:2px solid #1976d2;
-        ">
-
-          <img
-            src="/static/logo.png"
-            style="
-              width:85px;
-              height:85px;
-              object-fit:contain;
-            "
-            onerror="this.style.display='none'"
-          >
-
-          <h2 style="
-            margin:0;
-            color:#083b78;
-          ">
-            Family Saving Group
-          </h2>
-
-          <div style="margin-top:5px;">
-            एक परिवार • एक बचत • उज्ज्वल भविष्य
-          </div>
-
-          <h3 style="margin:10px 0 0;">
-            DIGITAL PASSBOOK
-          </h3>
-
-          <div>
-            वित्तीय वर्ष:
-            <b>2026–27</b>
-          </div>
-
-        </div>
-
-
-        <div style="
-          display:grid;
-          grid-template-columns:1fr 1fr;
-          gap:10px;
-          margin-top:15px;
-        ">
-
-          <div class="card">
-
-            <div class="label">
-              सदस्य
-            </div>
-
-            <div class="value">
-              ${family?.name || "—"}
-            </div>
-
-          </div>
-
-
-          <div class="card">
-
-            <div class="label">
-              मोबाइल
-            </div>
-
-            <div class="value">
-              ${family?.mobile || "—"}
-            </div>
-
-          </div>
-
-
-          <div class="card">
-
-            <div class="label">
-              कुल बचत
-            </div>
-
-            <div class="value green">
-              ${money(finalSaving)}
-            </div>
-
-          </div>
-
-
-          <div class="card">
-
-            <div class="label">
-              लोन बाकी
-            </div>
-
-            <div class="value red">
-              ${money(loanTotal)}
-            </div>
-
-          </div>
-
-        </div>
-
-        <div class="panel" style="margin-top:15px">
-
-          <h3>📅 वित्तीय वर्ष का रिकॉर्ड</h3>
-          <div style="
-            margin:10px 0;
-            display:flex;
-            align-items:center;
-            gap:10px;
-            flex-wrap:wrap;
-          ">
-          
-            <label>
-              वित्तीय वर्ष चुनें:
-            </label>
-          
-            <select
-              id="yearSelect"
-              onchange="filterYearlyRecord(this.value)"
-              style="
-                padding:8px 12px;
-                border:1px solid #d5deea;
-                border-radius:8px;
-                background:#fff;
-              "
-            >
-              <option value="">सभी वर्ष</option>
-          
-              ${
-                [...new Set(
-                  (x.yearly_records || [])
-                    .map(r => r.financial_year)
-                )].map(year => `
-                  <option value="${year}">
-                    ${year}
-                  </option>
-                `).join("")
-              }
-          
-            </select>
-          
-          </div>
-         <div class="table">
-        
-          <table id="yearlyRecordTable">
-        
-            <tr>
-              <th>वित्तीय वर्ष</th>
-              <th>कुल बचत</th>
-              <th>ब्याज लाभ</th>
-              <th>निकासी</th>
-              <th>Net Saving</th>
-            </tr>
-        
-              ${
-                (x.yearly_records || []).map(r => `
-                  <tr>
-                    <td>${r.financial_year}</td>
-                    <td class="green">${money(r.saving)}</td>
-                    <td class="green">${money(r.interest)}</td>
-                    <td class="red">${money(r.debit)}</td>
-                    <td class="green">${money(r.net_saving)}</td>
-                  </tr>
-                `).join("")
-                ||
-                `
-                  <tr>
-                    <td colspan="5" class="empty">
-                      कोई वार्षिक रिकॉर्ड नहीं
-                    </td>
-                  </tr>
-                `
-              }
-        
-            </table>
-        
-          </div>
-        
-        </div>
-        <div
-          class="panel"
-          style="margin-top:15px"
-        >
-        
-          <h3>
-            📋 चयनित वित्तीय वर्ष का विवरण
-          </h3>
-        
-          <div class="table">
-        
-            <table>
-        
-              <tr>
-                <th>तारीख</th>
-                <th>विवरण</th>
-                <th>राशि</th>
-              </tr>
-        
-              <tbody id="yearlyDetailedLedger">
-              </tbody>
-        
-            </table>
-        
-          </div>
-        
-        </div>
-        <div class="panel" style="margin-top:15px">
-
-          <h3>
-            बचत / भुगतान विवरण
-          </h3>
-
-          <div class="table">
-
-            <table>
-
-              <tr>
-
-                <th>तारीख</th>
-
-                <th>विवरण</th>
-
-                <th>राशि</th>
-
-              </tr>
-
-
-              ${buildPassbookLedger(x)}
-
-            </table>
-
-          </div>
-
-        </div>
-
-
-        <div style="
-          margin-top:25px;
-          display:flex;
-          justify-content:space-between;
-          font-size:12px;
-        ">
-
-          <div>
-            सदस्य हस्ताक्षर
-          </div>
-
-          <div>
-            Admin हस्ताक्षर
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <div style="
-        margin-top:15px;
-        text-align:right;
-      ">
-
-        <button
-          class="btn"
-          onclick="printPassbook()">
-          🖨️ Print Passbook
-        </button>
-
-      </div>
-
-    `;
-
-  }catch(e){
-
-    alert(e.message);
-
-  }
-
-}
-
-
-/* ================= PRINT PASSBOOK ================= */
-
-function printPassbook(){
-
-  const box =
-    $("printPassbook");
-
-  if(!box){
-
-    alert("Passbook तैयार नहीं है");
-    return;
-
-  }
-
-  const content =
-    box.innerHTML;
-
-  const w =
-    window.open("", "_blank");
-
-  if(!w){
-
-    alert(
-      "Print window नहीं खुली। Browser में popup allow करें।"
-    );
-
-    return;
-
-  }
-
-
-  w.document.write(`
-
-    <!doctype html>
-
-    <html lang="hi">
-
-    <head>
-
-      <meta charset="utf-8">
-
-      <title>
-        Family Saving Group - Passbook
-      </title>
-
-      <style>
-
-        *{
-          box-sizing:border-box;
-        }
-
-        body{
-          font-family:
-            Arial,
-            "Noto Sans Devanagari",
-            sans-serif;
-          color:#16233b;
-          margin:25px;
-        }
-
-        h2,h3{
-          margin-top:0;
-        }
-
-        table{
-          width:100%;
-          border-collapse:collapse;
-          margin-top:10px;
-        }
-
-        th,td{
-          border:1px solid #ccc;
-          padding:9px;
-          text-align:left;
-        }
-
-        th{
-          background:#f2f5f9;
-        }
-
-        .card{
-          border:1px solid #ddd;
-          padding:12px;
-          margin:5px;
-          display:inline-block;
-          width:45%;
-          vertical-align:top;
-        }
-
-        .label{
-          font-size:12px;
-          color:#666;
-        }
-
-        .value{
-          font-size:18px;
-          font-weight:bold;
-          margin-top:5px;
-        }
-
-        .green{
-          color:#20864b;
-        }
-
-        .red{
-          color:#c73535;
-        }
-
-        @page{
-          size:A4 portrait;
-          margin:12mm;
-        }
-        
-        @media print{
-            body{
-                margin:0 !important;
+        if fy_name not in yearly_records:
+            yearly_records[fy_name] = {
+                "financial_year": fy_name,
+                "saving": 0,
+                "interest": 0,
+                "debit": 0
             }
-        
-            .ledger-brand-header{
-                text-align:center !important;
-                display:block !important;
+    
+        yearly_records[fy_name]["saving"] += amount
+    
+    
+    for r in ic:
+        amount = float(r["amount"] or 0)
+        dt = str(r["date"])
+    
+        year = int(dt[:4])
+        month = int(dt[5:7])
+    
+        fy_start = year if month >= 4 else year - 1
+        fy_name = f"{fy_start}-{str(fy_start + 1)[-2:]}"
+    
+        if fy_name not in yearly_records:
+            yearly_records[fy_name] = {
+                "financial_year": fy_name,
+                "saving": 0,
+                "interest": 0,
+                "debit": 0
             }
-        
-            .ledger-brand-header .ledger-brand-logo{
-                width:90px !important;
-                height:90px !important;
-                max-width:90px !important;
-                max-height:90px !important;
-                min-width:90px !important;
-                min-height:90px !important;
-                object-fit:contain !important;
-                display:block !important;
-                margin:5px auto !important;
+    
+        yearly_records[fy_name]["interest"] += amount
+    
+    
+    for r in d:
+        amount = float(r["amount"] or 0)
+        dt = str(r["date"])
+    
+        year = int(dt[:4])
+        month = int(dt[5:7])
+    
+        fy_start = year if month >= 4 else year - 1
+        fy_name = f"{fy_start}-{str(fy_start + 1)[-2:]}"
+    
+        if fy_name not in yearly_records:
+            yearly_records[fy_name] = {
+                "financial_year": fy_name,
+                "saving": 0,
+                "interest": 0,
+                "debit": 0
             }
+    
+        yearly_records[fy_name]["debit"] += amount
+    
+    
+    yearly_records = list(yearly_records.values())
+    
+    for r in yearly_records:
+        r["net_saving"] = (
+            r["saving"]
+            + r["interest"]
+        )
+    c.close()
+
+    return jsonify({
+        "family": dict(f),
+
+        "group_savings": group_savings,
+        "group_loan": group_loan,
+        "group_interest": group_interest,
+        "group_available": group_available,
+
+        "savings": [dict(x) for x in s],
+        "payments": [dict(x) for x in p],
+        "loans": [dict(x) for x in l],
+        "saving_debits": [dict(x) for x in d],
+        "interest_credits": [dict(x) for x in ic],
+        "yearly_records": yearly_records
+    })
+# ==================================================
+# SAVINGS - GET
+# ==================================================
+
+@app.get("/api/savings")
+def savings():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    rows = c.execute(
+        """
+        SELECT s.*, f.name family
+        FROM savings s
+        JOIN families f
+        ON f.id=s.family_id
+        ORDER BY s.id DESC
+        """
+    ).fetchall()
+
+    c.close()
+
+    return jsonify([
+        dict(x)
+        for x in rows
+    ])
+
+
+# ==================================================
+# ADD SAVING
+# ==================================================
+
+@app.post("/api/savings")
+def add_saving():
+    error = admin_required()
+
+    if error:
+        return error
+
+    d = request.json or {}
+
+    try:
+        family_id = int(
+            d.get("family_id")
+        )
+
+        amount = float(
+            d.get("amount", 0)
+        )
+
+    except (TypeError, ValueError):
+        return jsonify(
+            error="बचत जानकारी सही दें"
+        ), 400
+
+    month = (
+        d.get("month") or ""
+    ).strip()
+
+    if amount <= 0:
+        return jsonify(
+            error="बचत राशि सही दें"
+        ), 400
+
+    if not month:
+        return jsonify(
+            error="महीना जरूरी है"
+        ), 400
+
+    c = conn()
+
+    family = c.execute(
+        """
+        SELECT id, name
+        FROM families
+        WHERE id=?
+        """,
+        (family_id,)
+    ).fetchone()
+
+    if not family:
+        c.close()
+
+        return jsonify(
+            error="परिवार नहीं मिला"
+        ), 404
+
+    entry_date = d.get(
+        "date",
+        datetime.date.today().isoformat()
+    )
+
+    # ==============================
+    # SAVE MONTHLY SAVING
+    # ==============================
+
+    c.execute(
+        """
+        INSERT INTO savings
+        (family_id, month, amount, date)
+        VALUES (?, ?, ?, ?)
+        """,
+        (
+            family_id,
+            month,
+            amount,
+            entry_date
+        )
+    )
+
+    # ==============================
+    # CREATE MEMBER NOTIFICATION
+    # ==============================
+
+    c.execute(
+        """
+        INSERT INTO notifications
+        (family_id, title, message, is_read, created_at)
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            family_id,
+            "💰 बचत अपडेट",
+            f"आपकी {month} महीने की ₹{amount:.2f} बचत अपडेट की गई है।",
+            False,
+            datetime.datetime.now().isoformat(timespec="seconds")
+        )
+    )
+
+    c.commit()
+
+    # ==============================
+    # SEND FIREBASE PUSH NOTIFICATION
+    # ==============================
+
+    token_row = c.execute(
+        """
+        SELECT token
+        FROM fcm_tokens
+        WHERE family_id=?
+        """,
+        (family_id,)
+    ).fetchone()
+
+    if token_row:
+        try:
+            message = messaging.Message(
+                notification=messaging.Notification(
+                    title="💰 बचत अपडेट",
+                    body=f"आपकी {month} महीने की ₹{amount:.2f} बचत अपडेट की गई है।"
+                ),
+                token=token_row["token"]
+            )
+
+            messaging.send(message)
+
+        except Exception as e:
+            print("FCM notification error:", e)
+
+    c.close()
+
+    return jsonify(
+        ok=True
+    )
+# ==================================================
+# ADD SAVING DEBIT / WITHDRAWAL
+# ==================================================
+
+@app.post("/api/saving-debits")
+def add_saving_debit():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    d = request.json or {}
+
+    try:
+        family_id = int(d.get("family_id"))
+        amount = float(d.get("amount", 0))
+    except (TypeError, ValueError):
+        return jsonify(
+            error="डेबिट जानकारी सही दें"
+        ), 400
+
+    if amount <= 0:
+        return jsonify(
+            error="डेबिट राशि सही दें"
+        ), 400
+
+    c = conn()
+
+    family = c.execute(
+        """
+        SELECT id, name
+        FROM families
+        WHERE id=?
+        """,
+        (family_id,)
+    ).fetchone()
+
+    if not family:
+        c.close()
+        return jsonify(
+            error="परिवार नहीं मिला"
+        ), 404
+
+    deposit_row = c.execute(
+        """
+        SELECT COALESCE(SUM(amount), 0) AS total
+        FROM savings
+        WHERE family_id=?
+        """,
+        (family_id,)
+    ).fetchone()
+
+    debit_row = c.execute(
+        """
+        SELECT COALESCE(SUM(amount), 0) AS total
+        FROM saving_debits
+        WHERE family_id=?
+        """,
+        (family_id,)
+    ).fetchone()
+
+    available = float(deposit_row["total"] or 0) - float(debit_row["total"] or 0)
+
+    if amount > available:
+        c.close()
+        return jsonify(
+            error=f"उपलब्ध बचत ₹{available:.2f} है। इससे ज्यादा डेबिट नहीं कर सकते।"
+        ), 400
+
+    entry_date = d.get(
+        "date",
+        datetime.date.today().isoformat()
+    )
+
+    reason = (
+        d.get("reason") or ""
+    ).strip()
+
+    c.execute(
+        """
+        INSERT INTO saving_debits
+        (family_id, amount, date, reason)
+        VALUES (?, ?, ?, ?)
+        """,
+        (
+            family_id,
+            amount,
+            entry_date,
+            reason
+        )
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True
+    )
+
+
+# ==================================================
+# GET SAVING DEBITS
+# ==================================================
+
+@app.get("/api/saving-debits")
+def get_saving_debits():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    rows = c.execute(
+        """
+        SELECT d.*, f.name family
+        FROM saving_debits d
+        JOIN families f
+        ON f.id=d.family_id
+        ORDER BY d.id DESC
+        """
+    ).fetchall()
+
+    c.close()
+
+    return jsonify([
+        dict(x)
+        for x in rows
+    ])
+
+
+# ==================================================
+# UPDATE SAVING DEBIT
+# ==================================================
+
+@app.put("/api/saving-debits/<int:did>")
+def update_saving_debit(did):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    d = request.json or {}
+
+    try:
+        family_id = int(d.get("family_id"))
+        amount = float(d.get("amount", 0))
+    except (TypeError, ValueError):
+        return jsonify(
+            error="डेबिट जानकारी सही दें"
+        ), 400
+
+    if amount <= 0:
+        return jsonify(
+            error="डेबिट राशि सही दें"
+        ), 400
+
+    c = conn()
+
+    old = c.execute(
+        """
+        SELECT id, family_id, amount, date, reason
+        FROM saving_debits
+        WHERE id=?
+        """,
+        (did,)
+    ).fetchone()
+
+    if not old:
+        c.close()
+        return jsonify(
+            error="डेबिट एंट्री नहीं मिली"
+        ), 404
+
+    family = c.execute(
+        """
+        SELECT id
+        FROM families
+        WHERE id=?
+        """,
+        (family_id,)
+    ).fetchone()
+
+    if not family:
+        c.close()
+        return jsonify(
+            error="परिवार नहीं मिला"
+        ), 404
+
+    deposit_row = c.execute(
+        """
+        SELECT COALESCE(SUM(amount), 0) AS total
+        FROM savings
+        WHERE family_id=?
+        """,
+        (family_id,)
+    ).fetchone()
+
+    debit_row = c.execute(
+        """
+        SELECT COALESCE(SUM(amount), 0) AS total
+        FROM saving_debits
+        WHERE family_id=?
+          AND id<>?
+        """,
+        (family_id, did)
+    ).fetchone()
+
+    available = (
+        float(deposit_row["total"] or 0)
+        -
+        float(debit_row["total"] or 0)
+    )
+
+    if amount > available:
+        c.close()
+        return jsonify(
+            error=f"उपलब्ध बचत ₹{available:.2f} है। इससे ज्यादा डेबिट नहीं कर सकते।"
+        ), 400
+
+    entry_date = (
+        d.get("date")
+        or old["date"]
+        or datetime.date.today().isoformat()
+    )
+
+    reason = (
+        d.get("reason")
+        if d.get("reason") is not None
+        else (old["reason"] or "")
+    ).strip()
+
+    c.execute(
+        """
+        UPDATE saving_debits
+        SET family_id=?, amount=?, date=?, reason=?
+        WHERE id=?
+        """,
+        (
+            family_id,
+            amount,
+            entry_date,
+            reason,
+            did
+        )
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True
+    )
+
+
+# ==================================================
+# DELETE SAVING DEBIT
+# ==================================================
+
+@app.delete("/api/saving-debits/<int:did>")
+def delete_saving_debit(did):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    row = c.execute(
+        """
+        SELECT id
+        FROM saving_debits
+        WHERE id=?
+        """,
+        (did,)
+    ).fetchone()
+
+    if not row:
+        c.close()
+        return jsonify(
+            error="डेबिट एंट्री नहीं मिली"
+        ), 404
+
+    c.execute(
+        """
+        DELETE FROM saving_debits
+        WHERE id=?
+        """,
+        (did,)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True
+    )
+
+
+# ==================================================
+# UPDATE SAVING
+# ==================================================
+
+@app.put("/api/savings/<int:sid>")
+def update_saving(sid):
+    error = admin_required()
+
+    if error:
+        return error
+
+    d = request.json or {}
+
+    try:
+        family_id = int(
+            d.get("family_id")
+        )
+
+        amount = float(
+            d.get("amount", 0)
+        )
+
+    except (TypeError, ValueError):
+
+        return jsonify(
+            error="बचत जानकारी सही दें"
+        ), 400
+
+    month = (
+        d.get("month") or ""
+    ).strip()
+
+    date = (
+        d.get("date") or ""
+    ).strip()
+
+    if amount <= 0:
+
+        return jsonify(
+            error="बचत राशि सही दें"
+        ), 400
+
+    if not month or not date:
+
+        return jsonify(
+            error="महीना और तारीख जरूरी है"
+        ), 400
+
+    c = conn()
+
+    row = c.execute(
+        """
+        SELECT id
+        FROM savings
+        WHERE id=?
+        """,
+        (sid,)
+    ).fetchone()
+
+    if not row:
+
+        c.close()
+
+        return jsonify(
+            error="बचत एंट्री नहीं मिली"
+        ), 404
+
+    c.execute(
+        """
+        UPDATE savings
+        SET family_id=?,
+            month=?,
+            amount=?,
+            date=?
+        WHERE id=?
+        """,
+        (
+            family_id,
+            month,
+            amount,
+            date,
+            sid
+        )
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True
+    )
+
+
+# ==================================================
+# DELETE SAVING
+# ==================================================
+
+@app.delete("/api/savings/<int:sid>")
+def delete_saving(sid):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    row = c.execute(
+        """
+        SELECT id
+        FROM savings
+        WHERE id=?
+        """,
+        (sid,)
+    ).fetchone()
+
+    if not row:
+
+        c.close()
+
+        return jsonify(
+            error="बचत एंट्री नहीं मिली"
+        ), 404
+
+    c.execute(
+        "DELETE FROM savings WHERE id=?",
+        (sid,)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True
+    )
+
+
+# ==================================================
+# LOAN INTEREST RATE SETTINGS
+# ==================================================
+
+@app.get("/api/settings/loan-interest")
+def get_loan_interest_setting():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    row = c.execute(
+        """
+        SELECT value
+        FROM app_settings
+        WHERE key=?
+        """,
+        ("loan_interest_rate",)
+    ).fetchone()
+
+    if not row:
+        c.execute(
+            """
+            INSERT INTO app_settings (key, value)
+            VALUES (?, ?)
+            ON CONFLICT(key) DO NOTHING
+            """,
+            ("loan_interest_rate", "2")
+        )
+        c.commit()
+        rate = 2.0
+    else:
+        rate = float(row["value"])
+
+    c.close()
+
+    return jsonify(rate=rate)
+
+
+@app.put("/api/settings/loan-interest")
+def update_loan_interest_setting():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    d = request.json or {}
+
+    try:
+        rate = float(d.get("rate"))
+    except (TypeError, ValueError):
+        return jsonify(error="सही ब्याज दर डालें"), 400
+
+    if rate <= 0 or rate > 100:
+        return jsonify(error="ब्याज दर 0 से अधिक और 100% से कम या बराबर होनी चाहिए"), 400
+
+    c = conn()
+
+    c.execute(
+        """
+        INSERT INTO app_settings (key, value)
+        VALUES (?, ?)
+        ON CONFLICT(key) DO UPDATE SET value=EXCLUDED.value
+        """,
+        ("loan_interest_rate", str(rate))
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(ok=True, rate=rate)
+
+
+# ==================================================
+# LOANS - GET
+# ==================================================
+
+@app.get("/api/loans")
+def loans():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    rows = c.execute(
+        """
+        SELECT l.*, f.name family
+        FROM loans l
+        JOIN families f
+        ON f.id=l.family_id
+        ORDER BY l.id DESC
+        """
+    ).fetchall()
+
+    c.close()
+
+    return jsonify([
+        dict(x)
+        for x in rows
+    ])
+
+
+# ==================================================
+# ADD LOAN
+# ==================================================
+
+@app.post("/api/loans")
+def add_loan():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    d = request.json or {}
+
+    try:
+
+        family_id = int(
+            d.get("family_id")
+        )
+
+        amount = float(
+            d.get("amount", 0)
+        )
+
+        months = int(
+            d.get("months", 12)
+        )
+
+    except (TypeError, ValueError):
+
+        return jsonify(
+            error="लोन जानकारी सही दें"
+        ), 400
+
+    if amount <= 0:
+
+        return jsonify(
+            error="लोन राशि सही दें"
+        ), 400
+
+    if months <= 0:
+
+        return jsonify(
+            error="अवधि सही दें"
+        ), 400
+
+    c = conn()
+
+    rate_row = c.execute(
+        """
+        SELECT value
+        FROM app_settings
+        WHERE key=?
+        """,
+        ("loan_interest_rate",)
+    ).fetchone()
+
+    rate = float(rate_row["value"]) if rate_row else 2.0
+
+    family = c.execute(
+        """
+        SELECT id, name
+        FROM families
+        WHERE id=?
+        """,
+        (family_id,)
+    ).fetchone()
+
+    if not family:
+
+        c.close()
+
+        return jsonify(
+            error="परिवार नहीं मिला"
+        ), 404
+
+    entry_date = d.get(
+        "date",
+        datetime.date.today().isoformat()
+    )
+
+    # ==============================
+    # SAVE LOAN
+    # ==============================
+
+    c.execute(
+        """
+        INSERT INTO loans
+        (family_id, original, principal, rate, months, date)
+        VALUES (?, ?, ?, ?, ?, ?)
+        """,
+        (
+            family_id,
+            amount,
+            amount,
+            rate,
+            months,
+            entry_date
+        )
+    )
+
+    # ==============================
+    # CREATE MEMBER NOTIFICATION
+    # ==============================
+
+    c.execute(
+        """
+        INSERT INTO notifications
+        (family_id, title, message, is_read, created_at)
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            family_id,
+            "💳 Loan अपडेट",
+            f"आपके परिवार के लिए ₹{amount:.2f} का Loan अपडेट किया गया है। अवधि: {months} महीने।",
+            False,
+            datetime.datetime.now().isoformat(timespec="seconds")
+        )
+    )
+
+    c.commit()
+
+    # ==============================
+    # SEND FIREBASE PUSH NOTIFICATION
+    # ==============================
+    token_row = c.execute(
+        """
+        SELECT token
+        FROM fcm_tokens
+        WHERE family_id=?
+        """,
+        (family_id,)
+    ).fetchone()
+
+    if token_row:
+        try:
+            message = messaging.Message(
+                notification=messaging.Notification(
+                    title="💳 Loan अपडेट",
+                    body=f"आपके परिवार के लिए ₹{amount:.2f} का Loan अपडेट किया गया है। अवधि: {months} महीने।"
+                ),
+                token=token_row["token"]
+            )
+            messaging.send(message)
+        except Exception as e:
+            print("FCM loan notification error:", e)
+
+    c.close()
+
+    return jsonify(
+        ok=True
+    )
+
+# ==================================================
+# UPDATE LOAN
+# ==================================================
+
+@app.put("/api/loans/<int:lid>")
+def update_loan(lid):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    d = request.json or {}
+
+    try:
+
+        family_id = int(
+            d.get("family_id")
+        )
+
+        amount = float(
+            d.get("amount", 0)
+        )
+
+        rate = float(
+            d.get("rate", 2)
+        )
+
+        months = int(
+            d.get("months", 12)
+        )
+
+    except (TypeError, ValueError):
+
+        return jsonify(
+            error="लोन जानकारी सही दें"
+        ), 400
+
+    if amount <= 0:
+
+        return jsonify(
+            error="लोन राशि सही दें"
+        ), 400
+
+    if months <= 0:
+
+        return jsonify(
+            error="अवधि सही दें"
+        ), 400
+
+    c = conn()
+
+    loan = c.execute(
+        """
+        SELECT *
+        FROM loans
+        WHERE id=?
+        """,
+        (lid,)
+    ).fetchone()
+
+    if not loan:
+
+        c.close()
+
+        return jsonify(
+            error="लोन नहीं मिला"
+        ), 404
+
+    paid_principal = (
+        loan["original"]
+        - loan["principal"]
+    )
+
+    if amount < paid_principal:
+
+        c.close()
+
+        return jsonify(
+            error="नई लोन राशि अब तक चुकाए गए मूलधन से कम नहीं हो सकती"
+        ), 400
+
+    new_principal = (
+        amount - paid_principal
+    )
+
+    c.execute(
+        """
+        UPDATE loans
+        SET family_id=?,
+            original=?,
+            principal=?,
+            rate=?,
+            months=?
+        WHERE id=?
+        """,
+        (
+            family_id,
+            amount,
+            new_principal,
+            rate,
+            months,
+            lid
+        )
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True
+    )
+
+
+# ==================================================
+# DELETE LOAN
+# ==================================================
+
+@app.delete("/api/loans/<int:lid>")
+def delete_loan(lid):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    loan = c.execute(
+        """
+        SELECT id
+        FROM loans
+        WHERE id=?
+        """,
+        (lid,)
+    ).fetchone()
+
+    if not loan:
+
+        c.close()
+
+        return jsonify(
+            error="लोन नहीं मिला"
+        ), 404
+
+    c.execute(
+        "DELETE FROM payments WHERE loan_id=?",
+        (lid,)
+    )
+
+    c.execute(
+        "DELETE FROM loans WHERE id=?",
+        (lid,)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True
+    )
+
+
+# ==================================================
+# PAYMENTS - GET
+# ==================================================
+
+@app.get("/api/payments")
+def payments():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    rows = c.execute(
+        """
+        SELECT p.*, f.name family
+        FROM payments p
+        JOIN families f
+        ON f.id=p.family_id
+        ORDER BY p.id DESC
+        """
+    ).fetchall()
+
+    c.close()
+
+    return jsonify([
+        dict(x)
+        for x in rows
+    ])
+
+
+# ==================================================
+# DELETE PAYMENT
+# ==================================================
+
+@app.delete("/api/payments/<int:pid>")
+def delete_payment(pid):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    payment_row = c.execute(
+        """
+        SELECT *
+        FROM payments
+        WHERE id=?
+        """,
+        (pid,)
+    ).fetchone()
+
+    if not payment_row:
+
+        c.close()
+
+        return jsonify(
+            error="भुगतान रिकॉर्ड नहीं मिला"
+        ), 404
+
+    loan = c.execute(
+        """
+        SELECT id, principal
+        FROM loans
+        WHERE id=?
+        """,
+        (payment_row["loan_id"],)
+    ).fetchone()
+
+    if not loan:
+
+        c.close()
+
+        return jsonify(
+            error="इस भुगतान से जुड़ा Loan नहीं मिला"
+        ), 404
+
+    # Deleted payment का मूलधन Loan balance में वापस जोड़ें
+    restored_balance = (
+        loan["principal"] + payment_row["principal"]
+    )
+
+    c.execute(
+        """
+        UPDATE loans
+        SET principal=?
+        WHERE id=?
+        """,
+        (
+            restored_balance,
+            payment_row["loan_id"]
+        )
+    )
+
+    c.execute(
+        "DELETE FROM payments WHERE id=?",
+        (pid,)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True,
+        remaining=restored_balance
+    )
+
+
+# ==================================================
+# ADD PAYMENT
+# ==================================================
+
+@app.post("/api/payments")
+def payment():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    d = request.json or {}
+
+    try:
+
+        amount = float(
+            d.get("amount", 0)
+        )
+
+        lid = int(
+            d.get("loan_id")
+        )
+
+    except (TypeError, ValueError):
+
+        return jsonify(
+            error="भुगतान जानकारी सही दें"
+        ), 400
+
+    if amount <= 0:
+
+        return jsonify(
+            error="भुगतान राशि सही दें"
+        ), 400
+
+    c = conn()
+
+    l = c.execute(
+        """
+        SELECT *
+        FROM loans
+        WHERE id=?
+        """,
+        (lid,)
+    ).fetchone()
+
+    if not l:
+
+        c.close()
+
+        return jsonify(
+            error="लोन नहीं मिला"
+        ), 404
+
+    if l["principal"] <= 0:
+
+        c.close()
+
+        return jsonify(
+            error="इस लोन की पूरी राशि चुकाई जा चुकी है"
+        ), 400
+
+    # 2% interest calculation
+    interest = min(
+        l["principal"] * l["rate"] / 100,
+        amount
+    )
+
+    principal = amount - interest
+
+    principal = min(
+        principal,
+        l["principal"]
+    )
+
+    # अगर payment principal से ज्यादा हो
+    actual_amount = (
+        interest + principal
+    )
+
+    new_balance = (
+        l["principal"] - principal
+    )
+
+    entry_date = d.get(
+        "date",
+        datetime.date.today().isoformat()
+    )
+
+    # ==============================
+    # UPDATE LOAN BALANCE
+    # ==============================
+
+    c.execute(
+        """
+        UPDATE loans
+        SET principal=?
+        WHERE id=?
+        """,
+        (
+            new_balance,
+            lid
+        )
+    )
+
+    # ==============================
+    # SAVE PAYMENT
+    # ==============================
+
+    c.execute(
+        """
+        INSERT INTO payments
+        (loan_id, family_id, amount, interest, principal, date)
+        VALUES (?, ?, ?, ?, ?, ?)
+        """,
+        (
+            lid,
+            l["family_id"],
+            actual_amount,
+            interest,
+            principal,
+            entry_date
+        )
+    )
+
+    # ==============================
+    # CREATE MEMBER NOTIFICATION
+    # ==============================
+
+    c.execute(
+        """
+        INSERT INTO notifications
+        (family_id, title, message, is_read, created_at)
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            l["family_id"],
+            "💵 Payment अपडेट",
+            f"आपके Loan का ₹{actual_amount:.2f} भुगतान अपडेट किया गया है। बाकी Loan: ₹{new_balance:.2f}",
+            False,
+            datetime.datetime.now().isoformat(timespec="seconds")
+        )
+    )
+
+    c.commit()
+
+    # ==============================
+    # SEND FIREBASE PUSH NOTIFICATION
+    # ==============================
+    
+    token_row = c.execute(
+        """
+        SELECT token
+        FROM fcm_tokens
+        WHERE family_id=?
+        """,
+        (l["family_id"],)
+    ).fetchone()
+    
+    if token_row:
+        try:
+    
+            if principal == 0 and interest > 0:
+                title = "💰 Loan Interest Paid"
+                body = f"आपके Loan का ₹{interest:.2f} ब्याज भुगतान अपडेट किया गया है।"
+    
+            else:
+                title = "💵 Payment अपडेट"
+                body = f"आपके Loan का ₹{actual_amount:.2f} भुगतान अपडेट किया गया है। बाकी Loan: ₹{new_balance:.2f}"
+    
+            message = messaging.Message(
+                notification=messaging.Notification(
+                    title=title,
+                    body=body
+                ),
+                token=token_row["token"]
+            )
+                        
+            messaging.send(message)
         
-            .ledger-brand-title{
-                font-size:16px !important;
-            }
+        except Exception as e:
+            print("FCM payment notification error:", e)
         
-            .ledger-brand-subtitle{
-                font-size:10px !important;
-            }
-        }
-      </style>
+    c.close()
+        
+    return jsonify(
+        ok=True,
+        interest=interest,
+        principal=principal,
+        remaining=new_balance
+    )
 
-    </head>
+# ==================================================
+# INTEREST DISTRIBUTION
+# ==================================================
 
-    <body>
+@app.post("/api/interest-distribution")
+def distribution():
 
-      ${content}
+    error = admin_required()
 
-      <script>
+    if error:
+        return error
 
-        window.onload=function(){
-          window.print();
-        };
+    d = request.json or {}
 
-      <\/script>
+    try:
 
-    </body>
+        total = float(
+            d.get("total_interest", 0)
+        )
 
-    </html>
+    except (TypeError, ValueError):
 
-  `);
+        return jsonify(
+            error="ब्याज राशि सही दें"
+        ), 400
 
-  w.document.close();
+    if total <= 0:
 
-}
+        return jsonify(
+            error="ब्याज राशि सही दें"
+        ), 400
 
+    c = conn()
 
-/* ================= EDIT FAMILY ================= */
+    total_s = c.execute(
+        """
+        SELECT COALESCE(SUM(amount), 0) x
+        FROM savings
+        """
+    ).fetchone()["x"]
 
-async function editFamily(id){
+    if total_s <= 0:
 
-  const family =
-    fam.find(
-      f => Number(f.id) === Number(id)
-    );
+        c.close()
 
-  if(!family){
+        return jsonify(
+            error="पहले बचत एंट्री करें"
+        ), 400
 
-    alert("सदस्य नहीं मिला");
-    return;
+    # ==============================================
+    # TIME-WEIGHTED INTEREST DISTRIBUTION
+    # अधिक समय तक रखी बचत को अधिक ब्याज लाभ मिलेगा।
+    # ==============================================
+    try:
+        distribution_dt = datetime.date.fromisoformat(
+            d.get("date") or datetime.date.today().isoformat()
+        )
+    except (TypeError, ValueError):
+        c.close()
+        return jsonify(
+            error="ब्याज वितरण की तारीख सही दें"
+        ), 400
 
-  }
+    rows = c.execute(
+        """
+        SELECT
+            f.id,
+            f.name,
+            COALESCE(SUM(s.amount), 0) savings
+        FROM families f
+        LEFT JOIN savings s
+        ON s.family_id=f.id
+        GROUP BY f.id
+        ORDER BY f.id
+        """
+    ).fetchall()
 
+    total_weighted_s = 0
+    weighted_rows = []
 
-  const name =
-    prompt(
-      "सदस्य का नाम बदलें",
-      family.name
-    );
+    for r in rows:
+        weighted_savings = 0
 
-  if(name === null) return;
+        savings_rows = c.execute(
+            """
+            SELECT amount, date
+            FROM savings
+            WHERE family_id=?
+            """,
+            (r["id"],)
+        ).fetchall()
 
+        for s in savings_rows:
+            try:
+                saving_dt = datetime.date.fromisoformat(
+                    str(s["date"])
+                )
+            except (TypeError, ValueError):
+                continue
 
-  const mobile =
-    prompt(
-      "मोबाइल नंबर बदलें",
-      family.mobile || ""
-    );
+            holding_days = (distribution_dt - saving_dt).days
 
-  if(mobile === null) return;
+            if holding_days > 0:
+                weighted_savings += (
+                    float(s["amount"] or 0) * holding_days
+                )
 
+        total_weighted_s += weighted_savings
 
-
-  const pin =
-    prompt(
-      "Member Login PIN बदलें",
-      family.pin || ""
-    );
-
-  if(pin === null) return;
-
-  const cleanPin = pin.trim();
-
-  if(cleanPin.length < 4){
-
-    alert("PIN कम से कम 4 अंक का होना चाहिए");
-    return;
-
-  }
-
-
-  if(!name.trim()){
-
-    alert("सदस्य का नाम जरूरी है");
-    return;
-
-  }
-
-
-  try{
-
-    await api(
-      "/api/families/" + id,
-      {
-
-        method:"PUT",
-
-        headers:{
-          "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-          name:name.trim(),
-
-          mobile:mobile.trim(),
-
-          pin:cleanPin
-
+        weighted_rows.append({
+            **dict(r),
+            "weighted_savings": weighted_savings
         })
 
-      }
-    );
+    if total_weighted_s <= 0:
+        c.close()
+        return jsonify(
+            error="ब्याज वितरण के लिए तारीख तक कोई बचत उपलब्ध नहीं है"
+        ), 400
 
+    result = []
 
-    alert(
-      "सदस्य की जानकारी अपडेट हो गई"
-    );
+    for r in weighted_rows:
 
-    await refresh();
+        share = (
+            r["weighted_savings"]
+            / total_weighted_s
+        )
 
-  }catch(e){
-
-    alert(e.message);
-
-  }
-
-}
-
-
-/* ================= DELETE FAMILY ================= */
-
-async function deleteFamily(id){
-
-  const family =
-    fam.find(
-      f => Number(f.id) === Number(id)
-    );
-
-  if(!family){
-
-    alert("सदस्य नहीं मिला");
-    return;
-
-  }
-
-
-  if(!confirm(
-    "क्या आप '" +
-    family.name +
-    "' को Delete करना चाहते हैं?"
-  )){
-
-    return;
-
-  }
-
-
-  try{
-
-    await api(
-      "/api/families/" + id,
-      {
-        method:"DELETE"
-      }
-    );
-
-
-    alert("सदस्य Delete हो गया");
-
-    await refresh();
-
-  }catch(e){
-
-    alert(e.message);
-
-  }
-
-}
-
-
-/* ================= ADD FAMILY ================= */
-
-async function addFamily(){
-
-  const name =
-    prompt("सदस्य का नाम");
-
-  if(!name || !name.trim()) return;
-
-
-  const mobile =
-    prompt(
-      "मोबाइल (वैकल्पिक)"
-    ) || "";
-
-
-  try{
-
-    await api(
-      "/api/families",
-      {
-
-        method:"POST",
-
-        headers:{
-          "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-          name:name.trim(),
-
-          mobile:mobile.trim()
-
+        result.append({
+            **dict(r),
+            "share": share,
+            "interest": total * share
         })
 
-      }
-    );
+    distribution_date = d.get(
+        "date",
+        datetime.date.today().isoformat()
+    )
+    
+    distribution_row = c.execute(
+        """
+        INSERT INTO interest_distributions
+        (total_interest, date)
+        VALUES (?, ?)
+        RETURNING id
+        """,
+        (
+            total,
+            distribution_date
+        )
+    ).fetchone()
+    
+    distribution_id = distribution_row["id"]
+    
+    # ==============================
+    # SAVE FAMILY-WISE INTEREST CREDIT
+    # ==============================
+    
+    for r in result:
+    
+        interest_amount = r["interest"]
+    
+        if interest_amount <= 0:
+            continue
+    
+        c.execute(
+            """
+            INSERT INTO interest_credits
+            (family_id, amount, date, distribution_id)
+            VALUES (?, ?, ?, ?)
+            """,
+            (
+                r["id"],
+                interest_amount,
+                distribution_date,
+                distribution_id
+            )
+        )
+    
+    c.commit()
+
+
+    # ==============================
+    # CREATE MEMBER NOTIFICATIONS
+    # + SEND FIREBASE PUSH
+    # ==============================
+    for r in result:
+
+        interest_amount = r["interest"]
+
+        if interest_amount <= 0:
+            continue
+
+        title = "💰 ब्याज वितरण"
+        body = f"आपके परिवार के खाते में ₹{interest_amount:.2f} ब्याज वितरित किया गया है।"
+
+        c.execute(
+            """
+            INSERT INTO notifications
+            (family_id, title, message, is_read, created_at)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (
+                r["id"],
+                title,
+                body,
+                False,
+                datetime.datetime.now().isoformat(timespec="seconds")
+            )
+        )
+
+        token_row = c.execute(
+            """
+            SELECT token
+            FROM fcm_tokens
+            WHERE family_id=?
+            """,
+            (r["id"],)
+        ).fetchone()
+
+        if token_row:
+            try:
+                message = messaging.Message(
+                    notification=messaging.Notification(
+                        title=title,
+                        body=body
+                    ),
+                    token=token_row["token"]
+                )
+                messaging.send(message)
+            except Exception as e:
+                print("FCM interest distribution notification error:", e)
+
+    c.commit()
+    c.close()
 
+    return jsonify(
+        total_savings=total_s,
+        result=result
+    )
 
-    alert("सदस्य जोड़ दिया गया");
 
-    await refresh();
+# ==================================================
+# GET INTEREST DISTRIBUTION HISTORY
+# ==================================================
 
-  }catch(e){
-
-    alert(e.message);
-
-  }
-
-}
-
-
-/* ================= EDIT MEMBER ================= */
-
-async function editMember(id){
-
-  const member =
-    fam.find(
-      f => Number(f.id) === Number(id)
-    );
-
-  if(!member){
-
-    alert("Member नहीं मिला");
-    return;
-
-  }
-
-
-  const name =
-    prompt(
-      "Member का नाम:",
-      member.name
-    );
-
-  if(name === null) return;
-
-
-  const cleanName =
-    name.trim();
-
-  if(!cleanName){
-
-    alert("नाम जरूरी है");
-    return;
-
-  }
-
-
-  const mobile =
-    prompt(
-      "Mobile Number:",
-      member.mobile || ""
-    );
-
-  if(mobile === null) return;
-
-
-  const pin =
-    prompt(
-      "Member Login PIN:",
-      member.pin || ""
-    );
-
-  if(pin === null) return;
-
-
-  const cleanPin =
-    pin.trim();
-
-  if(cleanPin.length < 4){
-
-    alert(
-      "PIN कम से कम 4 अंक का होना चाहिए"
-    );
-
-    return;
-
-  }
-
-
-  try{
-
-    await api(
-      "/api/families/" + id,
-      {
-
-        method:"PUT",
-
-        headers:{
-          "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-          name:cleanName,
-
-          mobile:mobile.trim(),
-
-          pin:cleanPin
-
-        })
-
-      }
-    );
-
-
-    alert(
-      "Member details सफलतापूर्वक अपडेट हो गईं।"
-    );
-
-    await refresh();
-
-  }catch(e){
-
-    alert(e.message);
-
-  }
-
-}
-async function resetMemberPin(id){
-
-    const member = fam.find(
-        f => Number(f.id) === Number(id)
-    );
-
-    if(!member){
-        alert("Member नहीं मिला");
-        return;
-    }
-
-    const ok = confirm(
-        "क्या आप " + member.name +
-        " का PIN 1234 पर Reset करना चाहते हैं?"
-    );
-
-    if(!ok) return;
-
-    try{
-
-        await api(
-            "/api/families/" + id,
-            {
-                method:"PUT",
-
-                headers:{
-                    "Content-Type":"application/json"
-                },
-
-                body:JSON.stringify({
-                    name:member.name,
-                    mobile:member.mobile || "",
-                    pin:"1234"
-                })
-            }
-        );
-
-        alert(
-            "PIN सफलतापूर्वक 1234 पर Reset हो गया।"
-        );
-
-        await refresh();
-
-    }catch(e){
-
-        alert(e.message);
-
-    }
-}
-async function forceLogoutMember(id){
-
-    const member = fam.find(
-        f => Number(f.id) === Number(id)
-    );
-
-    if(!member){
-        alert("Member नहीं मिला");
-        return;
-    }
-
-    const ok = confirm(
-        "क्या आप " + member.name +
-        " का active login Force Logout करना चाहते हैं?"
-    );
-
-    if(!ok) return;
-
-    try{
-
-        await api(
-            "/api/admin/force-logout/" + id,
-            {
-                method: "POST"
-            }
-        );
-
-        alert(
-            member.name +
-            " का active login सफलतापूर्वक Force Logout हो गया।"
-        );
-
-    }catch(e){
-
-        alert(e.message);
-
-    }
-}
-/* ================= EDIT LOAN ================= */
-
-async function editLoan(id){
-
-  try{
-
-    const rows =
-      await api("/api/loans");
-
-    const loan =
-      rows.find(
-        x => Number(x.id) === Number(id)
-      );
-
-    if(!loan){
-
-      alert("लोन नहीं मिला");
-      return;
-
-    }
-
-
-    const amount =
-      prompt(
-        "लोन राशि",
-        loan.original
-      );
-
-    if(amount === null) return;
-
-
-    const months =
-      prompt(
-        "अवधि माह",
-        loan.months
-      );
-
-    if(months === null) return;
-
-
-    const amountNumber =
-      Number(amount);
-
-    const monthsNumber =
-      Number(months);
-
-
-    if(
-      !amountNumber ||
-      amountNumber <= 0 ||
-      !monthsNumber ||
-      monthsNumber <= 0
-    ){
-
-      alert("सही जानकारी डालें");
-      return;
-
-    }
-
-
-    await api(
-      "/api/loans/" + id,
-      {
-
-        method:"PUT",
-
-        headers:{
-          "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-          family_id:loan.family_id,
-
-          amount:amountNumber,
-
-          rate:loan.rate || 2,
-
-          months:monthsNumber,
-
-          date:loan.date
-
-        })
-
-      }
-    );
-
-
-    alert("लोन अपडेट हो गया");
-
-    await refresh();
-
-  }catch(e){
-
-    alert(e.message);
-
-  }
-
-}
-
-
-/* ================= DELETE LOAN ================= */
-
-async function deleteLoan(id){
-
-  if(!confirm(
-    "क्या आप यह लोन delete करना चाहते हैं?"
-  )){
-
-    return;
-
-  }
-
-
-  try{
-
-    await api(
-      "/api/loans/" + id,
-      {
-        method:"DELETE"
-      }
-    );
-
-
-    alert("लोन delete हो गया");
-
-    await refresh();
-
-  }catch(e){
-
-    alert(e.message);
-
-  }
-
-}
-
-
-/* ================= EXPORT ================= */
-
-async function exportData(key){
-
-  try{
-
-    let endpoint = "";
-
-    if(key === "families"){
-      endpoint = "/api/families";
-    }
-    else if(key === "savings"){
-      endpoint = "/api/savings";
-    }
-    else if(key === "loans"){
-  endpoint = "/api/loans";
-}
-else if(key === "payments"){
-  endpoint = "/api/payments";
-}
-else{
-  throw new Error("गलत रिपोर्ट");
-}
-
-    const data = await api(endpoint);
-
-    const blob = new Blob(
-      [JSON.stringify(data, null, 2)],
-      {
-        type: "application/json"
-      }
-    );
-
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-
-    a.href = url;
-    a.download = key + ".json";
-
-    document.body.appendChild(a);
-
-    a.click();
-
-    a.remove();
-
-    URL.revokeObjectURL(url);
-
-  }
-  catch(e){
-
-    alert(e.message);
-
-  }
-
-}
-
-
-/* ================= AUTO LOGIN ================= */
-
-async function checkAutoLogin(){
-
-  try{
-
-    const user = await api("/api/me");
-
-    if(user && user.admin){
-
-      $("login").classList.add("hidden");
-      $("app").classList.remove("hidden");
-
-      await init();
-      return;
-    }
-
-    if(
-      user &&
-      user.family_id
-    ){
-
-      $("login").classList.add("hidden");
-      $("app").classList.remove("hidden");
-
-      await initMember(user);
-      return;
-    }
-
-  }catch(e){
-
-    console.log("Auto login नहीं है:", e.message);
-
-  }
-
-}
-
-/* ================= START ================= */
-
-document.addEventListener(
-  "DOMContentLoaded",
-  function(){
-
-    loginType("admin");
-
-    checkAutoLogin();
-
-  }
-);
-
-</script>
-
-
-<script>
-window.addEventListener("load", function(){
-  const loader = document.getElementById("startupLoader");
-  if(loader){
-    loader.classList.add("hide");
-    setTimeout(function(){
-      loader.remove();
-    }, 400);
-  }
-});
-</script>
-</body>
-</html>
-
-<!-- ================= FAMILY GROUP CARD HOVER BOUNDARY FIX ================= -->
-<style>
-/* Keep the existing animation exactly as it is.
-   Give the cards room to scale/raise without being clipped by the grid. */
-#familyGroupDashboard .cards{
-  overflow:visible !important;
-}
-
-#familyGroupDashboard{
-  overflow:visible !important;
-}
-
-#familyGroupDashboard .card{
-  position:relative;
-  z-index:1;
-}
-
-#familyGroupDashboard .card:hover{
-  z-index:5;
-}
-</style>
+@app.get("/api/interest-distributions")
+def get_interest_distributions():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    rows = c.execute(
+        """
+        SELECT *
+        FROM interest_distributions
+        ORDER BY id DESC
+        """
+    ).fetchall()
+
+    c.close()
+
+    return jsonify({
+        "distributions": [
+            dict(x)
+            for x in rows
+        ]
+    })
+
+
+# ==================================================
+# REVERSE INTEREST DISTRIBUTION
+# ==================================================
+
+@app.post("/api/interest-distribution/<int:distribution_id>/reverse")
+def reverse_interest_distribution(distribution_id):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    distribution = c.execute(
+        """
+        SELECT *
+        FROM interest_distributions
+        WHERE id=?
+        """,
+        (distribution_id,)
+    ).fetchone()
+
+    if not distribution:
+        c.close()
+        return jsonify(
+            error="ब्याज वितरण रिकॉर्ड नहीं मिला"
+        ), 404
+
+    c.execute(
+        """
+        DELETE FROM interest_credits
+        WHERE distribution_id=?
+        """,
+        (distribution_id,)
+    )
+
+    c.execute(
+        """
+        DELETE FROM interest_distributions
+        WHERE id=?
+        """,
+        (distribution_id,)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True,
+        total_interest=distribution["total_interest"]
+    )
+
+
+# ==================================================
+# START APPLICATION
+# ==================================================
+
+init_db()
+
+
+if __name__ == "__main__":
+
+    app.run(
+        host="0.0.0.0",
+        port=int(
+            os.environ.get(
+                "PORT",
+                8000
+            )
+        ),
+        debug=False
+    )
