@@ -3756,15 +3756,38 @@ onMessage(messaging, (payload) => {
 </style>
 
 <style>
-/* ===== FAMILY GROUP: SINGLE DETAIL CARD BALANCE ===== */
+/* ===== FAMILY GROUP: SINGLE DETAIL CARD BALANCED WIDE ===== */
 #familyGroupDashboard .fgd-detail-grid{
-  grid-template-columns:minmax(0,520px);
+  grid-template-columns:minmax(0,900px);
   justify-content:center;
 }
+
+/* Desktop: 2 information items on left + 2 on right */
+@media(min-width:651px){
+  #familyGroupDashboard .fgd-detail-card.status-card{
+    width:100%;
+  }
+
+  #familyGroupDashboard .status-card .fgd-detail-list{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    column-gap:28px;
+    padding:6px 18px 10px;
+  }
+
+  #familyGroupDashboard .status-card .fgd-detail-row{
+    min-height:48px;
+  }
+}
+
 @media(max-width:650px){
   #familyGroupDashboard .fgd-detail-grid{
     grid-template-columns:1fr;
     justify-content:stretch;
+  }
+
+  #familyGroupDashboard .status-card .fgd-detail-list{
+    display:block;
   }
 }
 </style>
