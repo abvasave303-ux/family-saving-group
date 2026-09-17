@@ -1559,28 +1559,9 @@ header .title{
   height:4px;
   background:#1976d2;
 }
-.member-dashboard-card.green::before{background:#238b57}
-.member-dashboard-card.red::before{background:#d93636}
-.member-dashboard-card:nth-child(3)::before{background:#d47712}
-.member-dashboard-card:nth-child(4)::before{background:#1f2d49}
-
-/* Match Family Group Dashboard soft card colors */
-.member-dashboard-card:nth-child(1){
-  background:#eefaf3;
-  border-top:4px solid #238b57;
-}
-.member-dashboard-card:nth-child(2){
-  background:#fff1f1;
-  border-top:4px solid #d93636;
-}
-.member-dashboard-card:nth-child(3){
-  background:#fff8ed;
-  border-top:4px solid #d47712;
-}
-.member-dashboard-card:nth-child(4){
-  background:#f1f3f8;
-  border-top:4px solid #1f2d49;
-}
+.member-dashboard-card.green::before{background:#20864b}
+.member-dashboard-card.red::before{background:#c73535}
+.member-dashboard-card.orange::before{background:#c66d14}
 .member-dashboard-card .member-card-label{
   font-size:14px;
   color:#68768b;
@@ -1592,10 +1573,33 @@ header .title{
   font-weight:800;
   color:#16233b;
 }
-.member-dashboard-card.green .member-card-value{color:#238b57}
-.member-dashboard-card.red .member-card-value{color:#d93636}
+
+/* ===== MEMBER DASHBOARD CARDS - SAME SOFT COLORS AS FAMILY GROUP DASHBOARD ===== */
+.member-dashboard-card:nth-child(1){
+  background:#eefaf3;
+}
+.member-dashboard-card:nth-child(2){
+  background:#fff1f1;
+}
+.member-dashboard-card:nth-child(3){
+  background:#fff8ed;
+}
+.member-dashboard-card:nth-child(4){
+  background:#f1f3f8;
+}
+
+.member-dashboard-card:nth-child(1)::before{background:#238b57}
+.member-dashboard-card:nth-child(2)::before{background:#d93636}
+.member-dashboard-card:nth-child(3)::before{background:#d47712}
+.member-dashboard-card:nth-child(4)::before{background:#1f2d49}
+
+.member-dashboard-card:nth-child(1) .member-card-value{color:#238b57}
+.member-dashboard-card:nth-child(2) .member-card-value{color:#d93636}
 .member-dashboard-card:nth-child(3) .member-card-value{color:#d47712}
 .member-dashboard-card:nth-child(4) .member-card-value{color:#1f2d49}
+.member-dashboard-card.green .member-card-value{color:#20864b}
+.member-dashboard-card.red .member-card-value{color:#c73535}
+.member-dashboard-card.orange .member-card-value{color:#c66d14}
 .member-activity{
   background:#fff;
   border:1px solid #e4eaf2;
@@ -6511,13 +6515,28 @@ function renderMemberDashboard(){
   activities.sort((a,b) => String(b.date).localeCompare(String(a.date)));
 
   section.innerHTML = `
-    <div class="member-dashboard-welcome">
-      <div class="member-welcome-content">
-        <div class="member-welcome-label">👋 WELCOME BACK</div>
-        <h2>${user.name}</h2>
-        <div class="member-welcome-sub">फेमिली बचत ग्रुप में आपका स्वागत है</div>
+    <div class="family-welcome">
+    
+      <div class="welcome-label">
+        🏠 FAMILY SAVING GROUP
       </div>
-      <div class="member-welcome-icon" aria-hidden="true">👤</div>
+    
+      <h2>
+        ${user.name}
+      </h2>
+    
+      <p>
+        आप की बचत और वित्तीय स्थिति का संपूर्ण विवरण
+      </p>
+    
+      <div class="welcome-badge">
+        👨‍👩‍👧‍👦 <span>23 परिवार</span>
+        <span>•</span>
+        💰 समूहिक बचत
+        <span>•</span>
+        📊 वित्तीय प्रगति
+      </div>
+    
     </div>
 
       <div class="member-dashboard-cards">
@@ -6529,11 +6548,11 @@ function renderMemberDashboard(){
           <div class="member-card-label">🏦 मेरा बाकी लोन</div>
           <div class="member-card-value">${money(loanTotal)}</div>
         </div>
-        <div class="member-dashboard-card orange">
+        <div class="member-dashboard-card">
           <div class="member-card-label">📅 इस साल की बचत</div>
           <div class="member-card-value">${money(yearlySavings)}</div>
         </div>
-        <div class="member-dashboard-card blue">
+        <div class="member-dashboard-card orange">
           <div class="member-card-label">📈 मुझे प्राप्त ब्याज</div>
           <div class="member-card-value">${money(interestTotal)}</div>
         </div>
@@ -9941,132 +9960,3 @@ window.addEventListener("load", function(){
 </style>
 
 
-
-
-/* ================= MEMBER DASHBOARD FINAL COLOR + WELCOME POLISH ================= */
-/* Scoped only to the member dashboard. Family Group Dashboard remains unchanged. */
-
-#dashboard .member-dashboard-welcome{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:20px;
-  min-height:145px;
-  margin-bottom:14px;
-  padding:24px 28px;
-  border-radius:18px;
-  border:1px solid #d7e8fa;
-  background:linear-gradient(135deg,#e7f3ff,#f4f9ff);
-  box-shadow:0 5px 20px rgba(22,35,59,.07);
-}
-
-#dashboard .member-welcome-content{
-  min-width:0;
-}
-
-#dashboard .member-welcome-label{
-  color:#55708f;
-  font-size:14px;
-  font-weight:700;
-  letter-spacing:.8px;
-  margin-bottom:4px;
-}
-
-#dashboard .member-dashboard-welcome h2{
-  margin:0;
-  color:#083b78;
-  font-size:30px;
-  line-height:1.15;
-  font-weight:800;
-  animation:memberNameLoop 20s ease both infinite;
-}
-
-#dashboard .member-welcome-sub{
-  margin-top:6px;
-  color:#1976d2;
-  font-size:14px;
-  font-weight:500;
-}
-
-#dashboard .member-welcome-icon{
-  width:100px;
-  height:100px;
-  flex-shrink:0;
-  display:grid;
-  place-items:center;
-  border-radius:50%;
-  background:#dceeff;
-  color:#1769c2;
-  font-size:50px;
-}
-
-/* One clean background layer per card + one matching top border. */
-#dashboard .member-dashboard-card{
-  position:relative;
-  overflow:hidden;
-  border:1px solid #e4eaf2;
-  box-shadow:0 5px 18px rgba(22,35,59,.07);
-}
-
-#dashboard .member-dashboard-card::before{
-  content:"";
-  position:absolute;
-  left:0;
-  top:0;
-  width:100%;
-  height:4px;
-  background:#1976d2;
-}
-
-#dashboard .member-dashboard-card::after{
-  display:none !important;
-  content:none !important;
-}
-
-#dashboard .member-dashboard-card.green{
-  background:#eefaf3;
-  border-top:4px solid #238b57;
-}
-#dashboard .member-dashboard-card.green::before{display:none}
-
-#dashboard .member-dashboard-card.red{
-  background:#fff1f1;
-  border-top:4px solid #d93636;
-}
-#dashboard .member-dashboard-card.red::before{display:none}
-
-#dashboard .member-dashboard-card.orange{
-  background:#fff8ed;
-  border-top:4px solid #d47712;
-}
-#dashboard .member-dashboard-card.orange::before{display:none}
-
-#dashboard .member-dashboard-card.blue{
-  background:#f1f3f8;
-  border-top:4px solid #1f2d49;
-}
-#dashboard .member-dashboard-card.blue::before{display:none}
-
-#dashboard .member-dashboard-card.green .member-card-value{color:#238b57}
-#dashboard .member-dashboard-card.red .member-card-value{color:#d93636}
-#dashboard .member-dashboard-card.orange .member-card-value{color:#d47712}
-#dashboard .member-dashboard-card.blue .member-card-value{color:#1f2d49}
-
-@media(max-width:650px){
-  #dashboard .member-dashboard-welcome{
-    min-height:125px;
-    padding:18px 16px;
-    border-radius:15px;
-    gap:12px;
-  }
-
-  #dashboard .member-welcome-label{font-size:12px}
-  #dashboard .member-dashboard-welcome h2{font-size:23px}
-  #dashboard .member-welcome-sub{font-size:12px}
-
-  #dashboard .member-welcome-icon{
-    width:70px;
-    height:70px;
-    font-size:38px;
-  }
-}
