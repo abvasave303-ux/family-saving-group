@@ -6763,18 +6763,6 @@ async function openFamilyGroupDashboard(button){
     $("fgdStatusAvailable").textContent =
       money(x.group_available);
 
-    $("fgdSummarySavings").textContent =
-      money(x.group_savings);
-
-    $("fgdSummaryInterest").textContent =
-      money(x.group_interest);
-
-    $("fgdSummaryLoan").textContent =
-      money(x.group_loan);
-
-    $("fgdSummaryAvailable").textContent =
-      money(x.group_available);
-
   }catch(e){
 
     console.error(e);
