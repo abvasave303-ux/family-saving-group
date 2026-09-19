@@ -3666,6 +3666,12 @@ header .title{
 .ashish-branding strong {
     display: block;
 }
+/* Ashish Branding - No Decorative Lines */
+.dashboard-footer .ashish-branding::before,
+.dashboard-footer .ashish-branding::after {
+    display: none !important;
+    content: none !important;
+}
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
