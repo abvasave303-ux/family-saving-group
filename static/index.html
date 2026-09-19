@@ -1010,7 +1010,7 @@ header::after{
 .side.mobile-open{
   display:block;
   width:230px;
-  z-index:1000;
+  z-index:10;
   box-shadow:4px 0 18px rgba(0,0,0,.18);
 }
 /* ================= MEMBER HEADER MOBILE ================= */
@@ -6404,14 +6404,7 @@ function toggleSidebar(){
   if(!sidebar) return;
 
   if(window.innerWidth <= 650){
-    const opening = !sidebar.classList.contains("mobile-open");
     sidebar.classList.toggle("mobile-open");
-
-    // Always open the Admin/Member sidebar from the very top.
-    // This prevents the menu from reopening at its previous scroll position.
-    if(opening){
-      sidebar.scrollTop = 0;
-    }
   }
 }
 document.addEventListener("click", function(e){
@@ -9940,6 +9933,67 @@ window.addEventListener("load", function(){
   }
 }
 
+
+
+/* ================= MOBILE ADMIN SAVING TABLE COLUMN ALIGNMENT ================= */
+@media (max-width:650px){
+  /* Only the Admin monthly saving ledger */
+  #saving > .panel:last-child .table{
+    overflow:visible;
+    width:100%;
+  }
+
+  #saving > .panel:last-child table{
+    width:100%;
+    min-width:0;
+    table-layout:fixed;
+    font-size:11px;
+  }
+
+  #saving > .panel:last-child th,
+  #saving > .panel:last-child td{
+    padding:8px 3px;
+    font-size:11px;
+    line-height:1.35;
+    white-space:normal;
+    overflow-wrap:anywhere;
+    vertical-align:middle;
+  }
+
+  #saving > .panel:last-child th:nth-child(1),
+  #saving > .panel:last-child td:nth-child(1){width:18%;}
+
+  #saving > .panel:last-child th:nth-child(2),
+  #saving > .panel:last-child td:nth-child(2){width:16%;}
+
+  #saving > .panel:last-child th:nth-child(3),
+  #saving > .panel:last-child td:nth-child(3){width:24%;}
+
+  #saving > .panel:last-child th:nth-child(4),
+  #saving > .panel:last-child td:nth-child(4){width:14%;}
+
+  #saving > .panel:last-child th:nth-child(5),
+  #saving > .panel:last-child td:nth-child(5){width:10%;}
+
+  #saving > .panel:last-child th:nth-child(6),
+  #saving > .panel:last-child td:nth-child(6){
+    width:18%;
+    text-align:center;
+  }
+
+  #saving > .panel:last-child td:last-child .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-height:30px;
+    padding:6px 5px;
+    margin:2px 0;
+    font-size:10px;
+    line-height:1.1;
+    white-space:nowrap;
+    border-radius:7px;
+  }
+}
 </style>
 
 
