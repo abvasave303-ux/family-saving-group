@@ -3672,6 +3672,12 @@ header .title{
     display: none !important;
     content: none !important;
 }
+/* Remove footer decorative lines */
+.dashboard-footer::before,
+.dashboard-footer::after {
+    display: none !important;
+    content: none !important;
+}
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
