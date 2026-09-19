@@ -7204,16 +7204,20 @@ async function refresh(){
 
           <td>${x.date}</td>
 
-          <td>${x.kind === "debit" ? "Debit / निकासी" : x.month}</td>
-
+          <td>${x.kind === "debit" ? "—" : x.month}</td>
+          
           <td>${x.family}</td>
-
+          
           <td class="${x.kind === "debit" ? "red" : "green"}">
             ${money(x.amount)}
           </td>
-
+          
           <td>
-            ${x.kind === "debit" ? (x.reason || "—") : "—"}
+            ${
+              x.kind === "debit"
+                ? `Debit / निकासी${x.reason ? " (" + x.reason + ")" : ""}`
+                : "—"
+            }
           </td>
 
           <td>
