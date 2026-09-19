@@ -3608,6 +3608,35 @@ header .title{
     font-size:12px;
   }
 }
+/* ================= MEMBER DASHBOARD COLORFUL CARDS ================= */
+
+/* Green - मेरी कुल बचत */
+.member-dashboard-card.green{
+  background:linear-gradient(135deg,#f0faf4,#d9f3e3);
+  border:1px solid #c9e9d5;
+  border-top:4px solid #209653;
+}
+
+/* Red - मेरा बाकी लोन */
+.member-dashboard-card.red{
+  background:linear-gradient(135deg,#fff4f4,#ffe0e0);
+  border:1px solid #f3d0d0;
+  border-top:4px solid #dc3545;
+}
+
+/* Blue - इस साल की बचत */
+.member-dashboard-card:nth-child(3){
+  background:linear-gradient(135deg,#f1f7ff,#dcecff);
+  border:1px solid #cfe0f5;
+  border-top:4px solid #1976d2;
+}
+
+/* Orange - मुझे प्राप्त ब्याज */
+.member-dashboard-card.orange{
+  background:linear-gradient(135deg,#fff8ed,#ffebc9);
+  border:1px solid #f3dfbd;
+  border-top:4px solid #d97706;
+}
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
