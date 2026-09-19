@@ -3560,6 +3560,18 @@ header .title{
     grid-template-columns: 1.35fr 1fr;
   }
 }
+/* Desktop: समूह की स्थिति card full width */
+@media (min-width: 901px) {
+
+  #familyGroupDashboard .fgd-detail-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  #familyGroupDashboard .fgd-status-card {
+    width: 100%;
+  }
+
+}
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
