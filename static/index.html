@@ -7295,7 +7295,11 @@ async function refresh(){
 
           <td>${x.date}</td>
 
-          <td>${x.kind === "debit" ? "—" : x.month}</td>
+          <td>${
+            x.kind === "debit"
+              ? M[(Number(String(x.date).slice(5,7)) - 4 + 12) % 12]
+              : x.month
+          }</td>
           
           <td>${x.family}</td>
           
