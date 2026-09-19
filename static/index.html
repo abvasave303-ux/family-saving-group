@@ -3572,6 +3572,42 @@ header .title{
   }
 
 }
+/* ================= MEMBER MONTHLY LOAN INTEREST STRIP ================= */
+
+.member-loan-interest-strip{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 18px;
+  margin-top:-6px;
+  margin-bottom:18px;
+  border-radius:12px;
+  background:linear-gradient(90deg,#fff8ed,#fffdf8);
+  border:1px solid #f2dfbd;
+  box-shadow:0 3px 12px rgba(198,109,20,.06);
+  color:#8a5a18;
+  font-size:13px;
+  font-weight:600;
+}
+
+.member-loan-interest-strip strong{
+  color:#c66d14;
+  font-size:15px;
+  white-space:nowrap;
+}
+
+@media(max-width:650px){
+  .member-loan-interest-strip{
+    padding:11px 12px;
+    font-size:11px;
+    gap:8px;
+  }
+
+  .member-loan-interest-strip strong{
+    font-size:12px;
+  }
+}
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
@@ -6504,6 +6540,11 @@ function renderMemberDashboard(){
   const debitTotal = debitRows.reduce((a,r) => a + Number(r.amount || 0), 0);
   const memberSaving = savingsTotal + interestTotal - debitTotal;
   const loanTotal = loanRows.reduce((a,r) => a + Number(r.principal || 0), 0);
+  // Member ka monthly loan interest (2% per month)
+  const monthlyLoanInterest = loanRows.reduce(
+    (a, r) => a + (Number(r.principal || 0) * Number(r.rate || 2) / 100),
+    0
+  );
 
   const now = new Date();
   const fyStart = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1;
@@ -6587,7 +6628,11 @@ function renderMemberDashboard(){
           <div class="member-card-value">${money(interestTotal)}</div>
         </div>
       </div>
-
+      <!-- Monthly Loan Interest Strip -->
+      <div class="member-loan-interest-strip">
+        <span>💰 आपके लोन का मासिक ब्याज</span>
+        <strong>${money(monthlyLoanInterest)} प्रति माह</strong>
+      </div>
       <div class="member-activity">
         <h3>🕒 हाल की गतिविधि</h3>
         ${activities.slice(0,5).map(r => `
