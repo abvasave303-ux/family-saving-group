@@ -4236,8 +4236,8 @@ onMessage(messaging, (payload) => {
       <div class="body">
 
         <div class="notice">
-          23 सदस्य × ₹2,000 =
-          <b>₹46,000</b>
+          <span id="monthlyTargetMembers">23</span> सदस्य × ₹2,000 =
+          <b id="monthlyTargetAmount">₹46,000</b>
           सामान्य मासिक लक्ष्य।
         </div>
 
@@ -7129,7 +7129,18 @@ async function refresh(){
     const d = await api("/api/dashboard");
 
     $("cf").textContent = d.families ?? fam.length;
-
+// Monthly Saving Target ko members ke hisaab se update kare
+    const totalMembers = d.families ?? fam.length;
+    const monthlyTarget = totalMembers * 2000;
+    
+    if($("monthlyTargetMembers")){
+      $("monthlyTargetMembers").textContent = totalMembers;
+    }
+    
+    if($("monthlyTargetAmount")){
+      $("monthlyTargetAmount").textContent =
+        money(monthlyTarget);
+    }
     if($("adminFamilyCount")){
       $("adminFamilyCount").textContent =
         (d.families ?? fam.length) + " परिवार";
