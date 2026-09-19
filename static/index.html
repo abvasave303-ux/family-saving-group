@@ -6657,11 +6657,13 @@ function renderMemberDashboard(){
           <div class="member-card-value">${money(interestTotal)}</div>
         </div>
       </div>
+    ${loanRows.length > 0 ? `
       <!-- Monthly Loan Interest Strip -->
       <div class="member-loan-interest-strip">
         <span>💰 आपके लोन का मासिक ब्याज</span>
         <strong>${money(monthlyLoanInterest)} प्रति माह</strong>
       </div>
+    ` : ""}
       <div class="member-activity">
         <h3>🕒 हाल की गतिविधि</h3>
         ${activities.slice(0,5).map(r => `
