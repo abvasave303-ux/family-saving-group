@@ -633,16 +633,11 @@ th{
 }
 .side{
   display:block;
-  top:65px;
-  bottom:auto;
-  height:calc(100vh - 65px);
   transform:translateX(-100%);
   transition:transform .25s ease;
   will-change:transform;
   z-index:1000;
   pointer-events:none;
-  overflow-y:auto;
-  overscroll-behavior:contain;
 }
 
 .side.mobile-open{
@@ -6409,11 +6404,12 @@ function toggleSidebar(){
   if(!sidebar) return;
 
   if(window.innerWidth <= 650){
+    const opening = !sidebar.classList.contains("mobile-open");
     sidebar.classList.toggle("mobile-open");
 
-    // Always open the Admin sidebar from the top.
-    // This prevents the menu from reopening at the previous scroll position.
-    if(sidebar.classList.contains("mobile-open")){
+    // Always open the Admin/Member sidebar from the very top.
+    // This prevents the menu from reopening at its previous scroll position.
+    if(opening){
       sidebar.scrollTop = 0;
     }
   }
