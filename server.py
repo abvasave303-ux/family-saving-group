@@ -2861,11 +2861,6 @@ def distribution():
         ), 400
 
     c = conn()
-        c.execute("""
-        ALTER TABLE sbi_interest
-        ADD COLUMN IF NOT EXISTS distributed BOOLEAN DEFAULT FALSE
-    """)
-
     pending_sbi = c.execute("""
         SELECT COALESCE(SUM(amount), 0) x
         FROM sbi_interest
@@ -2873,7 +2868,6 @@ def distribution():
     """).fetchone()["x"] or 0
 
     total = total + float(pending_sbi)
-
     total_s = c.execute(
         """
         SELECT COALESCE(SUM(amount), 0) x
