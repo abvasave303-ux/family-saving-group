@@ -131,11 +131,18 @@ def init_db():
         FOREIGN KEY(family_id) REFERENCES families(id)
     );
 
-    CREATE TABLE IF NOT EXISTS interest_distributions(
-        id SERIAL PRIMARY KEY,
-        total_interest REAL NOT NULL,
-        date TEXT NOT NULL
-    );
+        CREATE TABLE IF NOT EXISTS interest_distributions(
+            id SERIAL PRIMARY KEY,
+            total_interest REAL NOT NULL,
+            date TEXT NOT NULL
+        );
+        
+        CREATE TABLE IF NOT EXISTS sbi_interest(
+            id SERIAL PRIMARY KEY,
+            amount REAL NOT NULL,
+            date TEXT NOT NULL,
+            description TEXT DEFAULT ''
+        );
     CREATE TABLE IF NOT EXISTS interest_credits(
         id SERIAL PRIMARY KEY,
         family_id INTEGER NOT NULL,
