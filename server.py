@@ -2752,7 +2752,81 @@ def payment():
         principal=principal,
         remaining=new_balance
     )
+# ==================================================
+# SBI INTEREST
+# ==================================================
 
+@app.post("/api/sbi-interest")
+def add_sbi_interest():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    d = request.json or {}
+
+    try:
+        amount = float(d.get("amount", 0))
+    except (TypeError, ValueError):
+        return jsonify(error="SBI ब्याज राशि सही दें"), 400
+
+    if amount <= 0:
+        return jsonify(error="SBI ब्याज राशि सही दें"), 400
+
+    date = d.get("date") or datetime.date.today().isoformat()
+    description = str(d.get("description") or "").strip()
+
+    c = conn()
+
+    c.execute(
+        """
+        INSERT INTO sbi_interest
+        (amount, date, description)
+        VALUES (?, ?, ?)
+        """,
+        (
+            amount,
+            date,
+            description
+        )
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True,
+        message="SBI ब्याज सफलतापूर्वक सेव हो गया"
+    )
+
+
+@app.get("/api/sbi-interest")
+def get_sbi_interest():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    rows = c.execute(
+        """
+        SELECT *
+        FROM sbi_interest
+        ORDER BY id DESC
+        """
+    ).fetchall()
+
+    c.close()
+
+    return jsonify({
+        "sbi_interest": [
+            dict(row)
+            for row in rows
+        ]
+    })
 # ==================================================
 # INTEREST DISTRIBUTION
 # ==================================================
