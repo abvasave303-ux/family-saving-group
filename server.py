@@ -143,7 +143,6 @@ def init_db():
             date TEXT NOT NULL,
             description TEXT DEFAULT ''
         );
-        """)
 
     CREATE TABLE IF NOT EXISTS interest_credits(
         id SERIAL PRIMARY KEY,
