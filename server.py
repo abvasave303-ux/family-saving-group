@@ -183,7 +183,10 @@ def init_db():
         value TEXT NOT NULL
     );
     """)
-
+    c.execute("""
+        ALTER TABLE sbi_interest
+        ADD COLUMN IF NOT EXISTS distributed BOOLEAN DEFAULT FALSE
+    """)
     c.execute(
         """
         INSERT INTO app_settings (key, value)
