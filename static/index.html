@@ -8192,7 +8192,53 @@ async function dist(){
 
 }
 
+async function saveSBIInterest(){
 
+  try{
+
+    const amount =
+      Number($("sbiInterestAmount").value);
+
+    const date =
+      $("sbiInterestDate").value;
+
+    const description =
+      $("sbiInterestDescription").value.trim();
+
+    if(!amount || amount <= 0){
+      alert("कृपया SBI ब्याज राशि दर्ज करें");
+      return;
+    }
+
+    const x = await api("/api/sbi-interest",{
+
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+        amount,
+        date,
+        description
+      })
+
+    });
+
+    alert(x.message || "SBI ब्याज सेव हो गया");
+
+    $("sbiInterestAmount").value = "";
+    $("sbiInterestDate").value = "";
+    $("sbiInterestDescription").value = "";
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+}
 async function loadInterestDistributions(){
 
   try{
