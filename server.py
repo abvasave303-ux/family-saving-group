@@ -143,6 +143,10 @@ def init_db():
             date TEXT NOT NULL,
             description TEXT DEFAULT ''
         );
+        c.execute("""
+            ALTER TABLE sbi_interest
+            ADD COLUMN IF NOT EXISTS distributed BOOLEAN DEFAULT FALSE
+        """)
     CREATE TABLE IF NOT EXISTS interest_credits(
         id SERIAL PRIMARY KEY,
         family_id INTEGER NOT NULL,
