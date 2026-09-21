@@ -8305,6 +8305,24 @@ async function loadSBIInterestHistory(){
   }
 
 }
+async function reverseSBIInterest(id) {
+  if (!confirm("क्या आप यह SBI ब्याज रिकॉर्ड Reverse करना चाहते हैं?")) {
+    return;
+  }
+
+  try {
+    const x = await api(`/api/sbi-interest/${id}/reverse`, {
+      method: "POST"
+    });
+
+    alert(x.message || "SBI ब्याज Reverse हो गया");
+
+    await loadSBIInterestHistory();
+
+  } catch (e) {
+    alert(e.message);
+  }
+}
 async function loadInterestDistributions(){
 
   try{
