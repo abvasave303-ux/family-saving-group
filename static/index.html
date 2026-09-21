@@ -8278,6 +8278,7 @@ async function loadSBIInterestHistory(){
           <th>तारीख</th>
           <th>SBI ब्याज</th>
           <th>विवरण</th>
+          <th>Action</th>
         </tr>
 
         ${rows.map(r => `
@@ -8286,6 +8287,11 @@ async function loadSBIInterestHistory(){
             <td>${r.date || "—"}</td>
             <td class="green">${money(r.amount)}</td>
             <td>${r.description || "—"}</td>
+            <td>
+              <button class="btn secondary" onclick="reverseSBIInterest(${Number(r.id)})">
+                ↩️ Reverse
+              </button>
+            </td>
           </tr>
         `).join("")}
 
