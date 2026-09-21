@@ -4916,6 +4916,17 @@ onMessage(messaging, (payload) => {
 
   </div>
 
+<div class="panel" style="margin-top:15px">
+  <h3>📋 पुराने SBI ब्याज देखें</h3>
+
+  <div class="body">
+    <button class="btn secondary" onclick="loadSBIInterestHistory()">
+      पुराने SBI ब्याज देखें
+    </button>
+
+    <div id="sbiInterestHistory" style="margin-top:15px"></div>
+  </div>
+</div>
 </section>
 
 
@@ -8231,6 +8242,54 @@ async function saveSBIInterest(){
     $("sbiInterestAmount").value = "";
     $("sbiInterestDate").value = "";
     $("sbiInterestDescription").value = "";
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+}
+async function loadSBIInterestHistory(){
+
+  try{
+
+    const x = await api("/api/sbi-interest");
+
+    const box = $("sbiInterestHistory");
+
+    if(!box) return;
+
+    const rows = x.sbi_interest || [];
+
+    if(!rows.length){
+
+      box.innerHTML = '<div class="notice">अभी कोई SBI ब्याज रिकॉर्ड नहीं है।</div>';
+
+      return;
+
+    }
+
+    box.innerHTML = `
+      <table>
+        <tr>
+          <th>ID</th>
+          <th>तारीख</th>
+          <th>SBI ब्याज</th>
+          <th>विवरण</th>
+        </tr>
+
+        ${rows.map(r => `
+          <tr>
+            <td>${r.id}</td>
+            <td>${r.date || "—"}</td>
+            <td class="green">${money(r.amount)}</td>
+            <td>${r.description || "—"}</td>
+          </tr>
+        `).join("")}
+
+      </table>
+    `;
 
   }catch(e){
 
