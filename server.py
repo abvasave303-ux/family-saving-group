@@ -2831,7 +2831,7 @@ def get_sbi_interest():
             for row in rows
         ]
     })
-@app.delete("/api/sbi-interest/<int:sbi_id>")
+@app.post("/api/sbi-interest/<int:sbi_id>/reverse")
 def reverse_sbi_interest(sbi_id):
 
     error = admin_required()
