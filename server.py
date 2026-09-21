@@ -2831,6 +2831,50 @@ def get_sbi_interest():
             for row in rows
         ]
     })
+@app.post("/api/sbi-interest/<int:sbi_id>/reverse")
+def reverse_sbi_interest(sbi_id):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    row = c.execute(
+        """
+        SELECT distributed
+        FROM sbi_interest
+        WHERE id = ?
+        """,
+        (sbi_id,)
+    ).fetchone()
+
+    if not row:
+        c.close()
+        return jsonify(error="SBI ब्याज रिकॉर्ड नहीं मिला"), 404
+
+    if row["distributed"]:
+        c.close()
+        return jsonify(
+            error="यह SBI ब्याज पहले ही वितरित हो चुका है।"
+        ), 400
+
+    c.execute(
+        """
+        DELETE FROM sbi_interest
+        WHERE id = ?
+        """,
+        (sbi_id,)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True,
+        message="SBI ब्याज रिकॉर्ड सफलतापूर्वक Reverse हो गया"
+    )
 @app.get("/api/sbi-interest/summary")
 def get_sbi_interest_summary():
 
