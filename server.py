@@ -2831,7 +2831,7 @@ def get_sbi_interest():
             for row in rows
         ]
     })
-@app.post("/api/sbi-interest/<int:sbi_id>/reverse")
+@app.delete("/api/sbi-interest/<int:sbi_id>")
 def reverse_sbi_interest(sbi_id):
 
     error = admin_required()
@@ -2852,12 +2852,13 @@ def reverse_sbi_interest(sbi_id):
 
     if not row:
         c.close()
-        return jsonify(error="SBI ब्याज रिकॉर्ड नहीं मिला"), 404
+        return jsonify(ok=False, message="SBI ब्याज रिकॉर्ड नहीं मिला"), 404
 
     if row["distributed"]:
         c.close()
         return jsonify(
-            error="यह SBI ब्याज पहले ही वितरित हो चुका है।"
+            ok=False,
+            message="यह SBI ब्याज पहले ही वितरित हो चुका है, Reverse नहीं कर सकते"
         ), 400
 
     c.execute(
@@ -2873,8 +2874,9 @@ def reverse_sbi_interest(sbi_id):
 
     return jsonify(
         ok=True,
-        message="SBI ब्याज रिकॉर्ड सफलतापूर्वक Reverse हो गया"
+        message="SBI ब्याज सफलतापूर्वक Reverse कर दिया गया"
     )
+
 @app.get("/api/sbi-interest/summary")
 def get_sbi_interest_summary():
 
