@@ -8327,6 +8327,22 @@ async function reverseSBIInterest(id) {
     alert(e.message);
   }
 }
+async function deleteSBIInterest(id) {
+  if (!confirm("क्या आप यह SBI ब्याज रिकॉर्ड Delete करना चाहते हैं?")) {
+    return;
+  }
+
+  try {
+    const x = await api(`/api/sbi-interest/${id}`, {
+      method: "DELETE"
+    });
+
+    alert(x.message || "SBI ब्याज रिकॉर्ड Delete हो गया");
+    await loadSBIInterestHistory();
+  } catch (e) {
+    alert(e.message);
+  }
+}
 async function loadInterestDistributions(){
 
   try{
