@@ -8289,7 +8289,11 @@ async function loadSBIInterestHistory(){
             <td>${r.description || "—"}</td>
             <td>
               <button class="btn secondary" onclick="reverseSBIInterest(${Number(r.id)})">
-                ↩️ Reverse
+                  🔄 Reverse
+              </button>
+              
+              <button class="btn danger" onclick="deleteSBIInterest(${Number(r.id)})">
+                  🗑️ Delete
               </button>
             </td>
           </tr>
