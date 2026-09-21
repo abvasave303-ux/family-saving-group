@@ -2831,6 +2831,23 @@ def get_sbi_interest():
             for row in rows
         ]
     })
+@app.get("/api/sbi-interest/summary")
+def get_sbi_interest_summary():
+
+    c = conn()
+
+    row = c.execute(
+        """
+        SELECT COALESCE(SUM(amount), 0) AS total
+        FROM sbi_interest
+        """
+    ).fetchone()
+
+    c.close()
+
+    return jsonify({
+        "total": float(row["total"] or 0)
+    })
 # ==================================================
 # INTEREST DISTRIBUTION
 # ==================================================
