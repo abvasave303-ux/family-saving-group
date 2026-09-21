@@ -788,6 +788,8 @@ def dashboard():
         """
         SELECT
             COALESCE((SELECT SUM(interest) FROM payments), 0)
+            +
+            COALESCE((SELECT SUM(amount) FROM sbi_interest), 0)
             -
             COALESCE((SELECT SUM(total_interest) FROM interest_distributions), 0)
         x
@@ -1315,11 +1317,11 @@ def passbook(fid):
     group_interest = c.execute(
         """
         SELECT
-            COALESCE((SELECT SUM(interest) FROM payments),0)
-            +
-            COALESCE((SELECT SUM(amount) FROM sbi_interest),0)
-            -
-            COALESCE((SELECT SUM(total_interest) FROM interest_distributions),0)
+          COALESCE((SELECT SUM(interest) FROM payments),0)
+          +
+          COALESCE((SELECT SUM(amount) FROM sbi_interest),0)
+          -
+          COALESCE((SELECT SUM(total_interest) FROM interest_distributions),0)
         x
         """
     ).fetchone()["x"]
@@ -2833,110 +2835,6 @@ def get_sbi_interest():
             for row in rows
         ]
     })
-@app.post("/api/sbi-interest/<int:sbi_id>/reverse")
-def reverse_sbi_interest(sbi_id):
-
-    error = admin_required()
-
-    if error:
-        return error
-
-    c = conn()
-
-    row = c.execute(
-        """
-        SELECT distributed
-        FROM sbi_interest
-        WHERE id = ?
-        """,
-        (sbi_id,)
-    ).fetchone()
-
-    if not row:
-        c.close()
-        return jsonify(ok=False, message="SBI ब्याज रिकॉर्ड नहीं मिला"), 404
-
-    if row["distributed"]:
-        c.close()
-        return jsonify(
-            ok=False,
-            message="यह SBI ब्याज पहले ही वितरित हो चुका है, Reverse नहीं कर सकते"
-        ), 400
-
-    c.execute(
-        """
-        DELETE FROM sbi_interest
-        WHERE id = ?
-        """,
-        (sbi_id,)
-    )
-
-    c.commit()
-    c.close()
-
-    return jsonify(
-        ok=True,
-        message="SBI ब्याज सफलतापूर्वक Reverse कर दिया गया"
-    )
-
-@app.get("/api/sbi-interest/summary")
-def get_sbi_interest_summary():
-
-    c = conn()
-
-    row = c.execute(
-        """
-        SELECT COALESCE(SUM(amount), 0) AS total
-        FROM sbi_interest
-        """
-    ).fetchone()
-
-    c.close()
-
-    return jsonify({
-        "total": float(row["total"] or 0)
-    })
-@app.delete("/api/sbi-interest/<int:sbi_id>")
-def delete_sbi_interest(sbi_id):
-
-    error = admin_required()
-
-    if error:
-        return error
-
-    c = conn()
-
-    row = c.execute(
-        """
-        SELECT id
-        FROM sbi_interest
-        WHERE id = ?
-        """,
-        (sbi_id,)
-    ).fetchone()
-
-    if not row:
-        c.close()
-        return jsonify(
-            ok=False,
-            message="SBI ब्याज रिकॉर्ड नहीं मिला"
-        ), 404
-
-    c.execute(
-        """
-        DELETE FROM sbi_interest
-        WHERE id = ?
-        """,
-        (sbi_id,)
-    )
-
-    c.commit()
-    c.close()
-
-    return jsonify(
-        ok=True,
-        message="SBI ब्याज रिकॉर्ड सफलतापूर्वक Delete कर दिया गया"
-    )
 # ==================================================
 # INTEREST DISTRIBUTION
 # ==================================================
