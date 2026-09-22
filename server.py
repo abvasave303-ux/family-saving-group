@@ -793,16 +793,12 @@ def dashboard():
         SELECT
             COALESCE((SELECT SUM(interest) FROM payments), 0)
             +
-            COALESCE((
-                SELECT SUM(amount)
-                FROM sbi_interest
-                WHERE distributed = FALSE
-            ), 0)
+            COALESCE((SELECT SUM(amount) FROM sbi_interest), 0)
+            -
+            COALESCE((SELECT SUM(total_interest) FROM interest_distributions), 0)
         x
         """
-    ).fetchone()["x"] or 0
-
-    interest = max(float(interest), 0)
+    ).fetchone()["x"]
 
     c.close()
 
@@ -3162,6 +3158,17 @@ def reverse_interest_distribution(distribution_id):
     c.execute(
         """
         DELETE FROM interest_credits
+        WHERE distribution_id=?
+        """,
+        (distribution_id,)
+    )
+
+    # Restore SBI interest records linked to this distribution
+    c.execute(
+        """
+        UPDATE sbi_interest
+        SET distributed = FALSE,
+            distribution_id = NULL
         WHERE distribution_id=?
         """,
         (distribution_id,)
