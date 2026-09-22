@@ -187,6 +187,10 @@ def init_db():
         ALTER TABLE sbi_interest
         ADD COLUMN IF NOT EXISTS distributed BOOLEAN DEFAULT FALSE
     """)
+    c.execute("""
+        ALTER TABLE sbi_interest
+        ADD COLUMN IF NOT EXISTS distribution_id INTEGER
+    """)
     c.execute(
         """
         INSERT INTO app_settings (key, value)
@@ -1316,13 +1320,14 @@ def passbook(fid):
 
     group_interest = c.execute(
         """
-        SELECT
+        SELECT GREATEST(
           COALESCE((SELECT SUM(interest) FROM payments),0)
           +
           COALESCE((SELECT SUM(amount) FROM sbi_interest),0)
           -
-          COALESCE((SELECT SUM(total_interest) FROM interest_distributions),0)
-        x
+          COALESCE((SELECT SUM(total_interest) FROM interest_distributions),0),
+          0
+        ) AS x
         """
     ).fetchone()["x"]
 
@@ -3022,9 +3027,10 @@ def distribution():
         )
     c.execute("""
         UPDATE sbi_interest
-        SET distributed = TRUE
+        SET distributed = TRUE,
+            distribution_id = ?
         WHERE distributed = FALSE
-    """)
+    """, (distribution_id,))
     c.commit()
 
 
