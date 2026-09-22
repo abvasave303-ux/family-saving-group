@@ -2840,6 +2840,46 @@ def get_sbi_interest():
             for row in rows
         ]
     })
+
+
+@app.delete("/api/sbi-interest/<int:sbi_id>")
+def delete_sbi_interest(sbi_id):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    row = c.execute(
+        "SELECT * FROM sbi_interest WHERE id=?",
+        (sbi_id,)
+    ).fetchone()
+
+    if not row:
+        c.close()
+        return jsonify(error="SBI ब्याज रिकॉर्ड नहीं मिला"), 404
+
+    if row.get("distributed"):
+        c.close()
+        return jsonify(
+            error="वितरित SBI ब्याज को पहले Reverse करें, फिर Delete करें"
+        ), 400
+
+    c.execute(
+        "DELETE FROM sbi_interest WHERE id=?",
+        (sbi_id,)
+    )
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True,
+        message="SBI ब्याज रिकॉर्ड delete हो गया"
+    )
+
+
 # ==================================================
 # INTEREST DISTRIBUTION
 # ==================================================
@@ -3163,7 +3203,6 @@ def reverse_interest_distribution(distribution_id):
         (distribution_id,)
     )
 
-    # Restore SBI interest records linked to this distribution
     c.execute(
         """
         UPDATE sbi_interest
