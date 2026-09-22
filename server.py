@@ -2946,9 +2946,24 @@ def reverse_sbi_interest(sbi_id):
             (distribution_id,)
         ).fetchone()
 
-        # Distribution record मौजूद हो या पहले से हट चुका हो,
-        # दोनों स्थितियों में SBI entry को Pending करें।
-        # इससे अधूरे/पुराने distribution के कारण Reverse अटकता नहीं है।
+        if not distribution:
+            c.close()
+            return jsonify(error="संबंधित ब्याज वितरण रिकॉर्ड नहीं मिला"), 404
+
+        # पहले सभी संबंधित SBI entries को Un-distributed करें।
+        # इससे distribution_id पर लगे foreign-key constraint की वजह से
+        # distribution delete होने में समस्या नहीं आएगी।
+        c.execute(
+            """
+            UPDATE sbi_interest
+            SET distributed=FALSE,
+                distribution_id=NULL
+            WHERE distribution_id=?
+            """,
+            (distribution_id,)
+        )
+
+        # अब संबंधित member interest credits हटाएँ।
         c.execute(
             """
             DELETE FROM interest_credits
@@ -2957,21 +2972,11 @@ def reverse_sbi_interest(sbi_id):
             (distribution_id,)
         )
 
-        if distribution:
-            c.execute(
-                """
-                DELETE FROM interest_distributions
-                WHERE id=?
-                """,
-                (distribution_id,)
-            )
-
+        # अंत में distribution history हटाएँ।
         c.execute(
             """
-            UPDATE sbi_interest
-            SET distributed=FALSE,
-                distribution_id=NULL
-            WHERE distribution_id=?
+            DELETE FROM interest_distributions
+            WHERE id=?
             """,
             (distribution_id,)
         )
@@ -2990,10 +2995,7 @@ def reverse_sbi_interest(sbi_id):
             c.rollback()
         except Exception:
             pass
-        try:
-            c.close()
-        except Exception:
-            pass
+        c.close()
         print("SBI interest reverse error:", e)
         return jsonify(error="SBI ब्याज Reverse नहीं हो सका"), 500
 
