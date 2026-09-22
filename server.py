@@ -66,6 +66,9 @@ class DBConnection:
     def commit(self):
         self.connection.commit()
 
+    def rollback(self):
+        self.connection.rollback()
+
     def close(self):
         self.connection.close()
 
@@ -790,14 +793,13 @@ def dashboard():
 
     interest = c.execute(
         """
-        SELECT GREATEST(
+        SELECT
             COALESCE((SELECT SUM(interest) FROM payments), 0)
             +
             COALESCE((SELECT SUM(amount) FROM sbi_interest), 0)
             -
-            COALESCE((SELECT SUM(total_interest) FROM interest_distributions), 0),
-            0
-        ) x
+            COALESCE((SELECT SUM(total_interest) FROM interest_distributions), 0)
+        x
         """
     ).fetchone()["x"]
 
@@ -2884,33 +2886,26 @@ def reverse_sbi_interest(sbi_id):
             (distribution_id,)
         ).fetchone()
 
-        # यदि distribution record मौजूद है तो उसके credits और record को हटाएं
-        if distribution:
-            c.execute(
-                """
-                DELETE FROM interest_credits
-                WHERE distribution_id=?
-                """,
-                (distribution_id,)
-            )
+        if not distribution:
+            c.rollback()
+            c.close()
+            return jsonify(error="संबंधित ब्याज वितरण रिकॉर्ड नहीं मिला"), 404
 
-            c.execute(
-                """
-                DELETE FROM interest_distributions
-                WHERE id=?
-                """,
-                (distribution_id,)
-            )
-        else:
-            # पुराने/अधूरे distribution record की स्थिति में भी
-            # SBI entry को वापस Pending करने की अनुमति दें
-            c.execute(
-                """
-                DELETE FROM interest_credits
-                WHERE distribution_id=?
-                """,
-                (distribution_id,)
-            )
+        c.execute(
+            """
+            DELETE FROM interest_credits
+            WHERE distribution_id=?
+            """,
+            (distribution_id,)
+        )
+
+        c.execute(
+            """
+            DELETE FROM interest_distributions
+            WHERE id=?
+            """,
+            (distribution_id,)
+        )
 
         c.execute(
             """
@@ -2932,6 +2927,7 @@ def reverse_sbi_interest(sbi_id):
         )
 
     except Exception as e:
+        c.rollback()
         c.close()
         print("SBI interest reverse error:", e)
         return jsonify(error="SBI ब्याज Reverse नहीं हो सका"), 500
@@ -2970,22 +2966,13 @@ def distribution():
         ), 400
 
     c = conn()
-    available_interest = c.execute(
-        """
-        SELECT GREATEST(
-            COALESCE((SELECT SUM(interest) FROM payments), 0)
-            + COALESCE((SELECT SUM(amount) FROM sbi_interest), 0)
-            - COALESCE((SELECT SUM(total_interest) FROM interest_distributions), 0),
-            0
-        ) AS x
-        """
-    ).fetchone()["x"] or 0
+    pending_sbi = c.execute("""
+        SELECT COALESCE(SUM(amount), 0) x
+        FROM sbi_interest
+        WHERE distributed = FALSE
+    """).fetchone()["x"] or 0
 
-    if float(available_interest) <= 0:
-        c.close()
-        return jsonify(
-            error="वितरण के लिए ब्याज उपलब्ध नहीं है।"
-        ), 400
+    total = total + float(pending_sbi)
     total_s = c.execute(
         """
         SELECT COALESCE(SUM(amount), 0) x
