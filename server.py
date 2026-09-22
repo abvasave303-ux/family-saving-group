@@ -793,12 +793,16 @@ def dashboard():
         SELECT
             COALESCE((SELECT SUM(interest) FROM payments), 0)
             +
-            COALESCE((SELECT SUM(amount) FROM sbi_interest), 0)
-            -
-            COALESCE((SELECT SUM(total_interest) FROM interest_distributions), 0)
+            COALESCE((
+                SELECT SUM(amount)
+                FROM sbi_interest
+                WHERE distributed = FALSE
+            ), 0)
         x
         """
-    ).fetchone()["x"]
+    ).fetchone()["x"] or 0
+
+    interest = max(float(interest), 0)
 
     c.close()
 
