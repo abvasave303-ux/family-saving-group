@@ -187,10 +187,6 @@ def init_db():
         ALTER TABLE sbi_interest
         ADD COLUMN IF NOT EXISTS distributed BOOLEAN DEFAULT FALSE
     """)
-    c.execute("""
-        ALTER TABLE sbi_interest
-        ADD COLUMN IF NOT EXISTS distribution_id INTEGER
-    """)
     c.execute(
         """
         INSERT INTO app_settings (key, value)
@@ -792,8 +788,6 @@ def dashboard():
         """
         SELECT
             COALESCE((SELECT SUM(interest) FROM payments), 0)
-            +
-            COALESCE((SELECT SUM(amount) FROM sbi_interest), 0)
             -
             COALESCE((SELECT SUM(total_interest) FROM interest_distributions), 0)
         x
@@ -1320,14 +1314,11 @@ def passbook(fid):
 
     group_interest = c.execute(
         """
-        SELECT GREATEST(
+        SELECT
           COALESCE((SELECT SUM(interest) FROM payments),0)
-          +
-          COALESCE((SELECT SUM(amount) FROM sbi_interest),0)
           -
-          COALESCE((SELECT SUM(total_interest) FROM interest_distributions),0),
-          0
-        ) AS x
+          COALESCE((SELECT SUM(total_interest) FROM interest_distributions),0)
+        x
         """
     ).fetchone()["x"]
 
@@ -2841,96 +2832,6 @@ def get_sbi_interest():
         ]
     })
 # ==================================================
-# REVERSE SBI INTEREST
-# ==================================================
-
-@app.post("/api/sbi-interest/<int:sbi_id>/reverse")
-def reverse_sbi_interest(sbi_id):
-
-    error = admin_required()
-
-    if error:
-        return error
-
-    c = conn()
-
-    try:
-        sbi_row = c.execute(
-            """
-            SELECT *
-            FROM sbi_interest
-            WHERE id=?
-            """,
-            (sbi_id,)
-        ).fetchone()
-
-        if not sbi_row:
-            c.close()
-            return jsonify(error="SBI ब्याज रिकॉर्ड नहीं मिला"), 404
-
-        if not sbi_row["distributed"] or not sbi_row.get("distribution_id"):
-            c.close()
-            return jsonify(error="यह SBI ब्याज अभी वितरित नहीं है"), 400
-
-        distribution_id = sbi_row["distribution_id"]
-
-        distribution = c.execute(
-            """
-            SELECT *
-            FROM interest_distributions
-            WHERE id=?
-            """,
-            (distribution_id,)
-        ).fetchone()
-
-        if not distribution:
-            c.rollback()
-            c.close()
-            return jsonify(error="संबंधित ब्याज वितरण रिकॉर्ड नहीं मिला"), 404
-
-        c.execute(
-            """
-            DELETE FROM interest_credits
-            WHERE distribution_id=?
-            """,
-            (distribution_id,)
-        )
-
-        c.execute(
-            """
-            DELETE FROM interest_distributions
-            WHERE id=?
-            """,
-            (distribution_id,)
-        )
-
-        c.execute(
-            """
-            UPDATE sbi_interest
-            SET distributed=FALSE,
-                distribution_id=NULL
-            WHERE distribution_id=?
-            """,
-            (distribution_id,)
-        )
-
-        c.commit()
-        c.close()
-
-        return jsonify(
-            ok=True,
-            message="SBI ब्याज वितरण सफलतापूर्वक Reverse हो गया",
-            total_interest=distribution["total_interest"]
-        )
-
-    except Exception as e:
-        c.rollback()
-        c.close()
-        print("SBI interest reverse error:", e)
-        return jsonify(error="SBI ब्याज Reverse नहीं हो सका"), 500
-
-
-# ==================================================
 # INTEREST DISTRIBUTION
 # ==================================================
 
@@ -3117,10 +3018,9 @@ def distribution():
         )
     c.execute("""
         UPDATE sbi_interest
-        SET distributed = TRUE,
-            distribution_id = ?
+        SET distributed = TRUE
         WHERE distributed = FALSE
-    """, (distribution_id,))
+    """)
     c.commit()
 
 
@@ -3267,6 +3167,103 @@ def reverse_interest_distribution(distribution_id):
     return jsonify(
         ok=True,
         total_interest=distribution["total_interest"]
+    )
+
+
+
+# ==================================================
+# SBI INTEREST REVERSE / DELETE
+# ==================================================
+
+@app.post("/api/sbi-interest/<int:sbi_id>/reverse")
+def reverse_sbi_interest(sbi_id):
+
+    error = admin_required()
+    if error:
+        return error
+
+    c = conn()
+
+    row = c.execute(
+        """
+        SELECT *
+        FROM sbi_interest
+        WHERE id=?
+        """,
+        (sbi_id,)
+    ).fetchone()
+
+    if not row:
+        c.close()
+        return jsonify(error="SBI ब्याज रिकॉर्ड नहीं मिला"), 404
+
+    if not bool(row.get("distributed")):
+        c.close()
+        return jsonify(error="यह SBI ब्याज अभी वितरित नहीं है"), 400
+
+    # Mark this SBI entry as pending again.
+    # Existing member credits are intentionally not modified here.
+    # The entry becomes available for the next distribution cycle.
+    c.execute(
+        """
+        UPDATE sbi_interest
+        SET distributed=FALSE
+        WHERE id=?
+        """,
+        (sbi_id,)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True,
+        message="SBI ब्याज Reverse होकर फिर से Pending हो गया"
+    )
+
+
+@app.delete("/api/sbi-interest/<int:sbi_id>")
+def delete_sbi_interest(sbi_id):
+
+    error = admin_required()
+    if error:
+        return error
+
+    c = conn()
+
+    row = c.execute(
+        """
+        SELECT *
+        FROM sbi_interest
+        WHERE id=?
+        """,
+        (sbi_id,)
+    ).fetchone()
+
+    if not row:
+        c.close()
+        return jsonify(error="SBI ब्याज रिकॉर्ड नहीं मिला"), 404
+
+    if bool(row.get("distributed")):
+        c.close()
+        return jsonify(
+            error="वितरित SBI ब्याज पहले Reverse करें, फिर Delete करें"
+        ), 400
+
+    c.execute(
+        """
+        DELETE FROM sbi_interest
+        WHERE id=?
+        """,
+        (sbi_id,)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(
+        ok=True,
+        message="SBI ब्याज रिकॉर्ड Delete हो गया"
     )
 
 
