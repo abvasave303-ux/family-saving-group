@@ -2964,7 +2964,7 @@ def distribution():
         ), 400
 
     c = conn()
-        available_interest = c.execute(
+    available_interest = c.execute(
         """
         SELECT GREATEST(
             COALESCE((SELECT SUM(interest) FROM payments), 0)
