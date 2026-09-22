@@ -2964,7 +2964,22 @@ def distribution():
         ), 400
 
     c = conn()
-    
+        available_interest = c.execute(
+        """
+        SELECT GREATEST(
+            COALESCE((SELECT SUM(interest) FROM payments), 0)
+            + COALESCE((SELECT SUM(amount) FROM sbi_interest), 0)
+            - COALESCE((SELECT SUM(total_interest) FROM interest_distributions), 0),
+            0
+        ) AS x
+        """
+    ).fetchone()["x"] or 0
+
+    if float(available_interest) <= 0:
+        c.close()
+        return jsonify(
+            error="वितरण के लिए ब्याज उपलब्ध नहीं है।"
+        ), 400
     total_s = c.execute(
         """
         SELECT COALESCE(SUM(amount), 0) x
