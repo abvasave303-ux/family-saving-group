@@ -2946,10 +2946,9 @@ def reverse_sbi_interest(sbi_id):
             (distribution_id,)
         ).fetchone()
 
-        if not distribution:
-            c.close()
-            return jsonify(error="संबंधित ब्याज वितरण रिकॉर्ड नहीं मिला"), 404
-
+        # Distribution record मौजूद हो या पहले से हट चुका हो,
+        # दोनों स्थितियों में SBI entry को Pending करें।
+        # इससे अधूरे/पुराने distribution के कारण Reverse अटकता नहीं है।
         c.execute(
             """
             DELETE FROM interest_credits
@@ -2958,13 +2957,14 @@ def reverse_sbi_interest(sbi_id):
             (distribution_id,)
         )
 
-        c.execute(
-            """
-            DELETE FROM interest_distributions
-            WHERE id=?
-            """,
-            (distribution_id,)
-        )
+        if distribution:
+            c.execute(
+                """
+                DELETE FROM interest_distributions
+                WHERE id=?
+                """,
+                (distribution_id,)
+            )
 
         c.execute(
             """
@@ -2990,7 +2990,10 @@ def reverse_sbi_interest(sbi_id):
             c.rollback()
         except Exception:
             pass
-        c.close()
+        try:
+            c.close()
+        except Exception:
+            pass
         print("SBI interest reverse error:", e)
         return jsonify(error="SBI ब्याज Reverse नहीं हो सका"), 500
 
