@@ -2964,13 +2964,7 @@ def distribution():
         ), 400
 
     c = conn()
-    pending_sbi = c.execute("""
-        SELECT COALESCE(SUM(amount), 0) x
-        FROM sbi_interest
-        WHERE distributed = FALSE
-    """).fetchone()["x"] or 0
-
-    total = total + float(pending_sbi)
+    
     total_s = c.execute(
         """
         SELECT COALESCE(SUM(amount), 0) x
