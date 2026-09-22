@@ -2844,6 +2844,66 @@ def get_sbi_interest():
         ]
     })
 # ==================================================
+# DELETE SBI INTEREST
+# ==================================================
+
+@app.delete("/api/sbi-interest/<int:sbi_id>")
+def delete_sbi_interest(sbi_id):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    c = conn()
+
+    try:
+        row = c.execute(
+            """
+            SELECT *
+            FROM sbi_interest
+            WHERE id=?
+            """,
+            (sbi_id,)
+        ).fetchone()
+
+        if not row:
+            c.close()
+            return jsonify(error="SBI ब्याज रिकॉर्ड नहीं मिला"), 404
+
+        if bool(row.get("distributed")):
+            c.close()
+            return jsonify(
+                error="वितरित SBI ब्याज पहले Reverse करें, फिर Delete करें"
+            ), 400
+
+        c.execute(
+            """
+            DELETE FROM sbi_interest
+            WHERE id=?
+            """,
+            (sbi_id,)
+        )
+
+        c.commit()
+        c.close()
+
+        return jsonify(
+            ok=True,
+            message="SBI ब्याज रिकॉर्ड Delete हो गया"
+        )
+
+    except Exception as e:
+        try:
+            c.rollback()
+        except Exception:
+            pass
+        c.close()
+        print("SBI interest delete error:", e)
+        return jsonify(error="SBI ब्याज Delete नहीं हो सका"), 500
+
+
+# ==================================================
 # REVERSE SBI INTEREST
 # ==================================================
 
@@ -2887,7 +2947,6 @@ def reverse_sbi_interest(sbi_id):
         ).fetchone()
 
         if not distribution:
-            c.rollback()
             c.close()
             return jsonify(error="संबंधित ब्याज वितरण रिकॉर्ड नहीं मिला"), 404
 
@@ -2927,7 +2986,10 @@ def reverse_sbi_interest(sbi_id):
         )
 
     except Exception as e:
-        c.rollback()
+        try:
+            c.rollback()
+        except Exception:
+            pass
         c.close()
         print("SBI interest reverse error:", e)
         return jsonify(error="SBI ब्याज Reverse नहीं हो सका"), 500
@@ -2966,13 +3028,9 @@ def distribution():
         ), 400
 
     c = conn()
-    pending_sbi = c.execute("""
-        SELECT COALESCE(SUM(amount), 0) x
-        FROM sbi_interest
-        WHERE distributed = FALSE
-    """).fetchone()["x"] or 0
 
-    total = total + float(pending_sbi)
+    # यहाँ दर्ज की गई राशि ही कुल वितरण राशि मानी जाएगी।
+    # इसमें Loan Interest + SBI Interest दोनों शामिल होंगे।
     total_s = c.execute(
         """
         SELECT COALESCE(SUM(amount), 0) x
@@ -3260,6 +3318,16 @@ def reverse_interest_distribution(distribution_id):
         """
         DELETE FROM interest_distributions
         WHERE id=?
+        """,
+        (distribution_id,)
+    )
+
+    c.execute(
+        """
+        UPDATE sbi_interest
+        SET distributed=FALSE,
+            distribution_id=NULL
+        WHERE distribution_id=?
         """,
         (distribution_id,)
     )
