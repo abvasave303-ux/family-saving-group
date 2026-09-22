@@ -2884,25 +2884,33 @@ def reverse_sbi_interest(sbi_id):
             (distribution_id,)
         ).fetchone()
 
-        if not distribution:
-            c.close()
-            return jsonify(error="संबंधित ब्याज वितरण रिकॉर्ड नहीं मिला"), 404
+        # यदि distribution record मौजूद है तो उसके credits और record को हटाएं
+        if distribution:
+            c.execute(
+                """
+                DELETE FROM interest_credits
+                WHERE distribution_id=?
+                """,
+                (distribution_id,)
+            )
 
-        c.execute(
-            """
-            DELETE FROM interest_credits
-            WHERE distribution_id=?
-            """,
-            (distribution_id,)
-        )
-
-        c.execute(
-            """
-            DELETE FROM interest_distributions
-            WHERE id=?
-            """,
-            (distribution_id,)
-        )
+            c.execute(
+                """
+                DELETE FROM interest_distributions
+                WHERE id=?
+                """,
+                (distribution_id,)
+            )
+        else:
+            # पुराने/अधूरे distribution record की स्थिति में भी
+            # SBI entry को वापस Pending करने की अनुमति दें
+            c.execute(
+                """
+                DELETE FROM interest_credits
+                WHERE distribution_id=?
+                """,
+                (distribution_id,)
+            )
 
         c.execute(
             """
