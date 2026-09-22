@@ -788,6 +788,8 @@ def dashboard():
         """
         SELECT
             COALESCE((SELECT SUM(interest) FROM payments), 0)
+            +
+            COALESCE((SELECT SUM(amount) FROM sbi_interest WHERE distributed = FALSE), 0)
             -
             COALESCE((SELECT SUM(total_interest) FROM interest_distributions), 0)
         x
@@ -1316,6 +1318,8 @@ def passbook(fid):
         """
         SELECT
           COALESCE((SELECT SUM(interest) FROM payments),0)
+          +
+          COALESCE((SELECT SUM(amount) FROM sbi_interest WHERE distributed = FALSE),0)
           -
           COALESCE((SELECT SUM(total_interest) FROM interest_distributions),0)
         x
@@ -3167,103 +3171,6 @@ def reverse_interest_distribution(distribution_id):
     return jsonify(
         ok=True,
         total_interest=distribution["total_interest"]
-    )
-
-
-
-# ==================================================
-# SBI INTEREST REVERSE / DELETE
-# ==================================================
-
-@app.post("/api/sbi-interest/<int:sbi_id>/reverse")
-def reverse_sbi_interest(sbi_id):
-
-    error = admin_required()
-    if error:
-        return error
-
-    c = conn()
-
-    row = c.execute(
-        """
-        SELECT *
-        FROM sbi_interest
-        WHERE id=?
-        """,
-        (sbi_id,)
-    ).fetchone()
-
-    if not row:
-        c.close()
-        return jsonify(error="SBI ब्याज रिकॉर्ड नहीं मिला"), 404
-
-    if not bool(row.get("distributed")):
-        c.close()
-        return jsonify(error="यह SBI ब्याज अभी वितरित नहीं है"), 400
-
-    # Mark this SBI entry as pending again.
-    # Existing member credits are intentionally not modified here.
-    # The entry becomes available for the next distribution cycle.
-    c.execute(
-        """
-        UPDATE sbi_interest
-        SET distributed=FALSE
-        WHERE id=?
-        """,
-        (sbi_id,)
-    )
-
-    c.commit()
-    c.close()
-
-    return jsonify(
-        ok=True,
-        message="SBI ब्याज Reverse होकर फिर से Pending हो गया"
-    )
-
-
-@app.delete("/api/sbi-interest/<int:sbi_id>")
-def delete_sbi_interest(sbi_id):
-
-    error = admin_required()
-    if error:
-        return error
-
-    c = conn()
-
-    row = c.execute(
-        """
-        SELECT *
-        FROM sbi_interest
-        WHERE id=?
-        """,
-        (sbi_id,)
-    ).fetchone()
-
-    if not row:
-        c.close()
-        return jsonify(error="SBI ब्याज रिकॉर्ड नहीं मिला"), 404
-
-    if bool(row.get("distributed")):
-        c.close()
-        return jsonify(
-            error="वितरित SBI ब्याज पहले Reverse करें, फिर Delete करें"
-        ), 400
-
-    c.execute(
-        """
-        DELETE FROM sbi_interest
-        WHERE id=?
-        """,
-        (sbi_id,)
-    )
-
-    c.commit()
-    c.close()
-
-    return jsonify(
-        ok=True,
-        message="SBI ब्याज रिकॉर्ड Delete हो गया"
     )
 
 
