@@ -8278,6 +8278,7 @@ async function loadSBIInterestHistory(){
           <th>तारीख</th>
           <th>SBI ब्याज</th>
           <th>विवरण</th>
+          <th>स्थिति</th>
           <th>Action</th>
         </tr>
 
@@ -8287,6 +8288,7 @@ async function loadSBIInterestHistory(){
             <td>${r.date || "—"}</td>
             <td class="green">${money(r.amount)}</td>
             <td>${r.description || "—"}</td>
+            <td>${r.distributed ? '<span style="color:green;font-weight:700;">✅ वितरित</span>' : '<span style="color:#b77900;font-weight:700;">🕒 वितरण बाकी</span>'}</td>
             <td>
               <button class="btn secondary" onclick="reverseSBIInterest(${Number(r.id)})">
                   🔄 Reverse
