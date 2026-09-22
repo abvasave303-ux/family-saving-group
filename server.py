@@ -1316,13 +1316,14 @@ def passbook(fid):
 
     group_interest = c.execute(
         """
-        SELECT
+        SELECT GREATEST(
           COALESCE((SELECT SUM(interest) FROM payments),0)
           +
           COALESCE((SELECT SUM(amount) FROM sbi_interest),0)
           -
-          COALESCE((SELECT SUM(total_interest) FROM interest_distributions),0)
-        x
+          COALESCE((SELECT SUM(total_interest) FROM interest_distributions),0),
+          0
+        ) AS x
         """
     ).fetchone()["x"]
 
