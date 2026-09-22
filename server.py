@@ -2931,63 +2931,73 @@ def reverse_sbi_interest(sbi_id):
             c.close()
             return jsonify(error="SBI ब्याज रिकॉर्ड नहीं मिला"), 404
 
-        if not sbi_row["distributed"] or not sbi_row.get("distribution_id"):
+        # Reverse केवल वितरित SBI entry पर ही होगा।
+        if not bool(sbi_row.get("distributed")):
             c.close()
             return jsonify(error="यह SBI ब्याज अभी वितरित नहीं है"), 400
 
-        distribution_id = sbi_row["distribution_id"]
+        distribution_id = sbi_row.get("distribution_id")
 
-        distribution = c.execute(
-            """
-            SELECT *
-            FROM interest_distributions
-            WHERE id=?
-            """,
-            (distribution_id,)
-        ).fetchone()
+        # पुराने records में कभी-कभी distribution_id खाली हो सकता है।
+        # ऐसी स्थिति में सबसे हाल का valid distribution record लें।
+        if not distribution_id:
+            latest_distribution = c.execute(
+                """
+                SELECT id
+                FROM interest_distributions
+                ORDER BY id DESC
+                LIMIT 1
+                """
+            ).fetchone()
 
-        if not distribution:
-            c.close()
-            return jsonify(error="संबंधित ब्याज वितरण रिकॉर्ड नहीं मिला"), 404
+            if latest_distribution:
+                distribution_id = latest_distribution["id"]
 
-        # पहले सभी संबंधित SBI entries को Un-distributed करें।
-        # इससे distribution_id पर लगे foreign-key constraint की वजह से
-        # distribution delete होने में समस्या नहीं आएगी।
-        c.execute(
-            """
-            UPDATE sbi_interest
-            SET distributed=FALSE,
-                distribution_id=NULL
-            WHERE distribution_id=?
-            """,
-            (distribution_id,)
-        )
+        if distribution_id:
+            c.execute(
+                """
+                DELETE FROM interest_credits
+                WHERE distribution_id=?
+                """,
+                (distribution_id,)
+            )
 
-        # अब संबंधित member interest credits हटाएँ।
-        c.execute(
-            """
-            DELETE FROM interest_credits
-            WHERE distribution_id=?
-            """,
-            (distribution_id,)
-        )
+            c.execute(
+                """
+                DELETE FROM interest_distributions
+                WHERE id=?
+                """,
+                (distribution_id,)
+            )
 
-        # अंत में distribution history हटाएँ।
-        c.execute(
-            """
-            DELETE FROM interest_distributions
-            WHERE id=?
-            """,
-            (distribution_id,)
-        )
+            c.execute(
+                """
+                UPDATE sbi_interest
+                SET distributed=FALSE,
+                    distribution_id=NULL
+                WHERE distribution_id=?
+                """,
+                (distribution_id,)
+            )
+        else:
+            # Distribution record उपलब्ध न हो तो कम-से-कम इस SBI entry को
+            # pending करें, ताकि इसे Delete किया जा सके।
+            c.execute(
+                """
+                UPDATE sbi_interest
+                SET distributed=FALSE,
+                    distribution_id=NULL
+                WHERE id=?
+                """,
+                (sbi_id,)
+            )
 
         c.commit()
         c.close()
 
         return jsonify(
             ok=True,
-            message="SBI ब्याज वितरण सफलतापूर्वक Reverse हो गया",
-            total_interest=distribution["total_interest"]
+            message="SBI ब्याज वितरण सफलतापूर्वक Reverse हो गया"
         )
 
     except Exception as e:
