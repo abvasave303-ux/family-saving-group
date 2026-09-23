@@ -2840,16 +2840,24 @@ def get_loan_interest_ledger():
     rows = c.execute(
         """
         SELECT
-            TO_CHAR(DATE_TRUNC('month', date::date), 'YYYY-MM') AS month,
-            COALESCE(SUM(interest), 0) AS interest,
-            COUNT(*) AS entries,
-            ARRAY_AGG(id ORDER BY id) AS payment_ids
-        FROM payments
-        WHERE COALESCE(distributed, FALSE)=FALSE
-          AND date >= ? AND date < ?
-          AND interest > 0
-        GROUP BY DATE_TRUNC('month', date::date)
-        ORDER BY month DESC
+            p.id,
+            p.loan_id,
+            p.family_id,
+            f.name AS family_name,
+            l.original AS loan_amount,
+            p.amount,
+            p.interest,
+            p.principal,
+            p.date,
+            COALESCE(p.distributed, FALSE) AS distributed,
+            p.distribution_id
+        FROM payments p
+        LEFT JOIN families f ON f.id = p.family_id
+        LEFT JOIN loans l ON l.id = p.loan_id
+        WHERE COALESCE(p.distributed, FALSE)=FALSE
+          AND p.date >= ? AND p.date < ?
+          AND COALESCE(p.interest, 0) > 0
+        ORDER BY p.date DESC, p.id DESC
         """,
         (fy_start, fy_end)
     ).fetchall()
