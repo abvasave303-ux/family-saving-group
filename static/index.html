@@ -8564,7 +8564,10 @@ async function loadInterestSelection(){
     }
 
     box.innerHTML = `
-      <h4>💵 Loan Interest — महीने चुनें</h4>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+        <h4 style="margin:0;">💵 Loan Interest — महीने चुनें</h4>
+        <button type="button" class="small-btn" onclick="selectAllLoanInterestMonths()">☑ सभी महीने चुनें</button>
+      </div>
       <table>
         <tr><th>Select</th><th>महीना</th><th>Entries</th><th>ब्याज</th></tr>
         ${monthRows.map(r => `
@@ -8592,6 +8595,13 @@ async function loadInterestSelection(){
     `;
     updateInterestSelectionTotal();
   }catch(e){ alert(e.message); }
+}
+
+function selectAllLoanInterestMonths(){
+  document.querySelectorAll(".loan-interest-month").forEach(el => {
+    el.checked = true;
+  });
+  updateInterestSelectionTotal();
 }
 
 function updateInterestSelectionTotal(){
