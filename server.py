@@ -2796,19 +2796,20 @@ def add_sbi_interest():
 
     date = d.get("date") or datetime.date.today().isoformat()
     description = str(d.get("description") or "").strip()
-
+    financial_year = str(d.get("financial_year") or "").strip()
     c = conn()
 
     c.execute(
         """
         INSERT INTO sbi_interest
-        (amount, date, description)
-        VALUES (?, ?, ?)
+        (amount, date, description, financial_year)
+        VALUES (?, ?, ?, ?)
         """,
         (
             amount,
             date,
-            description
+            description,
+            financial_year
         )
     )
 
