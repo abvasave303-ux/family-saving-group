@@ -4825,122 +4825,6 @@ onMessage(messaging, (payload) => {
 
 </section>
 
-<!-- ================= INTEREST ================= -->
-
-<section id="interest" class="hidden">
-<div class="panel" style="margin-bottom:15px">
-
-  <h3>🏦 SBI ब्याज जमा करें</h3>
-
-  <div class="body">
-
-    <div class="form">
-
-      <div class="field">
-        <label>SBI ब्याज राशि ₹</label>
-        <input
-          type="number"
-          id="sbiInterestAmount"
-          placeholder="जैसे 5000"
-          min="0"
-          step="0.01"
-        >
-      </div>
-
-      <div class="field">
-        <label>तारीख</label>
-        <input
-          type="date"
-          id="sbiInterestDate"
-        >
-      </div>
-
-      <div class="field">
-        <label>विवरण</label>
-        <input
-          type="text"
-          id="sbiInterestDescription"
-          placeholder="जैसे SBI खाते का ब्याज"
-        >
-      </div>
-      <div class="field">
-        <label>Financial Year</label>
-        <input type="text" id="sbiInterestFinancialYear" placeholder="जैसे 2026-27">
-      </div>
-      <button
-        class="btn"
-        onclick="saveSBIInterest()"
-      >
-        💾 SBI ब्याज सेव करें
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-  <div class="panel">
-
-    <h3>बचत अनुपात से ब्याज वितरण</h3>
-
-    <div class="body">
-
-      <div class="form">
-
-        <div class="field">
-          <label>कुल वितरण योग्य ब्याज ₹</label>
-          <input id="di" type="number">
-        </div>
-
-        <div class="field">
-          <label>तारीख</label>
-          <input id="dd" type="date">
-        </div>
-
-        <div class="full">
-
-          <button class="btn" onclick="dist()">
-            गणना करें
-          </button>
-
-        </div>
-
-      </div>
-
-      <div id="dr" style="margin-top:15px"></div>
-
-      <div class="panel" style="margin-top:15px">
-
-        <h3>↩️ ब्याज वितरण वापस करें</h3>
-
-        <div class="body">
-
-          <button class="btn secondary" onclick="loadInterestDistributions()">
-            पुराने वितरण देखें
-          </button>
-
-          <div id="interestDistributionHistory" style="margin-top:15px"></div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-<div class="panel" style="margin-top:15px">
-  <h3>📋 पुराने SBI ब्याज देखें</h3>
-
-  <div class="body">
-    <button class="btn secondary" onclick="loadSBIInterestHistory()">
-      पुराने SBI ब्याज देखें
-    </button>
-
-    <div id="sbiInterestHistory" style="margin-top:15px"></div>
-  </div>
-</div>
-</section>
 
 <!-- ================= LOAN INTEREST LEDGER ================= -->
 
@@ -4962,20 +4846,79 @@ onMessage(messaging, (payload) => {
 
 </section>
 
-
 <!-- ================= SBI INTEREST LEDGER ================= -->
 
 <section id="sbiInterestLedger" class="hidden">
 
-  <div class="panel">
+  <div class="panel" style="margin-bottom:15px">
 
-    <h3>🏦 SBI Interest Ledger</h3>
+    <h3>🏦 SBI ब्याज जमा करें</h3>
 
     <div class="body">
 
-      <div class="notice">
-        SBI Interest Ledger यहाँ प्रदर्शित होगा।
+      <div class="form">
+
+        <div class="field">
+          <label>SBI ब्याज राशि ₹</label>
+          <input
+            type="number"
+            id="sbiInterestAmount"
+            placeholder="जैसे 5000"
+            min="0"
+            step="0.01"
+          >
+        </div>
+
+        <div class="field">
+          <label>तारीख</label>
+          <input
+            type="date"
+            id="sbiInterestDate"
+          >
+        </div>
+
+        <div class="field">
+          <label>विवरण</label>
+          <input
+            type="text"
+            id="sbiInterestDescription"
+            placeholder="जैसे SBI खाते का ब्याज"
+          >
+        </div>
+
+        <div class="field">
+          <label>Financial Year</label>
+          <input
+            type="text"
+            id="sbiInterestFinancialYear"
+            placeholder="जैसे 2026-27"
+          >
+        </div>
+
+        <button
+          class="btn"
+          onclick="saveSBIInterest()"
+        >
+          💾 SBI ब्याज सेव करें
+        </button>
+
       </div>
+
+    </div>
+
+  </div>
+
+  <div class="panel">
+
+    <h3>📋 पुराने SBI ब्याज देखें</h3>
+
+    <div class="body">
+
+      <button class="btn secondary" onclick="loadSBIInterestHistory()">
+        पुराने SBI ब्याज देखें
+      </button>
+
+      <div id="sbiInterestHistory" style="margin-top:15px"></div>
 
     </div>
 
