@@ -24,6 +24,23 @@ app.secret_key = os.environ.get(
     "SECRET_KEY",
     "change-this-secret-in-production"
 )
+
+
+def current_financial_year():
+    today = datetime.date.today()
+    start_year = today.year if today.month >= 4 else today.year - 1
+    return f"{start_year}-{str(start_year + 1)[-2:]}"
+
+
+def financial_year_dates(financial_year):
+    try:
+        start_year = int(str(financial_year).split("-")[0])
+        return (
+            datetime.date(start_year, 4, 1).isoformat(),
+            datetime.date(start_year + 1, 4, 1).isoformat()
+        )
+    except (TypeError, ValueError, IndexError):
+        return None, None
 # FIREBASE ADMIN
 firebase_cred = credentials.Certificate(
     "/etc/secrets/firebase-service-account.json"
@@ -197,6 +214,14 @@ def init_db():
     c.execute("""
         ALTER TABLE sbi_interest
         ADD COLUMN IF NOT EXISTS financial_year TEXT
+    """)
+    c.execute("""
+        ALTER TABLE payments
+        ADD COLUMN IF NOT EXISTS distributed BOOLEAN DEFAULT FALSE
+    """)
+    c.execute("""
+        ALTER TABLE payments
+        ADD COLUMN IF NOT EXISTS distribution_id INTEGER
     """)
     c.execute(
         """
@@ -795,16 +820,29 @@ def dashboard():
         """
     ).fetchone()["x"]
 
+    fy = current_financial_year()
+    fy_start, fy_end = financial_year_dates(fy)
+
     interest = c.execute(
         """
         SELECT
-            COALESCE((SELECT SUM(interest) FROM payments), 0)
+            COALESCE((
+                SELECT SUM(interest)
+                FROM payments
+                WHERE COALESCE(distributed, FALSE)=FALSE
+                  AND date >= ? AND date < ?
+            ), 0)
             +
-            COALESCE((SELECT SUM(amount) FROM sbi_interest), 0)
-            -
-            COALESCE((SELECT SUM(total_interest) FROM interest_distributions), 0)
+            COALESCE((
+                SELECT SUM(amount)
+                FROM sbi_interest
+                WHERE COALESCE(distributed, FALSE)=FALSE
+                  AND (financial_year = ? OR (financial_year IS NULL OR financial_year = '')
+                       AND date >= ? AND date < ?)
+            ), 0)
         x
-        """
+        """,
+        (fy_start, fy_end, fy, fy_start, fy_end)
     ).fetchone()["x"]
 
     c.close()
@@ -1325,17 +1363,28 @@ def passbook(fid):
         "SELECT COALESCE(SUM(principal),0) x FROM loans"
     ).fetchone()["x"]
 
+    fy = current_financial_year()
+    fy_start, fy_end = financial_year_dates(fy)
+
     group_interest = c.execute(
         """
         SELECT GREATEST(
-          COALESCE((SELECT SUM(interest) FROM payments),0)
+          COALESCE((
+            SELECT SUM(interest) FROM payments
+            WHERE COALESCE(distributed, FALSE)=FALSE
+              AND date >= ? AND date < ?
+          ),0)
           +
-          COALESCE((SELECT SUM(amount) FROM sbi_interest),0)
-          -
-          COALESCE((SELECT SUM(total_interest) FROM interest_distributions),0),
+          COALESCE((
+            SELECT SUM(amount) FROM sbi_interest
+            WHERE COALESCE(distributed, FALSE)=FALSE
+              AND (financial_year = ? OR (financial_year IS NULL OR financial_year = '')
+                   AND date >= ? AND date < ?)
+          ),0),
           0
         ) AS x
-        """
+        """,
+        (fy_start, fy_end, fy, fy_start, fy_end)
     ).fetchone()["x"]
 
     group_available = (
@@ -2773,6 +2822,46 @@ def payment():
         remaining=new_balance
     )
 # ==================================================
+# LOAN INTEREST LEDGER
+# ==================================================
+
+@app.get("/api/loan-interest-ledger")
+def get_loan_interest_ledger():
+    error = admin_required()
+    if error:
+        return error
+
+    fy = request.args.get("financial_year") or current_financial_year()
+    fy_start, fy_end = financial_year_dates(fy)
+    if not fy_start:
+        return jsonify(error="Financial Year सही दें"), 400
+
+    c = conn()
+    rows = c.execute(
+        """
+        SELECT
+            TO_CHAR(DATE_TRUNC('month', date::date), 'YYYY-MM') AS month,
+            COALESCE(SUM(interest), 0) AS interest,
+            COUNT(*) AS entries,
+            ARRAY_AGG(id ORDER BY id) AS payment_ids
+        FROM payments
+        WHERE COALESCE(distributed, FALSE)=FALSE
+          AND date >= ? AND date < ?
+          AND interest > 0
+        GROUP BY DATE_TRUNC('month', date::date)
+        ORDER BY month DESC
+        """,
+        (fy_start, fy_end)
+    ).fetchall()
+    c.close()
+
+    return jsonify({
+        "financial_year": fy,
+        "loan_interest": [dict(row) for row in rows]
+    })
+
+
+# ==================================================
 # SBI INTEREST
 # ==================================================
 
@@ -2914,105 +3003,25 @@ def delete_sbi_interest(sbi_id):
 
 @app.post("/api/sbi-interest/<int:sbi_id>/reverse")
 def reverse_sbi_interest(sbi_id):
-
     error = admin_required()
-
     if error:
         return error
 
     c = conn()
+    row = c.execute(
+        "SELECT distribution_id, distributed FROM sbi_interest WHERE id=?",
+        (sbi_id,)
+    ).fetchone()
+    c.close()
 
-    try:
-        sbi_row = c.execute(
-            """
-            SELECT *
-            FROM sbi_interest
-            WHERE id=?
-            """,
-            (sbi_id,)
-        ).fetchone()
+    if not row:
+        return jsonify(error="SBI ब्याज रिकॉर्ड नहीं मिला"), 404
+    if not bool(row.get("distributed")):
+        return jsonify(error="यह SBI ब्याज अभी वितरित नहीं है"), 400
+    if not row.get("distribution_id"):
+        return jsonify(error="इस SBI entry का distribution record नहीं मिला"), 400
 
-        if not sbi_row:
-            c.close()
-            return jsonify(error="SBI ब्याज रिकॉर्ड नहीं मिला"), 404
-
-        # Reverse केवल वितरित SBI entry पर ही होगा।
-        if not bool(sbi_row.get("distributed")):
-            c.close()
-            return jsonify(error="यह SBI ब्याज अभी वितरित नहीं है"), 400
-
-        distribution_id = sbi_row.get("distribution_id")
-
-        # पुराने records में कभी-कभी distribution_id खाली हो सकता है।
-        # ऐसी स्थिति में सबसे हाल का valid distribution record लें।
-        if not distribution_id:
-            latest_distribution = c.execute(
-                """
-                SELECT id
-                FROM interest_distributions
-                ORDER BY id DESC
-                LIMIT 1
-                """
-            ).fetchone()
-
-            if latest_distribution:
-                distribution_id = latest_distribution["id"]
-
-        if distribution_id:
-            c.execute(
-                """
-                DELETE FROM interest_credits
-                WHERE distribution_id=?
-                """,
-                (distribution_id,)
-            )
-
-            c.execute(
-                """
-                DELETE FROM interest_distributions
-                WHERE id=?
-                """,
-                (distribution_id,)
-            )
-
-            c.execute(
-                """
-                UPDATE sbi_interest
-                SET distributed=FALSE,
-                    distribution_id=NULL
-                WHERE distribution_id=?
-                """,
-                (distribution_id,)
-            )
-        else:
-            # Distribution record उपलब्ध न हो तो कम-से-कम इस SBI entry को
-            # pending करें, ताकि इसे Delete किया जा सके।
-            c.execute(
-                """
-                UPDATE sbi_interest
-                SET distributed=FALSE,
-                    distribution_id=NULL
-                WHERE id=?
-                """,
-                (sbi_id,)
-            )
-
-        c.commit()
-        c.close()
-
-        return jsonify(
-            ok=True,
-            message="SBI ब्याज वितरण सफलतापूर्वक Reverse हो गया"
-        )
-
-    except Exception as e:
-        try:
-            c.rollback()
-        except Exception:
-            pass
-        c.close()
-        print("SBI interest reverse error:", e)
-        return jsonify(error="SBI ब्याज Reverse नहीं हो सका"), 500
+    return reverse_interest_distribution(row["distribution_id"])
 
 
 # ==================================================
@@ -3021,74 +3030,80 @@ def reverse_sbi_interest(sbi_id):
 
 @app.post("/api/interest-distribution")
 def distribution():
-
     error = admin_required()
-
     if error:
         return error
 
     d = request.json or {}
-
-    try:
-
-        total = float(
-            d.get("total_interest", 0)
-        )
-
-    except (TypeError, ValueError):
-
-        return jsonify(
-            error="ब्याज राशि सही दें"
-        ), 400
-
-    if total <= 0:
-
-        return jsonify(
-            error="ब्याज राशि सही दें"
-        ), 400
+    distribution_date = d.get("date") or datetime.date.today().isoformat()
+    selected_months = d.get("loan_months") or []
+    selected_sbi_ids = d.get("sbi_ids") or []
 
     c = conn()
 
-    # यहाँ दर्ज की गई राशि ही कुल वितरण राशि मानी जाएगी।
-    # इसमें Loan Interest + SBI Interest दोनों शामिल होंगे।
-    total_s = c.execute(
-        """
-        SELECT COALESCE(SUM(amount), 0) x
-        FROM savings
-        """
-    ).fetchone()["x"]
-
-    if total_s <= 0:
-
-        c.close()
-
-        return jsonify(
-            error="पहले बचत एंट्री करें"
-        ), 400
-
-    # ==============================================
-    # TIME-WEIGHTED INTEREST DISTRIBUTION
-    # अधिक समय तक रखी बचत को अधिक ब्याज लाभ मिलेगा।
-    # ==============================================
     try:
-        distribution_dt = datetime.date.fromisoformat(
-            d.get("date") or datetime.date.today().isoformat()
-        )
+        distribution_dt = datetime.date.fromisoformat(distribution_date)
     except (TypeError, ValueError):
         c.close()
-        return jsonify(
-            error="ब्याज वितरण की तारीख सही दें"
-        ), 400
+        return jsonify(error="ब्याज वितरण की तारीख सही दें"), 400
+
+    if not selected_months and not selected_sbi_ids:
+        c.close()
+        return jsonify(error="कम से कम एक Loan month या SBI entry चुनें"), 400
+
+    try:
+        selected_sbi_ids = [int(x) for x in selected_sbi_ids]
+    except (TypeError, ValueError):
+        c.close()
+        return jsonify(error="SBI entries सही चुनें"), 400
+
+    loan_rows = []
+    if selected_months:
+        loan_rows = c.execute(
+            """
+            SELECT id, interest, date
+            FROM payments
+            WHERE COALESCE(distributed, FALSE)=FALSE
+              AND interest > 0
+              AND TO_CHAR(DATE_TRUNC('month', date::date), 'YYYY-MM') = ANY(?)
+            ORDER BY id
+            """,
+            (selected_months,)
+        ).fetchall()
+
+    sbi_rows = []
+    if selected_sbi_ids:
+        sbi_rows = c.execute(
+            """
+            SELECT id, amount, date, financial_year
+            FROM sbi_interest
+            WHERE id = ANY(?)
+              AND COALESCE(distributed, FALSE)=FALSE
+            ORDER BY id
+            """,
+            (selected_sbi_ids,)
+        ).fetchall()
+
+    total_loan_interest = sum(float(r["interest"] or 0) for r in loan_rows)
+    total_sbi_interest = sum(float(r["amount"] or 0) for r in sbi_rows)
+    total = total_loan_interest + total_sbi_interest
+
+    if total <= 0:
+        c.close()
+        return jsonify(error="चुनी गई entries में कोई Pending ब्याज नहीं है"), 400
+
+    total_s = c.execute(
+        "SELECT COALESCE(SUM(amount), 0) x FROM savings"
+    ).fetchone()["x"]
+    if total_s <= 0:
+        c.close()
+        return jsonify(error="पहले बचत एंट्री करें"), 400
 
     rows = c.execute(
         """
-        SELECT
-            f.id,
-            f.name,
-            COALESCE(SUM(s.amount), 0) savings
+        SELECT f.id, f.name, COALESCE(SUM(s.amount), 0) savings
         FROM families f
-        LEFT JOIN savings s
-        ON s.family_id=f.id
+        LEFT JOIN savings s ON s.family_id=f.id
         GROUP BY f.id
         ORDER BY f.id
         """
@@ -3096,173 +3111,99 @@ def distribution():
 
     total_weighted_s = 0
     weighted_rows = []
-
     for r in rows:
         weighted_savings = 0
-
         savings_rows = c.execute(
-            """
-            SELECT amount, date
-            FROM savings
-            WHERE family_id=?
-            """,
+            "SELECT amount, date FROM savings WHERE family_id=?",
             (r["id"],)
         ).fetchall()
-
-        for s in savings_rows:
+        for saving in savings_rows:
             try:
-                saving_dt = datetime.date.fromisoformat(
-                    str(s["date"])
-                )
+                saving_dt = datetime.date.fromisoformat(str(saving["date"]))
             except (TypeError, ValueError):
                 continue
-
             holding_days = (distribution_dt - saving_dt).days
-
             if holding_days > 0:
-                weighted_savings += (
-                    float(s["amount"] or 0) * holding_days
-                )
-
+                weighted_savings += float(saving["amount"] or 0) * holding_days
         total_weighted_s += weighted_savings
-
-        weighted_rows.append({
-            **dict(r),
-            "weighted_savings": weighted_savings
-        })
+        weighted_rows.append({**dict(r), "weighted_savings": weighted_savings})
 
     if total_weighted_s <= 0:
         c.close()
-        return jsonify(
-            error="ब्याज वितरण के लिए तारीख तक कोई बचत उपलब्ध नहीं है"
-        ), 400
+        return jsonify(error="ब्याज वितरण के लिए तारीख तक कोई बचत उपलब्ध नहीं है"), 400
 
-    result = []
-
-    for r in weighted_rows:
-
-        share = (
-            r["weighted_savings"]
-            / total_weighted_s
-        )
-
-        result.append({
-            **dict(r),
-            "share": share,
-            "interest": total * share
-        })
-
-    distribution_date = d.get(
-        "date",
-        datetime.date.today().isoformat()
-    )
-    
     distribution_row = c.execute(
         """
-        INSERT INTO interest_distributions
-        (total_interest, date)
-        VALUES (?, ?)
-        RETURNING id
+        INSERT INTO interest_distributions (total_interest, date)
+        VALUES (?, ?) RETURNING id
         """,
-        (
-            total,
-            distribution_date
-        )
+        (total, distribution_date)
     ).fetchone()
-    
     distribution_id = distribution_row["id"]
-    
-    # ==============================
-    # SAVE FAMILY-WISE INTEREST CREDIT
-    # ==============================
-    
-    for r in result:
-    
-        interest_amount = r["interest"]
-    
-        if interest_amount <= 0:
-            continue
-    
+
+    result = []
+    for r in weighted_rows:
+        share = r["weighted_savings"] / total_weighted_s
+        interest_amount = total * share
+        result.append({**dict(r), "share": share, "interest": interest_amount})
+        if interest_amount > 0:
+            c.execute(
+                """
+                INSERT INTO interest_credits (family_id, amount, date, distribution_id)
+                VALUES (?, ?, ?, ?)
+                """,
+                (r["id"], interest_amount, distribution_date, distribution_id)
+            )
+
+    if loan_rows:
         c.execute(
             """
-            INSERT INTO interest_credits
-            (family_id, amount, date, distribution_id)
-            VALUES (?, ?, ?, ?)
+            UPDATE payments
+            SET distributed=TRUE, distribution_id=?
+            WHERE id = ANY(?)
             """,
-            (
-                r["id"],
-                interest_amount,
-                distribution_date,
-                distribution_id
-            )
+            (distribution_id, [r["id"] for r in loan_rows])
         )
-    c.execute("""
-        UPDATE sbi_interest
-        SET distributed = TRUE,
-            distribution_id = ?
-        WHERE distributed = FALSE
-    """, (distribution_id,))
-    c.commit()
 
+    if sbi_rows:
+        c.execute(
+            """
+            UPDATE sbi_interest
+            SET distributed=TRUE, distribution_id=?
+            WHERE id = ANY(?)
+            """,
+            (distribution_id, [r["id"] for r in sbi_rows])
+        )
 
-    # ==============================
-    # CREATE MEMBER NOTIFICATIONS
-    # + SEND FIREBASE PUSH
-    # ==============================
     for r in result:
-
-        interest_amount = r["interest"]
-
-        if interest_amount <= 0:
+        if r["interest"] <= 0:
             continue
-
         title = "💰 ब्याज वितरण"
-        body = f"आपके परिवार के खाते में ₹{interest_amount:.2f} ब्याज वितरित किया गया है।"
-
+        body = f"आपके परिवार के खाते में ₹{r['interest']:.2f} ब्याज वितरित किया गया है।"
         c.execute(
             """
             INSERT INTO notifications
             (family_id, title, message, is_read, created_at)
             VALUES (?, ?, ?, ?, ?)
             """,
-            (
-                r["id"],
-                title,
-                body,
-                False,
-                datetime.datetime.now().isoformat(timespec="seconds")
-            )
+            (r["id"], title, body, False, datetime.datetime.now().isoformat(timespec="seconds"))
         )
-
         token_row = c.execute(
-            """
-            SELECT token
-            FROM fcm_tokens
-            WHERE family_id=?
-            """,
+            "SELECT token FROM fcm_tokens WHERE family_id=?",
             (r["id"],)
         ).fetchone()
-
         if token_row:
             try:
-                message = messaging.Message(
-                    notification=messaging.Notification(
-                        title=title,
-                        body=body
-                    ),
+                messaging.send(messaging.Message(
+                    notification=messaging.Notification(title=title, body=body),
                     token=token_row["token"]
-                )
-                messaging.send(message)
+                ))
             except Exception as e:
                 print("FCM interest distribution notification error:", e)
 
     c.commit()
     c.close()
-
-    return jsonify(
-        total_savings=total_s,
-        result=result
-    )
+    return jsonify(total_savings=total_s, total_interest=total, result=result, distribution_id=distribution_id)
 
 
 # ==================================================
@@ -3303,52 +3244,35 @@ def get_interest_distributions():
 
 @app.post("/api/interest-distribution/<int:distribution_id>/reverse")
 def reverse_interest_distribution(distribution_id):
-
     error = admin_required()
-
     if error:
         return error
 
     c = conn()
+    try:
+        distribution = c.execute(
+            "SELECT * FROM interest_distributions WHERE id=?",
+            (distribution_id,)
+        ).fetchone()
+        if not distribution:
+            c.close()
+            return jsonify(error="ब्याज वितरण रिकॉर्ड नहीं मिला"), 404
 
-    distribution = c.execute(
-        """
-        SELECT *
-        FROM interest_distributions
-        WHERE id=?
-        """,
-        (distribution_id,)
-    ).fetchone()
-
-    if not distribution:
+        c.execute("DELETE FROM interest_credits WHERE distribution_id=?", (distribution_id,))
+        c.execute("UPDATE payments SET distributed=FALSE, distribution_id=NULL WHERE distribution_id=?", (distribution_id,))
+        c.execute("UPDATE sbi_interest SET distributed=FALSE, distribution_id=NULL WHERE distribution_id=?", (distribution_id,))
+        c.execute("DELETE FROM interest_distributions WHERE id=?", (distribution_id,))
+        c.commit()
         c.close()
-        return jsonify(
-            error="ब्याज वितरण रिकॉर्ड नहीं मिला"
-        ), 404
-
-    c.execute(
-        """
-        DELETE FROM interest_credits
-        WHERE distribution_id=?
-        """,
-        (distribution_id,)
-    )
-
-    c.execute(
-        """
-        DELETE FROM interest_distributions
-        WHERE id=?
-        """,
-        (distribution_id,)
-    )
-
-    c.commit()
-    c.close()
-
-    return jsonify(
-        ok=True,
-        total_interest=distribution["total_interest"]
-    )
+        return jsonify(ok=True, total_interest=distribution["total_interest"], message="ब्याज वितरण Reverse हो गया")
+    except Exception as e:
+        try:
+            c.rollback()
+        except Exception:
+            pass
+        c.close()
+        print("Interest distribution reverse error:", e)
+        return jsonify(error="ब्याज वितरण Reverse नहीं हो सका"), 500
 
 
 # ==================================================
