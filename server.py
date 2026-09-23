@@ -2946,6 +2946,70 @@ def get_sbi_interest():
         ]
     })
 # ==================================================
+# UPDATE SBI INTEREST
+# ==================================================
+
+@app.put("/api/sbi-interest/<int:sbi_id>")
+def update_sbi_interest(sbi_id):
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    d = request.json or {}
+
+    try:
+        amount = float(d.get("amount", 0))
+    except (TypeError, ValueError):
+        return jsonify(error="SBI ब्याज राशि सही नहीं है"), 400
+
+    if amount <= 0:
+        return jsonify(error="SBI ब्याज राशि सही नहीं है"), 400
+
+    date = str(d.get("date") or "").strip()
+    description = str(d.get("description") or "").strip()
+    financial_year = str(d.get("financial_year") or "").strip()
+
+    c = conn()
+
+    try:
+        row = c.execute(
+            "SELECT id, distributed FROM sbi_interest WHERE id=?",
+            (sbi_id,)
+        ).fetchone()
+
+        if not row:
+            c.close()
+            return jsonify(error="SBI ब्याज रिकॉर्ड नहीं मिला"), 404
+
+        if bool(row.get("distributed")):
+            c.close()
+            return jsonify(error="वितरित SBI ब्याज को पहले Reverse करें"), 400
+
+        c.execute(
+            """
+            UPDATE sbi_interest
+            SET amount=?, date=?, description=?, financial_year=?
+            WHERE id=?
+            """,
+            (amount, date, description, financial_year, sbi_id)
+        )
+
+        c.commit()
+        c.close()
+        return jsonify(ok=True, message="SBI ब्याज रिकॉर्ड अपडेट हो गया")
+
+    except Exception as e:
+        try:
+            c.rollback()
+        except Exception:
+            pass
+        c.close()
+        print("SBI interest update error:", e)
+        return jsonify(error="SBI ब्याज अपडेट नहीं हो सका"), 500
+
+# ==================================================
 # DELETE SBI INTEREST
 # ==================================================
 
