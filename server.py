@@ -3337,16 +3337,6 @@ def reverse_interest_distribution(distribution_id):
         (distribution_id,)
     )
 
-    c.execute(
-        """
-        UPDATE sbi_interest
-        SET distributed=FALSE,
-            distribution_id=NULL
-        WHERE distribution_id=?
-        """,
-        (distribution_id,)
-    )
-
     c.commit()
     c.close()
 
