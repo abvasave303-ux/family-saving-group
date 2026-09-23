@@ -8343,6 +8343,44 @@ async function deleteSBIInterest(id) {
     alert(e.message);
   }
 }
+async function loadLoanInterestLedger() {
+  try {
+    const x = await api("/api/loan-interest-ledger");
+    const box = $("loanInterestLedgerBox");
+
+    if (!x || !x.length) {
+      box.innerHTML = `
+        <div class="notice">
+          अभी कोई Loan Interest रिकॉर्ड नहीं है।
+        </div>
+      `;
+      return;
+    }
+
+    box.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>तारीख</th>
+            <th>विवरण</th>
+            <th>राशि ₹</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${x.map(r => `
+            <tr>
+              <td>${r.date || ""}</td>
+              <td>${r.description || "Loan Interest"}</td>
+              <td>₹${Number(r.amount || 0).toFixed(2)}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    `;
+  } catch (e) {
+    alert(e.message);
+  }
+}
 async function loadInterestDistributions(){
 
   try{
