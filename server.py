@@ -194,6 +194,10 @@ def init_db():
         ALTER TABLE sbi_interest
         ADD COLUMN IF NOT EXISTS distribution_id INTEGER
     """)
+    c.execute("""
+        ALTER TABLE sbi_interest
+        ADD COLUMN IF NOT EXISTS financial_year TEXT
+    """)
     c.execute(
         """
         INSERT INTO app_settings (key, value)
