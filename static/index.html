@@ -4853,7 +4853,10 @@ onMessage(messaging, (payload) => {
           placeholder="जैसे SBI खाते का ब्याज"
         >
       </div>
-
+      <div class="field">
+        <label>Financial Year</label>
+        <input type="text" id="sbiInterestFinancialYear" placeholder="जैसे 2026-27">
+      </div>
       <button
         class="btn"
         onclick="saveSBIInterest()"
@@ -8215,7 +8218,8 @@ async function saveSBIInterest(){
 
     const description =
       $("sbiInterestDescription").value.trim();
-
+    const financial_year =
+      $("sbiInterestFinancialYear").value.trim();
     if(!amount || amount <= 0){
       alert("कृपया SBI ब्याज राशि दर्ज करें");
       return;
@@ -8232,7 +8236,8 @@ async function saveSBIInterest(){
       body:JSON.stringify({
         amount,
         date,
-        description
+        description,
+        financial_year
       })
 
     });
@@ -8242,7 +8247,7 @@ async function saveSBIInterest(){
     $("sbiInterestAmount").value = "";
     $("sbiInterestDate").value = "";
     $("sbiInterestDescription").value = "";
-
+    $("sbiInterestFinancialYear").value = "";
   }catch(e){
 
     alert(e.message);
