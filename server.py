@@ -820,9 +820,6 @@ def dashboard():
         """
     ).fetchone()["x"]
 
-    fy = current_financial_year()
-    fy_start, fy_end = financial_year_dates(fy)
-
     interest = c.execute(
         """
         SELECT
@@ -830,19 +827,15 @@ def dashboard():
                 SELECT SUM(interest)
                 FROM payments
                 WHERE COALESCE(distributed, FALSE)=FALSE
-                  AND date >= ? AND date < ?
             ), 0)
             +
             COALESCE((
                 SELECT SUM(amount)
                 FROM sbi_interest
                 WHERE COALESCE(distributed, FALSE)=FALSE
-                  AND (financial_year = ? OR (financial_year IS NULL OR financial_year = '')
-                       AND date >= ? AND date < ?)
             ), 0)
         x
-        """,
-        (fy_start, fy_end, fy, fy_start, fy_end)
+        """
     ).fetchone()["x"]
 
     c.close()
@@ -2831,11 +2824,6 @@ def get_loan_interest_ledger():
     if error:
         return error
 
-    fy = request.args.get("financial_year") or current_financial_year()
-    fy_start, fy_end = financial_year_dates(fy)
-    if not fy_start:
-        return jsonify(error="Financial Year सही दें"), 400
-
     c = conn()
     rows = c.execute(
         """
@@ -2855,16 +2843,14 @@ def get_loan_interest_ledger():
         LEFT JOIN families f ON f.id = p.family_id
         LEFT JOIN loans l ON l.id = p.loan_id
         WHERE COALESCE(p.distributed, FALSE)=FALSE
-          AND p.date >= ? AND p.date < ?
           AND COALESCE(p.interest, 0) > 0
         ORDER BY p.date DESC, p.id DESC
-        """,
-        (fy_start, fy_end)
+        """
     ).fetchall()
     c.close()
 
     return jsonify({
-        "financial_year": fy,
+        "financial_year": "ALL",
         "loan_interest": [dict(row) for row in rows]
     })
 
@@ -2945,70 +2931,6 @@ def get_sbi_interest():
             for row in rows
         ]
     })
-# ==================================================
-# UPDATE SBI INTEREST
-# ==================================================
-
-@app.put("/api/sbi-interest/<int:sbi_id>")
-def update_sbi_interest(sbi_id):
-
-    error = admin_required()
-
-    if error:
-        return error
-
-    d = request.json or {}
-
-    try:
-        amount = float(d.get("amount", 0))
-    except (TypeError, ValueError):
-        return jsonify(error="SBI ब्याज राशि सही नहीं है"), 400
-
-    if amount <= 0:
-        return jsonify(error="SBI ब्याज राशि सही नहीं है"), 400
-
-    date = str(d.get("date") or "").strip()
-    description = str(d.get("description") or "").strip()
-    financial_year = str(d.get("financial_year") or "").strip()
-
-    c = conn()
-
-    try:
-        row = c.execute(
-            "SELECT id, distributed FROM sbi_interest WHERE id=?",
-            (sbi_id,)
-        ).fetchone()
-
-        if not row:
-            c.close()
-            return jsonify(error="SBI ब्याज रिकॉर्ड नहीं मिला"), 404
-
-        if bool(row.get("distributed")):
-            c.close()
-            return jsonify(error="वितरित SBI ब्याज को पहले Reverse करें"), 400
-
-        c.execute(
-            """
-            UPDATE sbi_interest
-            SET amount=?, date=?, description=?, financial_year=?
-            WHERE id=?
-            """,
-            (amount, date, description, financial_year, sbi_id)
-        )
-
-        c.commit()
-        c.close()
-        return jsonify(ok=True, message="SBI ब्याज रिकॉर्ड अपडेट हो गया")
-
-    except Exception as e:
-        try:
-            c.rollback()
-        except Exception:
-            pass
-        c.close()
-        print("SBI interest update error:", e)
-        return jsonify(error="SBI ब्याज अपडेट नहीं हो सका"), 500
-
 # ==================================================
 # DELETE SBI INTEREST
 # ==================================================
