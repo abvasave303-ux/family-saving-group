@@ -8292,6 +8292,10 @@ async function loadSBIInterestHistory(){
                   🔄 Reverse
               </button>
               
+              <button class="btn secondary" onclick="editSBIInterest(${Number(r.id)}, ${JSON.stringify(r.amount)}, ${JSON.stringify(r.date || "")}, ${JSON.stringify(r.description || "")}, ${JSON.stringify(r.financial_year || "")})">
+                  ✏️ Edit
+              </button>
+
               <button class="btn danger" onclick="deleteSBIInterest(${Number(r.id)})">
                   🗑️ Delete
               </button>
@@ -8327,6 +8331,38 @@ async function reverseSBIInterest(id) {
     alert(e.message);
   }
 }
+async function editSBIInterest(id, amount, date, description, financialYear) {
+  const newAmount = prompt("SBI ब्याज राशि दर्ज करें:", amount);
+  if (newAmount === null) return;
+
+  const newDate = prompt("तारीख दर्ज करें (YYYY-MM-DD):", date);
+  if (newDate === null) return;
+
+  const newDescription = prompt("विवरण दर्ज करें:", description);
+  if (newDescription === null) return;
+
+  const newFinancialYear = prompt("Financial Year दर्ज करें:", financialYear);
+  if (newFinancialYear === null) return;
+
+  try {
+    const x = await api(`/api/sbi-interest/${id}`, {
+      method: "PUT",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        amount: Number(newAmount),
+        date: newDate,
+        description: newDescription,
+        financial_year: newFinancialYear
+      })
+    });
+
+    alert(x.message || "SBI ब्याज रिकॉर्ड अपडेट हो गया");
+    await loadSBIInterestHistory();
+  } catch (e) {
+    alert(e.message);
+  }
+}
+
 async function deleteSBIInterest(id) {
   if (!confirm("क्या आप यह SBI ब्याज रिकॉर्ड Delete करना चाहते हैं?")) {
     return;
