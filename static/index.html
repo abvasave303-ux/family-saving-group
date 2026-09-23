@@ -8347,8 +8347,9 @@ async function loadLoanInterestLedger() {
   try {
     const x = await api("/api/loan-interest-ledger");
     const box = $("loanInterestLedgerBox");
+    const rows = x.loan_interest || [];
 
-    if (!x || !x.length) {
+    if (!rows.length) {
       box.innerHTML = `
         <div class="notice">
           अभी कोई Loan Interest रिकॉर्ड नहीं है।
@@ -8358,24 +8359,28 @@ async function loadLoanInterestLedger() {
     }
 
     box.innerHTML = `
-      <table>
-        <thead>
-          <tr>
-            <th>तारीख</th>
-            <th>विवरण</th>
-            <th>राशि ₹</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${x.map(r => `
+      <div class="table">
+        <table>
+          <thead>
             <tr>
-              <td>${r.date || ""}</td>
-              <td>${r.description || "Loan Interest"}</td>
-              <td>₹${Number(r.amount || 0).toFixed(2)}</td>
+              <th>तारीख</th>
+              <th>सदस्य</th>
+              <th>Loan राशि ₹</th>
+              <th>ब्याज ₹</th>
             </tr>
-          `).join("")}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            ${rows.map(r => `
+              <tr>
+                <td>${r.date || ""}</td>
+                <td>${r.family_name || "—"}</td>
+                <td>₹${Number(r.loan_amount || 0).toFixed(2)}</td>
+                <td class="green">₹${Number(r.interest || 0).toFixed(2)}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
     `;
   } catch (e) {
     alert(e.message);
