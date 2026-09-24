@@ -8818,7 +8818,7 @@ const ledgerRows = rows.map(r =>
     <td>${r.date}</td>
     <td>${r.detail}</td>
     <td class="${r.className}">
-      ${money(r.amount)}
+      ${money(r.displayAmount !== undefined ? r.displayAmount : Math.abs(r.amount))}
     </td>
   </tr>
   `
