@@ -4127,6 +4127,10 @@ onMessage(messaging, (payload) => {
       📒 My Passbook
     </button>
 
+    <button onclick="memberInterestHistory(this)">
+      📈 ब्याज वितरण इतिहास
+    </button>
+
     <button onclick="memberLedger(this)">
       📋 Ledger
     </button>
@@ -7037,6 +7041,52 @@ function memberGoTo(id, button){
 
   if(id === "passbook"){
     $("title").textContent = "📒 My Passbook";
+  }
+}
+
+async function memberInterestHistory(button){
+  closeMemberSidebar();
+
+  document.querySelectorAll("main section")
+    .forEach(x => x.classList.add("hidden"));
+
+  document.querySelectorAll("#memberSidebar .nav button")
+    .forEach(x => x.classList.remove("active"));
+  if(button) button.classList.add("active");
+
+  let section = $("memberInterestHistorySection");
+  if(!section){
+    section = document.createElement("section");
+    section.id = "memberInterestHistorySection";
+    section.className = "hidden";
+    document.querySelector("main .content").appendChild(section);
+  }
+  section.classList.remove("hidden");
+  $("title").textContent = "📈 ब्याज वितरण इतिहास";
+  section.innerHTML = `<div class="panel"><h3>📋 ब्याज वितरण इतिहास</h3><div id="memberInterestHistoryBox" class="body"><div class="notice">लोड हो रहा है...</div></div></div>`;
+
+  try{
+    const x = await api("/api/member-interest-distributions");
+    const rows = x.distributions || [];
+    const box = $("memberInterestHistoryBox");
+    if(!rows.length){
+      box.innerHTML = '<div class="notice">अभी कोई ब्याज वितरण रिकॉर्ड नहीं है।</div>';
+      return;
+    }
+    box.innerHTML = `
+      <div class="table"><table>
+        <tr><th>ID</th><th>तारीख</th><th>कुल ब्याज</th><th>Action</th></tr>
+        ${rows.map(r => `
+          <tr>
+            <td>${r.id}</td>
+            <td>${r.date || "—"}</td>
+            <td class="green">${money(r.total_interest)}</td>
+            <td><button class="btn secondary" onclick="showInterestDistributionDetails(${Number(r.id)})">👥 Member-wise देखें</button></td>
+          </tr>
+        `).join("")}
+      </table></div>`;
+  }catch(e){
+    $("memberInterestHistoryBox").innerHTML = '<div class="notice">' + e.message + '</div>';
   }
 }
 
