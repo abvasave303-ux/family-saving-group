@@ -3233,6 +3233,49 @@ def get_interest_distributions():
 
 
 # ==================================================
+# INTEREST DISTRIBUTION MEMBER-WISE DETAILS
+# ==================================================
+
+@app.get("/api/interest-distributions/<int:distribution_id>/details")
+def get_interest_distribution_details(distribution_id):
+    error = admin_required()
+    if error:
+        return error
+
+    c = conn()
+    try:
+        distribution = c.execute(
+            "SELECT id, total_interest, date FROM interest_distributions WHERE id=?",
+            (distribution_id,)
+        ).fetchone()
+
+        if not distribution:
+            c.close()
+            return jsonify(error="ब्याज वितरण रिकॉर्ड नहीं मिला"), 404
+
+        rows = c.execute(
+            """
+            SELECT ic.family_id, f.name, ic.amount, ic.date
+            FROM interest_credits ic
+            LEFT JOIN families f ON f.id = ic.family_id
+            WHERE ic.distribution_id=?
+            ORDER BY ic.family_id
+            """,
+            (distribution_id,)
+        ).fetchall()
+        c.close()
+
+        return jsonify({
+            "distribution": dict(distribution),
+            "members": [dict(row) for row in rows]
+        })
+    except Exception as e:
+        c.close()
+        print("Interest distribution details error:", e)
+        return jsonify(error="Member-wise विवरण नहीं मिल सका"), 500
+
+
+# ==================================================
 # REVERSE INTEREST DISTRIBUTION
 # ==================================================
 
