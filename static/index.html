@@ -8573,6 +8573,7 @@ async function showInterestDistributionDetails(id){
       <tr>
         <td>${i + 1}</td>
         <td>${m.name || ("परिवार " + m.family_id)}</td>
+        <td>${money(m.savings_balance)}</td>
         <td class="green">${money(m.amount)}</td>
       </tr>
     `).join("");
@@ -8593,7 +8594,7 @@ async function showInterestDistributionDetails(id){
         <div class="interest-memberwise-table-wrap">
           <table class="interest-memberwise-table">
             <thead>
-              <tr><th>क्र.</th><th>परिवार का नाम</th><th>मिला हुआ ब्याज</th></tr>
+              <tr><th>क्र.</th><th>परिवार का नाम</th><th>उस समय की बचत</th><th>मिला हुआ ब्याज</th></tr>
             </thead>
             <tbody>${rows}</tbody>
           </table>
