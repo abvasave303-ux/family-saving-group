@@ -3233,14 +3233,30 @@ def get_interest_distributions():
 
 
 # ==================================================
+# MEMBER: INTEREST DISTRIBUTION HISTORY
+# ==================================================
+
+@app.get("/api/member-interest-distributions")
+def get_member_interest_distributions():
+    if not session.get("admin") and not session.get("family_id"):
+        return jsonify(error="Login required"), 401
+
+    c = conn()
+    rows = c.execute(
+        "SELECT id, total_interest, date FROM interest_distributions ORDER BY id DESC"
+    ).fetchall()
+    c.close()
+    return jsonify({"distributions": [dict(row) for row in rows]})
+
+
+# ==================================================
 # INTEREST DISTRIBUTION MEMBER-WISE DETAILS
 # ==================================================
 
 @app.get("/api/interest-distributions/<int:distribution_id>/details")
 def get_interest_distribution_details(distribution_id):
-    error = admin_required()
-    if error:
-        return error
+    if not session.get("admin") and not session.get("family_id"):
+        return jsonify(error="Login required"), 401
 
     c = conn()
     try:
