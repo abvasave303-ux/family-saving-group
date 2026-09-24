@@ -1340,14 +1340,14 @@ def passbook(fid):
 
     c = conn()
 
+    # समूह की बचत में ब्याज को अलग रखें, ताकि
+    # "प्राप्त ब्याज" कार्ड में वितरित ब्याज सही दिखाई दे।
     group_savings = c.execute(
         """
         SELECT
           COALESCE((SELECT SUM(amount) FROM savings),0)
           -
           COALESCE((SELECT SUM(amount) FROM saving_debits),0)
-          +
-          COALESCE((SELECT SUM(amount) FROM interest_credits),0)
         x
         """
     ).fetchone()["x"]
@@ -1356,28 +1356,9 @@ def passbook(fid):
         "SELECT COALESCE(SUM(principal),0) x FROM loans"
     ).fetchone()["x"]
 
-    fy = current_financial_year()
-    fy_start, fy_end = financial_year_dates(fy)
-
+    # अब तक वितरित कुल ब्याज
     group_interest = c.execute(
-        """
-        SELECT GREATEST(
-          COALESCE((
-            SELECT SUM(interest) FROM payments
-            WHERE COALESCE(distributed, FALSE)=FALSE
-              AND date >= ? AND date < ?
-          ),0)
-          +
-          COALESCE((
-            SELECT SUM(amount) FROM sbi_interest
-            WHERE COALESCE(distributed, FALSE)=FALSE
-              AND (financial_year = ? OR (financial_year IS NULL OR financial_year = '')
-                   AND date >= ? AND date < ?)
-          ),0),
-          0
-        ) AS x
-        """,
-        (fy_start, fy_end, fy, fy_start, fy_end)
+        "SELECT COALESCE(SUM(amount),0) x FROM interest_credits"
     ).fetchone()["x"]
 
     group_available = (
@@ -3271,16 +3252,7 @@ def get_interest_distribution_details(distribution_id):
 
         rows = c.execute(
             """
-            SELECT ic.family_id, f.name, ic.amount, ic.date,
-                (
-                    COALESCE((SELECT SUM(s.amount) FROM savings s
-                              WHERE s.family_id=ic.family_id AND s.date <=
-                              (SELECT date FROM interest_distributions WHERE id=ic.distribution_id)), 0)
-                    -
-                    COALESCE((SELECT SUM(sd.amount) FROM saving_debits sd
-                              WHERE sd.family_id=ic.family_id AND sd.date <=
-                              (SELECT date FROM interest_distributions WHERE id=ic.distribution_id)), 0)
-                ) AS savings_balance
+            SELECT ic.family_id, f.name, ic.amount, ic.date
             FROM interest_credits ic
             LEFT JOIN families f ON f.id = ic.family_id
             WHERE ic.distribution_id=?
