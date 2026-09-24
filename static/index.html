@@ -8488,6 +8488,9 @@ async function loadInterestDistributions(){
               <td>${r.date || "—"}</td>
               <td class="green">${money(r.total_interest)}</td>
               <td>
+                <button class="btn secondary" onclick="showInterestDistributionDetails(${Number(r.id)})">
+                  👥 Member-wise
+                </button>
                 <button class="btn secondary" onclick="reverseInterestDistribution(${Number(r.id)})">
                   ↩️ Reverse
                 </button>
@@ -8502,6 +8505,32 @@ async function loadInterestDistributions(){
     alert(e.message);
   }
 }
+
+async function showInterestDistributionDetails(id){
+  try{
+    const x = await api("/api/interest-distributions/" + id + "/details");
+    const members = x.members || [];
+
+    if(!members.length){
+      alert("इस पुराने distribution के लिए Member-wise विवरण उपलब्ध नहीं है।");
+      return;
+    }
+
+    const lines = members.map((m, i) =>
+      (i + 1) + ". " + (m.name || ("परिवार " + m.family_id)) + " : " + money(m.amount)
+    ).join("\n");
+
+    alert(
+      "📋 ब्याज वितरण Member-wise विवरण\n\n" +
+      "तारीख: " + (x.distribution.date || "—") + "\n" +
+      "कुल ब्याज: " + money(x.distribution.total_interest) + "\n\n" +
+      lines
+    );
+  }catch(e){
+    alert(e.message);
+  }
+}
+
 
 async function reverseInterestDistribution(id){
 
