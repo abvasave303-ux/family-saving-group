@@ -5135,7 +5135,8 @@ onMessage(messaging, (payload) => {
             <tr>
               <th>तारीख</th>
               <th>विवरण</th>
-              <th>राशि</th>
+              <th>जमा</th>
+              <th>निकासी</th>
             </tr>
 
             <tbody id="ledgerTransactions">
@@ -8785,18 +8786,14 @@ function buildPassbookLedger(x, showTotal = false){
       date: r.date || "",
       order: 1,
       detail: "Loan लिया गया",
-      amount: 0,
-      displayAmount: Math.abs(Number(
+      deposit: 0,
+      withdrawal: Math.abs(Number(
         r.original ??
         r.loan_amount ??
         r.principal ??
         r.amount ??
         0
-      )),
-      displayType: "withdrawal",
-      affectsBalance: false,
-      excluded: true,
-      className: "red"
+      ))
     });
   });
 
@@ -8805,17 +8802,18 @@ function buildPassbookLedger(x, showTotal = false){
       date: r.date || "",
       order: 2,
       detail: `मासिक बचत (${r.month || ""})`,
-      amount: Math.abs(Number(r.amount || 0)),
-      className: "green"
+      deposit: Math.abs(Number(r.amount || 0)),
+      withdrawal: 0
     });
   });
-    (x.interest_credits || []).forEach(r => {
+
+  (x.interest_credits || []).forEach(r => {
     rows.push({
       date: r.date || "",
       order: 3,
       detail: "ब्याज लाभ",
-      amount: Math.abs(Number(r.amount || 0)),
-      className: "green"
+      deposit: Math.abs(Number(r.amount || 0)),
+      withdrawal: 0
     });
   });
 
@@ -8824,8 +8822,8 @@ function buildPassbookLedger(x, showTotal = false){
       date: r.date || "",
       order: 4,
       detail: `Debit / निकासी${r.reason ? " (" + r.reason + ")" : ""}`,
-      amount: -Math.abs(Number(r.amount || 0)),
-      className: "red"
+      deposit: 0,
+      withdrawal: Math.abs(Number(r.amount || 0))
     });
   });
 
@@ -8834,8 +8832,8 @@ function buildPassbookLedger(x, showTotal = false){
       date: r.date || "",
       order: 5,
       detail: "Loan Payment",
-      amount: Math.abs(Number(r.amount || 0)),
-      className: "green"
+      deposit: Math.abs(Number(r.amount || 0)),
+      withdrawal: 0
     });
   });
 
@@ -8844,45 +8842,47 @@ function buildPassbookLedger(x, showTotal = false){
     return dateCompare !== 0 ? dateCompare : a.order - b.order;
   });
 
-const ledgerRows = rows.map(r =>
-  `
-  <tr>
-    <td>${r.date}</td>
-    <td>${r.detail}</td>
-    <td class="${r.className}">
-      ${money(r.amount)}
-    </td>
-  </tr>
-  `
-).join("");
-
-if (!ledgerRows) {
-  return `
+  const ledgerRows = rows.map(r => `
     <tr>
-      <td colspan="3" class="empty">
-        इस वित्तीय वर्ष में कोई एंट्री नहीं
-      </td>
-    </tr>
-  `;
-}
-
-if (showTotal) {
-  return ledgerRows + `
-    <tr style="
-      font-weight:bold;
-      border-top:2px solid #1976d2;
-    ">
-      <td colspan="2" style="text-align:right;">
-        Net Total
-      </td>
+      <td>${r.date}</td>
+      <td>${r.detail}</td>
       <td class="green">
-        ${money(getLedgerNetTotal(x))}
+        ${r.deposit > 0 ? money(r.deposit) : "—"}
+      </td>
+      <td class="red">
+        ${r.withdrawal > 0 ? money(r.withdrawal) : "—"}
       </td>
     </tr>
-  `;
-}
+  `).join("");
 
-return ledgerRows;
+  if (!ledgerRows) {
+    return `
+      <tr>
+        <td colspan="4" class="empty">
+          इस वित्तीय वर्ष में कोई एंट्री नहीं
+        </td>
+      </tr>
+    `;
+  }
+
+  if (showTotal) {
+    return ledgerRows + `
+      <tr style="
+        font-weight:bold;
+        border-top:2px solid #1976d2;
+      ">
+        <td colspan="2" style="text-align:right;">
+          Net Total
+        </td>
+        <td class="green">
+          ${money(getLedgerNetTotal(x))}
+        </td>
+        <td>—</td>
+      </tr>
+    `;
+  }
+
+  return ledgerRows;
 }
 
 function buildMemberTransactionLedger(x){
