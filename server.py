@@ -1346,8 +1346,6 @@ def passbook(fid):
           COALESCE((SELECT SUM(amount) FROM savings),0)
           -
           COALESCE((SELECT SUM(amount) FROM saving_debits),0)
-          +
-          COALESCE((SELECT SUM(amount) FROM interest_credits),0)
         x
         """
     ).fetchone()["x"]
@@ -1361,23 +1359,9 @@ def passbook(fid):
 
     group_interest = c.execute(
         """
-        SELECT GREATEST(
-          COALESCE((
-            SELECT SUM(interest) FROM payments
-            WHERE COALESCE(distributed, FALSE)=FALSE
-              AND date >= ? AND date < ?
-          ),0)
-          +
-          COALESCE((
-            SELECT SUM(amount) FROM sbi_interest
-            WHERE COALESCE(distributed, FALSE)=FALSE
-              AND (financial_year = ? OR (financial_year IS NULL OR financial_year = '')
-                   AND date >= ? AND date < ?)
-          ),0),
-          0
-        ) AS x
-        """,
-        (fy_start, fy_end, fy, fy_start, fy_end)
+        SELECT COALESCE(SUM(amount),0) x
+        FROM interest_credits
+        """
     ).fetchone()["x"]
 
     group_available = (
