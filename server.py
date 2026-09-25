@@ -3271,7 +3271,16 @@ def get_interest_distribution_details(distribution_id):
 
         rows = c.execute(
             """
-            SELECT ic.family_id, f.name, ic.amount, ic.date
+            SELECT ic.family_id, f.name, ic.amount, ic.date,
+                (
+                    COALESCE((SELECT SUM(s.amount) FROM savings s
+                              WHERE s.family_id=ic.family_id AND s.date <=
+                              (SELECT date FROM interest_distributions WHERE id=ic.distribution_id)), 0)
+                    -
+                    COALESCE((SELECT SUM(sd.amount) FROM saving_debits sd
+                              WHERE sd.family_id=ic.family_id AND sd.date <=
+                              (SELECT date FROM interest_distributions WHERE id=ic.distribution_id)), 0)
+                ) AS savings_balance
             FROM interest_credits ic
             LEFT JOIN families f ON f.id = ic.family_id
             WHERE ic.distribution_id=?
