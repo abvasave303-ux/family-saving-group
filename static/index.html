@@ -3554,36 +3554,129 @@ header .title{
   }
 
 }
-/* Desktop: समूह की स्थिति कार्ड + motivational information layout */
+/* Desktop: समूह की स्थिति कार्ड को थोड़ा wide करना */
 @media (min-width: 901px) {
   #familyGroupDashboard .fgd-detail-grid {
-    grid-template-columns: 1fr;
-    gap: 14px;
-    padding-left: 8px !important;
-    padding-right: 8px !important;
+    grid-template-columns: 1.35fr 1fr;
+  }
+}
+/* Desktop: समूह की स्थिति card full width */
+@media (min-width: 901px) {
+
+  #familyGroupDashboard .fgd-detail-grid {
+    grid-template-columns: 1fr !important;
   }
 
-  /* समूह की स्थिति card ऊपर वाले cards के साथ edge-to-edge aligned */
-  #familyGroupDashboard .fgd-detail-card.status-card {
-    grid-column: 1 / -1;
+  #familyGroupDashboard .fgd-status-card {
     width: 100%;
   }
 
-  /* Motivational information status card के नीचे, दो columns में */
-  #familyGroupDashboard .fgd-motivation {
-    grid-column: 1 / -1;
-    width: 100%;
-    margin: 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+}
+/* ================= MEMBER MONTHLY LOAN INTEREST STRIP ================= */
+
+.member-loan-interest-strip{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 18px;
+  margin-top:-6px;
+  margin-bottom:18px;
+  border-radius:12px;
+  background:linear-gradient(90deg,#fff8ed,#fffdf8);
+  border:1px solid #f2dfbd;
+  box-shadow:0 3px 12px rgba(198,109,20,.06);
+  color:#8a5a18;
+  font-size:13px;
+  font-weight:600;
+}
+
+.member-loan-interest-strip strong{
+  color:#c66d14;
+  font-size:15px;
+  white-space:nowrap;
+}
+
+@media(max-width:650px){
+  .member-loan-interest-strip{
+    padding:11px 12px;
+    font-size:11px;
+    gap:8px;
+  }
+
+  .member-loan-interest-strip strong{
+    font-size:12px;
+  }
+}
+/* ================= MEMBER DASHBOARD COLORFUL CARDS ================= */
+
+/* Green - मेरी कुल बचत */
+.member-dashboard-card.green{
+  background:linear-gradient(135deg,#f0faf4,#d9f3e3);
+  border:1px solid #c9e9d5;
+  border-top:4px solid #209653;
+}
+
+/* Red - मेरा बाकी लोन */
+.member-dashboard-card.red{
+  background:linear-gradient(135deg,#fff4f4,#ffe0e0);
+  border:1px solid #f3d0d0;
+  border-top:4px solid #dc3545;
+}
+
+/* Blue - इस साल की बचत */
+.member-dashboard-card:nth-child(3){
+  background:linear-gradient(135deg,#f1f7ff,#dcecff);
+  border:1px solid #cfe0f5;
+  border-top:4px solid #1976d2;
+}
+
+/* Orange - मुझे प्राप्त ब्याज */
+.member-dashboard-card.orange{
+  background:linear-gradient(135deg,#fff8ed,#ffebc9);
+  border:1px solid #f3dfbd;
+  border-top:4px solid #d97706;
+}
+/* Ashish Branding - Admin Footer Only */
+.dashboard-footer .ashish-branding {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-top: 4px;
+  padding-top: 3px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #718096;
+}
+
+.dashboard-footer .ashish-branding strong {
+  color: #244B7A;
+  font-size: 12px;
+  font-weight: 700;
+}
+.ashish-branding {
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 16px;
-    text-align: center;
-  }
-
-  #familyGroupDashboard .fgd-motivation span {
-    margin-top: 0;
-  }
+    gap: 3px;
+    width: 100%;
+}
+.ashish-branding span,
+.ashish-branding strong {
+    display: block;
+}
+/* Ashish Branding - No Decorative Lines */
+.dashboard-footer .ashish-branding::before,
+.dashboard-footer .ashish-branding::after {
+    display: none !important;
+    content: none !important;
+}
+/* Remove footer decorative lines */
+.dashboard-footer::before,
+.dashboard-footer::after {
+    display: none !important;
+    content: none !important;
 }
 </style>
 <script type="module">
@@ -3871,6 +3964,7 @@ onMessage(messaging, (payload) => {
     <!-- MEMBER LOGIN -->
 
     <div id="memberLogin" class="hidden">
+    <!-- Member Login Branding -->
 
       <label style="font-size:13px;">
         👤 अपना सदस्य चुनें
@@ -3957,6 +4051,16 @@ onMessage(messaging, (payload) => {
       💵&nbsp; किस्त / भुगतान
     </button>
 
+    <div class="nav-section-title">ब्याज प्रबंधन</div>
+    
+    <button onclick="show('loanInterestLedger',this)">
+      💵&nbsp; Loan Interest Ledger
+    </button>
+    
+    <button onclick="show('sbiInterestLedger',this)">
+      🏦&nbsp; SBI Interest Ledger
+    </button>
+    
     <button onclick="show('interest',this)">
       📈&nbsp; ब्याज वितरण
     </button>
@@ -4184,8 +4288,8 @@ onMessage(messaging, (payload) => {
       <div class="body">
 
         <div class="notice">
-          23 सदस्य × ₹2,000 =
-          <b>₹46,000</b>
+          <span id="monthlyTargetMembers">23</span> सदस्य × ₹2,000 =
+          <b id="monthlyTargetAmount">₹46,000</b>
           सामान्य मासिक लक्ष्य।
         </div>
 
@@ -4229,7 +4333,12 @@ onMessage(messaging, (payload) => {
 
 
 <div class="dashboard-footer">
-  <strong>Family Saving Group</strong> • Online-ready • 2026-27
+  
+
+  <div class="ashish-branding">
+    <span>Designed & Developed by</span>
+    <strong>Ashish Vasave</strong>
+  </div>
 </div>
 </section>
 
@@ -4716,55 +4825,21 @@ onMessage(messaging, (payload) => {
 
 </section>
 
-<!-- ================= INTEREST ================= -->
+<!-- ================= LOAN INTEREST LEDGER ================= -->
 
-<section id="interest" class="hidden">
+<section id="loanInterestLedger" class="hidden">
 
   <div class="panel">
 
-    <h3>बचत अनुपात से ब्याज वितरण</h3>
+    <h3>💵 Loan Interest Ledger</h3>
 
     <div class="body">
 
-      <div class="form">
+      <button class="btn secondary" onclick="loadLoanInterestLedger()">
+        📋 Loan Interest देखें
+      </button>
 
-        <div class="field">
-          <label>कुल वितरण योग्य ब्याज ₹</label>
-          <input id="di" type="number">
-        </div>
-
-        <div class="field">
-          <label>तारीख</label>
-          <input id="dd" type="date">
-        </div>
-
-        <div class="full">
-
-          <button class="btn" onclick="dist()">
-            गणना करें
-          </button>
-
-        </div>
-
-      </div>
-
-      <div id="dr" style="margin-top:15px"></div>
-
-      <div class="panel" style="margin-top:15px">
-
-        <h3>↩️ ब्याज वितरण वापस करें</h3>
-
-        <div class="body">
-
-          <button class="btn secondary" onclick="loadInterestDistributions()">
-            पुराने वितरण देखें
-          </button>
-
-          <div id="interestDistributionHistory" style="margin-top:15px"></div>
-
-        </div>
-
-      </div>
+      <div id="loanInterestLedgerBox" style="margin-top:15px"></div>
 
     </div>
 
@@ -4772,7 +4847,115 @@ onMessage(messaging, (payload) => {
 
 </section>
 
+<!-- ================= SBI INTEREST LEDGER ================= -->
 
+<section id="sbiInterestLedger" class="hidden">
+
+  <div class="panel" style="margin-bottom:15px">
+
+    <h3>🏦 SBI ब्याज जमा करें</h3>
+
+    <div class="body">
+
+      <div class="form">
+
+        <div class="field">
+          <label>SBI ब्याज राशि ₹</label>
+          <input
+            type="number"
+            id="sbiInterestAmount"
+            placeholder="जैसे 5000"
+            min="0"
+            step="0.01"
+          >
+        </div>
+
+        <div class="field">
+          <label>तारीख</label>
+          <input
+            type="date"
+            id="sbiInterestDate"
+          >
+        </div>
+
+        <div class="field">
+          <label>विवरण</label>
+          <input
+            type="text"
+            id="sbiInterestDescription"
+            placeholder="जैसे SBI खाते का ब्याज"
+          >
+        </div>
+
+        <div class="field">
+          <label>Financial Year</label>
+          <input
+            type="text"
+            id="sbiInterestFinancialYear"
+            placeholder="जैसे 2026-27"
+          >
+        </div>
+
+        <button
+          class="btn"
+          onclick="saveSBIInterest()"
+        >
+          💾 SBI ब्याज सेव करें
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="panel">
+
+    <h3>📋 पुराने SBI ब्याज देखें</h3>
+
+    <div class="body">
+
+      <button class="btn secondary" onclick="loadSBIInterestHistory()">
+        पुराने SBI ब्याज देखें
+      </button>
+
+      <div id="sbiInterestHistory" style="margin-top:15px"></div>
+
+    </div>
+
+  </div>
+
+</section>
+<!-- ================= INTEREST DISTRIBUTION ================= -->
+<section id="interest" class="hidden">
+  <div class="panel" style="margin-bottom:15px">
+    <h3>📈 ब्याज वितरण</h3>
+    <div class="body">
+      <div class="form">
+        <div class="field">
+          <label>वितरण की तारीख</label>
+          <input type="date" id="interestDistributionDate">
+        </div>
+      </div>
+      <div class="notice" style="margin-top:10px">
+        नीचे Pending Loan Interest के महीने और SBI Interest entries चुनें।
+      </div>
+      <div id="interestSelectionBox" style="margin-top:15px"></div>
+      <div id="interestSelectionTotal" style="margin-top:15px"></div>
+      <button class="btn" onclick="distributeSelectedInterest()" style="margin-top:12px">
+        💰 चयनित ब्याज वितरित करें
+      </button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>📋 वितरण इतिहास</h3>
+    <div class="body">
+      <button class="btn secondary" onclick="loadInterestDistributions()">वितरण इतिहास देखें</button>
+      <div id="interestDistributionHistory" style="margin-top:15px"></div>
+    </div>
+  </div>
+</section>
 <!-- ================= PASSBOOK ================= -->
 
 <section id="passbook" class="hidden">
@@ -5839,7 +6022,7 @@ return rows.length
         <td>${r.date}</td>
         <td>${r.detail}</td>
         <td class="${r.className}">
-          ${money(r.displayAmount !== undefined ? r.displayAmount : r.amount)}
+          ${money(r.amount)}
         </td>
       </tr>
     `).join("")
@@ -6517,6 +6700,11 @@ function renderMemberDashboard(){
   const debitTotal = debitRows.reduce((a,r) => a + Number(r.amount || 0), 0);
   const memberSaving = savingsTotal + interestTotal - debitTotal;
   const loanTotal = loanRows.reduce((a,r) => a + Number(r.principal || 0), 0);
+  // Member ka monthly loan interest (2% per month)
+  const monthlyLoanInterest = loanRows.reduce(
+    (a, r) => a + (Number(r.principal || 0) * Number(r.rate || 2) / 100),
+    0
+  );
 
   const now = new Date();
   const fyStart = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1;
@@ -6600,7 +6788,13 @@ function renderMemberDashboard(){
           <div class="member-card-value">${money(interestTotal)}</div>
         </div>
       </div>
-
+    ${loanRows.length > 0 ? `
+      <!-- Monthly Loan Interest Strip -->
+      <div class="member-loan-interest-strip">
+        <span>💰 आपके लोन का मासिक ब्याज</span>
+        <strong>${money(monthlyLoanInterest)} प्रति माह</strong>
+      </div>
+    ` : ""}
       <div class="member-activity">
         <h3>🕒 हाल की गतिविधि</h3>
         ${activities.slice(0,5).map(r => `
@@ -6617,6 +6811,13 @@ function renderMemberDashboard(){
         `).join("") || `<div class="member-activity-empty">अभी कोई गतिविधि नहीं है।</div>`}
       </div>
     </div>
+    <div class="dashboard-footer">
+  <div class="ashish-branding">
+    <span>Designed & Developed by</span>
+    <strong>Ashish Vasave</strong>
+  </div>
+</div>
+
   `;
 }
 
@@ -6917,6 +7118,11 @@ function memberLedger(button){
 /* ================= NAVIGATION ================= */
 
 function show(id, button){
+  if(id === "interest"){
+    $("interestDistributionDate").value = new Date().toISOString().slice(0,10);
+    loadInterestSelection();
+    loadInterestDistributions();
+  }
 
   document.querySelectorAll("main section")
     .forEach(x => x.classList.add("hidden"));
@@ -7066,7 +7272,18 @@ async function refresh(){
     const d = await api("/api/dashboard");
 
     $("cf").textContent = d.families ?? fam.length;
-
+// Monthly Saving Target ko members ke hisaab se update kare
+    const totalMembers = d.families ?? fam.length;
+    const monthlyTarget = totalMembers * 2000;
+    
+    if($("monthlyTargetMembers")){
+      $("monthlyTargetMembers").textContent = totalMembers;
+    }
+    
+    if($("monthlyTargetAmount")){
+      $("monthlyTargetAmount").textContent =
+        money(monthlyTarget);
+    }
     if($("adminFamilyCount")){
       $("adminFamilyCount").textContent =
         (d.families ?? fam.length) + " परिवार";
@@ -7232,7 +7449,11 @@ async function refresh(){
 
           <td>${x.date}</td>
 
-          <td>${x.kind === "debit" ? "—" : x.month}</td>
+          <td>${
+            x.kind === "debit"
+              ? M[(Number(String(x.date).slice(5,7)) - 4 + 12) % 12]
+              : x.month
+          }</td>
           
           <td>${x.family}</td>
           
@@ -8013,7 +8234,229 @@ async function dist(){
 
 }
 
+async function saveSBIInterest(){
 
+  try{
+
+    const amount =
+      Number($("sbiInterestAmount").value);
+
+    const date =
+      $("sbiInterestDate").value;
+
+    const description =
+      $("sbiInterestDescription").value.trim();
+    const financial_year =
+      $("sbiInterestFinancialYear").value.trim();
+    if(!amount || amount <= 0){
+      alert("कृपया SBI ब्याज राशि दर्ज करें");
+      return;
+    }
+
+    const x = await api("/api/sbi-interest",{
+
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+        amount,
+        date,
+        description,
+        financial_year
+      })
+
+    });
+
+    alert(x.message || "SBI ब्याज सेव हो गया");
+
+    $("sbiInterestAmount").value = "";
+    $("sbiInterestDate").value = "";
+    $("sbiInterestDescription").value = "";
+    $("sbiInterestFinancialYear").value = "";
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+}
+
+async function loadSBIInterestHistory(){
+
+  try{
+
+    const x = await api("/api/sbi-interest");
+
+    const box = $("sbiInterestHistory");
+
+    if(!box) return;
+
+    const rows = x.sbi_interest || [];
+
+    if(!rows.length){
+
+      box.innerHTML = '<div class="notice">अभी कोई SBI ब्याज रिकॉर्ड नहीं है।</div>';
+
+      return;
+
+    }
+
+    box.innerHTML = `
+      <table>
+        <tr>
+          <th>ID</th>
+          <th>तारीख</th>
+          <th>SBI ब्याज</th>
+          <th>विवरण</th>
+          <th>स्थिति</th>
+          <th>Action</th>
+        </tr>
+
+        ${rows.map(r => `
+          <tr>
+            <td>${r.id}</td>
+            <td>${r.date || "—"}</td>
+            <td class="green">${money(r.amount)}</td>
+            <td>${r.description || "—"}</td>
+            <td>${r.distributed ? '<span style="color:green;font-weight:700;">✅ वितरित</span>' : '<span style="color:#b77900;font-weight:700;">🕒 वितरण बाकी</span>'}</td>
+            <td>
+              <button class="btn secondary" onclick="reverseSBIInterest(${Number(r.id)})">
+                  🔄 Reverse
+              </button>
+              
+              <button class="btn secondary" onclick="editSBIInterest(${Number(r.id)}, ${JSON.stringify(r.amount)}, ${JSON.stringify(r.date || "")}, ${JSON.stringify(r.description || "")}, ${JSON.stringify(r.financial_year || "")})">
+                  ✏️ Edit
+              </button>
+
+              <button class="btn danger" onclick="deleteSBIInterest(${Number(r.id)})">
+                  🗑️ Delete
+              </button>
+            </td>
+          </tr>
+        `).join("")}
+
+      </table>
+    `;
+
+  }catch(e){
+
+    alert(e.message);
+
+  }
+
+}
+async function reverseSBIInterest(id) {
+  if (!confirm("क्या आप यह SBI ब्याज रिकॉर्ड Reverse करना चाहते हैं?")) {
+    return;
+  }
+
+  try {
+    const x = await api(`/api/sbi-interest/${id}/reverse`, {
+      method: "POST"
+    });
+
+    alert(x.message || "SBI ब्याज Reverse हो गया");
+
+    await loadSBIInterestHistory();
+
+  } catch (e) {
+    alert(e.message);
+  }
+}
+async function editSBIInterest(id, amount, date, description, financialYear) {
+  const newAmount = prompt("SBI ब्याज राशि दर्ज करें:", amount);
+  if (newAmount === null) return;
+
+  const newDate = prompt("तारीख दर्ज करें (YYYY-MM-DD):", date);
+  if (newDate === null) return;
+
+  const newDescription = prompt("विवरण दर्ज करें:", description);
+  if (newDescription === null) return;
+
+  const newFinancialYear = prompt("Financial Year दर्ज करें:", financialYear);
+  if (newFinancialYear === null) return;
+
+  try {
+    const x = await api(`/api/sbi-interest/${id}`, {
+      method: "PUT",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        amount: Number(newAmount),
+        date: newDate,
+        description: newDescription,
+        financial_year: newFinancialYear
+      })
+    });
+
+    alert(x.message || "SBI ब्याज रिकॉर्ड अपडेट हो गया");
+    await loadSBIInterestHistory();
+  } catch (e) {
+    alert(e.message);
+  }
+}
+
+async function deleteSBIInterest(id) {
+  if (!confirm("क्या आप यह SBI ब्याज रिकॉर्ड Delete करना चाहते हैं?")) {
+    return;
+  }
+
+  try {
+    const x = await api(`/api/sbi-interest/${id}`, {
+      method: "DELETE"
+    });
+
+    alert(x.message || "SBI ब्याज रिकॉर्ड Delete हो गया");
+    await loadSBIInterestHistory();
+  } catch (e) {
+    alert(e.message);
+  }
+}
+async function loadLoanInterestLedger() {
+  try {
+    const x = await api("/api/loan-interest-ledger");
+    const box = $("loanInterestLedgerBox");
+    const rows = x.loan_interest || [];
+
+    if (!rows.length) {
+      box.innerHTML = `
+        <div class="notice">
+          अभी कोई Loan Interest रिकॉर्ड नहीं है।
+        </div>
+      `;
+      return;
+    }
+
+    box.innerHTML = `
+      <div class="table">
+        <table>
+          <thead>
+            <tr>
+              <th>तारीख</th>
+              <th>सदस्य</th>
+              <th>Loan राशि ₹</th>
+              <th>ब्याज ₹</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(r => `
+              <tr>
+                <td>${r.date || ""}</td>
+                <td>${r.family_name || "—"}</td>
+                <td>₹${Number(r.loan_amount || 0).toFixed(2)}</td>
+                <td class="green">₹${Number(r.interest || 0).toFixed(2)}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
+  } catch (e) {
+    alert(e.message);
+  }
+}
 async function loadInterestDistributions(){
 
   try{
@@ -8088,6 +8531,108 @@ async function reverseInterestDistribution(id){
   }
 }
 
+
+/* ================= INTEREST DISTRIBUTION ================= */
+let pendingLoanInterestRows = [];
+let pendingSBIInterestRows = [];
+
+async function loadInterestSelection(){
+  try{
+    const [loanData, sbiData] = await Promise.all([
+      api("/api/loan-interest-ledger"),
+      api("/api/sbi-interest")
+    ]);
+
+    pendingLoanInterestRows = loanData.loan_interest || [];
+    pendingSBIInterestRows = (sbiData.sbi_interest || []).filter(r => !r.distributed);
+
+    const months = {};
+    pendingLoanInterestRows.forEach(r => {
+      const month = String(r.date || "").slice(0,7);
+      if(!months[month]) months[month] = { month, amount: 0, count: 0 };
+      months[month].amount += Number(r.interest || 0);
+      months[month].count += 1;
+    });
+
+    const monthRows = Object.values(months).sort((a,b) => b.month.localeCompare(a.month));
+    const box = $("interestSelectionBox");
+
+    if(!monthRows.length && !pendingSBIInterestRows.length){
+      box.innerHTML = '<div class="notice">अभी कोई Pending ब्याज उपलब्ध नहीं है।</div>';
+      $("interestSelectionTotal").innerHTML = "";
+      return;
+    }
+
+    box.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+        <h4 style="margin:0;">💵 Loan Interest — महीने चुनें</h4>
+        <button type="button" class="small-btn" onclick="selectAllLoanInterestMonths()">☑ सभी महीने चुनें</button>
+      </div>
+      <table>
+        <tr><th>Select</th><th>महीना</th><th>Entries</th><th>ब्याज</th></tr>
+        ${monthRows.map(r => `
+          <tr>
+            <td><input type="checkbox" class="loan-interest-month" value="${r.month}" data-amount="${r.amount}" onchange="updateInterestSelectionTotal()"></td>
+            <td>${r.month}</td>
+            <td>${r.count}</td>
+            <td class="green">${money(r.amount)}</td>
+          </tr>
+        `).join("")}
+      </table>
+      <h4 style="margin-top:20px">🏦 SBI Interest — entries चुनें</h4>
+      <table>
+        <tr><th>Select</th><th>तारीख</th><th>विवरण</th><th>Financial Year</th><th>ब्याज</th></tr>
+        ${pendingSBIInterestRows.map(r => `
+          <tr>
+            <td><input type="checkbox" class="sbi-interest-entry" value="${Number(r.id)}" data-amount="${Number(r.amount || 0)}" onchange="updateInterestSelectionTotal()"></td>
+            <td>${r.date || "—"}</td>
+            <td>${r.description || "—"}</td>
+            <td>${r.financial_year || "—"}</td>
+            <td class="green">${money(r.amount)}</td>
+          </tr>
+        `).join("")}
+      </table>
+    `;
+    updateInterestSelectionTotal();
+  }catch(e){ alert(e.message); }
+}
+
+function selectAllLoanInterestMonths(){
+  document.querySelectorAll(".loan-interest-month").forEach(el => {
+    el.checked = true;
+  });
+  updateInterestSelectionTotal();
+}
+
+function updateInterestSelectionTotal(){
+  let total = 0;
+  document.querySelectorAll(".loan-interest-month:checked, .sbi-interest-entry:checked").forEach(el => {
+    total += Number(el.dataset.amount || 0);
+  });
+  $("interestSelectionTotal").innerHTML = `<div class="notice"><b>चयनित कुल ब्याज: ${money(total)}</b></div>`;
+}
+
+async function distributeSelectedInterest(){
+  const loanMonths = [...document.querySelectorAll(".loan-interest-month:checked")].map(el => el.value);
+  const sbiIds = [...document.querySelectorAll(".sbi-interest-entry:checked")].map(el => Number(el.value));
+  const date = $("interestDistributionDate").value;
+
+  if(!date){ alert("वितरण की तारीख चुनें"); return; }
+  if(!loanMonths.length && !sbiIds.length){ alert("कम से कम एक Loan month या SBI entry चुनें"); return; }
+  if(!confirm("क्या चयनित ब्याज वितरित करना चाहते हैं?")) return;
+
+  try{
+    const x = await api("/api/interest-distribution", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({date, loan_months:loanMonths, sbi_ids:sbiIds})
+    });
+    alert("ब्याज सफलतापूर्वक वितरित हो गया।\nकुल ब्याज: " + money(x.total_interest));
+    await loadInterestSelection();
+    await loadInterestDistributions();
+    await refresh();
+  }catch(e){ alert(e.message); }
+}
 
 /* ================= PASSBOOK ================= */
 
