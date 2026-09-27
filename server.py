@@ -204,6 +204,17 @@ def init_db():
     );
     """)
     c.execute("""
+        ALTER TABLE families
+        ADD COLUMN IF NOT EXISTS display_order INTEGER
+    """)
+
+    c.execute("""
+        UPDATE families
+        SET display_order = id
+        WHERE display_order IS NULL OR display_order <= 0
+    """)
+
+    c.execute("""
         ALTER TABLE sbi_interest
         ADD COLUMN IF NOT EXISTS distributed BOOLEAN DEFAULT FALSE
     """)
@@ -789,7 +800,7 @@ def dashboard():
         """
         SELECT *
         FROM families
-        ORDER BY id
+        ORDER BY display_order, id
         """
     ).fetchall()
 
@@ -955,17 +966,25 @@ def add_family():
 
     c = conn()
 
+    next_order = c.execute(
+        """
+        SELECT COALESCE(MAX(display_order), 0) + 1 AS next_order
+        FROM families
+        """
+    ).fetchone()["next_order"]
+
     cur = c.execute(
         """
         INSERT INTO families
-        (name, mobile, pin, created_at)
-        VALUES (?, ?, ?, ?)
+        (name, mobile, pin, created_at, display_order)
+        VALUES (?, ?, ?, ?, ?)
         """,
         (
             name,
             mobile,
             pin,
-            datetime.date.today().isoformat()
+            datetime.date.today().isoformat(),
+            next_order
         )
     )
 
@@ -979,6 +998,75 @@ def add_family():
         ok=True,
         id=family_id
     )
+
+
+# ==================================================
+# CHANGE MEMBER DISPLAY ORDER
+# ==================================================
+
+@app.put("/api/families/<int:fid>/order")
+def change_family_order(fid):
+
+    error = admin_required()
+    if error:
+        return error
+
+    data = request.json or {}
+
+    try:
+        new_order = int(data.get("display_order"))
+    except (TypeError, ValueError):
+        return jsonify(error="Sr.No. सही संख्या में दें"), 400
+
+    if new_order < 1:
+        return jsonify(error="Sr.No. 1 या उससे बड़ी संख्या होनी चाहिए"), 400
+
+    c = conn()
+
+    member = c.execute(
+        """
+        SELECT id, display_order
+        FROM families
+        WHERE id=?
+        """,
+        (fid,)
+    ).fetchone()
+
+    if not member:
+        c.close()
+        return jsonify(error="परिवार नहीं मिला"), 404
+
+    current_order = int(member["display_order"] or 1)
+
+    if new_order == current_order:
+        c.close()
+        return jsonify(ok=True, display_order=current_order)
+
+    target = c.execute(
+        """
+        SELECT id, display_order
+        FROM families
+        WHERE display_order=? AND id<>?
+        LIMIT 1
+        """,
+        (new_order, fid)
+    ).fetchone()
+
+    if target:
+        c.execute(
+            "UPDATE families SET display_order=? WHERE id=?",
+            (current_order, target["id"])
+        )
+
+    c.execute(
+        "UPDATE families SET display_order=? WHERE id=?",
+        (new_order, fid)
+    )
+
+    c.commit()
+    c.close()
+
+    return jsonify(ok=True, display_order=new_order)
 
 
 # ==================================================
