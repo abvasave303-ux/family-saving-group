@@ -8946,13 +8946,39 @@ function buildPassbookLedger(x, showTotal = false){
   });
 
   (x.payments || []).forEach(r => {
-    rows.push({
-      date: r.date || "",
-      order: 5,
-      detail: "Loan Payment",
-      amount: Math.abs(Number(r.amount || 0)),
-      className: "green"
-    });
+    const principal = Math.abs(Number(r.principal || 0));
+    const interest = Math.abs(Number(r.interest || 0));
+    const totalAmount = Math.abs(Number(r.amount || 0));
+
+    if(principal > 0){
+      rows.push({
+        date: r.date || "",
+        order: 5,
+        detail: "Loan Repayment",
+        amount: principal,
+        className: "green"
+      });
+    }
+
+    if(interest > 0){
+      rows.push({
+        date: r.date || "",
+        order: 6,
+        detail: "Loan Interest Paid",
+        amount: interest,
+        className: "green"
+      });
+    }
+
+    if(principal === 0 && interest === 0 && totalAmount > 0){
+      rows.push({
+        date: r.date || "",
+        order: 5,
+        detail: "Loan Repayment",
+        amount: totalAmount,
+        className: "green"
+      });
+    }
   });
 
   rows.sort((a,b) => {
