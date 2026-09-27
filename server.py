@@ -882,7 +882,7 @@ def get_families():
         """
         SELECT *
         FROM families
-        ORDER BY id
+        ORDER BY display_order NULLS LAST, id
         """
     ).fetchall()
 
