@@ -1023,45 +1023,33 @@ def change_family_order(fid):
 
     c = conn()
 
-    member = c.execute(
+    members = c.execute(
         """
-        SELECT id, display_order
+        SELECT id
         FROM families
-        WHERE id=?
-        """,
-        (fid,)
-    ).fetchone()
+        ORDER BY display_order NULLS LAST, id
+        """
+    ).fetchall()
 
-    if not member:
+    ids = [int(row["id"]) for row in members]
+
+    if fid not in ids:
         c.close()
         return jsonify(error="परिवार नहीं मिला"), 404
 
-    current_order = int(member["display_order"] or 1)
+    # हमेशा 1..N का साफ क्रम बनाए रखें।
+    # Financial data / family_id में कोई बदलाव नहीं होता।
+    if new_order > len(ids):
+        new_order = len(ids)
 
-    if new_order == current_order:
-        c.close()
-        return jsonify(ok=True, display_order=current_order)
+    ids.remove(fid)
+    ids.insert(new_order - 1, fid)
 
-    target = c.execute(
-        """
-        SELECT id, display_order
-        FROM families
-        WHERE display_order=? AND id<>?
-        LIMIT 1
-        """,
-        (new_order, fid)
-    ).fetchone()
-
-    if target:
+    for position, member_id in enumerate(ids, start=1):
         c.execute(
             "UPDATE families SET display_order=? WHERE id=?",
-            (current_order, target["id"])
+            (position, member_id)
         )
-
-    c.execute(
-        "UPDATE families SET display_order=? WHERE id=?",
-        (new_order, fid)
-    )
 
     c.commit()
     c.close()
