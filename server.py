@@ -2172,6 +2172,58 @@ def update_saving(sid):
 
 
 # ==================================================
+# BULK DELETE SAVINGS
+# ==================================================
+
+@app.post("/api/savings/bulk-delete")
+def bulk_delete_savings():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    data = request.json or {}
+    ids = data.get("ids") or []
+
+    try:
+        ids = [int(x) for x in ids]
+    except (TypeError, ValueError):
+        return jsonify(error="बचत एंट्री चयन सही नहीं है"), 400
+
+    ids = list(dict.fromkeys(ids))
+
+    if not ids:
+        return jsonify(error="कम से कम एक बचत एंट्री चुनें"), 400
+
+    c = conn()
+
+    placeholders = ",".join(["?"] * len(ids))
+
+    rows = c.execute(
+        f"SELECT id FROM savings WHERE id IN ({placeholders})",
+        tuple(ids)
+    ).fetchall()
+
+    found_ids = [int(row["id"]) for row in rows]
+
+    if not found_ids:
+        c.close()
+        return jsonify(error="चयनित बचत एंट्री नहीं मिली"), 404
+
+    c.execute(
+        f"DELETE FROM savings WHERE id IN ({placeholders})",
+        tuple(found_ids)
+    )
+
+    deleted = len(found_ids)
+    c.commit()
+    c.close()
+
+    return jsonify(ok=True, deleted=deleted)
+
+
+# ==================================================
 # DELETE SAVING
 # ==================================================
 
@@ -2523,6 +2575,63 @@ def update_loan(lid):
 
 
 # ==================================================
+# BULK DELETE LOANS
+# ==================================================
+
+@app.post("/api/loans/bulk-delete")
+def bulk_delete_loans():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    data = request.json or {}
+    ids = data.get("ids") or []
+
+    try:
+        ids = [int(x) for x in ids]
+    except (TypeError, ValueError):
+        return jsonify(error="Loan चयन सही नहीं है"), 400
+
+    ids = list(dict.fromkeys(ids))
+
+    if not ids:
+        return jsonify(error="कम से कम एक Loan चुनें"), 400
+
+    c = conn()
+
+    placeholders = ",".join(["?"] * len(ids))
+
+    rows = c.execute(
+        f"SELECT id FROM loans WHERE id IN ({placeholders})",
+        tuple(ids)
+    ).fetchall()
+
+    found_ids = [int(row["id"]) for row in rows]
+
+    if not found_ids:
+        c.close()
+        return jsonify(error="चयनित Loan नहीं मिला"), 404
+
+    c.execute(
+        f"DELETE FROM payments WHERE loan_id IN ({placeholders})",
+        tuple(found_ids)
+    )
+
+    c.execute(
+        f"DELETE FROM loans WHERE id IN ({placeholders})",
+        tuple(found_ids)
+    )
+
+    deleted = len(found_ids)
+    c.commit()
+    c.close()
+
+    return jsonify(ok=True, deleted=deleted)
+
+
+# ==================================================
 # DELETE LOAN
 # ==================================================
 
@@ -2601,6 +2710,79 @@ def payments():
         dict(x)
         for x in rows
     ])
+
+
+# ==================================================
+# BULK DELETE PAYMENTS
+# ==================================================
+
+@app.post("/api/payments/bulk-delete")
+def bulk_delete_payments():
+
+    error = admin_required()
+
+    if error:
+        return error
+
+    data = request.json or {}
+    ids = data.get("ids") or []
+
+    try:
+        ids = [int(x) for x in ids]
+    except (TypeError, ValueError):
+        return jsonify(error="भुगतान चयन सही नहीं है"), 400
+
+    ids = list(dict.fromkeys(ids))
+
+    if not ids:
+        return jsonify(error="कम से कम एक भुगतान चुनें"), 400
+
+    c = conn()
+
+    placeholders = ",".join(["?"] * len(ids))
+
+    rows = c.execute(
+        f"SELECT id, loan_id, principal FROM payments WHERE id IN ({placeholders})",
+        tuple(ids)
+    ).fetchall()
+
+    if not rows:
+        c.close()
+        return jsonify(error="चयनित भुगतान रिकॉर्ड नहीं मिला"), 404
+
+    loan_ids = list(dict.fromkeys(int(row["loan_id"]) for row in rows))
+    loan_placeholders = ",".join(["?"] * len(loan_ids))
+
+    loans = c.execute(
+        f"SELECT id, principal FROM loans WHERE id IN ({loan_placeholders})",
+        tuple(loan_ids)
+    ).fetchall()
+
+    loan_map = {int(row["id"]): float(row["principal"] or 0) for row in loans}
+
+    for row in rows:
+        loan_id = int(row["loan_id"])
+        if loan_id not in loan_map:
+            c.close()
+            return jsonify(error="चयनित भुगतान से जुड़ा Loan नहीं मिला"), 404
+        loan_map[loan_id] += float(row["principal"] or 0)
+
+    for loan_id, restored_balance in loan_map.items():
+        c.execute(
+            "UPDATE loans SET principal=? WHERE id=?",
+            (restored_balance, loan_id)
+        )
+
+    c.execute(
+        f"DELETE FROM payments WHERE id IN ({placeholders})",
+        tuple(int(row["id"]) for row in rows)
+    )
+
+    deleted = len(rows)
+    c.commit()
+    c.close()
+
+    return jsonify(ok=True, deleted=deleted)
 
 
 # ==================================================
