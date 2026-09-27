@@ -5135,8 +5135,7 @@ onMessage(messaging, (payload) => {
             <tr>
               <th>तारीख</th>
               <th>विवरण</th>
-              <th>जमा</th>
-              <th>निकासी</th>
+              <th>राशि</th>
             </tr>
 
             <tbody id="ledgerTransactions">
@@ -7311,13 +7310,14 @@ function renderAdminMembers(){
 
   $("mt").innerHTML = filtered.map((f,i) => `
     <tr>
-      <td>${i+1}</td>
+      <td>${Number(f.display_order || (i+1))}</td>
       <td><b>${f.name}</b></td>
       <td>${f.mobile || "—"}</td>
       <td>••••</td>
       <td class="green">${money(f.savings)}</td>
       <td class="red">${money(f.loan)}</td>
       <td>
+        <button class="btn secondary small" onclick="changeMemberOrder(${f.id})">🔢 Sr.No.</button>
         <button class="btn secondary small" onclick="editMember(${f.id})">✏️ Edit</button>
         <button class="btn secondary small" onclick="resetMemberPin(${f.id})">🔄 Reset PIN</button>
         <button class="btn secondary small" onclick="forceLogoutMember(${f.id})">🔒 Force Logout</button>
@@ -7458,7 +7458,7 @@ async function refresh(){
 
         <tr>
 
-          <td>${i+1}</td>
+          <td>${Number(f.display_order || (i+1))}</td>
 
           <td>${f.name}</td>
 
@@ -7473,6 +7473,12 @@ async function refresh(){
           </td>
 
           <td>
+
+            <button
+              class="btn secondary small"
+              onclick="changeMemberOrder(${f.id})">
+              🔢 Sr.No.
+            </button>
 
             <button
               class="btn secondary small"
@@ -8786,14 +8792,18 @@ function buildPassbookLedger(x, showTotal = false){
       date: r.date || "",
       order: 1,
       detail: "Loan लिया गया",
-      deposit: 0,
-      withdrawal: Math.abs(Number(
+      amount: 0,
+      displayAmount: Math.abs(Number(
         r.original ??
         r.loan_amount ??
         r.principal ??
         r.amount ??
         0
-      ))
+      )),
+      displayType: "withdrawal",
+      affectsBalance: false,
+      excluded: true,
+      className: "red"
     });
   });
 
@@ -8802,18 +8812,17 @@ function buildPassbookLedger(x, showTotal = false){
       date: r.date || "",
       order: 2,
       detail: `मासिक बचत (${r.month || ""})`,
-      deposit: Math.abs(Number(r.amount || 0)),
-      withdrawal: 0
+      amount: Math.abs(Number(r.amount || 0)),
+      className: "green"
     });
   });
-
-  (x.interest_credits || []).forEach(r => {
+    (x.interest_credits || []).forEach(r => {
     rows.push({
       date: r.date || "",
       order: 3,
       detail: "ब्याज लाभ",
-      deposit: Math.abs(Number(r.amount || 0)),
-      withdrawal: 0
+      amount: Math.abs(Number(r.amount || 0)),
+      className: "green"
     });
   });
 
@@ -8822,8 +8831,8 @@ function buildPassbookLedger(x, showTotal = false){
       date: r.date || "",
       order: 4,
       detail: `Debit / निकासी${r.reason ? " (" + r.reason + ")" : ""}`,
-      deposit: 0,
-      withdrawal: Math.abs(Number(r.amount || 0))
+      amount: -Math.abs(Number(r.amount || 0)),
+      className: "red"
     });
   });
 
@@ -8832,8 +8841,8 @@ function buildPassbookLedger(x, showTotal = false){
       date: r.date || "",
       order: 5,
       detail: "Loan Payment",
-      deposit: Math.abs(Number(r.amount || 0)),
-      withdrawal: 0
+      amount: Math.abs(Number(r.amount || 0)),
+      className: "green"
     });
   });
 
@@ -8842,47 +8851,45 @@ function buildPassbookLedger(x, showTotal = false){
     return dateCompare !== 0 ? dateCompare : a.order - b.order;
   });
 
-  const ledgerRows = rows.map(r => `
+const ledgerRows = rows.map(r =>
+  `
+  <tr>
+    <td>${r.date}</td>
+    <td>${r.detail}</td>
+    <td class="${r.className}">
+      ${money(r.amount)}
+    </td>
+  </tr>
+  `
+).join("");
+
+if (!ledgerRows) {
+  return `
     <tr>
-      <td>${r.date}</td>
-      <td>${r.detail}</td>
-      <td class="green">
-        ${r.deposit > 0 ? money(r.deposit) : "—"}
-      </td>
-      <td class="red">
-        ${r.withdrawal > 0 ? money(r.withdrawal) : "—"}
+      <td colspan="3" class="empty">
+        इस वित्तीय वर्ष में कोई एंट्री नहीं
       </td>
     </tr>
-  `).join("");
+  `;
+}
 
-  if (!ledgerRows) {
-    return `
-      <tr>
-        <td colspan="4" class="empty">
-          इस वित्तीय वर्ष में कोई एंट्री नहीं
-        </td>
-      </tr>
-    `;
-  }
+if (showTotal) {
+  return ledgerRows + `
+    <tr style="
+      font-weight:bold;
+      border-top:2px solid #1976d2;
+    ">
+      <td colspan="2" style="text-align:right;">
+        Net Total
+      </td>
+      <td class="green">
+        ${money(getLedgerNetTotal(x))}
+      </td>
+    </tr>
+  `;
+}
 
-  if (showTotal) {
-    return ledgerRows + `
-      <tr style="
-        font-weight:bold;
-        border-top:2px solid #1976d2;
-      ">
-        <td colspan="2" style="text-align:right;">
-          Net Total
-        </td>
-        <td class="green">
-          ${money(getLedgerNetTotal(x))}
-        </td>
-        <td>—</td>
-      </tr>
-    `;
-  }
-
-  return ledgerRows;
+return ledgerRows;
 }
 
 function buildMemberTransactionLedger(x){
@@ -9955,6 +9962,59 @@ async function addFamily(){
 
   }
 
+}
+
+
+/* ================= CHANGE MEMBER SERIAL NUMBER ================= */
+async function changeMemberOrder(id){
+
+  const member = fam.find(
+    f => Number(f.id) === Number(id)
+  );
+
+  if(!member){
+    alert("Member नहीं मिला");
+    return;
+  }
+
+  const currentOrder = Number(
+    member.display_order || 1
+  );
+
+  const newOrderText = prompt(
+    "नया Sr.No. डालें:",
+    String(currentOrder)
+  );
+
+  if(newOrderText === null) return;
+
+  const newOrder = Number(newOrderText.trim());
+
+  if(!Number.isInteger(newOrder) || newOrder < 1){
+    alert("Sr.No. 1 या उससे बड़ी पूरी संख्या होनी चाहिए");
+    return;
+  }
+
+  try{
+    await api(
+      "/api/families/" + id + "/order",
+      {
+        method:"PUT",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          display_order:newOrder
+        })
+      }
+    );
+
+    alert("Member का Sr.No. अपडेट हो गया");
+    await refresh();
+
+  }catch(e){
+    alert(e.message);
+  }
 }
 
 
