@@ -4595,6 +4595,14 @@ onMessage(messaging, (payload) => {
 
     <h3>बचत लेजर</h3>
 
+    <div style="display:flex;justify-content:flex-end;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+      <label style="font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;">
+        <input type="checkbox" id="selectAllSavings" onchange="toggleAllSavings(this.checked)">
+        सभी बचत चुनें
+      </label>
+      <button class="btn danger small" onclick="deleteSelectedSavings()">🗑️ Selected Delete</button>
+    </div>
+
     <div class="table">
 
       <table>
@@ -4677,6 +4685,14 @@ onMessage(messaging, (payload) => {
   <div class="panel" style="margin-top:14px">
 
     <h3>लोन खाते</h3>
+
+    <div style="display:flex;justify-content:flex-end;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+      <label style="font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;">
+        <input type="checkbox" id="selectAllLoans" onchange="toggleAllLoans(this.checked)">
+        सभी Loan चुनें
+      </label>
+      <button class="btn danger small" onclick="deleteSelectedLoans()">🗑️ Selected Delete</button>
+    </div>
 
     <div class="table">
 
@@ -4791,6 +4807,14 @@ onMessage(messaging, (payload) => {
   >
 
     <h3>📋 भुगतान इतिहास</h3>
+
+    <div style="display:flex;justify-content:flex-end;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+      <label style="font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;">
+        <input type="checkbox" id="selectAllPayments" onchange="toggleAllPayments(this.checked)">
+        सभी भुगतान चुनें
+      </label>
+      <button class="btn danger small" onclick="deleteSelectedPayments()">🗑️ Selected Delete</button>
+    </div>
 
     <div class="table">
 
@@ -7537,7 +7561,10 @@ async function refresh(){
 
         <tr>
 
-          <td>${x.date}</td>
+          <td>
+            ${x.kind === "saving" ? `<input type="checkbox" class="saving-select" value="${x.id}" onchange="updateSavingsSelectAll()">` : ""}
+            ${x.date}
+          </td>
 
           <td>${
             x.kind === "debit"
@@ -7613,7 +7640,10 @@ async function refresh(){
 
         <tr>
 
-          <td>${x.family}</td>
+          <td>
+            <input type="checkbox" class="loan-select" value="${x.id}" onchange="updateLoansSelectAll()">
+            ${x.family}
+          </td>
 
           <td>
             ${money(x.original)}
@@ -7682,7 +7712,10 @@ async function refresh(){
 
         <tr>
 
-          <td>${x.date}</td>
+          <td>
+            <input type="checkbox" class="payment-select" value="${x.id}" onchange="updatePaymentsSelectAll()">
+            ${x.date}
+          </td>
 
           <td>${x.family}</td>
 
@@ -7726,6 +7759,82 @@ async function refresh(){
   }
 
 }
+  function toggleAllSavings(checked){
+    document.querySelectorAll(".saving-select").forEach(cb => cb.checked = checked);
+  }
+
+  function updateSavingsSelectAll(){
+    const boxes = [...document.querySelectorAll(".saving-select")];
+    const master = $("selectAllSavings");
+    if(master) master.checked = boxes.length > 0 && boxes.every(cb => cb.checked);
+  }
+
+  async function deleteSelectedSavings(){
+    const ids = [...document.querySelectorAll(".saving-select:checked")].map(cb => Number(cb.value));
+    if(!ids.length){ alert("कम से कम एक मासिक बचत एंट्री चुनें"); return; }
+    if(!confirm(ids.length + " मासिक बचत एंट्री delete करनी हैं?")) return;
+    try{
+      const result = await api("/api/savings/bulk-delete", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({ids})
+      });
+      alert("🗑️ " + result.deleted + " मासिक बचत एंट्री delete हो गईं");
+      await refresh();
+    }catch(e){ alert(e.message); }
+  }
+
+  function toggleAllLoans(checked){
+    document.querySelectorAll(".loan-select").forEach(cb => cb.checked = checked);
+  }
+
+  function updateLoansSelectAll(){
+    const boxes = [...document.querySelectorAll(".loan-select")];
+    const master = $("selectAllLoans");
+    if(master) master.checked = boxes.length > 0 && boxes.every(cb => cb.checked);
+  }
+
+  async function deleteSelectedLoans(){
+    const ids = [...document.querySelectorAll(".loan-select:checked")].map(cb => Number(cb.value));
+    if(!ids.length){ alert("कम से कम एक Loan चुनें"); return; }
+    if(!confirm(ids.length + " Loan delete करने हैं? उनके जुड़े repayment records भी हटेंगे।")) return;
+    try{
+      const result = await api("/api/loans/bulk-delete", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({ids})
+      });
+      alert("🗑️ " + result.deleted + " Loan delete हो गए");
+      await refresh();
+    }catch(e){ alert(e.message); }
+  }
+
+  function toggleAllPayments(checked){
+    document.querySelectorAll(".payment-select").forEach(cb => cb.checked = checked);
+  }
+
+  function updatePaymentsSelectAll(){
+    const boxes = [...document.querySelectorAll(".payment-select")];
+    const master = $("selectAllPayments");
+    if(master) master.checked = boxes.length > 0 && boxes.every(cb => cb.checked);
+  }
+
+  async function deleteSelectedPayments(){
+    const ids = [...document.querySelectorAll(".payment-select:checked")].map(cb => Number(cb.value));
+    if(!ids.length){ alert("कम से कम एक भुगतान चुनें"); return; }
+    if(!confirm(ids.length + " भुगतान रिकॉर्ड delete करने हैं? Loan balance वापस adjust होगा।")) return;
+    try{
+      const result = await api("/api/payments/bulk-delete", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({ids})
+      });
+      alert("🗑️ " + result.deleted + " भुगतान रिकॉर्ड delete हो गए और Loan balance adjust हो गया।");
+      await refresh();
+    }catch(e){ alert(e.message); }
+  }
+
+
   async function deletePayment(id){
 
     if(!confirm(
