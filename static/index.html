@@ -8897,18 +8897,31 @@ function buildPassbookLedger(x, showTotal = false){
   const rows = [];
 
   (x.loans || []).forEach(r => {
+    const loanCandidates = [
+      Number(r.original || 0),
+      Number(r.loan_amount || 0),
+      Number(r.amount || 0),
+      Number(r.principal || 0)
+    ].filter(v => v > 0);
+
+    let loanAmount = loanCandidates.length
+      ? Math.max(...loanCandidates)
+      : 0;
+
+    if(!loanAmount && r.id){
+      const repaidPrincipal = (x.payments || [])
+        .filter(p => Number(p.loan_id) === Number(r.id))
+        .reduce((sum, p) => sum + Math.abs(Number(p.principal || 0)), 0);
+
+      loanAmount = repaidPrincipal + Math.abs(Number(r.principal || 0));
+    }
+
     rows.push({
       date: r.date || "",
       order: 1,
       detail: "Loan लिया गया",
       amount: 0,
-      displayAmount: Math.abs(Number(
-        r.original ??
-        r.loan_amount ??
-        r.principal ??
-        r.amount ??
-        0
-      )),
+      displayAmount: loanAmount,
       displayType: "withdrawal",
       affectsBalance: false,
       excluded: true,
@@ -9035,13 +9048,24 @@ function buildMemberTransactionLedger(x){
   (x.loans || []).forEach(r => {
     // Loan की पूरी ली गई राशि ledger में दिखाएँ।
     // लेकिन balance / Net Total में इसे शामिल न करें।
-    const loanAmount = Math.abs(Number(
-      r.original ??
-      r.loan_amount ??
-      r.principal ??
-      r.amount ??
-      0
-    ));
+    const loanCandidates = [
+      Number(r.original || 0),
+      Number(r.loan_amount || 0),
+      Number(r.amount || 0),
+      Number(r.principal || 0)
+    ].filter(v => v > 0);
+
+    let loanAmount = loanCandidates.length
+      ? Math.max(...loanCandidates)
+      : 0;
+
+    if(!loanAmount && r.id){
+      const repaidPrincipal = (x.payments || [])
+        .filter(p => Number(p.loan_id) === Number(r.id))
+        .reduce((sum, p) => sum + Math.abs(Number(p.principal || 0)), 0);
+
+      loanAmount = repaidPrincipal + Math.abs(Number(r.principal || 0));
+    }
 
     rows.push({
       date: r.date || "",
