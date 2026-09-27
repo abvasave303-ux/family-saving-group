@@ -7310,7 +7310,7 @@ function renderAdminMembers(){
 
   $("mt").innerHTML = filtered.map((f,i) => `
     <tr>
-      <td>${Number(f.display_order || (i+1))}</td>
+      <td>${i+1}</td>
       <td><b>${f.name}</b></td>
       <td>${f.mobile || "—"}</td>
       <td>••••</td>
@@ -7458,7 +7458,7 @@ async function refresh(){
 
         <tr>
 
-          <td>${Number(f.display_order || (i+1))}</td>
+          <td>${i+1}</td>
 
           <td>${f.name}</td>
 
