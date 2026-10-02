@@ -3580,6 +3580,60 @@ def reverse_interest_distribution(distribution_id):
 
 
 # ==================================================
+# COMPLETE JSON BACKUP
+# ==================================================
+
+@app.get("/api/backup/complete")
+def complete_json_backup():
+    error = admin_required()
+    if error:
+        return error
+
+    c = conn()
+
+    try:
+        families = c.execute("""
+            SELECT id, name, mobile, created_at, display_order
+            FROM families
+            ORDER BY display_order NULLS LAST, id
+        """).fetchall()
+
+        tables = {
+            "families": families,
+            "savings": c.execute("SELECT * FROM savings ORDER BY id").fetchall(),
+            "saving_debits": c.execute("SELECT * FROM saving_debits ORDER BY id").fetchall(),
+            "loans": c.execute("SELECT * FROM loans ORDER BY id").fetchall(),
+            "payments": c.execute("SELECT * FROM payments ORDER BY id").fetchall(),
+            "sbi_interest": c.execute("SELECT * FROM sbi_interest ORDER BY id").fetchall(),
+            "interest_distributions": c.execute("SELECT * FROM interest_distributions ORDER BY id").fetchall(),
+            "interest_credits": c.execute("SELECT * FROM interest_credits ORDER BY id").fetchall(),
+            "notifications": c.execute("SELECT * FROM notifications ORDER BY id").fetchall(),
+            "app_settings": c.execute("SELECT * FROM app_settings ORDER BY key").fetchall()
+        }
+
+        c.close()
+
+        return jsonify({
+            "backup_version": 1,
+            "application": "Family Saving Group",
+            "generated_at": datetime.datetime.now().isoformat(timespec="seconds"),
+            "security_note": "Member PINs, FCM tokens and active login sessions are intentionally excluded from this backup.",
+            "data": {
+                key: [dict(row) for row in rows]
+                for key, rows in tables.items()
+            }
+        })
+
+    except Exception as e:
+        try:
+            c.close()
+        except Exception:
+            pass
+        print("Complete JSON backup error:", e)
+        return jsonify(error="Complete Backup तैयार नहीं हो सका"), 500
+
+
+# ==================================================
 # START APPLICATION
 # ==================================================
 
