@@ -3634,6 +3634,286 @@ def complete_json_backup():
 
 
 # ==================================================
+# COMPLETE JSON RESTORE
+# ==================================================
+
+@app.post("/api/backup/restore")
+def restore_complete_json():
+    error = admin_required()
+    if error:
+        return error
+
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        return jsonify(error="Valid JSON Backup file भेजें"), 400
+
+    if payload.get("application") != "Family Saving Group":
+        return jsonify(error="यह Family Saving Group का backup नहीं है"), 400
+
+    if payload.get("backup_version") != 1:
+        return jsonify(error="Backup version supported नहीं है"), 400
+
+    data = payload.get("data")
+    if not isinstance(data, dict):
+        return jsonify(error="Backup data section नहीं मिला"), 400
+
+    required_tables = [
+        "families", "savings", "saving_debits", "loans", "payments",
+        "sbi_interest", "interest_distributions", "interest_credits",
+        "notifications", "app_settings"
+    ]
+
+    for table_name in required_tables:
+        if table_name not in data or not isinstance(data[table_name], list):
+            return jsonify(error=f"Backup में {table_name} data missing या invalid है"), 400
+
+    families = data["families"]
+    savings = data["savings"]
+    saving_debits = data["saving_debits"]
+    loans = data["loans"]
+    payments = data["payments"]
+    sbi_interest = data["sbi_interest"]
+    interest_distributions = data["interest_distributions"]
+    interest_credits = data["interest_credits"]
+    notifications = data["notifications"]
+    app_settings = data["app_settings"]
+
+    # Basic schema validation before any database change.
+    try:
+        family_ids = {int(x["id"]) for x in families}
+        loan_ids = {int(x["id"]) for x in loans}
+        distribution_ids = {int(x["id"]) for x in interest_distributions}
+
+        if len(family_ids) != len(families):
+            raise ValueError("Duplicate family id")
+        if len(loan_ids) != len(loans):
+            raise ValueError("Duplicate loan id")
+        if len(distribution_ids) != len(interest_distributions):
+            raise ValueError("Duplicate distribution id")
+
+        for row in families:
+            if not row.get("name") or "id" not in row:
+                raise ValueError("Invalid family record")
+
+        for row in savings:
+            if int(row["family_id"]) not in family_ids:
+                raise ValueError("Savings में invalid family_id")
+
+        for row in saving_debits:
+            if int(row["family_id"]) not in family_ids:
+                raise ValueError("Saving debit में invalid family_id")
+
+        for row in loans:
+            if int(row["family_id"]) not in family_ids:
+                raise ValueError("Loan में invalid family_id")
+
+        for row in payments:
+            if int(row["family_id"]) not in family_ids or int(row["loan_id"]) not in loan_ids:
+                raise ValueError("Payment में invalid family_id या loan_id")
+
+        for row in interest_credits:
+            if int(row["family_id"]) not in family_ids:
+                raise ValueError("Interest credit में invalid family_id")
+            if row.get("distribution_id") is not None and int(row["distribution_id"]) not in distribution_ids:
+                raise ValueError("Interest credit में invalid distribution_id")
+
+        for row in sbi_interest:
+            if row.get("distribution_id") is not None and int(row["distribution_id"]) not in distribution_ids:
+                raise ValueError("SBI interest में invalid distribution_id")
+
+        for row in notifications:
+            if int(row["family_id"]) not in family_ids:
+                raise ValueError("Notification में invalid family_id")
+
+        for row in app_settings:
+            if "key" not in row or "value" not in row:
+                raise ValueError("Invalid app setting record")
+
+    except (KeyError, TypeError, ValueError) as e:
+        return jsonify(error=f"Backup validation failed: {e}"), 400
+
+    c = conn()
+
+    try:
+        # Preserve existing PINs for matching family IDs. PINs are intentionally
+        # not stored in the JSON backup. On a fresh/empty database, the normal
+        # default PIN 1234 is used.
+        current_pins = {}
+        for row in c.execute("SELECT id, pin FROM families").fetchall():
+            current_pins[int(row["id"])] = str(row["pin"] or "1234")
+
+        # Remove dependent records first. Secrets are cleared separately so
+        # restored data never carries old login/session state.
+        delete_order = [
+            "interest_credits",
+            "payments",
+            "notifications",
+            "sbi_interest",
+            "saving_debits",
+            "savings",
+            "interest_distributions",
+            "loans",
+            "families",
+            "app_settings",
+            "fcm_tokens",
+            "active_member_sessions"
+        ]
+
+        for table_name in delete_order:
+            c.execute(f"DELETE FROM {table_name}")
+
+        for row in families:
+            fid = int(row["id"])
+            c.execute(
+                """
+                INSERT INTO families (id, name, mobile, pin, created_at, display_order)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    fid,
+                    str(row.get("name") or ""),
+                    str(row.get("mobile") or ""),
+                    current_pins.get(fid, "1234"),
+                    str(row.get("created_at") or datetime.date.today().isoformat()),
+                    int(row.get("display_order") or fid)
+                )
+            )
+
+        for row in savings:
+            c.execute(
+                "INSERT INTO savings (id, family_id, month, amount, date) VALUES (?, ?, ?, ?, ?)",
+                (int(row["id"]), int(row["family_id"]), str(row["month"]), float(row["amount"]), str(row["date"]))
+            )
+
+        for row in saving_debits:
+            c.execute(
+                "INSERT INTO saving_debits (id, family_id, amount, date, reason) VALUES (?, ?, ?, ?, ?)",
+                (int(row["id"]), int(row["family_id"]), float(row["amount"]), str(row["date"]), str(row.get("reason") or ""))
+            )
+
+        for row in loans:
+            c.execute(
+                "INSERT INTO loans (id, family_id, original, principal, rate, months, date) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (
+                    int(row["id"]), int(row["family_id"]), float(row["original"]),
+                    float(row["principal"]), float(row.get("rate") or 2),
+                    int(row.get("months") or 12), str(row["date"])
+                )
+            )
+
+        for row in payments:
+            c.execute(
+                """
+                INSERT INTO payments
+                (id, loan_id, family_id, amount, interest, principal, date, distributed, distribution_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    int(row["id"]), int(row["loan_id"]), int(row["family_id"]),
+                    float(row["amount"]), float(row["interest"]), float(row["principal"]),
+                    str(row["date"]), bool(row.get("distributed", False)), row.get("distribution_id")
+                )
+            )
+
+        for row in interest_distributions:
+            c.execute(
+                "INSERT INTO interest_distributions (id, total_interest, date) VALUES (?, ?, ?)",
+                (int(row["id"]), float(row["total_interest"]), str(row["date"]))
+            )
+
+        for row in sbi_interest:
+            c.execute(
+                """
+                INSERT INTO sbi_interest
+                (id, amount, date, description, distributed, distribution_id, financial_year)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    int(row["id"]), float(row["amount"]), str(row["date"]),
+                    str(row.get("description") or ""), bool(row.get("distributed", False)),
+                    row.get("distribution_id"), row.get("financial_year")
+                )
+            )
+
+        for row in interest_credits:
+            c.execute(
+                "INSERT INTO interest_credits (id, family_id, amount, date, distribution_id) VALUES (?, ?, ?, ?, ?)",
+                (
+                    int(row["id"]), int(row["family_id"]), float(row["amount"]),
+                    str(row["date"]), row.get("distribution_id")
+                )
+            )
+
+        for row in notifications:
+            c.execute(
+                """
+                INSERT INTO notifications
+                (id, family_id, title, message, is_read, created_at)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    int(row["id"]), int(row["family_id"]), str(row["title"]),
+                    str(row["message"]), bool(row.get("is_read", False)), str(row["created_at"])
+                )
+            )
+
+        for row in app_settings:
+            c.execute(
+                "INSERT INTO app_settings (key, value) VALUES (?, ?)",
+                (str(row["key"]), str(row["value"]))
+            )
+
+        # Keep PostgreSQL SERIAL sequences ahead of restored explicit IDs.
+        sequence_tables = [
+            "families", "savings", "saving_debits", "loans", "payments",
+            "interest_distributions", "sbi_interest", "interest_credits", "notifications"
+        ]
+        for table_name in sequence_tables:
+            c.execute(
+                f"""
+                SELECT setval(
+                    pg_get_serial_sequence('{table_name}', 'id'),
+                    COALESCE(MAX(id), 1),
+                    CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
+                ) FROM {table_name}
+                """
+            )
+
+        c.commit()
+        c.close()
+
+        return jsonify({
+            "ok": True,
+            "message": "Complete JSON Backup सफलतापूर्वक restore हो गया",
+            "restored": {
+                "families": len(families),
+                "savings": len(savings),
+                "saving_debits": len(saving_debits),
+                "loans": len(loans),
+                "payments": len(payments),
+                "sbi_interest": len(sbi_interest),
+                "interest_distributions": len(interest_distributions),
+                "interest_credits": len(interest_credits),
+                "notifications": len(notifications),
+                "app_settings": len(app_settings)
+            },
+            "security_note": "FCM tokens and active member sessions were cleared and are not restored from backup."
+        })
+
+    except Exception as e:
+        try:
+            c.rollback()
+        except Exception:
+            pass
+        try:
+            c.close()
+        except Exception:
+            pass
+        print("Complete JSON restore error:", e)
+        return jsonify(error="Restore failed. Database changes rollback कर दिए गए हैं."), 500
+
+
+# ==================================================
 # START APPLICATION
 # ==================================================
 
