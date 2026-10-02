@@ -5258,6 +5258,25 @@ onMessage(messaging, (payload) => {
         <small style="display:block;margin-top:8px;color:#64748b;">
           Members, बचत, Loan, Payment, SBI ब्याज, ब्याज वितरण और अन्य जरूरी data एक ही backup file में।
         </small>
+
+        <div style="margin-top:16px;padding-top:16px;border-top:1px dashed #cbd5e1;">
+          <input
+            id="restoreBackupFile"
+            type="file"
+            accept="application/json,.json"
+            style="display:none"
+            onchange="restoreCompleteBackup(this)">
+
+          <button
+            class="btn danger"
+            onclick="document.getElementById('restoreBackupFile').click()">
+            📥 Restore / Import JSON Backup
+          </button>
+
+          <small style="display:block;margin-top:8px;color:#b45309;">
+            Restore करने से पहले current data का automatic backup download होगा। Restore current financial data को selected backup से replace करेगा।
+          </small>
+        </div>
       </div>
       
     </div>
@@ -10621,6 +10640,98 @@ async function exportCompleteBackup(){
   }catch(e){
 
     alert(e.message);
+
+  }
+
+}
+
+
+/* ================= COMPLETE BACKUP RESTORE ================= */
+
+async function restoreCompleteBackup(input){
+
+  const file = input?.files?.[0];
+  if(!file) return;
+
+  try{
+
+    const text = await file.text();
+    let backup;
+
+    try{
+      backup = JSON.parse(text);
+    }catch(e){
+      throw new Error("JSON file सही format में नहीं है");
+    }
+
+    if(!backup || backup.application !== "Family Saving Group" || backup.backup_version !== 1){
+      throw new Error("यह Family Saving Group का valid Complete Backup नहीं है");
+    }
+
+    if(!backup.data || !Array.isArray(backup.data.families)){
+      throw new Error("Backup में valid member data नहीं मिला");
+    }
+
+    const ok = confirm(
+      "⚠️ RESTORE CONFIRMATION\n\n" +
+      "यह selected JSON backup current financial/member data को replace करेगा।\n\n" +
+      "Restore से पहले current database का Complete Backup अपने आप download होगा।\n\n" +
+      "क्या आप आगे बढ़ना चाहते हैं?"
+    );
+
+    if(!ok){
+      input.value = "";
+      return;
+    }
+
+    // Safety copy of the current database before any restore operation.
+    const currentBackup = await api("/api/backup/complete");
+    const blob = new Blob(
+      [JSON.stringify(currentBackup, null, 2)],
+      {type:"application/json"}
+    );
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const stamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,"-");
+    a.href = url;
+    a.download = "Family_Saving_Group_Pre_Restore_Backup_" + stamp + ".json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+
+    const finalConfirm = confirm(
+      "✅ Current database का safety backup download हो गया है।\n\n" +
+      "अब selected JSON restore किया जाएगा।\n\n" +
+      "क्या आप वास्तव में RESTORE करना चाहते हैं?"
+    );
+
+    if(!finalConfirm){
+      input.value = "";
+      return;
+    }
+
+    const result = await api("/api/backup/restore",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(backup)
+    });
+
+    alert(
+      "✅ Complete Backup restore हो गया।\n\n" +
+      "Members: " + result.restored.families + "\n" +
+      "Savings: " + result.restored.savings + "\n" +
+      "Loans: " + result.restored.loans + "\n" +
+      "Payments: " + result.restored.payments
+    );
+
+    input.value = "";
+    await refresh();
+
+  }catch(e){
+
+    input.value = "";
+    alert("❌ Restore नहीं हुआ\n\n" + e.message);
 
   }
 
