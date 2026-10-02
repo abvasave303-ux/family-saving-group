@@ -3647,25 +3647,17 @@ def restore_complete_json():
     if not isinstance(payload, dict):
         return jsonify(error="Valid JSON Backup file भेजें"), 400
 
-    if payload.get("application") != "Family Saving Group":
-        return jsonify(error="यह Family Saving Group का backup नहीं है"), 400
-
-    if payload.get("backup_version") != 1:
-        return jsonify(error="Backup version supported नहीं है"), 400
+    if payload.get("application") != "Family Saving Group" or payload.get("backup_version") != 1:
+        return jsonify(error="यह Family Saving Group का supported Complete Backup नहीं है"), 400
 
     data = payload.get("data")
-    if not isinstance(data, dict):
-        return jsonify(error="Backup data section नहीं मिला"), 400
-
-    required_tables = [
+    required = [
         "families", "savings", "saving_debits", "loans", "payments",
         "sbi_interest", "interest_distributions", "interest_credits",
         "notifications", "app_settings"
     ]
-
-    for table_name in required_tables:
-        if table_name not in data or not isinstance(data[table_name], list):
-            return jsonify(error=f"Backup में {table_name} data missing या invalid है"), 400
+    if not isinstance(data, dict) or any(not isinstance(data.get(k), list) for k in required):
+        return jsonify(error="Backup data अधूरा या invalid है"), 400
 
     families = data["families"]
     savings = data["savings"]
@@ -3678,238 +3670,135 @@ def restore_complete_json():
     notifications = data["notifications"]
     app_settings = data["app_settings"]
 
-    # Basic schema validation before any database change.
     try:
-        family_ids = {int(x["id"]) for x in families}
-        loan_ids = {int(x["id"]) for x in loans}
-        distribution_ids = {int(x["id"]) for x in interest_distributions}
-
+        family_ids = {int(r["id"]) for r in families}
+        loan_ids = {int(r["id"]) for r in loans}
+        distribution_ids = {int(r["id"]) for r in interest_distributions}
         if len(family_ids) != len(families):
             raise ValueError("Duplicate family id")
         if len(loan_ids) != len(loans):
             raise ValueError("Duplicate loan id")
         if len(distribution_ids) != len(interest_distributions):
             raise ValueError("Duplicate distribution id")
-
-        for row in families:
-            if not row.get("name") or "id" not in row:
+        for r in families:
+            if not r.get("name"):
                 raise ValueError("Invalid family record")
-
-        for row in savings:
-            if int(row["family_id"]) not in family_ids:
-                raise ValueError("Savings में invalid family_id")
-
-        for row in saving_debits:
-            if int(row["family_id"]) not in family_ids:
-                raise ValueError("Saving debit में invalid family_id")
-
-        for row in loans:
-            if int(row["family_id"]) not in family_ids:
-                raise ValueError("Loan में invalid family_id")
-
-        for row in payments:
-            if int(row["family_id"]) not in family_ids or int(row["loan_id"]) not in loan_ids:
-                raise ValueError("Payment में invalid family_id या loan_id")
-
-        for row in interest_credits:
-            if int(row["family_id"]) not in family_ids:
-                raise ValueError("Interest credit में invalid family_id")
-            if row.get("distribution_id") is not None and int(row["distribution_id"]) not in distribution_ids:
-                raise ValueError("Interest credit में invalid distribution_id")
-
-        for row in sbi_interest:
-            if row.get("distribution_id") is not None and int(row["distribution_id"]) not in distribution_ids:
-                raise ValueError("SBI interest में invalid distribution_id")
-
-        for row in notifications:
-            if int(row["family_id"]) not in family_ids:
-                raise ValueError("Notification में invalid family_id")
-
-        for row in app_settings:
-            if "key" not in row or "value" not in row:
-                raise ValueError("Invalid app setting record")
-
+        for r in savings + saving_debits + loans + interest_credits + notifications:
+            if int(r["family_id"]) not in family_ids:
+                raise ValueError("Invalid family_id in backup")
+        for r in payments:
+            if int(r["family_id"]) not in family_ids or int(r["loan_id"]) not in loan_ids:
+                raise ValueError("Invalid payment family_id or loan_id")
+        for r in interest_credits + sbi_interest:
+            did = r.get("distribution_id")
+            if did is not None and int(did) not in distribution_ids:
+                raise ValueError("Invalid distribution_id in backup")
+        for r in app_settings:
+            if "key" not in r or "value" not in r:
+                raise ValueError("Invalid app setting")
     except (KeyError, TypeError, ValueError) as e:
         return jsonify(error=f"Backup validation failed: {e}"), 400
 
-    c = conn()
-
+    c = None
     try:
-        # Preserve existing PINs for matching family IDs. PINs are intentionally
-        # not stored in the JSON backup. On a fresh/empty database, the normal
-        # default PIN 1234 is used.
-        current_pins = {}
-        for row in c.execute("SELECT id, pin FROM families").fetchall():
-            current_pins[int(row["id"])] = str(row["pin"] or "1234")
+        c = conn()
 
-        # Remove dependent records first. Secrets are cleared separately so
-        # restored data never carries old login/session state.
-        delete_order = [
-            "interest_credits",
-            "payments",
-            "notifications",
-            "sbi_interest",
-            "saving_debits",
-            "savings",
-            "interest_distributions",
-            "loans",
-            "families",
-            "app_settings",
-            "fcm_tokens",
-            "active_member_sessions"
-        ]
+        # Keep current PINs for matching member IDs. PINs are intentionally not
+        # part of the JSON backup. Everything below remains one DB transaction.
+        current_pins = {
+            int(r["id"]): str(r.get("pin") or "1234")
+            for r in c.execute("SELECT id, pin FROM families").fetchall()
+        }
 
-        for table_name in delete_order:
-            c.execute(f"DELETE FROM {table_name}")
+        # CASCADE keeps the foreign-key cleanup consistent and rollback-safe.
+        c.execute("""
+            TRUNCATE TABLE
+                fcm_tokens,
+                active_member_sessions,
+                interest_credits,
+                payments,
+                notifications,
+                sbi_interest,
+                saving_debits,
+                savings,
+                interest_distributions,
+                loans,
+                families,
+                app_settings
+            RESTART IDENTITY CASCADE
+        """)
 
-        for row in families:
-            fid = int(row["id"])
+        for r in families:
+            fid = int(r["id"])
             c.execute(
-                """
-                INSERT INTO families (id, name, mobile, pin, created_at, display_order)
-                VALUES (?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    fid,
-                    str(row.get("name") or ""),
-                    str(row.get("mobile") or ""),
-                    current_pins.get(fid, "1234"),
-                    str(row.get("created_at") or datetime.date.today().isoformat()),
-                    int(row.get("display_order") or fid)
-                )
+                "INSERT INTO families (id,name,mobile,pin,created_at,display_order) VALUES (?,?,?,?,?,?)",
+                (fid, str(r.get("name") or ""), str(r.get("mobile") or ""),
+                 current_pins.get(fid, "1234"), str(r.get("created_at") or datetime.date.today().isoformat()),
+                 int(r.get("display_order") or fid))
             )
 
-        for row in savings:
-            c.execute(
-                "INSERT INTO savings (id, family_id, month, amount, date) VALUES (?, ?, ?, ?, ?)",
-                (int(row["id"]), int(row["family_id"]), str(row["month"]), float(row["amount"]), str(row["date"]))
-            )
+        for r in savings:
+            c.execute("INSERT INTO savings (id,family_id,month,amount,date) VALUES (?,?,?,?,?)",
+                      (int(r["id"]), int(r["family_id"]), str(r["month"]), float(r["amount"]), str(r["date"])))
+        for r in saving_debits:
+            c.execute("INSERT INTO saving_debits (id,family_id,amount,date,reason) VALUES (?,?,?,?,?)",
+                      (int(r["id"]), int(r["family_id"]), float(r["amount"]), str(r["date"]), str(r.get("reason") or "")))
+        for r in loans:
+            c.execute("INSERT INTO loans (id,family_id,original,principal,rate,months,date) VALUES (?,?,?,?,?,?,?)",
+                      (int(r["id"]), int(r["family_id"]), float(r["original"]), float(r["principal"]),
+                       float(r.get("rate") if r.get("rate") is not None else 2), int(r.get("months") or 12), str(r["date"])))
+        for r in payments:
+            c.execute("""
+                INSERT INTO payments (id,loan_id,family_id,amount,interest,principal,date,distributed,distribution_id)
+                VALUES (?,?,?,?,?,?,?,?,?)
+            """, (int(r["id"]), int(r["loan_id"]), int(r["family_id"]), float(r["amount"]),
+                   float(r["interest"]), float(r["principal"]), str(r["date"]), bool(r.get("distributed", False)),
+                   r.get("distribution_id")))
+        for r in interest_distributions:
+            c.execute("INSERT INTO interest_distributions (id,total_interest,date) VALUES (?,?,?)",
+                      (int(r["id"]), float(r["total_interest"]), str(r["date"])))
+        for r in sbi_interest:
+            c.execute("""
+                INSERT INTO sbi_interest (id,amount,date,description,distributed,distribution_id,financial_year)
+                VALUES (?,?,?,?,?,?,?)
+            """, (int(r["id"]), float(r["amount"]), str(r["date"]), str(r.get("description") or ""),
+                   bool(r.get("distributed", False)), r.get("distribution_id"), r.get("financial_year")))
+        for r in interest_credits:
+            c.execute("INSERT INTO interest_credits (id,family_id,amount,date,distribution_id) VALUES (?,?,?,?,?)",
+                      (int(r["id"]), int(r["family_id"]), float(r["amount"]), str(r["date"]), r.get("distribution_id")))
+        for r in notifications:
+            c.execute("""
+                INSERT INTO notifications (id,family_id,title,message,is_read,created_at)
+                VALUES (?,?,?,?,?,?)
+            """, (int(r["id"]), int(r["family_id"]), str(r["title"]), str(r["message"]),
+                   bool(r.get("is_read", False)), str(r["created_at"])))
+        for r in app_settings:
+            c.execute("INSERT INTO app_settings (key,value) VALUES (?,?)", (str(r["key"]), str(r["value"])))
 
-        for row in saving_debits:
-            c.execute(
-                "INSERT INTO saving_debits (id, family_id, amount, date, reason) VALUES (?, ?, ?, ?, ?)",
-                (int(row["id"]), int(row["family_id"]), float(row["amount"]), str(row["date"]), str(row.get("reason") or ""))
-            )
-
-        for row in loans:
-            c.execute(
-                "INSERT INTO loans (id, family_id, original, principal, rate, months, date) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                (
-                    int(row["id"]), int(row["family_id"]), float(row["original"]),
-                    float(row["principal"]), float(row.get("rate") or 2),
-                    int(row.get("months") or 12), str(row["date"])
-                )
-            )
-
-        for row in payments:
-            c.execute(
-                """
-                INSERT INTO payments
-                (id, loan_id, family_id, amount, interest, principal, date, distributed, distribution_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    int(row["id"]), int(row["loan_id"]), int(row["family_id"]),
-                    float(row["amount"]), float(row["interest"]), float(row["principal"]),
-                    str(row["date"]), bool(row.get("distributed", False)), row.get("distribution_id")
-                )
-            )
-
-        for row in interest_distributions:
-            c.execute(
-                "INSERT INTO interest_distributions (id, total_interest, date) VALUES (?, ?, ?)",
-                (int(row["id"]), float(row["total_interest"]), str(row["date"]))
-            )
-
-        for row in sbi_interest:
-            c.execute(
-                """
-                INSERT INTO sbi_interest
-                (id, amount, date, description, distributed, distribution_id, financial_year)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    int(row["id"]), float(row["amount"]), str(row["date"]),
-                    str(row.get("description") or ""), bool(row.get("distributed", False)),
-                    row.get("distribution_id"), row.get("financial_year")
-                )
-            )
-
-        for row in interest_credits:
-            c.execute(
-                "INSERT INTO interest_credits (id, family_id, amount, date, distribution_id) VALUES (?, ?, ?, ?, ?)",
-                (
-                    int(row["id"]), int(row["family_id"]), float(row["amount"]),
-                    str(row["date"]), row.get("distribution_id")
-                )
-            )
-
-        for row in notifications:
-            c.execute(
-                """
-                INSERT INTO notifications
-                (id, family_id, title, message, is_read, created_at)
-                VALUES (?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    int(row["id"]), int(row["family_id"]), str(row["title"]),
-                    str(row["message"]), bool(row.get("is_read", False)), str(row["created_at"])
-                )
-            )
-
-        for row in app_settings:
-            c.execute(
-                "INSERT INTO app_settings (key, value) VALUES (?, ?)",
-                (str(row["key"]), str(row["value"]))
-            )
-
-        # Keep PostgreSQL SERIAL sequences ahead of restored explicit IDs.
-        sequence_tables = [
-            "families", "savings", "saving_debits", "loans", "payments",
-            "interest_distributions", "sbi_interest", "interest_credits", "notifications"
-        ]
-        for table_name in sequence_tables:
-            c.execute(
-                f"""
-                SELECT setval(
-                    pg_get_serial_sequence('{table_name}', 'id'),
-                    COALESCE(MAX(id), 1),
-                    CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
-                ) FROM {table_name}
-                """
-            )
+        # Explicit IDs were restored, so move each SERIAL sequence to the current max.
+        for table in ["families","savings","saving_debits","loans","payments","interest_distributions","sbi_interest","interest_credits","notifications"]:
+            c.execute(f"""
+                SELECT setval(pg_get_serial_sequence('{table}','id'),
+                              COALESCE(MAX(id),1),
+                              CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END)
+                FROM {table}
+            """)
 
         c.commit()
         c.close()
-
-        return jsonify({
-            "ok": True,
-            "message": "Complete JSON Backup सफलतापूर्वक restore हो गया",
-            "restored": {
-                "families": len(families),
-                "savings": len(savings),
-                "saving_debits": len(saving_debits),
-                "loans": len(loans),
-                "payments": len(payments),
-                "sbi_interest": len(sbi_interest),
-                "interest_distributions": len(interest_distributions),
-                "interest_credits": len(interest_credits),
-                "notifications": len(notifications),
-                "app_settings": len(app_settings)
-            },
-            "security_note": "FCM tokens and active member sessions were cleared and are not restored from backup."
+        return jsonify(ok=True, message="Complete JSON Backup सफलतापूर्वक restore हो गया", restored={
+            "families":len(families), "savings":len(savings), "saving_debits":len(saving_debits),
+            "loans":len(loans), "payments":len(payments), "sbi_interest":len(sbi_interest),
+            "interest_distributions":len(interest_distributions), "interest_credits":len(interest_credits),
+            "notifications":len(notifications), "app_settings":len(app_settings)
         })
-
     except Exception as e:
-        try:
-            c.rollback()
-        except Exception:
-            pass
-        try:
-            c.close()
-        except Exception:
-            pass
-        print("Complete JSON restore error:", e)
+        if c is not None:
+            try: c.rollback()
+            except Exception: pass
+            try: c.close()
+            except Exception: pass
+        print("Complete JSON restore error:", repr(e))
         return jsonify(error="Restore failed. Database changes rollback कर दिए गए हैं."), 500
 
 
