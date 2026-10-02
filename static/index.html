@@ -5248,6 +5248,17 @@ onMessage(messaging, (payload) => {
   onclick="exportData('payments')">
   भुगतान
 </button>
+
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid #e5e7eb;">
+        <button
+          class="btn"
+          onclick="exportCompleteBackup()">
+          📦 Complete Backup JSON
+        </button>
+        <small style="display:block;margin-top:8px;color:#64748b;">
+          Members, बचत, Loan, Payment, SBI ब्याज, ब्याज वितरण और अन्य जरूरी data एक ही backup file में।
+        </small>
+      </div>
       
     </div>
 
@@ -10559,6 +10570,55 @@ else{
 
   }
   catch(e){
+
+    alert(e.message);
+
+  }
+
+}
+
+
+/* ================= COMPLETE BACKUP ================= */
+
+async function exportCompleteBackup(){
+
+  const ok = confirm(
+    "क्या आप पूरा JSON Backup डाउनलोड करना चाहते हैं?\n\nइसमें सभी जरूरी financial और member data शामिल होंगे। PIN, FCM token और active login session backup में शामिल नहीं होंगे।"
+  );
+
+  if(!ok) return;
+
+  try{
+
+    const data = await api("/api/backup/complete");
+
+    const blob = new Blob(
+      [JSON.stringify(data, null, 2)],
+      {
+        type: "application/json"
+      }
+    );
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+
+    const stamp = new Date()
+      .toISOString()
+      .slice(0,19)
+      .replace(/[:T]/g,"-");
+
+    a.href = url;
+    a.download = "Family_Saving_Group_Complete_Backup_" + stamp + ".json";
+
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    URL.revokeObjectURL(url);
+
+    alert("✅ Complete JSON Backup सफलतापूर्वक डाउनलोड हो गया।");
+
+  }catch(e){
 
     alert(e.message);
 
